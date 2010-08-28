@@ -1,0 +1,11 @@
+- title('Sightings')
+
+.span-23.prepend-1.mat
+  %h2== Sightings
+
+%hr.space
+
+.span-24.last#sightings
+  - @sightings.each do |sighting|
+    .span-11.prepend-1
+      = sighting.handle

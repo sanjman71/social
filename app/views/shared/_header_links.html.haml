@@ -1,0 +1,19 @@
+.span-24
+  .span-24.last#header_links{:style => 'text-align: right;'}
+    -# show these links always
+    = link_to 'Home', root_path, :class => 'header link'
+
+    - if user_signed_in?
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Sightings', sightings_path, :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Locations', locations_path, :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Accounts', accounts_path, :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Logout', logout_path, :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;:&nbsp;
+      %span{:style => 'color: #fff;'}= current_user.handle
+    - else
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Login', login_path, :class => 'header link', :rel => 'nofollow')
