@@ -30,6 +30,13 @@ class LocationImportTest < ActiveSupport::TestCase
       assert @location2.valid?
       assert_equal @location, @location2
     end
+    
+    should "create yojimbo" do
+      @hash     = Hash['address' => "1310 N Clybourn", 'city' => "Chicago", 'geolat' => 41.905768, 'geolong' => -87.642783,
+                       'id' => 2167915, 'name' => "Yojimbo's Garage", 'state' => "IL"]
+      @location = LocationImport.import_foursquare_venue(@hash)
+      assert @location.valid?
+    end
   end
 
   context "import facebook location" do

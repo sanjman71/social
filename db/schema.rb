@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 2) do
+ActiveRecord::Schema.define(:version => 20100829084055) do
 
   create_table "chains", :force => true do |t|
     t.string  "name"
@@ -19,6 +19,17 @@ ActiveRecord::Schema.define(:version => 2) do
 
   add_index "chains", ["name"], :name => "index_chains_on_name"
   add_index "chains", ["places_count"], :name => "index_chains_on_places_count"
+
+  create_table "checkin_logs", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "source",        :limit => 50
+    t.string   "state"
+    t.integer  "checkins"
+    t.datetime "last_check_at"
+  end
+
+  add_index "checkin_logs", ["source"], :name => "index_checkin_logs_on_source"
+  add_index "checkin_logs", ["user_id"], :name => "index_checkin_logs_on_user_id"
 
   create_table "checkins", :force => true do |t|
     t.integer  "user_id"
@@ -57,6 +68,19 @@ ActiveRecord::Schema.define(:version => 2) do
 
   add_index "countries", ["code"], :name => "index_countries_on_code"
   add_index "countries", ["locations_count"], :name => "index_countries_on_locations_count"
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "email_addresses", :force => true do |t|
     t.integer  "emailable_id"
@@ -117,8 +141,6 @@ ActiveRecord::Schema.define(:version => 2) do
     t.decimal  "lat",                                 :precision => 15, :scale => 10
     t.decimal  "lng",                                 :precision => 15, :scale => 10
     t.integer  "popularity",                                                          :default => 0
-    t.integer  "recommendations_count",                                               :default => 0
-    t.integer  "events_count",                                                        :default => 0
     t.integer  "status",                                                              :default => 0
     t.integer  "refer_to",                                                            :default => 0
     t.boolean  "delta"
@@ -130,11 +152,9 @@ ActiveRecord::Schema.define(:version => 2) do
   add_index "locations", ["city_id", "street_address"], :name => "index_locations_on_city_id_and_street_address"
   add_index "locations", ["city_id"], :name => "index_locations_on_city"
   add_index "locations", ["email_addresses_count"], :name => "index_locations_on_email_addresses_count"
-  add_index "locations", ["events_count"], :name => "index_locations_on_events_count"
   add_index "locations", ["neighborhoods_count"], :name => "index_locations_on_neighborhoods_count"
   add_index "locations", ["phone_numbers_count"], :name => "index_locations_on_phone_numbers_count"
   add_index "locations", ["popularity"], :name => "index_locations_on_popularity"
-  add_index "locations", ["recommendations_count"], :name => "index_locations_on_recommendations_count"
   add_index "locations", ["status"], :name => "index_locations_on_status"
   add_index "locations", ["timezone_id"], :name => "index_locations_on_timezone_id"
   add_index "locations", ["updated_at"], :name => "index_locations_on_updated_at"
@@ -230,6 +250,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "state",                 :limit => 50
+    t.string   "facebook_id",           :limit => 50
     t.integer  "rpx",                                  :default => 0
     t.integer  "email_addresses_count",                :default => 0
     t.integer  "phone_numbers_count",                  :default => 0
@@ -238,6 +259,7 @@ ActiveRecord::Schema.define(:version => 2) do
   end
 
   add_index "users", ["email_addresses_count"], :name => "index_users_on_email_addresses_count"
+  add_index "users", ["facebook_id"], :name => "index_users_on_facebook_id"
   add_index "users", ["handle"], :name => "index_users_on_handle"
   add_index "users", ["phone_numbers_count"], :name => "index_users_on_phone_numbers_count"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true

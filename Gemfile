@@ -9,6 +9,7 @@ gem 'rails', '3.0.0.rc'
 gem 'ruby-mysql'
 
 gem 'aasm',                   :git => 'git://github.com/rubyist/aasm' # rails3 fix
+gem 'delayed_job'
 gem 'foursquare'
 gem 'geokit',                 '>= 1.5.0'
 # hashie required by foursquare gem

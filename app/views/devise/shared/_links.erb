@@ -18,6 +18,6 @@
   <%= link_to "Didn't receive unlock instructions?", new_unlock_path(resource_name) %><br />
 <% end -%>
 
-<%= link_to "Sign in as User with Github", user_oauth_authorize_url(:github) %>
+<%= link_to "Sign in with your Facebook account", user_oauth_authorize_url(:facebook) %>
 <br/>
 <%= link_to "Sign in with your Foursquare account", oauth_initiate_path(:foursquare) %>

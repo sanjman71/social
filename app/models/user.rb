@@ -43,6 +43,7 @@ class User < ActiveRecord::Base
   has_many                  :oauths
   has_many                  :checkins
   has_many                  :locations, :through => :checkins
+  has_many                  :checkin_logs
 
   # has_many                  :subscriptions, :dependent => :destroy
   # has_many                  :ownerships, :through => :subscriptions, :source => :company
@@ -121,8 +122,7 @@ class User < ActiveRecord::Base
   # devise authenticate method
   def self.find_for_database_authentication(conditions)
     value = conditions[authentication_keys.first]
-    debugger # xxx
-    conditions = ["username = ? or email = ?", value, value]
+    conditions = ["handle = ? or email = ?", value, value]
     find(:first, conditions)
   end
 

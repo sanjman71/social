@@ -98,8 +98,6 @@ class CreateWalnut < ActiveRecord::Migration
       t.decimal     :lat,                   :precision => 15, :scale => 10
       t.decimal     :lng,                   :precision => 15, :scale => 10
       t.integer     :popularity,            :default => 0   # used to order search results
-      t.integer     :recommendations_count, :default => 0
-      t.integer     :events_count,          :default => 0
       t.integer     :status,                :default => 0
       t.integer     :refer_to,              :default => 0
       t.boolean     :delta                  # used by sphinx for real-time indexing
@@ -111,12 +109,10 @@ class CreateWalnut < ActiveRecord::Migration
     add_index :locations, [:city_id, :street_address]
     add_index :locations, :timezone_id
     add_index :locations, :popularity
-    add_index :locations, :events_count
     add_index :locations, :neighborhoods_count
     add_index :locations, :phone_numbers_count
     add_index :locations, :email_addresses_count
     add_index :locations, :status
-    add_index :locations, :recommendations_count
     add_index :locations, :updated_at
     
     create_table :phone_numbers do |t|

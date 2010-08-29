@@ -9,8 +9,9 @@ class CreateUsers < ActiveRecord::Migration
       t.rememberable
       t.trackable
       # t.lockable :lock_strategy => :failed_attempts, :unlock_strategy => :both
-      t.string    :state,     :limit => 50, :null => :false
-      t.integer   :rpx,       :default => 0
+      t.string    :state,         :limit => 50, :null => :false
+      t.string    :facebook_id,   :limit => 50
+      t.integer   :rpx,           :default => 0
       t.integer   :email_addresses_count, :default => 0
       t.integer   :phone_numbers_count, :default => 0
       t.timestamps
@@ -18,6 +19,7 @@ class CreateUsers < ActiveRecord::Migration
     
     add_index :users, :handle
     add_index :users, :state
+    add_index :users, :facebook_id
     add_index :users, :rpx
     add_index :users, :email_addresses_count
     add_index :users, :phone_numbers_count
@@ -46,11 +48,24 @@ class CreateUsers < ActiveRecord::Migration
     
     add_index :checkins, :user_id
     add_index :checkins, :location_id
+
+    create_table :checkin_logs do |t|
+      t.references  :user
+      t.string      :source,  :limit => 50   # e.g. 'fs', 'fb'
+      t.string      :state,   :limti => 50
+      t.integer     :checkins
+      t.datetime    :last_check_at
+      t.timestamp
+    end
+
+    add_index :checkin_logs, :user_id
+    add_index :checkin_logs, :source
   end
 
   def self.down
     drop_table :users
     drop_table :oauths
     drop_table :checkins
+    drop_table :checkin_logs
   end
 end
