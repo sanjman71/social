@@ -1,7 +1,6 @@
-require 'rubygems'
 require 'httparty'
 
-class Foursquare
+class FoursquareClient
   
   #FOURSQUARE Ruby JSON Class.
   #For more information on required and optional function parameters see 

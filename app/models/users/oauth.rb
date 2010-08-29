@@ -3,34 +3,15 @@ module Users::Oauth
   def self.included(base)
     def base.find_for_github_oauth(access_token, signed_in_resource=nil)
       return unless signed_in_resource
-      # parse access_token
-      data  = ActiveSupport::JSON.decode(access_token.get('/api/v2/json/user/show'))["user"]
-      user  = signed_in_resource
-      oauth = user.oauths.find_by_name('github')
-      if oauth
-        # update token
-        oauth.access_token = access_token.token
-        oauth.save
-      else
-        # create oauth object with token
-        oauth = user.oauths.create(:name => 'github', :access_token => access_token.token)
-      end
-      user
+      # parse access_token as an example of getting user data
+      data = ActiveSupport::JSON.decode(access_token.get('/api/v2/json/user/show'))["user"]
+      find_for_service_oauth('github', access_token, signed_in_resource)
     end
 
     def base.find_for_facebook_oauth(access_token, signed_in_resource=nil)
+      debugger
       return unless signed_in_resource
-      user  = signed_in_resource
-      oauth = user.oauths.find_by_name('facebook')
-      if oauth
-        # update token
-        oauth.access_token = access_token.token
-        oauth.save
-      else
-        # create oauth object with token
-        oauth = user.oauths.create(:name => 'facebook', :access_token => access_token.token)
-      end
-      user
+      find_for_service_oauth('facebook', access_token, signed_in_resource)
     end
 
     def base.find_for_foursquare_oauth(access_token, signed_in_resource=nil)
@@ -62,17 +43,20 @@ module Users::Oauth
       find_for_service_oauth('foursquare', access_token, signed_in_resource)
     end
   
+    # generic method to create or update user's oauth token for the specified service
     def base.find_for_service_oauth(service, access_token, signed_in_resource=nil)
       return unless signed_in_resource
       user  = signed_in_resource
       oauth = user.oauths.find_by_name(service)
+      # note: oauth1 uses an access_token_secret, but oauth2 does not
       if oauth
         # update token
-        oauth.access_token = access_token.token
+        oauth.access_token        = access_token.token
+        oauth.access_token_secret = (access_token.secret rescue nil)
         oauth.save
       else
         # create oauth object with token
-        oauth = user.oauths.create(:name => service, :access_token => access_token.token, :access_token_secret => access_token.secret)
+        oauth = user.oauths.create(:name => service, :access_token => access_token.token, :access_token_secret => (access_token.secret rescue nil))
       end
       user
     end

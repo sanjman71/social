@@ -8,13 +8,14 @@ Social::Application.routes.draw do
     get "/logout" => "devise/sessions#destroy"
   end
 
+  match 'checkins', :to => "checkins#index"
   match 'sightings', :to => "sightings#index"
   match 'locations', :to => "locations#index"
   match 'accounts', :to => "accounts#index"
 
   # oauth routes
   match 'oauth/:service/initiate', :to => "oauth#initiate", :as => :oauth_initiate
-  match 'oauth/:service/callback', :to => "oauth#callback"
+  match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

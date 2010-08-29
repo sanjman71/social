@@ -9,21 +9,37 @@ class Checkin < ActiveRecord::Base
   belongs_to  :location
   belongs_to  :user
 
-  # import a foursquare checkin hash
-  # e.g. {"id"=>141731194, "created"=>"Sun, 22 Aug 10 23:16:33 +0000", "timezone"=>"America/Chicago",
-  #       "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago", "state"=>"Illinois",
-  #                 "geolat"=>41.8964066, "geolong"=>-87.6312161}
-  #      }
-  def self.import_foursquare_checkin(user, checkin_hash)
-    # map foursquare venue to a location
-    @location = LocationImport.import_foursquare_venue(checkin_hash['venue'])
-    if @location.blank?
-      raise Exception, "Foursquare invalid location"
+  def self.import_foursquare_checkins(user)
+    checkins_start = user.checkins.count
+
+    begin
+      # find foursquare oauth tokens
+      oauths = user.oauths.where(:name => 'foursquare')
+      if oauths.empty?
+        log("[notice] user #{user.id}:#{user.handle}: does not have foursquare oauth token")
+        return 0
+      end
+      oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
+      oauth.authorize_from_access(oauths.first.access_token, oauths.first.access_token_secret)
+      foursquare = Foursquare::Base.new(oauth)
+      if foursquare.test['response'] != 'ok'
+        raise Exception, "foursquare ping failed"
+      end
+      log("[ok] user #{user.handle}: importing checkin history")
+      history = foursquare.history
+      history.each do |checkin_hash|
+        import_foursquare_checkin(user, checkin_hash)
+      end
+    rescue Exception => e
+      log("[error] user #{user.handle}: #{e.message}")
+      return user.checkins.count - checkins_start
     end
-    
-    # add checkin
-    options  = Hash[:location => @location, :checkin_at => Time.zone.now, :source_id => checkin_hash['id'], :source_type => 'fs']
-    @checkin = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
-    @checkin ||= user.checkins.create(options)
+    checkins_added = user.checkins.count - checkins_start
+    log("[ok] user #{user.handle}: imported #{checkins_added} checkins")
+    checkins_added
+  end
+  
+  def self.log(s, options={})
+    CHECKIN_LOGGER.debug("#{Time.now}: #{s}")
   end
 end

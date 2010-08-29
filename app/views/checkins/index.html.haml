@@ -1,0 +1,12 @@
+- title('Checkins')
+
+.span-23.prepend-1.mat
+  %h2== Checkins
+  %h4== My Checkin History
+
+%hr.space
+
+.span-24.last#sightings
+  - @checkins.each do |checkin|
+    .span-11.prepend-1
+      = checkin.location.try(:name)

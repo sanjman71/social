@@ -5,6 +5,8 @@
 
     - if user_signed_in?
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Checkins', checkins_path, :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Sightings', sightings_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Locations', locations_path, :class => 'header link')

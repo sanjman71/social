@@ -1,0 +1,1 @@
+CHECKIN_LOGGER  = Logger.new("log/checkins.#{Rails.env}.log")

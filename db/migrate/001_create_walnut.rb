@@ -180,7 +180,8 @@ class CreateWalnut < ActiveRecord::Migration
     
     create_table :location_sources do |t|
       t.references  :location
-      t.references  :source,  :polymorphic => true
+      t.string      :source_id                    # source id
+      t.string      :source_type, :limit => 50    # source type (e.g. 'fs', 'fb')
       t.timestamps
     end
     

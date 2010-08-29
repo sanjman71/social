@@ -39,7 +39,7 @@ class CreateUsers < ActiveRecord::Migration
       t.references  :user
       t.references  :location
       t.datetime    :checkin_at
-      t.integer     :source_id                    # checkin id
+      t.string      :source_id                    # checkin id
       t.string      :source_type, :limit => 50    # checkin source (e.g. 'fs', 'fb')
       t.timestamps
     end

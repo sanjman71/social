@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.integer  "user_id"
     t.integer  "location_id"
     t.datetime "checkin_at"
-    t.integer  "source_id"
+    t.string   "source_id"
     t.string   "source_type", :limit => 50
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -94,8 +94,8 @@ ActiveRecord::Schema.define(:version => 2) do
 
   create_table "location_sources", :force => true do |t|
     t.integer  "location_id"
-    t.integer  "source_id"
-    t.string   "source_type"
+    t.string   "source_id"
+    t.string   "source_type", :limit => 50
     t.datetime "created_at"
     t.datetime "updated_at"
   end

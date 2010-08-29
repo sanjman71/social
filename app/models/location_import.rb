@@ -3,15 +3,32 @@ class LocationImport
   # import a foursquare venue location hash
   # e.g. "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago", "state"=>"Illinois",
   #                "geolat"=>41.8964066, "geolong"=>-87.6312161}
-  def self.import_foursquare_venue(venue_hash)
-    # check for matching locations using venue id
-    @locations = Location.joins(:location_sources) & LocationSource.with_source_id(venue_hash['id']).with_source_type('fs')
+  def self.import_foursquare_venue(hash)
+    # normalize venue hash
+    @hash = Hash['name' => hash['name'], 'address' => hash['address'], 'city' => hash['city'],
+                 'state' => hash['state'], 'lat' => hash['geolat'], 'lng' => hash['geolong']]
+    import_venue(hash['id'].to_s, Source.foursquare_type, @hash)
+  end
+
+  # import a facebook place location hash
+  # e.g. "place"=>{"id"=>"117669674925118", "name"=>"Bull & Bear",
+  #                "location"=>{"street"=>"431 N Wells St", "city"=>"Chicago", "state"=>"IL", "zip"=>"60654-4512",
+  #                             "latitude"=>41.890177, "longitude"=>-87.633815}}  
+  def self.import_facebook_place(hash)
+    # normalize place hash
+    @hash = Hash['name' => hash['name'], 'address' => hash['location']['street'], 'city' => hash['location']['city'],
+                 'state' => hash['location']['state'], 'zip' => hash['location']['zip'],
+                 'lat' => hash['location']['latitude'], 'lng' => hash['location']['longitude']]
+    import_venue(hash['id'].to_s, Source.facebook_type, @hash)
+  end
+
+  def self.import_venue(id, type, hash)
+    # check for existing location using venue id
+    @locations = Location.joins(:location_sources) & LocationSource.with_source_id(id).with_source_type(type)
     return @locations.first if @locations.size == 1
 
-    # check for matching locations using venue info
-    @hash      = Hash['name' => venue_hash['name'], 'address' => venue_hash['address'], 'city' => venue_hash['city'],
-                      'state' => venue_hash['state'], 'lat' => venue_hash['geolat'], 'lng' => venue_hash['geolong']]
-    @locations = LocationFinder.match(@hash)
+    # search for matching locations using venue info
+    @locations = LocationFinder.match(hash)
     return @locations.first if @locations.size == 1
 
     if @locations.size > 1
@@ -22,7 +39,7 @@ class LocationImport
     # add new location
     @location = self.add(@hash)
     # add location source
-    @location.location_sources.create(:source_id => venue_hash['id'], :source_type => 'fs')
+    @location.location_sources.create(:source_id => id.to_s, :source_type => type)
     
     @location
   end
