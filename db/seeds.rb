@@ -6,6 +6,11 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 
+# remove log files
+system "rm #{Rails.root}/log/checkins.*.log"
+system "rm #{Rails.root}/log/users.*.log"
+puts "#{Time.now}: removed log files"
+
 # countries
 @us = Country.create(:name => "United States", :code => "US")
 puts "#{Time.now}: initialized countries"

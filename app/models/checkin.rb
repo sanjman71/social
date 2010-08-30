@@ -8,4 +8,9 @@ class Checkin < ActiveRecord::Base
   validates_uniqueness_of :user_id, :scope => [:location_id, :source_id, :source_type]
   belongs_to  :location
   belongs_to  :user
+
+  def self.minimum_check_interval
+    60.minutes
+  end
+
 end

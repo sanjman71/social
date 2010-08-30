@@ -93,7 +93,7 @@ class User < ActiveRecord::Base
     indexes handle, :as => :handle
     has locations(:id), :as => :location_ids, :facet => true
     # real time indexing with delayed_job
-    set_property :delta => :delayed
+    # set_property :delta => :delayed
     # only index active users
     where "state = 'active'"
   end

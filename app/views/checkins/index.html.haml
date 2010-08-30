@@ -7,6 +7,9 @@
 %hr.space
 
 .span-24.last#sightings
-  - @checkins.each do |checkin|
-    .span-11.prepend-1
-      = checkin.location.try(:name)
+  - @checkins.each_pair do |source, checkins|
+    .span-23.prepend-1.last{:style => 'padding-bottom: 15px;'}
+      %h2.bottom= source
+      - checkins.each do |checkin|
+        .span-23.last
+          = checkin.location.try(:name)

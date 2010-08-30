@@ -1,18 +1,27 @@
 class FoursquareCheckin
   
-  def self.import_checkins(user)
+  def self.import_checkins(user, options={})
     # find foursquare oauth tokens
     oauth = user.oauths.where(:name => 'foursquare').first
     if oauth.blank?
-      log(:notice, "#{user.handle}: does not have foursquare oauth token")
+      log(:notice, "#{user.handle}: no foursquare oauth token")
       return nil
     end
 
     # find checkin log
-    checkin_log    = user.checkin_logs.find_or_create_by_source('foursquare')
-    checkins_start = user.checkins.count
+    checkin_log     = user.checkin_logs.find_or_create_by_source('foursquare')
+    checkins_start  = user.checkins.count
+
+    # compare last check timestamp vs current timestamp
+    last_check_at   = checkin_log.last_check_at || Time.zone.now-1.year
+    if (last_check_at + Checkin.minimum_check_interval) > Time.zone.now
+      log(:notice, "#{user.handle}: skipping check, last check was at #{last_check_at}")
+      return checkin_log
+    end
 
     begin
+      log(:ok, "#{user.handle}: importing foursquare checkin history")
+
       # initiialize oauth object
       foursquare_oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
       foursquare_oauth.authorize_from_access(oauth.access_token, oauth.access_token_secret)
@@ -23,19 +32,22 @@ class FoursquareCheckin
         raise Exception, "foursquare ping failed"
       end
 
-      log(:notice, "#{user.handle}: importing checkin history")
-
-      history = foursquare.history
-      history.each do |checkin_hash|
+      # get checkins
+      checkins = foursquare.history
+      checkins.each do |checkin_hash|
         import_checkin(user, checkin_hash)
       end
     rescue Exception => e
       log(:error, "#{user.handle}: #{e.message}")
-      checkin_log.update_attributes(:state => 'error', :last_check_at => Time.zone.now)
+      checkin_log.update_attributes(:state => 'error', :checkins => 0, :last_check_at => Time.zone.now)
     else
       checkins_added = user.checkins.count - checkins_start
       checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
-      log(:ok, "##{user.handle}: imported #{checkins_added} foursquare checkins")
+      log(:ok, "#{user.handle}: imported #{checkins_added} foursquare checkins")
+      if checkins_added > 0
+        # rebuild sphinx index
+        Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
+      end
     end
     checkin_log
   end

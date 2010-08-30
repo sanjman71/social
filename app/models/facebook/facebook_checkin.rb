@@ -4,20 +4,33 @@ class FacebookCheckin
   def self.import_checkins(user)
     # find foursquare oauth tokens
     oauth = user.oauths.where(:name => 'facebook').first
-    if oauths.blank?
-      log(:notice, "#{user.handle}: does not have facebook oauth token")
+    if oauth.blank?
+      log(:notice, "#{user.handle}: no facebook oauth token")
       return nil
     end
 
     # find checkin log
-    checkin_log    = user.checkin_logs.find_or_create_by_source('foursquare')
+    checkin_log    = user.checkin_logs.find_or_create_by_source('facebook')
     checkins_start = user.checkins.count
+
+    # compare last check timestamp vs current timestamp
+    last_check_at   = checkin_log.last_check_at || Time.zone.now-1.year
+    if (last_check_at + Checkin.minimum_check_interval) > Time.zone.now
+      log(:notice, "#{user.handle}: skipping check, last check was at #{last_check_at}")
+      return checkin_log
+    end
   
     begin
+      log(:ok, "#{user.handle}: importing facebook checkin history")
+
       # initialize facebook client
       facebook = FacebookClient.new(oauth.access_token)
-      log(:notice, "#{user.handle}: importing checkin history")
-      
+
+      # get checkins
+      checkins = facebook.checkins(user.facebook_id)
+      checkins['data'].each do |checkin_hash|
+        import_checkin(user, checkin_hash)
+      end
     rescue Exception => e
       log(:error, "#{user.handle}: #{e.message}")
       checkin_log.update_attributes(:state => 'error', :last_check_at => Time.zone.now)
@@ -25,6 +38,10 @@ class FacebookCheckin
       checkins_added = user.checkins.count - checkins_start
       checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
       log(:ok, "#{user.handle}: imported #{checkins_added} facebook checkins")
+      if checkins_added > 0
+        # rebuild sphinx index
+        Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
+      end
     end
 
     checkin_log

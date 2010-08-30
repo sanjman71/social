@@ -35,6 +35,19 @@ module Users::Oauth
         end
         signed_in_resource = user
       end
+
+      # check if user's facebook id is set
+      if signed_in_resource and signed_in_resource.facebook_id.blank?
+        begin
+          # get user's facebook id
+          data = ActiveSupport::JSON.decode(access_token.get('https://graph.facebook.com/me'))
+          signed_in_resource.facebook_id = data['id']
+          signed_in_resource.save
+          log(:ok, "added facebook id to #{user.handle}:#{user.email_address}:#{user.phone_number}")
+        rescue Exception => e
+          
+        end
+      end
       find_for_service_oauth('facebook', access_token, signed_in_resource)
     end
 
