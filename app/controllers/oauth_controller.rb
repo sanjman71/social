@@ -10,6 +10,14 @@ class OauthController < ApplicationController
     # cache request token and secret
     session[:request_token] = @request_token
     redirect_to(@request_token.authorize_url)
+  rescue Exception => e
+    logger.debug("oauth #{params[:service]} initiate error: #{e.message}" )
+    flash[:error] = "Oauth error: #{e.message}"
+    if user_signed_in?
+      redirect_to(root_path) and return
+    else
+      redirect_to(login_path) and return
+    end
   end
 
   # GET /oauth/foursquare/callback
@@ -37,7 +45,7 @@ class OauthController < ApplicationController
   rescue Exception => e
     logger.debug("oauth #{params[:service]} callback error: #{e.message}" )
     flash[:error] = "Oauth error: #{e.message}"
-    redirect_to(login_path) and return
+    redirect_to(@redirect_path) and return
   end
   
 end

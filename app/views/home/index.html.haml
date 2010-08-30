@@ -1,1 +1,19 @@
 - title('Home')
+
+.span-23.prepend-1.mat
+  %h2== Home
+
+%hr.space
+
+.span.24.last
+  = display_flash(:all)
+
+- if user_signed_in?
+  -# check oauths
+  - if current_user.oauths.where(:name => 'facebook').empty?
+    .span-23.prepend-1.last
+      %h4= link_to "Link your Facebook account", user_oauth_authorize_url(:facebook)
+  - if current_user.oauths.where(:name => 'foursquare').empty?
+    .span-23.prepend-1.last
+      %h4= link_to "Link your Foursquare account", oauth_initiate_path(:foursquare)
+  
