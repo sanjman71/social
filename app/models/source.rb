@@ -1,11 +1,11 @@
 class Source
 
-  def self.facebook_type
-    'fb'
+  def self.facebook
+    'facebook'
   end
   
-  def self.foursquare_type
-    'fs'
+  def self.foursquare
+    'foursquare'
   end
   
 end

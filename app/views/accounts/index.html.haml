@@ -5,17 +5,23 @@
 
 %hr.space
 
+.span.24.last
+  = display_flash(:all)
+  %hr.space
+
 .span-24.last#accounts
-  - ['github', 'foursquare', 'facebook'].each do |service|
+  - ['foursquare', 'facebook'].each do |service|
     .span-23.prepend-1.last
       .span-5
         %h3= service
       .span-5.last
         - if @oauth_hash[service]
-          = @oauth_hash[service].access_token
+          == Account linked
+          = link_to 'Unlink', unlink_account_path(service), :method => :delete, :confirm => 'Are you sure', :class => 'admin', :style => 'margin-left: 5px;'
+          =#= @oauth_hash[service].access_token
         - else
           - if service.to_sym == :foursquare
-            %h5= link_to "Link to Account", oauth_initiate_path(:foursquare) rescue nil
+            %h5= link_to("Link to Account", oauth_initiate_path(:foursquare), :class => 'admin') rescue nil
           - else
-            %h5= link_to "Link to Account", user_oauth_authorize_url(service.to_sym) rescue nil
+            %h5= link_to("Link to Account", user_oauth_authorize_url(service.to_sym), :class => 'admin') rescue nil
     

@@ -53,14 +53,14 @@ class FoursquareCheckin
     end
     
     # add checkin
-    options  = Hash[:location => @location, :checkin_at => Time.zone.now, :source_id => checkin_hash['id'].to_s, :source_type => Source.foursquare_type]
+    options  = Hash[:location => @location, :checkin_at => Time.zone.now, :source_id => checkin_hash['id'].to_s, :source_type => Source.foursquare]
     @checkin = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
     log(:ok, "#{user.handle}: added checkin #{@location.name}") if @checkin.blank?
     @checkin ||= user.checkins.create(options)
   end
 
   def self.log(level, s, options={})
-    CHECKIN_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
+    CHECKINS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
   end
   
 end

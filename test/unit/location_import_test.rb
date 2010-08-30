@@ -23,7 +23,7 @@ class LocationImportTest < ActiveSupport::TestCase
       assert_equal -87.6312161, @location.lng
       # should create location_source for foursquare venue
       assert_equal 1, @location.location_sources.size
-      assert_equal ['fs'], @location.location_sources.collect(&:source_type)
+      assert_equal ['foursquare'], @location.location_sources.collect(&:source_type)
       assert_equal ['4172889'], @location.location_sources.collect(&:source_id)
       # should find this locaton if we search again
       @location2 = LocationImport.import_foursquare_venue(@hash)
@@ -54,7 +54,7 @@ class LocationImportTest < ActiveSupport::TestCase
       assert_equal -87.633815, @location.lng
       # should create location_source for foursquare venue
       assert_equal 1, @location.location_sources.size
-      assert_equal ['fb'], @location.location_sources.collect(&:source_type)
+      assert_equal ['facebook'], @location.location_sources.collect(&:source_type)
       assert_equal ['117669674925118'], @location.location_sources.collect(&:source_id)
       # should find this locaton if we search again
       @location2 = LocationImport.import_facebook_place(@hash)

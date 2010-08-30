@@ -14,6 +14,7 @@ class OauthController < ApplicationController
 
   # GET /oauth/foursquare/callback
   def callback
+    @service        = params[:service]
     # get cached request token
     @request_token  = session[:request_token]
     # use oauth verifier to build access token
@@ -23,10 +24,10 @@ class OauthController < ApplicationController
     @user   = User.send(@method, @access_token, current_user)
     if !user_signed_in?
       @redirect_path = root_path
-      flash[:notice] = "Successfully logged in using #{params[:service]} account"
+      flash[:notice] = "Successfully authenticated using #{@service} account"
     else
       @redirect_path = accounts_path
-      flash[:notice] = "Successly linked foursquare account"
+      flash[:notice] = "Successly linked #{@service} account"
     end
     # sign in user
     sign_in(@user)

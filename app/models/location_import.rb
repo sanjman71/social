@@ -7,7 +7,7 @@ class LocationImport
     # normalize venue hash
     @hash = Hash['name' => hash['name'], 'address' => hash['address'], 'city' => hash['city'],
                  'state' => hash['state'], 'lat' => hash['geolat'], 'lng' => hash['geolong']]
-    import_venue(hash['id'].to_s, Source.foursquare_type, @hash)
+    import_venue(hash['id'].to_s, Source.foursquare, @hash)
   end
 
   # import a facebook place location hash
@@ -19,7 +19,7 @@ class LocationImport
     @hash = Hash['name' => hash['name'], 'address' => hash['location']['street'], 'city' => hash['location']['city'],
                  'state' => hash['location']['state'], 'zip' => hash['location']['zip'],
                  'lat' => hash['location']['latitude'], 'lng' => hash['location']['longitude']]
-    import_venue(hash['id'].to_s, Source.facebook_type, @hash)
+    import_venue(hash['id'].to_s, Source.facebook, @hash)
   end
 
   def self.import_venue(id, type, hash)
@@ -78,7 +78,7 @@ class LocationImport
   end
 
   def self.log(level, s, options={})
-    CHECKIN_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
+    CHECKINS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
   end
 
 end

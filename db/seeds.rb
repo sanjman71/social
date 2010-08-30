@@ -105,7 +105,7 @@ puts "#{Time.now}: imported #{User.count} users"
   [@gal, @guy].each do |user|
     Location.limit(3).offset(@offset).each do |location|
       user.checkins.create(:location_id => location.id, :checkin_at => Time.zone.now - 3.days,
-                           :source_id => location.location_source.id, :source_type => 'fs')
+                           :source_id => location.location_source.id, :source_type => Source.foursquare)
     end
   end
   @offset += 3

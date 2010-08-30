@@ -18,7 +18,7 @@ class CheckinTest < ActiveSupport::TestCase
       @checkin  = FoursquareCheckin.import_checkin(@user, @hash)
       assert @checkin.valid?
       assert_equal '141731194', @checkin.source_id
-      assert_equal 'fs', @checkin.source_type
+      assert_equal 'foursquare', @checkin.source_type
       # user should have 1 checkin
       assert_equal 1, @user.reload.checkins.count
       # location should have 1 checkin
@@ -43,7 +43,7 @@ class CheckinTest < ActiveSupport::TestCase
       @checkin  = FacebookCheckin.import_checkin(@user, @hash)
       assert @checkin.valid?
       assert_equal '461630895812', @checkin.source_id
-      assert_equal 'fb', @checkin.source_type
+      assert_equal 'facebook', @checkin.source_type
       # user should have 1 checkin
       assert_equal 1, @user.reload.checkins.count
       # location should have 1 checkin

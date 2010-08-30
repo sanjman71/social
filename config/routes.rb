@@ -12,6 +12,7 @@ Social::Application.routes.draw do
   match 'sightings', :to => "sightings#index"
   match 'locations', :to => "locations#index"
   match 'accounts', :to => "accounts#index"
+  match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :conditions => {:method => :delete}
 
   # oauth routes
   match 'oauth/:service/initiate', :to => "oauth#initiate", :as => :oauth_initiate

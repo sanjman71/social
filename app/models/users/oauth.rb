@@ -23,7 +23,9 @@ module Users::Oauth
             # create user
             email_hash = email ? {"0" => {:address => email}} : Hash[]
             phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
-            User.create(:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash)
+            user       = User.create(:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash)
+            log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
+            user
           else
             # whoops
             nil
@@ -52,7 +54,9 @@ module Users::Oauth
             # create user
             email_hash = email ? {"0" => {:address => email}} : Hash[]
             phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
-            User.create(:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash)
+            user       = User.create(:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash)
+            log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
+            user
           else
             # whoops
             nil
@@ -76,9 +80,11 @@ module Users::Oauth
         oauth.access_token        = access_token.token
         oauth.access_token_secret = (access_token.secret rescue nil)
         oauth.save
+        log(:ok, "updated oauth token for user #{user.handle}:#{user.email_address}:#{user.phone_number}")
       else
         # create oauth object with token
         oauth = user.oauths.create(:name => service, :access_token => access_token.token, :access_token_secret => (access_token.secret rescue nil))
+        log(:ok, "created oauth #{service} token for user #{user.handle}:#{user.email_address}:#{user.phone_number}")
       end
       user
     end
@@ -96,6 +102,9 @@ module Users::Oauth
       consumer
     end
 
+    def base.log(level, s, options={})
+      USERS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
+    end
   end
 
 end
