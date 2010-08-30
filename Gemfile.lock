@@ -48,6 +48,8 @@ GEM
       activesupport (>= 3.0.0.beta)
     bcrypt-ruby (2.1.2)
     builder (2.1.2)
+    chronic (0.2.3)
+      hoe (>= 1.2.1)
     columnize (0.3.1)
     crack (0.1.8)
     daemons (1.1.0)
@@ -67,9 +69,13 @@ GEM
     geokit (1.5.0)
     haml (3.0.17)
     hashie (0.3.1)
+    hoe (2.6.1)
+      rake (>= 0.8.7)
+      rubyforge (>= 2.0.4)
     httparty (0.4.3)
       crack (>= 0.1.1)
     i18n (0.4.1)
+    json_pure (1.4.6)
     linecache19 (0.5.11)
       ruby_core_source (>= 0.1.4)
     mail (2.2.5)
@@ -116,6 +122,8 @@ GEM
     ruby-mysql (2.9.3)
     ruby_core_source (0.1.4)
       archive-tar-minitar (>= 0.5.2)
+    rubyforge (2.0.4)
+      json_pure (>= 1.1.7)
     shoulda (2.11.3)
     single_test (0.3.7)
     thinking-sphinx (2.0.0.rc2)
@@ -130,6 +138,8 @@ GEM
     tzinfo (0.3.23)
     warden (0.10.7)
       rack (>= 1.0.0)
+    whenever (0.5.0)
+      chronic (>= 0.2.3)
 
 PLATFORMS
   ruby
@@ -155,3 +165,4 @@ DEPENDENCIES
   single_test
   thinking-sphinx (>= 2.0.0.rc1)
   ts-delayed-delta (>= 1.1.0)
+  whenever

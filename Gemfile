@@ -23,6 +23,7 @@ gem 'oauth'
 gem 'oauth2'
 gem 'ts-delayed-delta',       '>= 1.1.0'
 gem 'thinking-sphinx',        '>=2.0.0.rc1', :require => 'thinking_sphinx'  
+gem 'whenever'
 
 # Use unicorn as the web server
 # gem 'unicorn'
