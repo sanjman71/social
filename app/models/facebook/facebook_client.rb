@@ -11,6 +11,9 @@ class FacebookClient
   end
 
   # get basic information about the current user
+  # e.g. {"id": "633015812", "name": "Sanjay Kapoor", "first_name": "Sanjay", "last_name": "Kapoor",
+  #       "link": "http://www.facebook.com/sanjman71", "gender": "male", "email": "sanjay@jarna.com", "timezone": -5,
+  #       "locale": "en_US", "verified": true, "updated_time": "2009-07-16T03:50:41+0000" }
   def me
     self.class.get("https://graph.facebook.com/me", :query => {:access_token => @token})
   end

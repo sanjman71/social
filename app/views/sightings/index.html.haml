@@ -2,10 +2,14 @@
 
 .span-23.prepend-1.mat
   %h2== Sightings
+  %h4== People who hang out where you do
 
 %hr.space
 
 .span-24.last#sightings
   - @sightings.each do |sighting|
-    .span-11.prepend-1
-      = sighting.handle
+    .span-24.last#sighting
+      .span-2.prepend-1#picture
+        = image_tag(picture_url(sighting), :size => '50x50')
+      .span-10.last{:style => 'padding-top: 15px;'}
+        = sighting.handle

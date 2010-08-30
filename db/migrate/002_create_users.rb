@@ -10,6 +10,7 @@ class CreateUsers < ActiveRecord::Migration
       t.trackable
       # t.lockable :lock_strategy => :failed_attempts, :unlock_strategy => :both
       t.string    :state,         :limit => 50, :null => :false
+      t.integer   :gender,        :default => 0
       t.string    :facebook_id,   :limit => 50
       t.integer   :rpx,           :default => 0
       t.boolean   :delta,         :default => 0
@@ -17,9 +18,10 @@ class CreateUsers < ActiveRecord::Migration
       t.integer   :phone_numbers_count, :default => 0
       t.timestamps
     end
-    
+
     add_index :users, :handle
     add_index :users, :state
+    add_index :users, :gender
     add_index :users, :facebook_id
     add_index :users, :rpx
     add_index :users, :email_addresses_count

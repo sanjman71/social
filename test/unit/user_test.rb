@@ -9,8 +9,11 @@ class UserTest < ActiveSupport::TestCase
         assert @user1.valid?
       end
 
-      should "create user in active state" do
+      should "create user in active state, no gender" do
         assert_equal "active", @user1.state
+        assert_false @user1.gender?
+        assert_equal 0, @user1.gender
+        assert_equal '', @user1.gender_name
       end
     end
 
@@ -262,6 +265,28 @@ class UserTest < ActiveSupport::TestCase
 
       # should *not* send user created message
       # should_not_change("delayed job count") { Delayed::Job.count }
+    end
+
+    context "gender" do
+      should "male" do
+        @user1 = User.create(:name => "User 1", :handle => 'user1')
+        assert @user1.valid?
+        assert_equal 0, @user1.gender
+        @user1.gender = 'female'
+        @user1.save
+        assert_equal 1, @user1.reload.gender
+        assert @user1.reload.female?
+      end
+      
+      should "male" do
+        @user1 = User.create(:name => "User 1", :handle => 'user1')
+        assert @user1.valid?
+        assert_equal 0, @user1.gender
+        @user1.gender = 'male'
+        @user1.save
+        assert_equal 2, @user1.reload.gender
+        assert @user1.reload.male?
+      end
     end
 
     # context "with phone required" do

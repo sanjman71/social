@@ -11,19 +11,23 @@ module Users::Oauth
       if signed_in_resource.blank?
         # find or create user
         begin
-          data  = ActiveSupport::JSON.decode(access_token.get('https://graph.facebook.com/me'))
-          email = data['email']
-          phone = data['phone']
-          fname = data['first_name']
-          users = self.find_by_email_or_phone(email, phone)
-          user  = case users.size
+          data    = ActiveSupport::JSON.decode(access_token.get('https://graph.facebook.com/me'))
+          email   = data['email']
+          phone   = data['phone']
+          fname   = data['first_name']
+          gender  = data['gender']
+          fbid    = data['id']
+          users   = self.find_by_email_or_phone(email, phone)
+          user    = case users.size
           when 1
             users.first
           when 0
             # create user
             email_hash = email ? {"0" => {:address => email}} : Hash[]
             phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
-            user       = User.create(:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash)
+            options    = Hash[:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash,
+                              :gender => gender, :facebook_id => fbid]
+            user       = User.create(options)
             log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
             user
           else
@@ -48,6 +52,8 @@ module Users::Oauth
           
         end
       end
+
+      # initialize oauth object
       find_for_service_oauth('facebook', access_token, signed_in_resource)
     end
 
@@ -55,19 +61,22 @@ module Users::Oauth
       if signed_in_resource.blank?
         # find or create user
         begin
-          data  = ActiveSupport::JSON.decode(access_token.get('http://api.foursquare.com/v1/user.json').body)["user"]
-          email = data['email']
-          phone = data['phone']
-          fname = data['firstname']
-          users = self.find_by_email_or_phone(email, phone)
-          user  = case users.size
+          data    = ActiveSupport::JSON.decode(access_token.get('http://api.foursquare.com/v1/user.json').body)["user"]
+          email   = data['email']
+          phone   = data['phone']
+          fname   = data['firstname']
+          gender  = data['gender']
+          users   = self.find_by_email_or_phone(email, phone)
+          user    = case users.size
           when 1
             users.first
           when 0
             # create user
             email_hash = email ? {"0" => {:address => email}} : Hash[]
             phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
-            user       = User.create(:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash)
+            options    = Hash[:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash,
+                              :gender => gender]
+            user       = User.create(options)
             log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
             user
           else
@@ -79,6 +88,8 @@ module Users::Oauth
         end
         signed_in_resource = user
       end
+
+      # initialize oauth object
       find_for_service_oauth('foursquare', access_token, signed_in_resource)
     end
   

@@ -250,6 +250,7 @@ ActiveRecord::Schema.define(:version => 20100829084055) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "state",                 :limit => 50
+    t.integer  "gender",                               :default => 0
     t.string   "facebook_id",           :limit => 50
     t.integer  "rpx",                                  :default => 0
     t.boolean  "delta",                                :default => false
@@ -261,6 +262,7 @@ ActiveRecord::Schema.define(:version => 20100829084055) do
 
   add_index "users", ["email_addresses_count"], :name => "index_users_on_email_addresses_count"
   add_index "users", ["facebook_id"], :name => "index_users_on_facebook_id"
+  add_index "users", ["gender"], :name => "index_users_on_gender"
   add_index "users", ["handle"], :name => "index_users_on_handle"
   add_index "users", ["phone_numbers_count"], :name => "index_users_on_phone_numbers_count"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true

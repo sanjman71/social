@@ -89,14 +89,14 @@ end
 puts "#{Time.now}: imported #{Location.count} locations"
 
 # users
-[{"handle" => "chicago_coffee_gal", "password" => 'coffee', 'password_confirmation' => 'coffee'},
- {"handle" => "chicago_coffee_guy", "password" => 'coffee', 'password_confirmation' => 'coffee'},
- {"handle" => "chicago_pizza_gal", "password" => 'pizza', 'password_confirmation' => 'pizza'},
- {"handle" => "chicago_pizza_guy", "password" => 'pizza', 'password_confirmation' => 'pizza'},
- {"handle" => "chicago_bar_gal", "password" => 'bar', 'password_confirmation' => 'bar'},
- {"handle" => "chicago_bar_guy", "password" => 'bar', 'password_confirmation' => 'bar'},
- {"handle" => "chicago_foodie_gal", "password" => 'foodie', 'password_confirmation' => 'foodie'},
- {"handle" => "chicago_foodie_guy", "password" => 'foodie', 'password_confirmation' => 'foodie'}
+[{"handle" => "chicago_coffee_gal", 'gender' => 'female', "password" => 'coffee', 'password_confirmation' => 'coffee'},
+ {"handle" => "chicago_coffee_guy", 'gender' => 'male', "password" => 'coffee', 'password_confirmation' => 'coffee'},
+ {"handle" => "chicago_pizza_gal", 'gender' => 'female', "password" => 'pizza', 'password_confirmation' => 'pizza'},
+ {"handle" => "chicago_pizza_guy", 'gender' => 'male', "password" => 'pizza', 'password_confirmation' => 'pizza'},
+ {"handle" => "chicago_bar_gal", 'gender' => 'female', "password" => 'bar', 'password_confirmation' => 'bar'},
+ {"handle" => "chicago_bar_guy", 'gender' => 'male', "password" => 'bar', 'password_confirmation' => 'bar'},
+ {"handle" => "chicago_foodie_gal", 'gender' => 'female', "password" => 'foodie', 'password_confirmation' => 'foodie'},
+ {"handle" => "chicago_foodie_guy", 'gender' => 'male', "password" => 'foodie', 'password_confirmation' => 'foodie'}
 ].each do |hash|
   User.create(hash)
 end

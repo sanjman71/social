@@ -57,8 +57,8 @@ class User < ActiveRecord::Base
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible           :handle, :password, :password_confirmation, :rpx, :email_addresses_attributes, :phone_numbers_attributes, 
-                            :preferences_phone, :preferences_email
+  attr_accessible           :handle, :password, :password_confirmation, :gender, :rpx, :email_addresses_attributes,
+                            :phone_numbers_attributes, :preferences_phone, :preferences_email
 
   # BEGIN acts_as_state_machine
   include AASM
@@ -175,9 +175,42 @@ class User < ActiveRecord::Base
     self.id == 0
   end
 
-  # return true if the user is a provider
-  def provider?
-    self.company_providers.count > 0
+  # set gender when its specified as a string
+  def gender=(s)
+    if s.is_a?(String)
+      case
+      when s.downcase.match(/^female$/)
+        s = 1
+      when s.downcase.match(/^male$/)
+        s = 2
+      else
+        s = 0
+      end
+    end
+    write_attribute(:gender, s)
+  end
+
+  def gender?
+    self.gender != 0
+  end
+
+  def female?
+    self.gender == 1
+  end
+
+  def male?
+    self.gender == 2
+  end
+  
+  def gender_name
+    case self.gender
+    when 1
+      'female'
+    when 2
+      'male'
+    else
+      ''
+    end
   end
 
   def rpx?

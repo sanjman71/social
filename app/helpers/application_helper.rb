@@ -25,4 +25,14 @@ module ApplicationHelper
     end
   end
 
+  def picture_url(user)
+    case
+    when user.try(:female?)
+      'http://foursquare.com/img/blank_girl.png'
+    when user.try(:male?)
+      'http://foursquare.com/img/blank_boy.png'
+    else
+      ''
+    end
+  end
 end
