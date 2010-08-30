@@ -1,0 +1,2 @@
+1. Create .rvmrc in your app's root directory
+  - rvm --rvmrc --create

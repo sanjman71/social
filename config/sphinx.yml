@@ -14,10 +14,23 @@ production:
   # ignore single quotes
   ignore_chars: U+0027
   # file paths, pid file
-  searchd_file_path: /usr/apps/walnut/shared/sphinx
-  searchd_log_file: /usr/apps/walnut/current/log/searchd.log
-  query_log_file: /usr/apps/walnut/current/log/searchd.query.log
-  pid_file:  /usr/apps/walnut/current/log/searchd.production.pid
+  searchd_file_path: /usr/apps/social/shared/sphinx
+  searchd_log_file: /usr/apps/social/current/log/searchd.log
+  query_log_file: /usr/apps/social/current/log/searchd.query.log
+  pid_file:  /usr/apps/social/current/log/searchd.production.pid
+  # indexer memory limit
+  mem_limit: 128M
+  morphology: stem_en
+staging:
+  port: 3312
+  max_matches: 200
+  # ignore single quotes
+  ignore_chars: U+0027
+  # file paths, pid file
+  searchd_file_path: /usr/apps/social/shared/sphinx
+  searchd_log_file: /usr/apps/social/current/log/searchd.log
+  query_log_file: /usr/apps/social/current/log/searchd.query.log
+  pid_file:  /usr/apps/social/current/log/searchd.production.pid
   # indexer memory limit
   mem_limit: 128M
   morphology: stem_en

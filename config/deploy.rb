@@ -39,8 +39,6 @@ end
 deploy.task :config, :roles => [:app, :db] do
   run "rm -f #{current_release}/config/database.yml"
   run "ln -s #{deploy_to}/shared/config/database.yml #{current_release}/config/database.yml"
-  run "rm -f #{current_release}/config/sphinx.yml"
-  run "ln -s #{deploy_to}/shared/config/sphinx.yml #{current_release}/config/sphinx.yml"
   run "rm -f #{current_release}/config/production.sphinx.conf"
   run "ln -s #{deploy_to}/shared/config/production.sphinx.conf #{current_release}/config/production.sphinx.conf"
 end
