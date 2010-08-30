@@ -1,5 +1,6 @@
 require 'digest/sha1'
 require 'serialized_hash'
+require 'thinking_sphinx/deltas/delayed_delta.rb'
 
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
@@ -91,6 +92,8 @@ class User < ActiveRecord::Base
     has :id, :as => :user_id
     indexes handle, :as => :handle
     has locations(:id), :as => :location_ids, :facet => true
+    # real time indexing with delayed_job
+    set_property :delta => :delayed
     # only index active users
     where "state = 'active'"
   end

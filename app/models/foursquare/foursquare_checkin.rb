@@ -2,8 +2,8 @@ class FoursquareCheckin
   
   def self.import_checkins(user)
     # find foursquare oauth tokens
-    oauths = user.oauths.where(:name => 'foursquare')
-    if oauths.empty?
+    oauth = user.oauths.where(:name => 'foursquare').first
+    if oauth.blank?
       log(:notice, "#{user.handle}: does not have foursquare oauth token")
       return nil
     end
@@ -14,11 +14,11 @@ class FoursquareCheckin
 
     begin
       # initiialize oauth object
-      oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
-      oauth.authorize_from_access(oauths.first.access_token, oauths.first.access_token_secret)
+      foursquare_oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
+      foursquare_oauth.authorize_from_access(oauth.access_token, oauth.access_token_secret)
       
       # initialize foursquare client
-      foursquare = Foursquare::Base.new(oauth)
+      foursquare = Foursquare::Base.new(foursquare_oauth)
       if foursquare.test['response'] != 'ok'
         raise Exception, "foursquare ping failed"
       end

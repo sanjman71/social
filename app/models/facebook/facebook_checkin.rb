@@ -3,8 +3,8 @@ class FacebookCheckin
   # import all checkins for the specfied user
   def self.import_checkins(user)
     # find foursquare oauth tokens
-    oauths = user.oauths.where(:name => 'facebook')
-    if oauths.empty?
+    oauth = user.oauths.where(:name => 'facebook').first
+    if oauths.blank?
       log(:notice, "#{user.handle}: does not have facebook oauth token")
       return nil
     end
@@ -14,7 +14,10 @@ class FacebookCheckin
     checkins_start = user.checkins.count
   
     begin
-  
+      # initialize facebook client
+      facebook = FacebookClient.new(oauth.access_token)
+      log(:notice, "#{user.handle}: importing checkin history")
+      
     rescue Exception => e
       log(:error, "#{user.handle}: #{e.message}")
       checkin_log.update_attributes(:state => 'error', :last_check_at => Time.zone.now)

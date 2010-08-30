@@ -238,9 +238,9 @@ ActiveRecord::Schema.define(:version => 20100829084055) do
   create_table "users", :force => true do |t|
     t.string   "name",                  :limit => 100, :default => ""
     t.string   "handle",                :limit => 100
-    t.string   "email",                                :default => "", :null => false
-    t.string   "encrypted_password",    :limit => 128, :default => "", :null => false
-    t.string   "password_salt",                        :default => "", :null => false
+    t.string   "email",                                :default => "",    :null => false
+    t.string   "encrypted_password",    :limit => 128, :default => "",    :null => false
+    t.string   "password_salt",                        :default => "",    :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
@@ -252,6 +252,7 @@ ActiveRecord::Schema.define(:version => 20100829084055) do
     t.string   "state",                 :limit => 50
     t.string   "facebook_id",           :limit => 50
     t.integer  "rpx",                                  :default => 0
+    t.boolean  "delta",                                :default => false
     t.integer  "email_addresses_count",                :default => 0
     t.integer  "phone_numbers_count",                  :default => 0
     t.datetime "created_at"

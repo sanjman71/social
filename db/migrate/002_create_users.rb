@@ -12,6 +12,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string    :state,         :limit => 50, :null => :false
       t.string    :facebook_id,   :limit => 50
       t.integer   :rpx,           :default => 0
+      t.boolean   :delta,         :default => 0
       t.integer   :email_addresses_count, :default => 0
       t.integer   :phone_numbers_count, :default => 0
       t.timestamps
