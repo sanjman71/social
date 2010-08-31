@@ -37,6 +37,7 @@ end
 
 # after deploy task
 deploy.task :config, :roles => [:app, :db] do
+  run "cp -u #{current_release}/config/templates/database.#{rails_env}.yml #{deploy_to}/shared/config/database.yml"
   run "rm -f #{current_release}/config/database.yml"
   run "ln -s #{deploy_to}/shared/config/database.yml #{current_release}/config/database.yml"
   run "rm -f #{current_release}/config/production.sphinx.conf"
@@ -45,6 +46,7 @@ end
 
 # after deploy
 after "deploy", "deploy:config"
+after "deploy", "bundle:config"
 after "deploy", "deploy:cleanup"
 
 after "deploy:stop",  "dj:stop"
@@ -53,6 +55,9 @@ after "deploy:start", "dj:start"
 # after deploy:setup
 deploy.task :init, :roles => :app do
   sudo "chown -R #{user}:#{group} #{deploy_to}"
+  run "mkdir -p #{deploy_to}/shared"
+  run "mkdir -p #{deploy_to}/shared/config"
+  run "mkdir -p #{deploy_to}/shared/vendor/bundle"
 end
 
 after "deploy:setup", "deploy:init"

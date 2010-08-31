@@ -6,11 +6,15 @@ require 'rake'
 
 Social::Application.load_tasks
 
-require 'single_test' 
-SingleTest.load_tasks
-
 begin
   require 'delayed/tasks'
 rescue LoadError
   STDERR.puts "Run `bundle install` to install delayed_job"
+end
+
+begin
+  require 'single_test'
+  SingleTest.load_tasks
+rescue LoadError
+  # ignore
 end
