@@ -25,8 +25,10 @@ module ApplicationHelper
     end
   end
 
-  def picture_url(user)
+  def picture_url(user, options={})
     case
+    when !user.facebook_id.blank?
+      "https://graph.facebook.com/#{user.facebook_id}/picture?type=square"
     when user.try(:female?)
       'http://foursquare.com/img/blank_girl.png'
     when user.try(:male?)
