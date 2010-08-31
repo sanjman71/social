@@ -25,7 +25,7 @@ default_run_options[:pty] = true
 
 # Load external recipe files
 load_paths << "config/recipes"
-# load "bundle"
+load "bundle"
 # load "delayed_job"
 # load "memcached"
 # load "sphinx"
@@ -61,3 +61,4 @@ deploy.task :init, :roles => :app do
 end
 
 after "deploy:setup", "deploy:init"
+after "deploy:setup", "bundle:install"
