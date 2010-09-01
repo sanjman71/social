@@ -8,7 +8,7 @@ else
   app_path  = '/usr/apps/social/current'
 end
 # 16 workers and 1 master
-worker_processes (rails_env == 'production' ? 16 : 4)
+worker_processes (rails_env == 'production' ? 4 : 2)
 
 # Load rails+github.git into the master before forking workers
 # for super-fast worker spawn times
