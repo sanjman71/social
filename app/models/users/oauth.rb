@@ -114,7 +114,7 @@ module Users::Oauth
     end
 
     def base.foursquare_oauth_consumer
-      consumer = OAuth::Consumer.new('UOPQQXD1M02JZLS1RZMCJCC23GUO0GEEOV53JANCP11ZCPFE', 'ZTYPX202I5GKITAPGTMWHE4S3ITOWYKIOBHYOPYE2VGMZ51I', 
+      consumer = OAuth::Consumer.new(FOURSQUARE_KEY, FOURSQUARE_SECRET,
                 {
                   :site               => "http://foursquare.com",
                   :scheme             => :header,

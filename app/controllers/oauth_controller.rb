@@ -5,8 +5,10 @@ class OauthController < ApplicationController
   def initiate
     # generate request token
     @service        = params[:service]
-    @consumer       = User.foursquare_oauth_consumer    
-    @request_token  = @consumer.get_request_token(:oauth_callback => "http://localhost:5001/oauth/#{@service}/callback")
+    @consumer       = User.foursquare_oauth_consumer
+    # build callback url using request host + port
+    @host_port      = "http://#{request.host}" + (request.port == 80 ? '' : ":#{request.port}")
+    @request_token  = @consumer.get_request_token(:oauth_callback => "#{@host_port}/oauth/#{@service}/callback")
     # cache request token and secret
     session[:request_token] = @request_token
     redirect_to(@request_token.authorize_url)
@@ -45,7 +47,7 @@ class OauthController < ApplicationController
   rescue Exception => e
     logger.debug("oauth #{params[:service]} callback error: #{e.message}" )
     flash[:error] = "Oauth error: #{e.message}"
-    redirect_to(@redirect_path) and return
+    redirect_to(@redirect_path || root_path) and return
   end
   
 end
