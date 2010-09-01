@@ -1,0 +1,14 @@
+- title('Locations')
+
+.span-23.prepend-1.mat
+  %h2== Locations
+
+%hr.space
+
+.span-24.last#locations
+  - @locations.each do |location|
+    .span-24.last#location
+      .span-5.prepend-1#name
+        = location.name
+      .span-15.last
+        = location.street_address

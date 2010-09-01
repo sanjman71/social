@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100829084055) do
+ActiveRecord::Schema.define(:version => 20100831140715) do
 
   create_table "chains", :force => true do |t|
     t.string  "name"
@@ -228,11 +228,25 @@ ActiveRecord::Schema.define(:version => 20100829084055) do
   add_index "states", ["country_id"], :name => "index_states_on_country_id"
   add_index "states", ["timezone_id"], :name => "index_states_on_timezone_id"
 
+  create_table "suggestions", :force => true do |t|
+    t.string  "user1_action", :limit => 50
+    t.string  "user2_action", :limit => 50
+    t.string  "state",        :limit => 50, :null => false
+    t.integer "location_id"
+    t.string  "when",         :limit => 50
+  end
+
   create_table "timezones", :force => true do |t|
     t.string  "name",                 :limit => 100, :null => false
     t.integer "utc_offset",                          :null => false
     t.integer "utc_dst_offset",                      :null => false
     t.string  "rails_time_zone_name", :limit => 100
+  end
+
+  create_table "user_suggestions", :force => true do |t|
+    t.integer "user_id"
+    t.integer "suggestion_id"
+    t.string  "state",         :limit => 50, :null => false
   end
 
   create_table "users", :force => true do |t|

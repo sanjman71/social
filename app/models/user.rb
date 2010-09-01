@@ -46,6 +46,9 @@ class User < ActiveRecord::Base
   has_many                  :locations, :through => :checkins
   has_many                  :checkin_logs
 
+  has_many                  :user_suggestions
+  has_many                  :suggestions, :through => :user_suggestions
+
   # has_many                  :subscriptions, :dependent => :destroy
   # has_many                  :ownerships, :through => :subscriptions, :source => :company
 

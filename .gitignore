@@ -1,7 +1,10 @@
 .bundle
 .rvmrc
+backups/*
+config/*.sphinx.conf
 db/*.sqlite3
 db/sphinx/*
-config/*.sphinx.conf
 log/
+tmp/*
 tmp/**/*
+vendor/bundle/*
