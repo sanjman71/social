@@ -1,8 +1,12 @@
 # unicorn_rails -c /usr/apps/social/current/config/unicorn.rb -E production -D
 
 rails_env = ENV['RAILS_ENV'] || 'production'
-app_path  = '/usr/apps/social/current'
-
+if rails_env == 'development'
+  app_path  = File.expand_path('.')
+else
+  # default
+  app_path  = '/usr/apps/social/current'
+end
 # 16 workers and 1 master
 worker_processes (rails_env == 'production' ? 16 : 4)
 
@@ -38,7 +42,7 @@ before_fork do |server, worker|
   #
   # Using this method we get 0 downtime deploys.
 
-  old_pid = RAILS_ROOT + '/tmp/pids/unicorn.pid.oldbin'
+  old_pid = Rails.root + '/tmp/pids/unicorn.pid.oldbin'
   if File.exists?(old_pid) && server.pid != old_pid
     begin
       Process.kill("QUIT", File.read(old_pid).to_i)
@@ -56,7 +60,7 @@ after_fork do |server, worker|
   # sockets, e.g. db connection
 
   ActiveRecord::Base.establish_connection
-  CHIMNEY.client.connect_to_server
+  # CHIMNEY.client.connect_to_server
   # Redis and Memcached would go here but their connections are established
   # on demand, so the master never opens a socket
 
@@ -77,7 +81,7 @@ after_fork do |server, worker|
       Process::UID.change_privilege(target_uid)
     end
   rescue => e
-    if RAILS_ENV == 'development'
+    if Rails.env == 'development'
       STDERR.puts "couldn't change user, oh well"
     else
       raise e
