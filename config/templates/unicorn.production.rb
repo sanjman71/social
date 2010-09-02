@@ -20,7 +20,6 @@ timeout 30
 # Listen on a Unix data socket
 listen "#{app_path}/tmp/sockets/unicorn.sock", :backlog => 2048
 
-
 ##
 # REE
 

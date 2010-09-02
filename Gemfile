@@ -2,13 +2,10 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.0.0'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
-
 # Mysql gem for ruby 1.9.2
 gem 'ruby-mysql'
 
-gem 'aasm',                   :git => 'git://github.com/rubyist/aasm' # rails3 fix
+gem 'aasm',                   '>= 2.1.7'
 gem 'delayed_job'
 gem 'foursquare'
 gem 'geokit',                 '>= 1.5.0'

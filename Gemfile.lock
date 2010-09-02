@@ -6,15 +6,10 @@ GIT
       bcrypt-ruby (~> 2.1.2)
       warden (~> 0.10.7)
 
-GIT
-  remote: git://github.com/rubyist/aasm
-  revision: 690137c
-  specs:
-    aasm (2.1.5)
-
 GEM
   remote: http://rubygems.org/
   specs:
+    aasm (2.1.7)
     abstract (1.0.0)
     actionmailer (3.0.0)
       actionpack (= 3.0.0)
@@ -161,7 +156,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm!
+  aasm (>= 2.1.7)
   capistrano
   delayed_job
   devise!
