@@ -12,7 +12,7 @@ gem 'geokit',                 '>= 1.5.0'
 # hashie required by foursquare gem
 gem 'hashie'                
 gem 'httparty',               '0.4.3' # older version required by foursquare gem
-gem 'haml'
+gem 'haml',                   '>= 3.0.18'
 gem 'devise',                 :git => 'git://github.com/plataformatec/devise.git'
 # gem 'devise',                 '1.1.1'
 # gem 'devise',                 '1.1.rc2'
