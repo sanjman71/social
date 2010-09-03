@@ -12,49 +12,66 @@ class SuggestionTest < ActiveSupport::TestCase
   end
 
   context "create" do
-    should "start in suggested state" do
+    should "start in initialized state with default messages" do
       @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
                       :location => @loc1, :when => 'next weeks']
       @suggestion = Suggestion.create(@options)
       assert @suggestion.valid?
-      assert_equal 'suggested', @suggestion.state
-      assert_equal 'signaled', @suggestion.actor1.state
-      assert_equal 'signaled', @suggestion.actor2.state
+      assert_equal 'initialized', @suggestion.state
+      assert_equal 'initialized', @suggestion.actor1.state
+      assert_equal 'initialized', @suggestion.actor2.state
+      assert_equal 'A suggested date', @suggestion.actor1.message
+      assert_equal 'A suggested date', @suggestion.actor2.message
     end
     
-    should "reject" do
+    should "decline" do
       @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
-                      :location => @loc1, :when => 'next weeks']
+                      :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
-      @actor1     = @suggestion.actor1
-      @actor2     = @suggestion.actor2
-      # actor1 rejects, should change suggeestion to 'rejected'
-      @actor1.reject!
-      assert_equal 'rejected', @actor1.state
-      assert_equal 'rejected', @suggestion.reload.state
-      # xxx - not sure about actor2
+      # actor1 declines
+      @suggestion.user_declines(@suggestion.actor1)
+      assert_equal 'declined', @suggestion.actor1.state
+      assert_equal 'dumped', @suggestion.actor2.state
+      assert_equal 'bailed', @suggestion.reload.state
+      assert_equal "user1 declined", @suggestion.actor2.message
     end
 
-    should "reschedule, confirm" do
+    should "schedule, then confirm" do
       @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
-                      :location => @loc1, :when => 'next weeks']
+                      :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
-      @actor1     = @suggestion.actor1
-      @actor2     = @suggestion.actor2
-      # actor1 reschedules, should change suggestion to 'rescheduling', actor2 to 'signaled'
-      @actor1.reschedule!
-      assert_equal 'rescheduled', @actor1.state
-      assert_equal 'rescheduling', @suggestion.reload.state
-      assert_equal 'signaled', @actor2.state
-      # actor1 confirms, should change suggestion to 'confirming', actor2 remains 'signaled'
-      @actor1.confirm!
-      assert_equal 'confirmed', @actor1.state
-      assert_equal 'confirming', @suggestion.reload.state
-      assert_equal 'signaled', @actor2.state
-      # actor2 confirms, should change suggestion to 'confirmed'
-      @actor2.confirm!
-      assert_equal 'confirmed', @actor2.state
-      assert_equal 'confirmed', @suggestion.reload.state
+      # actor1 schedules
+      @suggestion.user_schedules(@suggestion.actor1)
+      assert_equal 'scheduled', @suggestion.actor1.state
+      assert_equal 'scheduled', @suggestion.actor2.state
+      assert_equal 'talking', @suggestion.reload.state
+      assert_equal "user1 suggested a date and time", @suggestion.actor2.message
+      # actor1 confirms - should change actor2 state to 'scheduled'
+      @suggestion.user_confirms(@suggestion.actor1)
+      assert_equal 'confirmed', @suggestion.actor1.state
+      assert_equal 'scheduled', @suggestion.actor2.state
+      assert_equal 'talking', @suggestion.reload.state
+      assert_equal "user1 confirmed", @suggestion.actor2.message
+      # actor2 confirms
+      @suggestion.user_confirms(@suggestion.actor2)
+      assert_equal 'confirmed', @suggestion.actor2.state
+      assert_equal 'confirmed', @suggestion.actor1.state
+      assert_equal 'going_out', @suggestion.reload.state
     end
+    
+    should "schedule, then re-schedule" do
+      @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
+                      :location => @loc1, :when => 'next week']
+      @suggestion = Suggestion.create(@options)
+      # actor1 schedules
+      @suggestion.user_schedules(@suggestion.actor1)
+      # actor2 reschedules
+      @suggestion.user_reschedules(@suggestion.actor2)
+      assert_equal 'scheduled', @suggestion.actor1.state
+      assert_equal 'scheduled', @suggestion.actor2.state
+      assert_equal 'talking', @suggestion.reload.state
+      assert_equal "user2 suggested another date and time", @suggestion.actor1.message
+    end
+    
   end
 end

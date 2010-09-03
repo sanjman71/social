@@ -6,6 +6,7 @@ Social::Application.routes.draw do
   devise_scope :user do
     get "/login" => "devise/sessions#new"
     get "/logout" => "devise/sessions#destroy"
+    get "/signup" => "devise/registrations#new"
   end
 
   # oauth routes

@@ -7,6 +7,8 @@ else
   # default
   app_path  = '/usr/apps/social/current'
 end
+stderr_path = "#{app_path}/log/unicorn.error.log"
+
 # 16 workers and 1 master
 worker_processes (rails_env == 'production' ? 4 : 2)
 
