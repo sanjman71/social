@@ -9,7 +9,15 @@
 .span-24.last#sightings
   - @checkins.each_pair do |source, checkins|
     .span-23.prepend-1.last{:style => 'padding-bottom: 15px;'}
-      %h2.bottom= source
-      - checkins.each do |checkin|
-        .span-23.last
-          = checkin.location.try(:name)
+      %h2.bottom
+        = source
+        - if @checkin_logs[source]
+          -# show last checked at info
+          %span{:style => 'font-size: 0.6em;'}== (last checked about #{@checkin_logs[source]} minutes ago)
+      -# sort checkins most recent first
+      - checkins.sort_by{|c| -1 * c.checkin_at.to_i}.each do |checkin|
+        .span-23.last.padding-bottom-5
+          .span-5
+            = checkin.location.try(:name)
+          .span-18.last
+            = checkin.checkin_at.to_s(:datetime)

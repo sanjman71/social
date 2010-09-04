@@ -1,7 +1,7 @@
 class FacebookCheckin
   
   # import all checkins for the specfied user
-  def self.import_checkins(user)
+  def self.import_checkins(user, options={})
     # find foursquare oauth tokens
     oauth = user.oauths.where(:name => 'facebook').first
     if oauth.blank?
@@ -16,7 +16,8 @@ class FacebookCheckin
     # compare last check timestamp vs current timestamp
     last_check_at   = checkin_log.last_check_at || Time.zone.now-1.year
     if (last_check_at + Checkin.minimum_check_interval) > Time.zone.now
-      log(:notice, "#{user.handle}: skipping check, last check was at #{last_check_at}")
+      mm, ss = (Time.zone.now-last_check_at).divmod(60)
+      log(:notice, "#{user.handle}: skipping check because last check was about #{mm} minutes ago")
       return checkin_log
     end
   
@@ -26,8 +27,21 @@ class FacebookCheckin
       # initialize facebook client
       facebook = FacebookClient.new(oauth.access_token)
 
+      # parse options
+      # http://developers.facebook.com/docs/api#paging
+      # options - since, until, limit, offset
+      if options[:since]
+        # get checkins since a timestamp
+        case options[:since]
+        when :last
+          # find last facebok checkin's timestamp
+          options[:since] = user.checkins.facebook.recent.limit(1).first.try(:checkin_at).to_s(:datetime_schedule) rescue Time.zone.now.to_s(:datetime)
+          log(:ok, "#{user.handle}: importing since #{options[:since]}")
+        end
+      end
+
       # get checkins
-      checkins = facebook.checkins(user.facebook_id)
+      checkins = facebook.checkins(user.facebook_id, options)
       checkins['data'].each do |checkin_hash|
         import_checkin(user, checkin_hash)
       end
@@ -61,8 +75,9 @@ class FacebookCheckin
     end
 
     # add checkin
-    options  = Hash[:location => @location, :checkin_at => Time.zone.now, :source_id => checkin_hash['id'].to_s, :source_type => Source.facebook]
-    @checkin = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
+    checkin_at  = Time.parse(checkin_hash['created_time']).utc # created_time is in utc format
+    options     = Hash[:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'].to_s, :source_type => Source.facebook]
+    @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
     log(:ok, "#{user.handle}: added checkin #{@location.name}") if @checkin.blank?
     @checkin ||= user.checkins.create(options)
   end

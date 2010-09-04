@@ -11,9 +11,11 @@ class Oauth < ActiveRecord::Base
     # import user checkins
     case name
     when 'foursquare', 'fs'
-      FoursquareCheckin.send_later(:import_checkins, self.user)
+      # get all checkins - max of 250
+      FoursquareCheckin.send_later(:import_checkins, self.user, :limit => 250)
     when 'facebook', 'fb'
-      FacebookCheckin.send_later(:import_checkins, self.user)
+      # get all checkins
+      FacebookCheckin.send_later(:import_checkins, self.user, :limit => 250)
     end
   end
 end

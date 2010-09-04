@@ -16,4 +16,11 @@
   - if current_user.oauths.where(:name => 'foursquare').empty?
     .span-23.prepend-1.last
       %h4= link_to "Link your Foursquare account", oauth_initiate_path(:foursquare)
+- else
+  .span-23.prepend-1.last
+    -# ask user to signin with an existing account
+    = link_to "Sign in with your Facebook account", user_oauth_authorize_url(:facebook), :class => 'admin'
+    %p
+    = link_to "Sign in with your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'
+  
   

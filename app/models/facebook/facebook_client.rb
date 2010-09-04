@@ -24,7 +24,7 @@ class FacebookClient
 
   # paging options:
   # - limit, offset
-  # - until, since - e.g. until=yesterday, since=2010-02-01T120000
+  # - until, since - e.g. until=yesterday, since=2010-02-01T120000, since=September 04, 2010 at 09:26 AM
   def checkins(id, options={})
     options.merge!(:access_token => @token)
     self.class.get("https://graph.facebook.com/#{id}/checkins", :query => options)
