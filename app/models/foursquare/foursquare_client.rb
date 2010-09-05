@@ -11,8 +11,8 @@ class FoursquareClient
   include HTTParty
   format :json
   
-  def initialize(u,p)
-    self.class.basic_auth u, p
+  def initialize(u=nil,p=nil)
+    self.class.basic_auth(u, p) if u and p
   end
   
   #Returns a list of recent checkins from friends. If you pass in a geolat/geolong pair (optional, but recommended), 

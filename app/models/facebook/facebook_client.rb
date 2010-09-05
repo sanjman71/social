@@ -29,4 +29,8 @@ class FacebookClient
     options.merge!(:access_token => @token)
     self.class.get("https://graph.facebook.com/#{id}/checkins", :query => options)
   end
+  
+  def place(id, options={})
+    self.class.get("https://graph.facebook.com/#{id}", :query => options)
+  end
 end

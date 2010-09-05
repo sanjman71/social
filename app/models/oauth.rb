@@ -5,6 +5,9 @@ class Oauth < ActiveRecord::Base
 
   after_create  :after_create_callback
   
+  scope :facebook,      where("name = 'facebook'")
+  scope :foursquare,    where("name = 'foursquare'")
+  
   protected
   
   def after_create_callback
