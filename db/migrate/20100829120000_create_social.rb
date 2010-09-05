@@ -1,4 +1,4 @@
-class CreateWalnut < ActiveRecord::Migration
+class CreateSocial < ActiveRecord::Migration
   def self.up
     
     create_table :timezones do |t|

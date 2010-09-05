@@ -7,24 +7,9 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :lockable, :timeoutable and :activatable, :validatable
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :oauthable
 
-  # add states and events
-  # aasm_state :data_missing
-  # 
-  # aasm_event :profile_data_missing  do
-  #   transitions :from => [:active, :data_missing], :to => :data_missing
-  # end
-  # 
-  # aasm_event :profile_complete do
-  #   transitions :from => [:data_missing], :to => :active, :guard => :profile_complete?
-  # end
-
   # Badges for authorization
-  # badges_authorized_user
+  badges_authorized_user
 
-  # validates_format_of       :name, :with => Authentication.name_regex,  :message => Authentication.bad_name_message, :allow_nil => true
-  # validates_length_of       :name, :maximum => 100
-  # validates_presence_of     :name
-  
   include Users::Oauth
   include Users::Search
 
@@ -49,18 +34,15 @@ class User < ActiveRecord::Base
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
 
-  # has_many                  :subscriptions, :dependent => :destroy
-  # has_many                  :ownerships, :through => :subscriptions, :source => :company
-
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
 
-  # after_create              :manage_user_roles
+  after_create              :manage_user_roles
   # after_update              :after_update_callback
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible           :handle, :password, :password_confirmation, :gender, :rpx, :email_addresses_attributes,
+  attr_accessible           :handle, :password, :password_confirmation, :gender, :rpx, :facebook_id, :email_addresses_attributes,
                             :phone_numbers_attributes, :preferences_phone, :preferences_email
 
   # BEGIN acts_as_state_machine
@@ -290,10 +272,14 @@ class User < ActiveRecord::Base
   end
 
   def manage_user_roles
-    unless self.has_role?('user manager', self)
-      # all users can manage themselves
-      self.grant_role('user manager', self)
+    # check admin users
+    if self.facebook_id == '633015812' # sanjay
+      self.grant_role('admin')
     end
+    # unless self.has_role?('user manager', self)
+    #   # all users can manage themselves
+    #   self.grant_role('user manager', self)
+    # end
   end
 
   # def activate_user

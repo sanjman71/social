@@ -1,9 +1,10 @@
 - title('Home')
 - stylesheet('map')
-- javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
-- javascript 'mapiconmaker', 'markermanager'
-- javascript 'jquery.metadata'
-- javascript 'jquery.jmapping.min'
+- if user_signed_in?
+  - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
+  - javascript 'mapiconmaker', 'markermanager'
+  - javascript 'jquery.metadata'
+  - javascript 'jquery.jmapping.min'
 
 .span-23.prepend-1.mat
   %h2== Home
@@ -24,10 +25,11 @@
 - else
   .span-23.prepend-1.last
     -# ask user to signin with an existing account
-    = link_to "Sign in with your Facebook account", user_oauth_authorize_url(:facebook), :class => 'admin'
-    %p
-    = link_to "Sign in with your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'
-  
+    %h3
+      == Sign in with your
+      = link_to 'Facebook account', user_oauth_authorize_url(:facebook), :class => 'admin'
+      == or
+      = link_to "Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'  
 
 - if user_signed_in?
   .span-23.prepend-1.last
