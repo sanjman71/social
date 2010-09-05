@@ -14,6 +14,7 @@ Social::Application.routes.draw do
   match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
 
   match 'checkins', :to => "checkins#index"
+  match 'checkins/poll', :to => "checkins#poll", :as => :poll_checkins
   match 'sightings', :to => "sightings#index"
   match 'locations', :to => "locations#index"
   match 'accounts', :to => "accounts#index"

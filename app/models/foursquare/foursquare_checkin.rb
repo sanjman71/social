@@ -5,7 +5,7 @@ class FoursquareCheckin
     # find foursquare oauth tokens
     oauth  = user.oauths.where(:name => source).first
     if oauth.blank?
-      log(:notice, "#{user.handle}: no #{source} oauth token")
+      log(:notice, "user #{user.handle}: no #{source} oauth token")
       return nil
     end
 
@@ -14,15 +14,21 @@ class FoursquareCheckin
     checkins_start  = user.checkins.count
 
     # compare last check timestamp vs current timestamp
-    last_check_at   = checkin_log.last_check_at || Time.zone.now-1.year
-    if (last_check_at + Checkin.minimum_check_interval) > Time.zone.now
+    last_check_at   = checkin_log.last_check_at
+    
+    case
+    when last_check_at.blank?
+      mm = 0
+    when (last_check_at + Checkin.minimum_check_interval) > Time.zone.now
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
-      log(:notice, "#{user.handle}: skipping check because last check was about #{mm} minutes ago")
+      log(:ok, "user #{user.handle}: importing #{source} skipped because last check was about #{mm} minutes ago")
       return checkin_log
+    else
+      mm, ss = (Time.zone.now-last_check_at).divmod(60)
     end
 
     begin
-      log(:ok, "#{user.handle}: importing #{source} checkin history #{options.inspect}")
+      log(:ok, "user #{user.handle}: importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
 
       # initiialize oauth object
       foursquare_oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
@@ -36,14 +42,14 @@ class FoursquareCheckin
 
       # parse options
       # http://groups.google.com/group/foursquare-api/web/api-documentation
-      # options - sinceid, l
+      # options - sinceid (since), l
       if options[:sinceid]
         # get checkins since id
         case options[:sinceid]
         when :last
           # find last foursquare checkin
           options[:sinceid] = user.checkins.foursquare.recent.limit(1).first.try(:source_id)
-          log(:ok, "#{user.handle}: importing sinceid #{options[:sinceid]}")
+          log(:ok, "user #{user.handle}: importing sinceid #{options[:sinceid]}")
         end
       end
 
@@ -58,12 +64,12 @@ class FoursquareCheckin
         import_checkin(user, checkin_hash)
       end
     rescue Exception => e
-      log(:error, "#{user.handle}: #{e.message}")
+      log(:error, "user #{user.handle}: #{e.message}")
       checkin_log.update_attributes(:state => 'error', :checkins => 0, :last_check_at => Time.zone.now)
     else
       checkins_added = user.checkins.count - checkins_start
       checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
-      log(:ok, "#{user.handle}: imported #{checkins_added} #{source} checkins")
+      log(:ok, "user #{user.handle}: imported #{checkins_added} #{source} checkins")
       if checkins_added > 0
         # rebuild sphinx index
         Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
@@ -88,7 +94,7 @@ class FoursquareCheckin
     checkin_at  = Time.parse(checkin_hash['created']).utc # xxx - need to account for 'timezone' attribute
     options     = Hash[:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'].to_s, :source_type => Source.foursquare]
     @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
-    log(:ok, "#{user.handle}: added checkin #{@location.name}") if @checkin.blank?
+    log(:ok, "user #{user.handle}: added checkin #{@location.name}") if @checkin.blank?
     @checkin ||= user.checkins.create(options)
   end
 

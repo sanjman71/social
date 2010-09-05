@@ -13,9 +13,8 @@ gem 'geokit',                 '>= 1.5.0'
 gem 'hashie'                
 gem 'httparty',               '0.4.3' # older version required by foursquare gem
 gem 'haml',                   '>= 3.0.18'
-gem 'devise',                 :git => 'git://github.com/plataformatec/devise.git'
-# gem 'devise',                 '1.1.1'
-# gem 'devise',                 '1.1.rc2'
+gem 'devise',                 :git => 'git://github.com/plataformatec/devise.git' # devise with oauth support
+# gem 'devise',                 '>= 1.1.2'
 gem 'oauth'
 gem 'oauth2'
 gem 'ts-delayed-delta',       '>= 1.1.0'
