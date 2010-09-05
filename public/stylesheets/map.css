@@ -1,0 +1,11 @@
+#map {
+    width: 600px;
+    height: 460px;
+    float: left;
+}
+
+#map-side-bar {
+    float: left;
+    width: 160px;
+    padding: 7px 20px;
+}

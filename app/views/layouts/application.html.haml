@@ -4,10 +4,11 @@
     %meta{:"http-equiv" => 'Content-Type', :content => 'text/html; charset=utf-8'}
     %title= yield(:title).to_s + " | Social Intrigue"
     = csrf_meta_tag
-    = stylesheet_link_tag 'blueprint/screen', 'walnut', 'orange', :cache => true
+    = stylesheet_link_tag 'blueprint/screen', 'walnut', 'orange', :cache => false
     <!--[if lt IE 8]>
     <link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection">
     <![endif]-->
+    = yield :stylesheet
     -#= stylesheet_link_tag :all
     = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'
     = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js'

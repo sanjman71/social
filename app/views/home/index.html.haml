@@ -1,4 +1,9 @@
 - title('Home')
+- stylesheet('map')
+- javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
+- javascript 'mapiconmaker', 'markermanager'
+- javascript 'jquery.metadata'
+- javascript 'jquery.jmapping.min'
 
 .span-23.prepend-1.mat
   %h2== Home
@@ -23,4 +28,21 @@
     %p
     = link_to "Sign in with your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'
   
-  
+
+- if user_signed_in?
+  .span-23.prepend-1.last
+    #map
+
+    #map-side-bar
+      - @locations.each do |location|
+        - next unless location.mappable?
+        .map-location{'data-jmapping' => "{id: #{location.id}, point: {lat: #{location.lat}, lng: #{location.lng}}, category: 'Location'}"}
+          = link_to location.name, '#', :class => 'map-link'
+          .info-box
+            %p== #{location.name}, #{location.city}
+
+:javascript
+  var mapping = #{user_signed_in?};
+  $(document).ready(function() {
+    if (mapping) { $('#map').jMapping(); }
+  });
