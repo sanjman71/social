@@ -178,4 +178,4 @@ DEPENDENCIES
   thinking-sphinx (>= 2.0.0.rc1)
   ts-delayed-delta (>= 1.1.0)
   unicorn
-  whenever
+  whenever (>= 0.5.0)
