@@ -28,6 +28,7 @@ set :path, '/usr/apps/social/current'
 set :output, '/usr/apps/social/current/log/cron.log'
 
 every 1.hour do
-  # rebuild sphinx index
-  rake "ts:index"
+  # import recent checkins
+  rake "checkins:recent"
+  # rake "ts:index"
 end
