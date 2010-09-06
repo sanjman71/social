@@ -17,11 +17,9 @@ module Users::Oauth
           fname   = data['first_name']
           gender  = data['gender']
           fbid    = data['id']
-          users   = self.find_by_email_or_phone(email, phone)
-          user    = case users.size
-          when 1
-            users.first
-          when 0
+          user    = self.find_by_facebook_id(fbid)
+          user    = case
+          when user.blank?
             # create user
             email_hash = email ? {"0" => {:address => email}} : Hash[]
             phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
@@ -31,8 +29,7 @@ module Users::Oauth
             log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
             user
           else
-            # whoops
-            nil
+            user
           end
         rescue Exception => e
           user = nil
@@ -47,7 +44,7 @@ module Users::Oauth
           data = ActiveSupport::JSON.decode(access_token.get('https://graph.facebook.com/me'))
           signed_in_resource.facebook_id = data['id']
           signed_in_resource.save
-          log(:ok, "added facebook id to #{user.handle}:#{user.email_address}:#{user.phone_number}")
+          log(:ok, "added facebook id #{data['id']} to #{user.handle}:#{user.email_address}:#{user.phone_number}")
         rescue Exception => e
           
         end
@@ -66,27 +63,38 @@ module Users::Oauth
           phone   = data['phone']
           fname   = data['firstname']
           gender  = data['gender']
-          users   = self.find_by_email_or_phone(email, phone)
-          user    = case users.size
-          when 1
-            users.first
-          when 0
+          fsid    = data['id']
+          user    = self.find_by_foursquare_id(fsid)
+          user    = case
+          when user.blank?
             # create user
             email_hash = email ? {"0" => {:address => email}} : Hash[]
             phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
             options    = Hash[:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash,
-                              :gender => gender]
+                              :gender => gender, :foursquare_id => fsid]
             user       = User.create(options)
             log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
             user
           else
-            # whoops
-            nil
+            user
           end
         rescue Exception => e
           user = nil
         end
         signed_in_resource = user
+      end
+
+      # check if user's foursquare id is set
+      if signed_in_resource and signed_in_resource.foursquare_id.blank?
+        begin
+          # get user's foursquare id
+          data = ActiveSupport::JSON.decode(access_token.get('http://api.foursquare.com/v1/user.json').body)["user"]
+          signed_in_resource.foursquare_id = data['id']
+          signed_in_resource.save
+          log(:ok, "added foursquare id #{data['id']} to #{user.handle}:#{user.email_address}:#{user.phone_number}")
+        rescue Exception => e
+          
+        end
       end
 
       # initialize oauth object

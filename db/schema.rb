@@ -310,6 +310,7 @@ ActiveRecord::Schema.define(:version => 20100831140715) do
     t.string   "state",                 :limit => 50
     t.integer  "gender",                               :default => 0
     t.string   "facebook_id",           :limit => 50
+    t.string   "foursquare_id",         :limit => 50
     t.integer  "rpx",                                  :default => 0
     t.boolean  "delta",                                :default => false
     t.integer  "email_addresses_count",                :default => 0
