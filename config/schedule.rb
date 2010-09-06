@@ -29,6 +29,6 @@ set :output, '/usr/apps/social/current/log/cron.log'
 
 every 1.hour do
   # import recent checkins
-  rake "checkins:recent"
   # rake "ts:index"
+  command "curl http://www.socialintrigue.com/checkins/poll > /dev/null"
 end
