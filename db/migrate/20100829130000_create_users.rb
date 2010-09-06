@@ -24,6 +24,7 @@ class CreateUsers < ActiveRecord::Migration
     add_index :users, :state
     add_index :users, :gender
     add_index :users, :facebook_id
+    add_index :users, :foursquare_id
     add_index :users, :rpx
     add_index :users, :email_addresses_count
     add_index :users, :phone_numbers_count
