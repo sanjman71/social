@@ -8,8 +8,9 @@
       = link_to('Checkins', checkins_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Sightings', sightings_path, :class => 'header link')
-      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
-      = link_to('Locations', locations_path, :class => 'header link')
+      - if current_user.has_role?('admin')
+        %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+        = link_to('Locations', locations_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Accounts', accounts_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
