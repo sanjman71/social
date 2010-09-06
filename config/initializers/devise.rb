@@ -171,7 +171,7 @@ Devise.setup do |config|
 
   # facebook - uses oauth2
   config.oauth :facebook, FACEBOOK_KEY, FACEBOOK_SECRET,
-    :site               => 'https://graph.facebook.com/',
+    :site               => 'http://graph.facebook.com/',
     :authorize_path     => '/oauth/authorize',
     :access_token_path  => '/oauth/access_token',
     :scope              => ['offline_access', 'user_checkins', 'friends_checkins']
