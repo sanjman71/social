@@ -16,20 +16,20 @@
 
 - if user_signed_in?
   -# check oauths
-  - if current_user.oauths.where(:name => 'facebook').empty?
+  - if current_user.facebook_id.blank?
     .span-23.prepend-1.last
-      %h4= link_to "Link your Facebook account", user_oauth_authorize_url(:facebook)
-  - if current_user.oauths.where(:name => 'foursquare').empty?
+      %h4= link_to "Link your Facebook account", user_oauth_authorize_url(:facebook), :class => 'admin'
+  - if current_user.foursquare_id.blank?
     .span-23.prepend-1.last
-      %h4= link_to "Link your Foursquare account", oauth_initiate_path(:foursquare)
+      %h4= link_to "Link your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'
 - else
   .span-23.prepend-1.last
-    -# ask user to signin with an existing account
     %h3
+      -# always sign in with facebook
       == Sign in with your
       = link_to 'Facebook account', user_oauth_authorize_url(:facebook), :class => 'admin'
-      == or
-      = link_to "Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'  
+      -#== or
+      -#= link_to "Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'  
 
 - if user_signed_in?
   .span-23.prepend-1.last

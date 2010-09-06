@@ -17,5 +17,5 @@
       %span{:class => 'vertical bar'}== &nbsp;:&nbsp;
       %span{:style => 'color: #fff;'}= current_user.handle
     - else
-      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
-      = link_to('Login', login_path, :class => 'header link', :rel => 'nofollow')
+      -#%span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      -#= link_to('Login', login_path, :class => 'header link', :rel => 'nofollow')
