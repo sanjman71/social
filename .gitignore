@@ -2,6 +2,7 @@
 .rvmrc
 backups/*
 config/*.sphinx.conf
+config/database.yml
 db/*.sqlite3
 db/sphinx/*
 log/
