@@ -1,0 +1,6 @@
+%hr.space
+%h3== Please enter your access code below:
+
+- form_for('', :url => beta_path) do |f|
+  %h4= text_field_tag :code, '', :style => 'font-size: 2.0em; size => 20x20;'
+  

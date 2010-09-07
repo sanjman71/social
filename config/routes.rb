@@ -18,8 +18,10 @@ Social::Application.routes.draw do
   match 'sightings', :to => "sightings#index"
   match 'locations', :to => "locations#index"
   match 'accounts', :to => "accounts#index"
-  match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :conditions => {:method => :delete}
+  match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
   match 'suggestions', :to => "suggestions#index"
+
+  match 'beta', :to => "home#beta", :via => [:get, :post]
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
