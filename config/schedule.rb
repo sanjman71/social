@@ -18,7 +18,7 @@ set :environment, :production
 set :path, '/usr/apps/social/current'
 set :output, '/usr/apps/social/current/log/cron.log'
 
-every 1.hour do
+every 5.minutes do
   # poll recent checkins
   command "curl http://www.socialintrigue.com/checkins/poll > /dev/null"
 end
