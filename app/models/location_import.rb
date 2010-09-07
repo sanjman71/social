@@ -38,11 +38,13 @@ class LocationImport
 
     # add new location
     @location = self.add(@hash)
-    # add location source
-    @location.location_sources.create(:source_id => id.to_s, :source_type => type)
     
-    log(:ok, "added location #{@location.name}")
-    
+    if @location
+      # add location source
+      @location.location_sources.create(:source_id => id.to_s, :source_type => type)
+      log(:ok, "added location #{@location.name}")
+    end
+
     @location
   end
 
