@@ -14,13 +14,14 @@ class FacebookCheckin
     checkin_log    = user.checkin_logs.find_or_create_by_source(source)
     checkins_start = user.checkins.count
 
-    # compare last check timestamp vs current timestamp
+    # compare last check timestamp + check interval vs current timestamp
     last_check_at   = checkin_log.last_check_at
+    last_check_mins = options[:minutes_since] ? options.delete(:minutes_since).to_i.minutes : Checkin.minimum_check_interval
 
     case
     when last_check_at.blank?
       mm = 0
-    when (last_check_at + Checkin.minimum_check_interval) > Time.zone.now
+    when (last_check_at + last_check_mins) > Time.zone.now
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
       log(:ok, "user #{user.handle}: importing #{source} skipped because last check was about #{mm} minutes ago")
       return checkin_log
