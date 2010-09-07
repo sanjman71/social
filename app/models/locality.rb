@@ -3,7 +3,10 @@ class LocalityError < StandardError; end
 class Locality
   include Geokit::Mappable
   
-  def self.resolve(s)
+  def self.resolve(s, options={})
+    # parse options
+    create = options[:create] ? options[:create] : false
+
     begin
       geoloc = geocode(s)
       
@@ -25,6 +28,10 @@ class Locality
           state   = State.find_by_code(geoloc.state)
           # find city from state
           object  = state.cities.find_by_name(geoloc.city)
+          if object.blank? and create
+            # create city
+            object = state.cities.create(:name => geoloc.city, :lat => geoloc.lat, :lng => geoloc.lng)
+          end
         when 'zip'
           # map state codes
           map_state_codes(geoloc)

@@ -25,10 +25,6 @@ File.open(file).lines.each do |row|
 end
 puts "#{Time.now}: initialized #{State.count} states"
 
-# cities
-@il = @us.states.find_by_code('IL')
-@chicago = @il.cities.create(:name => 'Chicago', :lat => 41.879535, :lng => -87.624333)
-
 # locations - coffee, pizza, bar
 [
  # coffee

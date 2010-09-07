@@ -3,9 +3,9 @@ require 'test_helper'
 class LocationImportTest < ActiveSupport::TestCase
 
   def setup
-    @us       = Country.us || Factory(:us)
-    @il       = Factory(:il, :country => @us)
-    @chicago  = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
+    # create country, state, but not city
+    @us = Country.us || Factory(:us)
+    @il = Factory(:il, :country => @us)
   end
 
   context "import foursquare location" do
@@ -14,10 +14,11 @@ class LocationImportTest < ActiveSupport::TestCase
                        "state"=>"Illinois", "geolat"=>41.8964066, "geolong"=>-87.6312161]
       @location = LocationImport.import_foursquare_venue(@hash)
       assert @location.valid?
-      # should create location with geo params
+      # should create city, location
       assert_equal @us, @location.country
       assert_equal @il, @location.state
-      assert_equal @chicago, @location.city
+      assert_equal 'Chicago', @location.city.name
+      assert_equal @il, @location.city.state
       assert_equal '763 N Clark St', @location.street_address
       assert_equal 41.8964066, @location.lat
       assert_equal -87.6312161, @location.lng
@@ -45,10 +46,11 @@ class LocationImportTest < ActiveSupport::TestCase
                        "location"=>{"street"=>"431 N Wells St", "city"=>"Chicago", "state"=>"IL", "zip"=>"60654-4512",
                                     "latitude"=>41.890177, "longitude"=>-87.633815}]
       @location = LocationImport.import_facebook_place(@hash)
-      # should create location with geo params
+      # should create city, location
       assert_equal @us, @location.country
       assert_equal @il, @location.state
-      assert_equal @chicago, @location.city
+      assert_equal 'Chicago', @location.city.name
+      assert_equal @il, @location.city.state
       assert_equal '431 N Wells St', @location.street_address
       assert_equal 41.890177, @location.lat
       assert_equal -87.633815, @location.lng

@@ -13,6 +13,9 @@ class CreateUsers < ActiveRecord::Migration
       t.integer   :gender,        :default => 0
       t.string    :facebook_id,   :limit => 50
       t.string    :foursquare_id, :limit => 50
+      t.integer   :city_id
+      t.decimal   :lat,           :precision => 15, :scale => 10
+      t.decimal   :lng,           :precision => 15, :scale => 10
       t.integer   :rpx,           :default => 0
       t.boolean   :delta,         :default => 0
       t.integer   :email_addresses_count, :default => 0

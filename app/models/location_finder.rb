@@ -36,7 +36,7 @@ class LocationFinder
       return []
     end
 
-    @city           = @state.cities.find_by_name(@city)
+    @city           = @state.cities.find_by_name(@city) || Locality.resolve(@city, :create => true)
 
     if @city.blank?
       puts "[error] missing city" if @log
@@ -122,7 +122,7 @@ class LocationFinder
       return []
     end
 
-    @city           = @state.cities.find_by_name(@city)
+    @city           = @state.cities.find_by_name(@city) || Locality.resolve(@city, :create => true)
 
     if @city.blank?
       puts "[error] missing city" if @log
