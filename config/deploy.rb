@@ -26,9 +26,9 @@ default_run_options[:pty] = true
 # Load external recipe files
 load_paths << "config/recipes"
 load "bundle"
-# load "delayed_job"
-# load "memcached"
-# load "sphinx"
+load "delayed_job"
+load "unicorn"
+load "sphinx"
 
 # automatically called after a deploy
 deploy.task :restart, :roles => :app do
@@ -57,6 +57,9 @@ deploy.task :init, :roles => :app do
   sudo "chown -R #{user}:#{group} #{deploy_to}"
   run "mkdir -p #{deploy_to}/shared"
   run "mkdir -p #{deploy_to}/shared/config"
+  run "mkdir -p #{deploy_to}/shared/backups"
+  run "mkdir -p #{deploy_to}/shared/sockets"
+  run "mkdir -p #{deploy_to}/shared/pids"
   run "mkdir -p #{deploy_to}/shared/vendor/bundle"
 end
 
