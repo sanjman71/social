@@ -11,14 +11,13 @@
 # Learn more: http://github.com/javan/whenever
 
 # Crontab update/write example
-# whenever --update-crontab social
-# whenever --write-crontab social
+# whenever --update-crontab db
+# whenever --write-crontab db
 
 set :environment, :production
 set :path, '/usr/apps/social/current'
-set :output, '/usr/apps/social/current/log/cron.log'
+set :output, '/usr/apps/social/current/log/backups.log'
 
-every 1.hour do
-  # poll recent checkins
-  command "curl http://www.socialintrigue.com/checkins/poll > /dev/null"
+every 2.hours do
+  rake "db:backup DB=social_production BACKUP_DIR=/usr/apps/social/current/shared"
 end
