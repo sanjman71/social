@@ -7,7 +7,7 @@ class LocationImport
     # normalize venue hash
     @hash = Hash['name' => hash['name'], 'address' => hash['address'], 'city' => hash['city'],
                  'state' => hash['state'], 'lat' => hash['geolat'], 'lng' => hash['geolong']]
-    import_venue(hash['id'].to_s, Source.foursquare, @hash)
+    import_location(hash['id'].to_s, Source.foursquare, @hash)
   end
 
   # import a facebook place location hash
@@ -19,10 +19,11 @@ class LocationImport
     @hash = Hash['name' => hash['name'], 'address' => hash['location']['street'], 'city' => hash['location']['city'],
                  'state' => hash['location']['state'], 'zip' => hash['location']['zip'],
                  'lat' => hash['location']['latitude'], 'lng' => hash['location']['longitude']]
-    import_venue(hash['id'].to_s, Source.facebook, @hash)
+    import_location(hash['id'].to_s, Source.facebook, @hash)
   end
 
-  def self.import_venue(id, type, hash)
+  # import facebook or foursquare location
+  def self.import_location(id, type, hash)
     # check for existing location using venue id
     @locations = Location.joins(:location_sources) & LocationSource.with_source_id(id).with_source_type(type)
     return @locations.first if @locations.size == 1
@@ -56,7 +57,13 @@ class LocationImport
     @lat            = hash['lat']
     @lng            = hash['lng']
     @country        = Country.us              # default to 'US'
-    
+
+    if @lat and @lng and @state.blank? and @city.blank? and @address.blank?
+      # create location with just a lat, lng
+      @location = Location.create(:name => hash['name'], :country => @country, :lat => @lat, :lng => @lng)
+      return @location
+    end
+
     # find state, city
     @state          = @state.match(/^[a-zA-Z]{2,2}$/) ? State.find_by_code(@state.upcase) : State.find_by_name(@state)
 

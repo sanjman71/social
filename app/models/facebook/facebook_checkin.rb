@@ -16,7 +16,7 @@ class FacebookCheckin
 
     # compare last check timestamp vs current timestamp
     last_check_at   = checkin_log.last_check_at
-    
+
     case
     when last_check_at.blank?
       mm = 0
