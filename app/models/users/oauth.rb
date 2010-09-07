@@ -19,7 +19,7 @@ module Users::Oauth
       end
 
       user = signed_in_resource || find_or_create_facebook_user(data)
-      user.update_facebook_id(data)
+      user.update_from_facebook(data)
       # initialize oauth object
       find_for_service_oauth('facebook', access_token, user)
     end
@@ -36,7 +36,7 @@ module Users::Oauth
       end
       
       user = signed_in_resource || find_or_create_foursquare_user(data)
-      user.update_foursquare_id(data)
+      user.update_from_foursquare(data)
       # initialize oauth object
       find_for_service_oauth('foursquare', access_token, user)
     end
@@ -61,57 +61,65 @@ module Users::Oauth
     end
 
     def base.find_or_create_facebook_user(data)
-      email   = data['email']
-      phone   = data['phone']
-      fname   = data['first_name']
-      gender  = data['gender']
       fbid    = data['id']
       user    = self.find_by_facebook_id(fbid)
       
       if user.blank?
-        # create user
-        email_hash = email ? {"0" => {:address => email}} : Hash[]
-        phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
-        options    = Hash[:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash,
-                          :gender => gender, :facebook_id => fbid]
-        user       = User.create!(options)
-        log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
+        # create user, default handle is firstname
+        fname   = data['first_name']
+        gender  = data['gender']
+        options = Hash[:handle => fname, :gender => gender, :facebook_id => fbid]
+        user    = User.create!(options)
+        log(:ok, "created user #{user.handle}")
       end
       user
     end
     
     def base.find_or_create_foursquare_user(data)
-      email   = data['email']
-      phone   = data['phone']
-      fname   = data['firstname']
-      gender  = data['gender']
-      fsid    = data['id']
-      user    = self.find_by_foursquare_id(fsid)
+      fsid  = data['id']
+      user  = self.find_by_foursquare_id(fsid)
       
       if user.blank?
-        # create user
-        email_hash = email ? {"0" => {:address => email}} : Hash[]
-        phone_hash = phone ? {"0" => {:address => phone, :name => 'Mobile'}} : Hash[]
-        options    = Hash[:handle => fname, :email_addresses_attributes => email_hash, :phone_numbers_attributes => phone_hash,
-                          :gender => gender, :foursquare_id => fsid]
-        user       = User.create!(options)
-        log(:ok, "created user #{user.handle}:#{user.email_address}:#{user.phone_number}")
+        # create user, default handle is firstname
+        fname   = data['firstname']
+        gender  = data['gender']
+        options = Hash[:handle => fname, :gender => gender, :foursquare_id => fsid]
+        user    = User.create!(options)
+        log(:ok, "created user #{user.handle}")
       end
       user
     end
 
-    def update_facebook_id(data)
-      return if self.facebook_id
-      self.facebook_id = data['id']
+    # e.g. {"id"=>"633015812", "name"=>"Sanjay Kapoor", "first_name"=>"Sanjay", "last_name"=>"Kapoor",
+    #       "link"=>"http://www.facebook.com/sanjman71", "gender"=>"male", "timezone"=>-5, "locale"=>"en_US", "verified"=>true,
+    #       "updated_time"=>"2009-07-16T03:50:41+0000"}
+    def update_from_facebook(data)
+      return if data.blank?
+      if data['id'] and self.facebook_id.blank?
+        self.facebook_id = data['id']
+        self.class.log(:ok, "added facebook id #{self.facebook_id} to #{self.handle}")
+      end
       self.save
-      self.class.log(:ok, "added facebook id #{self.facebook_id} to #{self.handle}:#{self.email_address}:#{self.phone_number}")
     end
 
-    def update_foursquare_id(data)
-      return if self.foursquare_id
-      self.foursquare_id = data['id']
+    # e.g {"id"=>2278601, "firstname"=>"Sanjay", "friendstatus"=>"self", "homecity"=>"Chicago, IL",
+    #      "photo"=>"http://foursquare.com/img/blank_boy.png", "gender"=>"male", "phone"=>"6503876818", 
+    #      "email"=>"sanjay@jarna.com", "settings"=>{"pings"=>"off", "sendtotwitter"=>false, "sendtofacebook"=>false}
+    def update_from_foursquare(data)
+      return if data.blank?
+      if data['id'] and self.foursquare_id.blank?
+        self.foursquare_id = data['id']
+        self.class.log(:ok, "added foursquare id #{self.foursquare_id} to #{self.handle}")
+      end
+      if data['email'] and !self.email_addresses.collect(&:address).include?(data['email'])
+        self.email_addresses.build(:address => data['email'])
+        self.class.log(:ok, "added email #{data['email']} to #{self.handle}")
+      end
+      if data['phone'] and !self.phone_numbers.collect(&:address).include?(data['phone'])
+        self.phone_numbers.build(:address => data['phone'], :name => 'Mobile')
+        self.class.log(:ok, "added phone #{data['phone']} to #{self.handle}")
+      end
       self.save
-      self.class.log(:ok, "added foursquare id #{self.foursquare_id} to #{self.handle}:#{self.email_address}:#{self.phone_number}")
     end
 
     def base.foursquare_oauth_consumer
