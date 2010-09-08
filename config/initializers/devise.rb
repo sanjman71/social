@@ -17,11 +17,11 @@
 # FACEBOOK_SECRET     = "b67635266ea25fcc6b613b1b38d893bd"
 case Rails.env
 when 'development', 'test'
-  # http://socialintrigue.dev:5001
+  # http://localhost.outlate.ly:5001
   FACEBOOK_KEY        = "116164955103409"
   FACEBOOK_SECRET     = "74539e3aab96c99d88ac4739b0ab5553"
 when 'production'
-  # http://socialintrigue.com
+  # http://outlate.ly
   FACEBOOK_KEY        = "112124405511761"
   FACEBOOK_SECRET     = "7855c8949c684c4246bc1abb2e0e5af5"
 end
@@ -30,11 +30,11 @@ end
 # FOURSQUARE_SECRET   = "ZTYPX202I5GKITAPGTMWHE4S3ITOWYKIOBHYOPYE2VGMZ51I"
 case Rails.env
 when 'development', 'test'
-  # http://socialintrigue.dev:5001
+  # http://localhost.outlate.ly:5001
   FOURSQUARE_KEY      = "SJ3XA21S2SMTJHJAHR3HAQJWRQKSD5EFY32O35V0IJRV0XGY" 
   FOURSQUARE_SECRET   = "SLTSPUZUXCINMPBGYFCTGUVTGJBRMZUSYXE5H1BD1NNMH5E3"
 when 'production'
-  # http://socialintrigue.com
+  # http://outlate.ly
   FOURSQUARE_KEY      = "JY5LNKYLEYNMQU5WOE2JALFV3LTY2UDIS10PHI3ML1NDQMWK"
   FOURSQUARE_SECRET   = "4IDPZKE2XDYEVSOEW4OOWJYNKXJ3XRLMD2AINIGL3GDT3NYH"
 end
@@ -174,13 +174,14 @@ Devise.setup do |config|
     :site               => 'https://graph.facebook.com/',
     :authorize_path     => '/oauth/authorize',
     :access_token_path  => '/oauth/access_token',
-    :scope              => ['offline_access', 'user_checkins', 'friends_checkins']
+    :scope              => ['offline_access', 'user_checkins', 'friends_checkins', 'user_about_me', 'user_birthday',
+                            'user_location', 'email']
 
   # github - uses oauth2
   config.oauth :github, GITHUB_KEY, GITHUB_SECRET,
     :site               => 'https://github.com/',
     :authorize_path     => '/login/oauth/authorize',
     :access_token_path  => '/login/oauth/access_token',
-    :scope              => %w(user public_repo)
+    :scope              => ['user', 'public_repo']
   
 end

@@ -1,0 +1,8 @@
+1. Create .rvmrc in your app's root directory
+  - rvm user ruby-1.9.2 --rvmrc --create
+  
+  
+# Libyan spider setup
+
+- original ip address - 67.18.153.50
+
