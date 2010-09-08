@@ -1,5 +1,6 @@
 class CheckinsController < ApplicationController
   before_filter :authenticate_user!, :only => [:index]
+  skip_before_filter :check_beta, :only => :poll
 
   # GET /checkins
   def index
