@@ -66,10 +66,12 @@ module Users::Oauth
       
       if user.blank?
         # create user, default handle is firstname
-        fname   = data['first_name']
-        gender  = data['gender']
-        options = Hash[:handle => fname, :gender => gender, :facebook_id => fbid]
-        user    = User.create!(options)
+        fname     = data['first_name']
+        username  = data['link'].try(:split, '/').try(:last)
+        handle    = username || fname # try username first, default to first name
+        gender    = data['gender']
+        options   = Hash[:handle => handle, :gender => gender, :facebook_id => fbid]
+        user      = User.create!(options)
         log(:ok, "created user #{user.handle}")
       end
       user
@@ -93,6 +95,17 @@ module Users::Oauth
     # e.g. {"id"=>"633015812", "name"=>"Sanjay Kapoor", "first_name"=>"Sanjay", "last_name"=>"Kapoor",
     #       "link"=>"http://www.facebook.com/sanjman71", "gender"=>"male", "timezone"=>-5, "locale"=>"en_US", "verified"=>true,
     #       "updated_time"=>"2009-07-16T03:50:41+0000"}
+    # e.g. {"id": "633015812", "name": "Sanjay Kapoor", "first_name": "Sanjay", "last_name": "Kapoor",
+    #       "link": "http://www.facebook.com/sanjman71", "birthday": "02/16",
+    #       "hometown": {"id": 108482895842493, "name": "Saratoga, California"},
+    #       "location": {"id": 108659242498155, "name": "Chicago, Illinois"},
+    #       "education": [{"school": {"id": 10111634660, "name": "University of California, Berkeley"},
+    #                                 "year": {"id": 110605848960677, "name": "1993"}},
+    #                     {school": {"id": 114526828564190, "name": "Stanford"},
+    #                                "year": { "id": 110649312296565, "name": "1997"}}],
+    #       "gender": "male", "interested_in": ["female"],
+    #       "political": "Moderate", "website": "www.walnutplaces.com", "timezone": -5, "locale": "en_US", "verified": true,
+    #       "updated_time": "2009-07-16T03:50:41+0000"}
     def update_from_facebook(data)
       return if data.blank?
       if data['id'] and self.facebook_id.blank?
