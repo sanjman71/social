@@ -37,4 +37,17 @@ module ApplicationHelper
       ''
     end
   end
+
+  # build user display name based on context of the current user
+  def user_display_name(user, current_user, me = 'Me')
+    case
+    when user.blank?
+      ''
+    when user == current_user
+      me
+    else
+      user.handle
+    end
+  end
+  
 end

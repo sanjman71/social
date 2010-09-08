@@ -1,12 +1,13 @@
 class CheckinsController < ApplicationController
   before_filter :authenticate_user!, :only => [:index]
+  before_filter :init_user, :only => [:index]
   skip_before_filter :check_beta, :only => :poll
 
   # GET /checkins
   def index
     # group checkins by source
-    @checkins     = current_user.checkins.group_by(&:source_type)
-    @checkin_logs = current_user.checkin_logs.inject(Hash[]) do |hash, log|
+    @checkins     = @user.checkins.group_by(&:source_type)
+    @checkin_logs = @user.checkin_logs.inject(Hash[]) do |hash, log|
       mm, ss = (Time.zone.now-log.last_check_at).divmod(60)
       # track minutes ago
       hash[log.source] = mm
@@ -31,6 +32,12 @@ class CheckinsController < ApplicationController
     end
 
     flash[:notice] = "Polling checkins for #{@checkin_logs.keys.size} users"
+  end
+
+  protected
+
+  def init_user
+    @user = params[:user_id] ? User.find(params[:user_id]) : current_user
   end
 
 end
