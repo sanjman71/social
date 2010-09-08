@@ -20,6 +20,7 @@ Social::Application.routes.draw do
   match 'accounts', :to => "accounts#index"
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
   match 'suggestions', :to => "suggestions#index"
+  match 'users', :to => "users#index"
 
   match 'beta', :to => "home#beta", :via => [:get, :post]
 

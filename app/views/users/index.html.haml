@@ -1,0 +1,16 @@
+- title('Users')
+
+.span-23.prepend-1.mat
+  %h2== Users
+
+%hr.space
+
+.span-24.last#users
+  - @users.each do |user|
+    .span-24.last#user.padding-bottom-10
+      .span-5.prepend-1#name
+        = user.handle
+      .span-3
+        = pluralize(user.checkins.count, 'checkin')
+      .span-15.last
+        = pluralize(user.checkin_logs.error.count, 'error')

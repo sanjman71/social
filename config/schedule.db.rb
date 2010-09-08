@@ -11,8 +11,8 @@
 # Learn more: http://github.com/javan/whenever
 
 # Crontab update/write example
-# whenever --update-crontab db
-# whenever --write-crontab db
+# whenever --update-crontab db --load-file 'config/schedule.db.rb
+# whenever --write-crontab db --load-file 'config/schedule.db.rb
 
 set :environment, :production
 set :path, '/usr/apps/social/current'
