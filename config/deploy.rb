@@ -32,7 +32,7 @@ load "sphinx"
 
 # automatically called after a deploy
 deploy.task :restart, :roles => :app do
-  run "touch #{current_release}/tmp/restart.txt"
+  unicorn.restart
 end
 
 # after deploy task
