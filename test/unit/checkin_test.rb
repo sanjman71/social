@@ -41,8 +41,11 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 1, @checkin_log.checkins
           assert_equal 'success', @checkin_log.state
           assert_equal 'foursquare', @checkin_log.source
-          # should add delayed_job to rebuild sphinx
-          assert Delayed::Job.last.handler.match(/SphinxJob/)
+          assert_equal 1, @user.checkins.count
+          # should add delayed_job to add suggestion and rebuild sphinx
+          delayed_jobs = Delayed::Job.limit(2).order('id desc').collect(&:handler)
+          assert delayed_jobs[0].match(/SphinxJob/)
+          assert delayed_jobs[1].match(/SuggestionAlgorithm/)
         end
       end
       
@@ -103,8 +106,10 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 1, @checkin_log.checkins
           assert_equal 'success', @checkin_log.state
           assert_equal 'facebook', @checkin_log.source
-          # should add delayed_job to rebuild sphinx
-          assert Delayed::Job.last.handler.match(/SphinxJob/)
+          # should add delayed_job to add suggestion and rebuild sphinx
+          delayed_jobs = Delayed::Job.limit(2).order('id desc').collect(&:handler)
+          assert delayed_jobs[0].match(/SphinxJob/)
+          assert delayed_jobs[1].match(/SuggestionAlgorithm/)
         end
       end
     end

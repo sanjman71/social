@@ -320,34 +320,18 @@ class User < ActiveRecord::Base
 
   def after_add_email_address(email_address)
     return if email_address.new_record?
-    # self.profile_complete! if self.data_missing?
   end
 
   def after_remove_email_address(email_address)
     return if email_address.new_record?
-    # if self.active? and self.reload.email_missing?
-    #   self.profile_data_missing!
-    # end
   end
 
   def after_add_phone_number(phone_number)
     return if phone_number.new_record?
-    # self.profile_complete! if self.data_missing?
   end
 
   def after_remove_phone_number(phone_number)
     return if phone_number.new_record?
-    # if self.active? and self.reload.phone_missing?
-    #   self.profile_data_missing!
-    # end
-  end
-  
-  def after_update_callback
-    # when a user's phone or email is added using update_attributes, the after_add callbacks are not called
-    # check if user is in the data_missing state and the missing data has been added
-    if self.data_missing? and self.profile_complete?
-      self.profile_complete!
-    end
   end
 
 end

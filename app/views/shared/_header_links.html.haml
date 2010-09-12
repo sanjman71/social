@@ -7,10 +7,10 @@
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Checkins', checkins_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
-      = link_to('Sightings', sightings_path, :class => 'header link')
-      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Suggestions', suggestions_path, :class => 'header link')
       - if current_user.has_role?('admin')
+        %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+        = link_to('Sightings', sightings_path, :class => 'header link')
         %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
         = link_to('Users', users_path, :class => 'header link')
         %span{:class => 'vertical bar'}== &nbsp;|&nbsp;

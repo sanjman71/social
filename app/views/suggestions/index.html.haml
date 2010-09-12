@@ -20,6 +20,8 @@
           = link_to image_tag('pencil.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
         - elsif suggestion.going_out?
           = link_to image_tag('circle-check.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+        - elsif suggestion.bailed?
+          = link_to image_tag('circle-delete.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
         - else
           == &nbsp;
       .span-19.last{:style => 'padding-top: 15px;'}

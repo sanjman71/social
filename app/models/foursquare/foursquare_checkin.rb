@@ -72,6 +72,8 @@ class FoursquareCheckin
       checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
       log(:ok, "user #{user.handle}: imported #{checkins_added} #{source} checkins")
       if checkins_added > 0
+        # create suggestions
+        SuggestionAlgorithm.send_later(:create_for, user, Hash[:algorithm => [:checkins, :radius, :gender], :limit => 1])
         # rebuild sphinx index
         Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
       end

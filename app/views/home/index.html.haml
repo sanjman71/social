@@ -32,9 +32,14 @@
       -#= link_to "Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'  
 
 - if user_signed_in?
+  .span-23.prepend-1.last#suggestions
+    - if current_user.suggestions.active.count > 0
+      %h3== You have #{link_to(pluralize(current_user.suggestions.active.count, 'suggestion'), suggestions_path)}
+    - else
+      %h3== No suggestions at the moment, but we're working on finding you some.
+
   .span-23.prepend-1.last
     #map
-
     #map-side-bar
       - @locations.each do |location|
         - next unless location.mappable?

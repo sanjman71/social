@@ -34,7 +34,10 @@ class Suggestion < ActiveRecord::Base
     transitions :to => :bailed, :from => [:initialized, :talking]
   end
   # END acts_as_state_machine
-  
+
+  # active suggestions have not been marked as bailed
+  scope       :active, where("suggestions.state != 'bailed'")
+
   def scheduled_at=(t)
     if t.is_a?(String)
       # convert string to datetime
