@@ -1,6 +1,6 @@
 /* link styles */
 
-a:hover                                           { color: #FFFFFF; background-color: #0033CC; text-decoration: none; }
+/* a:hover                                           { color: #FFFFFF; background-color: #0033CC; text-decoration: none; } */
 a.current, a.current:hover                        { text-decoration: none; }
 a img                                             { border: 0 none; vertical-align: top; }
 
@@ -70,6 +70,7 @@ div#header_links span.vertical.bar                { color: #FFFFFF; }
 
 div.block                                         { background: #E1E0E0 none repeat scroll 0 0; border-bottom: 1px solid #DFDFDF;
                                                     color: #666666; font-size: 11px; font-weight: bold; padding: 5px 10px 5px 10px; }
+div.block.light                                   { background: #EFEFEF; }
 
 div.mat                                           { background: #EDF3FE none repeat scroll 0 0; }
 div.mat.shaded                                    { background: #E5ECF9 none repeat scroll 0 0; }
@@ -80,6 +81,7 @@ h1.title                                          { font-size: 1.5em; }
 
 input:focus                                       { outline: 0 none; }  /* needed to remove border/outline in safari */
 
+input.big                                         { font-size: 1.5em; }
 input.title.big                                   { color: #000000; font-size: 20px; font-weight: bold; }
 input.title.hint                                  { color: #BBBBBB; border: none; }
 
@@ -91,10 +93,14 @@ label.big                                         { font-size: 16px; }
 .select                                           { font-size: 12px; }
 .select.big                                       { font-size: 15px; }
 
+.text.big                                         { font-size: 1.5em; }
+
 /* admin styles */
 
 a.admin:link, a.admin:visited                     { font-size: 0.9em; font-weight: normal; color: #0000FF; }
 a.admin:hover                                     { color: #FFFFFF; background-color: #0000FF; text-decoration: none; }
+
+a.admin.big:link, a.admin.big:visited             { font-size: 1.5em; }
 
 a.admin.color, a.admin.color:visited              { color: #3A2313; font-size: 0.9em; font-weight: bold; }
 a.admin.color:hover                               { color: #FFFFFF; background-color: #3A2313; }

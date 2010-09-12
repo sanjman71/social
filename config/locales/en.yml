@@ -3,3 +3,28 @@
 
 en:
   hello: "Hello world"
+  suggestion:
+    error:
+      flash: "Whoops, that's not allowed"
+    title:
+      outlately: "outlate.ly suggests meeting %{name} at %{location}"
+    initialized:
+      outlately: "Here's a suggestion from outlate.ly"
+    declined:
+      by: "%{name} said no to this suggestion"
+      to: "%{name} said no to this suggestion"
+      flash: "Suggestion was declined"
+    scheduled:
+      by: "%{name} suggested a date and time"
+      to: "%{name} suggested a date and time"
+      flash: "Suggestion was scheduled"
+    rescheduled:
+      by: "%{name} suggested a different date and time"
+      to: "%{name} suggested a different date and time"
+      flash: "Suggestion was re-scheduled"
+    confirmed:
+      by: "%{name} confirmed the date and time"
+      to: "%{name} confirmed the date and time"
+    goingout:
+      by: "%{name} confirmed and are going out"
+      to: "%{name} confirmed so you're going out"

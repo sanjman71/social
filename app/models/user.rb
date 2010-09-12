@@ -26,6 +26,8 @@ class User < ActiveRecord::Base
   has_one                   :primary_phone_number, :class_name => 'PhoneNumber', :as => :callable, :order => "priority asc"
   accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
 
+  belongs_to                :city
+
   has_many                  :oauths
   has_many                  :checkins
   has_many                  :locations, :through => :checkins
@@ -37,13 +39,14 @@ class User < ActiveRecord::Base
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
 
+  before_save               :before_save_callback
   after_create              :manage_user_roles
   # after_update              :after_update_callback
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible           :handle, :password, :password_confirmation, :gender, :rpx, :facebook_id, :email_addresses_attributes,
-                            :phone_numbers_attributes, :preferences_phone, :preferences_email
+  attr_accessible           :handle, :password, :password_confirmation, :gender, :rpx, :facebook_id, :city, :city_id,
+                            :email_addresses_attributes, :phone_numbers_attributes, :preferences_phone, :preferences_email
 
   # BEGIN acts_as_state_machine
   include AASM
@@ -76,7 +79,11 @@ class User < ActiveRecord::Base
   define_index do
     has :id, :as => :user_id
     indexes handle, :as => :handle
+    has :gender, :as => :gender
     has locations(:id), :as => :location_ids, :facet => true
+    # convert degrees to radians for sphinx
+    has 'RADIANS(users.lat)', :as => :lat,  :type => :float
+    has 'RADIANS(users.lng)', :as => :lng,  :type => :float
     # real time indexing with delayed_job
     # set_property :delta => :delayed
     # only index active users
@@ -202,10 +209,16 @@ class User < ActiveRecord::Base
     self.rpx == 1
   end
 
-  def profile_complete?
-    return false if (self.reload.email_missing? or self.reload.phone_missing?)
-    true
+  # returns true iff the user has a latitude and longitude 
+  def mappable?
+    return true if self.lat and self.lng
+    false
   end
+
+  # def profile_complete?
+  #   return false if (self.reload.email_missing? or self.reload.phone_missing?)
+  #   true
+  # end
 
   # return true if a email address is required but user doesn't have one
   def email_missing?
@@ -269,6 +282,13 @@ class User < ActiveRecord::Base
   def make_activation_code
     self.deleted_at = nil
     self.activation_code = self.class.make_token
+  end
+
+  def before_save_callback
+    if self.lat.blank? and self.lng.blank? and self.city
+      self.lat = self.city.lat
+      self.lng = self.city.lng
+    end
   end
 
   def manage_user_roles

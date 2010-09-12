@@ -3,6 +3,14 @@ class FacebookCheckin
   # import all checkins for the specfied user
   def self.import_checkins(user, options={})
     source = 'facebook'
+    # find user
+    if user.is_a?(String)
+      user = User.find_by_handle(user)
+    end
+    if user.blank?
+      log(:notice, "invalid user #{user.inspect}")
+      return nil
+    end
     # find foursquare oauth tokens
     oauth  = user.oauths.where(:name => source).first
     if oauth.blank?

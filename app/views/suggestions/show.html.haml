@@ -1,0 +1,63 @@
+- title('Suggestion')
+- javascript('suggestions', 'jquery.timepickr')
+- stylesheet('jquery.timepickr')
+
+.span-23.prepend-1.mat
+  %h2== Suggestion
+
+%hr.space
+
+.span.24.last
+  = display_flash(:all)
+
+.span-15.prepend-1#title
+  %h3= @party.message
+  
+- form_for(@suggestion, :html => {:id => 'suggestion_form', "data-schedule-url" => schedule_suggestion_path(@suggestion, :format => 'js'), :url => schedule_suggestion_path(@suggestion)}) do |f|
+
+  .span-15.prepend-1.last.padding-bottom-10#with
+    .span-2.label.block.light
+      %h4.bigger.block.bottom== With:
+    .span-11.text.big.last
+      = @other_party.handle
+
+  .span-15.prepend-1.last.padding-bottom-10#where
+    .span-2.label.block.light
+      %h4.bigger.block.bottom== Where:
+    .span-11.text.big.last
+      = @suggestion.location.name
+    
+  .span-15.prepend-1.last.padding-bottom-10#when
+    .span-2.label.block.light
+      %h4.bigger.block.bottom== When:
+    .span-11.text.big.last
+      = @suggestion.scheduled_at.try(:to_s, :datetime) || @suggestion.when
+
+  .span-15.prepend-1.last.padding-top-10#options
+    - links = []
+    - if @party.aasm_events_for_current_state.include?(:schedule)
+      - links.push(link_to('Pick a Date', '#', :class => 'admin big', :id => 'pick_suggestion_date'))
+    - if @party.aasm_events_for_current_state.include?(:decline)
+      - links.push(link_to('Decline', decline_suggestion_path(@suggestion), :class => 'admin big', :method => :put, :confirm => 'Are you sure'))
+    - links.each_with_index do |link, index|
+      = link
+      - unless index == links.size-1
+        ==&nbsp;or&nbsp;
+
+  .span-15.prepend-1.last.padding-top-10.padding-bottom-10.hide#datetime
+    .span-2.label.block.light
+      %h4.bigger.block.bottom== Date:
+    .span-11.last
+      = text_field_tag 'suggestion[date]', '', :class => 'datepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 12, :autocomplete => 'off'
+      -#= text_field_tag 'suggestion[time]', '', :class => 'timepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 9, :autocomplete => 'off'
+
+  .span-15.prepend-1.last.padding-bottom-10.hide#message
+    .span-2.label.block.light
+      %h4.bigger.block.bottom== Message:
+    .span-11.last
+      = text_field_tag 'suggestion[message]', '', :class => 'big top', :style => 'padding: 3px; margin: 0px;', :size => 50, :autocomplete => 'off'
+  
+  .span-15.prepend-1.last.padding-bottom-10.hide#schedule_submit
+    = submit_tag 'Schedule', :id => 'schedule_suggestion_date'
+    ==&nbsp;or&nbsp;
+    = link_to 'Nevermind', '#', :id => 'pick_suggestion_date_nevermind', :class => 'admin'

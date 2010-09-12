@@ -93,8 +93,9 @@ module Users::Oauth
     end
 
     # e.g. {"id"=>"633015812", "name"=>"Sanjay Kapoor", "first_name"=>"Sanjay", "last_name"=>"Kapoor",
-    #       "link"=>"http://www.facebook.com/sanjman71", "gender"=>"male", "timezone"=>-5, "locale"=>"en_US", "verified"=>true,
-    #       "updated_time"=>"2009-07-16T03:50:41+0000"}
+    #       "link"=>"http://www.facebook.com/sanjman71", "birthday"=>"02/16",
+    #       "location"=>{"id"=>108659242498155, "name"=>"Chicago, Illinois"}, "gender"=>"male", "email"=>"sanjay@jarna.com",
+    #        "timezone"=>-5, "locale"=>"en_US", "verified"=>true, "updated_time"=>"2009-07-16T03:50:41+0000"}
     # e.g. {"id": "633015812", "name": "Sanjay Kapoor", "first_name": "Sanjay", "last_name": "Kapoor",
     #       "link": "http://www.facebook.com/sanjman71", "birthday": "02/16",
     #       "hometown": {"id": 108482895842493, "name": "Saratoga, California"},
@@ -109,8 +110,19 @@ module Users::Oauth
     def update_from_facebook(data)
       return if data.blank?
       if data['id'] and self.facebook_id.blank?
+        # add user facebook id
         self.facebook_id = data['id']
         self.class.log(:ok, "added facebook id #{self.facebook_id} to #{self.handle}")
+      end
+      if data['location'] and !self.mappable?
+        # add user location city
+        begin
+          city = Locality.resolve(data['location']['name'], :create => true)
+          self.city = city
+          self.class.log(:ok, "added city #{city.name} to #{self.handle}")
+        rescue Exception => e
+          
+        end
       end
       self.save
     end

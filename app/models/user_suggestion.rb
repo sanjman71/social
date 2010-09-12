@@ -3,6 +3,10 @@ class UserSuggestion < ActiveRecord::Base
   belongs_to    :user
   
   validates     :state, :presence => true
+  validates     :user_id, :presence => true, :uniqueness => {:scope => :suggestion_id}
+  # validates     :suggestion_id, :presence => true # doesn't work with nested attributes
+
+  delegate      :handle, :to => :user
 
   before_create :before_create_callback
 
@@ -17,11 +21,11 @@ class UserSuggestion < ActiveRecord::Base
   aasm_state                :confirmed
 
   aasm_event :decline do
-    transitions :to => :declined, :from => [:initialized, :scheduled, :confirmed, :declined]
+    transitions :to => :declined, :from => [:initialized, :scheduled, :confirmed]
   end
 
   aasm_event :dump do
-    transitions :to => :dumped, :from => [:initialized, :scheduled, :confirmed, :dumped]
+    transitions :to => :dumped, :from => [:initialized, :scheduled, :confirmed]
   end
 
   aasm_event :schedule do
@@ -41,13 +45,9 @@ class UserSuggestion < ActiveRecord::Base
     self.update_attribute(:message, s)
   end
 
-  # messages
-
-  @@message_initialized   = "A suggested date"
-  @@message_declined      = "%s declined"
-  @@message_scheduled     = "%s suggested a date and time"
-  @@message_rescheduled   = "%s suggested another date and time"
-  @@message_confirmed     = "%s confirmed"
+  def alert!(b=true)
+    self.update_attribute(:alert, b)
+  end
 
   protected
   
@@ -56,7 +56,13 @@ class UserSuggestion < ActiveRecord::Base
   end
 
   def before_create_callback
-    self.message = @@message_initialized if self.message.blank?
+    self.alert = true
+    if self.message.blank?
+      # set default message
+      if suggestion.creator.blank?
+        self.message = I18n.t('suggestion.initialized.outlately')
+      end
+    end
   end
 
   def log(level, s, options={})

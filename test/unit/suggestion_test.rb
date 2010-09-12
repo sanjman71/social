@@ -13,65 +13,107 @@ class SuggestionTest < ActiveSupport::TestCase
 
   context "create" do
     should "start in initialized state with default messages" do
-      @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
-                      :location => @loc1, :when => 'next weeks']
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
+                      :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
       assert @suggestion.valid?
       assert_equal 'initialized', @suggestion.state
-      assert_equal 'initialized', @suggestion.actor1.state
-      assert_equal 'initialized', @suggestion.actor2.state
-      assert_equal 'A suggested date', @suggestion.actor1.message
-      assert_equal 'A suggested date', @suggestion.actor2.message
+      assert_equal 'initialized', @suggestion.party1.state
+      assert_equal 'initialized', @suggestion.party2.state
+      assert_true @suggestion.party1.alert?
+      assert_true @suggestion.party2.alert?
+      assert_equal "Here's a suggestion from outlate.ly", @suggestion.party1.message
+      assert_equal "Here's a suggestion from outlate.ly", @suggestion.party2.message
+      assert_equal @user1, @suggestion.user1
+      assert_equal @user2, @suggestion.user2
+      assert_equal [:bail, :talk], @suggestion.aasm_events_for_current_state.sort
+      assert_equal [:decline, :dump, :schedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:decline, :dump, :schedule], @suggestion.party2.aasm_events_for_current_state.sort
     end
     
+    should "create with scheduled_at format dd/mm/yyyy" do
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
+                      :location => @loc1, :when => 'next week', :scheduled_at => '08/01/2010']
+      @suggestion = Suggestion.create(@options)
+      assert_equal "20100801T000000", @suggestion.scheduled_at.to_s(:datetime_schedule)
+    end
+
+    should "create with scheduled_at format yyyymmdd" do
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
+                      :location => @loc1, :when => 'next week', :scheduled_at => '20100501']
+      @suggestion = Suggestion.create(@options)
+      assert_equal "20100501T000000", @suggestion.scheduled_at.to_s(:datetime_schedule)
+    end
+  end
+
+  context "state transitions" do
     should "decline" do
-      @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                       :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
-      # actor1 declines
-      @suggestion.user_declines(@suggestion.actor1)
-      assert_equal 'declined', @suggestion.actor1.state
-      assert_equal 'dumped', @suggestion.actor2.state
+      # party1 declines
+      @suggestion.party_declines(@suggestion.party1)
+      assert_equal 'declined', @suggestion.party1.state
+      assert_equal 'dumped', @suggestion.party2.state
       assert_equal 'bailed', @suggestion.reload.state
-      assert_equal "user1 declined", @suggestion.actor2.message
+      assert_equal "You said no to this suggestion", @suggestion.party1.message
+      assert_equal "user1 said no to this suggestion", @suggestion.party2.message
+      assert_equal [], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [], @suggestion.party2.aasm_events_for_current_state.sort
     end
 
     should "schedule, then confirm" do
-      @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                       :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
-      # actor1 schedules
-      @suggestion.user_schedules(@suggestion.actor1)
-      assert_equal 'scheduled', @suggestion.actor1.state
-      assert_equal 'scheduled', @suggestion.actor2.state
+      # party1 schedules - should change party1 to confirmed, party2 to scheduled
+      @tomorrow   = Time.zone.now.end_of_day + 1.second + 10.hours
+      @suggestion.party_schedules(@suggestion.party1, :scheduled_at => @tomorrow)
+      assert_equal 'scheduled', @suggestion.party1.state
+      assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
-      assert_equal "user1 suggested a date and time", @suggestion.actor2.message
-      # actor1 confirms - should change actor2 state to 'scheduled'
-      @suggestion.user_confirms(@suggestion.actor1)
-      assert_equal 'confirmed', @suggestion.actor1.state
-      assert_equal 'scheduled', @suggestion.actor2.state
+      # compare times without subsec
+      assert_equal @tomorrow.to_s(:datetime_schedule), @suggestion.scheduled_at.to_s(:datetime_schedule)
+      assert_equal "You suggested a date and time", @suggestion.party1.message
+      assert_equal "user1 suggested a date and time", @suggestion.party2.message
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      # party1 confirms - should change party2 state to 'scheduled'
+      @suggestion.party_confirms(@suggestion.party1)
+      assert_equal 'confirmed', @suggestion.party1.state
+      assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
-      assert_equal "user1 confirmed", @suggestion.actor2.message
-      # actor2 confirms
-      @suggestion.user_confirms(@suggestion.actor2)
-      assert_equal 'confirmed', @suggestion.actor2.state
-      assert_equal 'confirmed', @suggestion.actor1.state
+      assert_equal "You confirmed the date and time", @suggestion.party1.message
+      assert_equal "user1 confirmed the date and time", @suggestion.party2.message
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      # party2 confirms
+      @suggestion.party_confirms(@suggestion.party2)
+      assert_equal 'confirmed', @suggestion.party2.state
+      assert_equal 'confirmed', @suggestion.party1.state
       assert_equal 'going_out', @suggestion.reload.state
+      assert_equal "You confirmed and are going out", @suggestion.party2.message
+      assert_equal "user2 confirmed so you're going out", @suggestion.party1.message
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
     end
     
     should "schedule, then re-schedule" do
-      @options = Hash[:actor1_attributes => {:user => @user1}, :actor2_attributes => {:user => @user2},
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                       :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
-      # actor1 schedules
-      @suggestion.user_schedules(@suggestion.actor1)
-      # actor2 reschedules
-      @suggestion.user_reschedules(@suggestion.actor2)
-      assert_equal 'scheduled', @suggestion.actor1.state
-      assert_equal 'scheduled', @suggestion.actor2.state
+      # party1 schedules
+      @suggestion.party_schedules(@suggestion.party1)
+      # party2 reschedules
+      @suggestion.party_reschedules(@suggestion.party2)
+      assert_equal 'scheduled', @suggestion.party1.state
+      assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
-      assert_equal "user2 suggested another date and time", @suggestion.actor1.message
+      assert_equal "You suggested a different date and time", @suggestion.party2.message
+      assert_equal "user2 suggested a different date and time", @suggestion.party1.message
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
     end
-    
   end
+
 end

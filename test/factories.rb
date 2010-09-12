@@ -20,6 +20,16 @@ Factory.define :il, :class => :State do |o|
   o.code        "IL"
 end
 
+Factory.define :ny, :class => :State do |o|
+  o.name        "New York"
+  o.code        "NY"
+end
+
+Factory.define :ma, :class => :State do |o|
+  o.name        "Massachusetts"
+  o.code        "MA"
+end
+
 Factory.define :ontario, :class => :State do |o|
   o.name        "Ontario"
   o.code        "ON"
@@ -39,7 +49,7 @@ Factory.define :toronto, :class => :City do |o|
 end
 
 Factory.define :city do |o|
-  o.name        "Chicago"
+  o.name        "City Name"
 end
 
 Factory.define :zip do |o|

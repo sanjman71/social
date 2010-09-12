@@ -1,0 +1,28 @@
+- title('Suggestions')
+
+.span-23.prepend-1.mat
+  %h2== Suggestions
+  %h4== My Suggestions
+
+%hr.space
+
+.span-24.last#suggestions
+  - @suggestions.each do |suggestion|
+    .span-24.last#suggestion
+      .span-2.prepend-1#picture
+        - my_party    = suggestion.my_party(current_user)
+        - other_party = suggestion.other_party(current_user)
+        = image_tag(picture_url(other_party.user), :size => '50x50')
+      .span-1#icons
+        - if my_party.alert?
+          = link_to image_tag('circle-alert.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+        - elsif suggestion.talking?
+          = link_to image_tag('pencil.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+        - elsif suggestion.going_out?
+          = link_to image_tag('circle-check.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+        - else
+          == &nbsp;
+      .span-19.last{:style => 'padding-top: 15px;'}
+        %h4
+          = t("suggestion.title.outlately", :name => other_party.handle, :location => suggestion.location.name)
+        

@@ -35,8 +35,10 @@ staging:
   mem_limit: 128M
   morphology: stem_en
 test:
-  port: 3312
+  port: 3313
   max_matches: 200
+  searchd_log_file: log/searchd.test.log
+  query_log_file: log/searchd.query.test.log
   pid_file: log/searchd.test.pid
   # ignore single quotes
   ignore_chars: U+0027

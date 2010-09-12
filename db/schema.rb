@@ -273,9 +273,12 @@ ActiveRecord::Schema.define(:version => 20100831140715) do
   add_index "states", ["timezone_id"], :name => "index_states_on_timezone_id"
 
   create_table "suggestions", :force => true do |t|
-    t.integer "location_id"
-    t.string  "state",       :limit => 50, :null => false
-    t.string  "when",        :limit => 50
+    t.integer  "location_id"
+    t.string   "state",        :limit => 50, :null => false
+    t.string   "when",         :limit => 50
+    t.datetime "scheduled_at"
+    t.integer  "creator_id"
+    t.string   "match",        :limit => 50
   end
 
   create_table "timezones", :force => true do |t|
@@ -290,7 +293,7 @@ ActiveRecord::Schema.define(:version => 20100831140715) do
     t.integer "suggestion_id"
     t.string  "state",         :limit => 50,                     :null => false
     t.string  "message",       :limit => 200
-    t.boolean "dirty",                        :default => false
+    t.boolean "alert",                        :default => false
   end
 
   create_table "users", :force => true do |t|

@@ -12,8 +12,6 @@ class LocationTest < ActiveSupport::TestCase
   should have_many :phone_numbers
   should have_many :neighbors
   should have_many :location_sources
-  # should have_many :companies
-  # should have_one  :company
 
   def setup
     @us           = Factory(:us)
@@ -24,7 +22,6 @@ class LocationTest < ActiveSupport::TestCase
     @toronto      = Factory(:toronto, :state => @on)
     @zip          = Factory(:zip, :name => "60654", :state => @il)
     @river_north  = Factory(:neighborhood, :name => "River North", :city => @chicago)
-    # @company      = Company.create(:name => "My Company", :time_zone => "UTC", :tag_list => 'beer, soccer')
   end
 
   context "location to_param" do
@@ -54,85 +51,6 @@ class LocationTest < ActiveSupport::TestCase
   #   
   #     should "have empty tags collection" do
   #       assert_equal ['beer', 'soccer'], @location.tags.collect(&:name)
-  #     end
-  #   end
-  # end
-
-  # context "location with a company" do
-  #   setup do
-  #     @location = Location.create(:name => "Home", :country => @us)
-  #     @company.locations.push(@location)
-  #     @company.reload
-  #   end
-  # 
-  #   should_change("Location.count", :by => 1) { Location.count }
-  #   should_change("CompanyLocation.count", :by => 1) { CompanyLocation.count }
-  #   
-  #   should "increment company.locations_count" do
-  #     assert_equal 1, @company.locations_count
-  #   end
-  #   
-  #   should "increment us.locations_count" do
-  #     assert_equal 1, @us.reload.locations_count
-  #   end
-  #   
-  #   context "add second company to location" do
-  #     setup do
-  #       @company2 = Factory(:company, :name => "Company 2")
-  #       @company2.locations.push(@location)
-  #       @company2.reload
-  #     end
-  # 
-  #     should_change("CompanyLocation.count", :by => 1) { CompanyLocation.count }
-  # 
-  #     should "increment company2.locations_count" do
-  #       assert_equal 1, @company2.locations_count
-  #     end
-  #     
-  #     should "add to location.companies" do
-  #       assert_equal [@company, @company2], @location.companies
-  #     end
-  #     
-  #     should "have company as location.comapny" do
-  #       assert_equal @company, @location.company
-  #     end
-  # 
-  #     context "remove company" do
-  #       setup do
-  #         @company.locations.delete(@location)
-  #       end
-  # 
-  #       should_change("CompanyLocation.count", :by => -1) { CompanyLocation.count }
-  #       
-  #       should "have 1 company in location.companies" do
-  #         assert_equal [@company2], @location.companies
-  #       end
-  # 
-  #       should "have company2 as location.comapny" do
-  #         assert_equal @company2, @location.company
-  #       end
-  #     end
-  #   end
-  #  
-  #   context "remove company location" do
-  #     setup do
-  #       @company.locations.delete(@location)
-  #     end
-  #     
-  #     should_change("CompanyLocation.count", :by => -1) { CompanyLocation.count }
-  #     
-  #     context "then destroy company and location" do
-  #       setup do
-  #         @company.destroy
-  #         @location.destroy
-  #       end
-  # 
-  #       should_change("Location.count", :by => -1) { Location.count }
-  #       should_change("Company.count", :by => -1) { Company.count }
-  #       
-  #       should "decrement us.locations_count" do
-  #         assert_equal 0, @us.reload.locations_count
-  #       end
   #     end
   #   end
   # end
@@ -216,7 +134,7 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
   
-  context "location with a city" do
+  context "location with a pre-defined city" do
     setup do
       @location = Location.create(:name => "Home", :city => @chicago, :country => @us)
       assert @location.valid?
@@ -225,12 +143,9 @@ class LocationTest < ActiveSupport::TestCase
       @us.reload
     end
     
-    should "increment chicago.locations_count, us.locations_count" do
+    should "increment chicago.locations_count, us.locations_count, set chicago.locations" do
       assert_equal 1, @chicago.locations_count
       assert_equal 1, @us.locations_count
-    end
-
-    should "set chicago locations to [@location]" do
       assert_equal [@location], @chicago.locations
     end
 
@@ -241,11 +156,8 @@ class LocationTest < ActiveSupport::TestCase
         @chicago.reload
       end
 
-      should "decrement chicago.locations_count" do
+      should "decrement chicago.locations_count, change chicago.locations" do
         assert_equal 0, @chicago.locations_count
-      end
-
-      should "set chicago locations to []" do
         assert_equal [], @chicago.locations
       end
     end
@@ -263,40 +175,16 @@ class LocationTest < ActiveSupport::TestCase
         @canada.reload
       end
 
-      should "remove chicago locations" do
+      should "remove chicago locations, set toronto.locations, change location state, country, change counters" do
         assert_equal [], @chicago.locations
-      end
-
-      should "set toronto locations to [@location]" do
         assert_equal [@location], @toronto.locations
-      end
-
-      should "set location's state and country to new city's state and country" do
         assert_equal @toronto.state, @location.state
         assert_equal @toronto.state.country, @location.country
-      end
-      
-      should "decrement chicago locations_count" do
         assert_equal 0, @chicago.locations_count
-      end
-
-      should "decrement illinois locations_count" do
         assert_equal 0, @il.locations_count
-      end
-
-      should "decrement us locations_count" do
         assert_equal 0, @us.locations_count
-      end
-
-      should "increment toronto locations_count" do
         assert_equal 1, @toronto.locations_count
-      end
-
-      should "increment ontario locations_count" do
         assert_equal 1, @on.locations_count
-      end
-
-      should "increment canada locations_count" do
         assert_equal 1, @canada.locations_count
       end
       
@@ -304,7 +192,6 @@ class LocationTest < ActiveSupport::TestCase
       # should "clear all existing neighborhoods not in the new city" do
       #   assert_equal @location.neighborhoods, []
       # end
-      
     end
   end
 
