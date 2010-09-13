@@ -6,7 +6,8 @@ class SuggestionAlgorithm
     @remaining        = @limit
     @users            = []
     @users_hash       = Hash[]
-    @without_user_ids = [user.id]
+    # by default, no repeat suggestion users
+    @without_user_ids = ([user.id] + user.suggestions.collect(&:users).flatten.collect(&:id)).uniq.sort
 
     # check that user has at least 1 checkin
     return [] if user.checkins.count == 0
@@ -25,7 +26,7 @@ class SuggestionAlgorithm
       else
         users = []
       end
-      # add to users collection
+      # append to users collection
       @users            += users
       # decrement remaining users to find
       @remaining        -= @users.size
@@ -36,8 +37,19 @@ class SuggestionAlgorithm
 
     @suggestions = []
     @users.each do |u|
-      @options    = Hash[:party1_attributes => {:user => user}, :party2_attributes => {:user => u},
-                         :location => user.locations.first, :when => 'next week', :match => @users_hash[u.id]]
+      # pick a location based on the suggestion match type
+      @match = @users_hash[u.id]
+      case @match
+      when 'checkin'
+        # pick a (random) common location
+        @common   = u.locations.collect(&:id)
+        @location = user.locations.where('locations.id IN (%s)' % @common.join(',')).limit(1).order('rand()').first
+      else
+        # pick a random location
+        @location = user.locations.limit(1).order('rand()').first
+      end
+      @options    = Hash[:party1_attributes => {:user => user}, :party2_attributes => {:user => u}, :match => @match,
+                         :location => @location, :when => 'next week']
       @suggestion = Suggestion.create(@options)
       @suggestions.push(@suggestion)
     end

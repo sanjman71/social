@@ -1,14 +1,15 @@
 class Suggestion < ActiveRecord::Base
-  has_many    :parties, :class_name => "UserSuggestion", :dependent => :destroy
-  has_one     :party1, :class_name => 'UserSuggestion', :order => 'id asc'
-  has_one     :party2, :class_name => 'UserSuggestion', :order => 'id desc'
-  has_many    :users, :through => :parties, :source => :user
-  has_one     :user1, :through => :party1, :order => 'id asc',  :source => :user
-  has_one     :user2, :through => :party2, :order => 'id desc', :source => :user
-  belongs_to  :creator, :class_name => 'User'
-  belongs_to  :location
+  has_many      :parties, :class_name => "UserSuggestion", :dependent => :destroy
+  has_one       :party1, :class_name => 'UserSuggestion', :order => 'id asc'
+  has_one       :party2, :class_name => 'UserSuggestion', :order => 'id desc'
+  has_many      :users, :through => :parties, :source => :user
+  has_one       :user1, :through => :party1, :order => 'id asc',  :source => :user
+  has_one       :user2, :through => :party2, :order => 'id desc', :source => :user
+  belongs_to    :creator, :class_name => 'User'
+  belongs_to    :location
 
-  validates   :state, :presence => true
+  validates     :state, :presence => true
+  after_create  :after_create_callback
 
   accepts_nested_attributes_for :party1, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
   accepts_nested_attributes_for :party2, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
@@ -56,48 +57,42 @@ class Suggestion < ActiveRecord::Base
   def party_declines(party, options={})
     party.decline!
     party.alert!(false)
-    log(:ok, "#{party.handle} declined")
     @other_party = other_party(party) 
     @other_party.dump!
     @other_party.alert!
-    log(:ok, "#{@other_party.handle} dumped")
     bail!
     party.message!(I18n.t('suggestion.declined.by', :name => 'You'))
     @other_party.message!(I18n.t('suggestion.declined.to', :name => party.handle))
-    log(:ok, "bailed")
+    log(:ok, "#{party.handle} declined, #{@other_party.handle} dumped, suggestion bailed")
   end
 
   def party_schedules(party, options={})
     self.scheduled_at = options[:scheduled_at]
     party.schedule!
     party.alert!(false)
-    log(:ok, "#{party.handle} scheduled")
     @other_party = other_party(party) 
     @other_party.schedule!
     @other_party.alert!
-    log(:ok, "#{@other_party.handle} changed to scheduled")
     talk!
     party.message!(I18n.t('suggestion.scheduled.by', :name => 'You'))
     @other_party.message!(I18n.t('suggestion.scheduled.to', :name => party.handle))
-    log(:ok, "talking")
+    log(:ok, "#{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion talking")
   end
 
   def party_reschedules(party, options={})
     party.reschedule!
-    log(:ok, "#{party.handle} rescheduled")
     @other_party = other_party(party) 
     @other_party.reschedule!
     @other_party.alert!
     party.message!(I18n.t('suggestion.rescheduled.by', :name => 'You'))
     @other_party.message!(I18n.t('suggestion.rescheduled.to', :name => party.handle))
-    log(:ok, self.state)
+    log(:ok, "#{party.handle} rescheduled, suggestion #{self.state}")
   end
 
   def party_confirms(party, options={})
     party.confirm!
-    log(:ok, "#{party.handle} confirmed")
     @other_party = other_party(party)
-    log(:ok, self.state)
+    log(:ok, "#{party.handle} confirmed, suggestion #{self.state}")
     case options[:message]
     when :keep
       # don't change the message
@@ -110,7 +105,7 @@ class Suggestion < ActiveRecord::Base
     if party.confirmed? and @other_party.confirmed?
       # both parties have confirmed
       go_out!
-      log(:ok, "going out")
+      log(:ok, "suggestion going out")
       party.message!(I18n.t('suggestion.goingout.by', :name => 'You'))
       @other_party.message!(I18n.t('suggestion.goingout.to', :name => party.handle))
     end
@@ -135,6 +130,10 @@ class Suggestion < ActiveRecord::Base
   end
 
   protected
+
+  def after_create_callback
+    log(:ok, "creator:#{creator.try(:id).to_i}, users:#{party1.try(:user_id)},#{party2.try(:user_id)}, when:#{self.when}")
+  end
 
   def log(level, s, options={})
     SUGGESTIONS_LOGGER.debug("#{Time.now}: [#{level}] suggestion:#{self.id} #{s}")

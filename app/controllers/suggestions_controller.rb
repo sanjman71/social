@@ -6,12 +6,6 @@ class SuggestionsController < ApplicationController
   # GET /suggestions
   def index
     @suggestions = current_user.suggestions
-    
-    if @suggestions.blank?
-      SuggestionAlgorithm.create_for(current_user, :algorithm => [:checkins, :radius, :gender], :limit => 1)
-      # reload
-      @suggestions = current_user.reload.suggestions
-    end
   end
 
   # GET /suggestions/1

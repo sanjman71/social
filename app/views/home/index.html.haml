@@ -34,7 +34,7 @@
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions
     - if current_user.suggestions.active.count > 0
-      %h3== You have #{link_to(pluralize(current_user.suggestions.active.count, 'suggestion'), suggestions_path)}
+      %h3== You have #{link_to(pluralize(current_user.suggestions.active.count, 'suggestion'), suggestions_path, :style => 'color: #0000BB;')}
     - else
       %h3== No suggestions at the moment, but we're working on finding you some.
 
@@ -44,7 +44,7 @@
       - @locations.each do |location|
         - next unless location.mappable?
         .map-location{'data-jmapping' => "{id: #{location.id}, point: {lat: #{location.lat}, lng: #{location.lng}}, category: 'Location'}"}
-          = link_to location.name, '#', :class => 'map-link'
+          = link_to location.name, '#', :class => 'map-link', :style => 'color: #999;'
           .info-box
             %p== #{location.name}, #{location.city}
 
