@@ -36,7 +36,7 @@ class OauthController < ApplicationController
       @redirect_path = root_path
       flash[:notice] = "Successfully authenticated using #{@service} account"
     else
-      @redirect_path = accounts_path
+      @redirect_path = root_path
       flash[:notice] = "Successly linked #{@service} account"
     end
     # sign in user
