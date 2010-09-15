@@ -22,14 +22,15 @@ Social::Application.routes.draw do
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
   match 'users', :to => "users#index"
 
-  match 'beta', :to => "home#beta", :via => [:get, :post]
-
   resources :suggestions, :only => [:index, :show] do
     put :decline, :on => :member
     put :confirm, :on => :member
     post :schedule, :on => :member
     post :reschedule, :on => :member
   end
+
+  match 'ping', :to => "home#ping", :via => [:get]
+  match 'beta', :to => "home#beta", :via => [:get, :post]
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

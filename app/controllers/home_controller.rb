@@ -23,4 +23,11 @@ class HomeController < ApplicationController
     end
   end
 
+  # GET /ping
+  def ping
+    # touch the database
+    @user = User.first
+    head(:ok)
+  end
+
 end
