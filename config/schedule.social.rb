@@ -19,6 +19,8 @@ set :path, '/usr/apps/social/current'
 set :output, '/usr/apps/social/current/log/cron.log'
 
 every 5.minutes do
+  # ping
+  command "curl http://www.socialintrigue.com/ping > /dev/null"
   # poll recent checkins
   command "curl http://www.socialintrigue.com/checkins/poll > /dev/null"
 end
