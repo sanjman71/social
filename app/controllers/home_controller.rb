@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  skip_before_filter :check_beta, :only => :beta
+  skip_before_filter :check_beta, :only => [:beta, :ping]
 
   # GET /
   def index
