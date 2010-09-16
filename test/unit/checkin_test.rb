@@ -42,6 +42,8 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 'success', @checkin_log.state
           assert_equal 'foursquare', @checkin_log.source
           assert_equal 1, @user.checkins.count
+          # should add user points
+          assert_equal 5, @user.reload.points
           # should add delayed_job to add suggestion and rebuild sphinx
           delayed_jobs = Delayed::Job.limit(2).order('id desc').collect(&:handler)
           assert delayed_jobs[0].match(/SphinxJob/)

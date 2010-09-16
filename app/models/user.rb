@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   belongs_to                :city
 
   has_many                  :oauths
-  has_many                  :checkins
+  has_many                  :checkins, :after_add => :after_add_checkin
   has_many                  :locations, :through => :checkins
   has_many                  :checkin_logs
 
@@ -346,4 +346,10 @@ class User < ActiveRecord::Base
     return if phone_number.new_record?
   end
 
+  def after_add_checkin(checkin)
+    # add points based on the number of checkins for this location
+    count = checkins.where(:location_id => checkin.location_id).count
+    self.points += Point.checkin_points(checkin.location_id, count)
+    self.save
+  end
 end

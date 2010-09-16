@@ -26,3 +26,7 @@
     - else
       -#%span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       -#= link_to('Login', login_path, :class => 'header link', :rel => 'nofollow')
+      
+  - if user_signed_in?
+    .span-24.last#header_data{:style => 'text-align: right;'}
+      %span{:style => 'color: #fff;'}== #{current_user.points} points

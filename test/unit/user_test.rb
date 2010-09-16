@@ -9,11 +9,12 @@ class UserTest < ActiveSupport::TestCase
         assert @user1.valid?
       end
 
-      should "create user in active state, no gender" do
+      should "create user in active state, no gender, no points" do
         assert_equal "active", @user1.state
         assert_false @user1.gender?
         assert_equal 0, @user1.gender
         assert_equal '', @user1.gender_name
+        assert_equal 0, @user1.points
       end
     end
 

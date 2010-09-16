@@ -10,6 +10,7 @@ class CreateUsers < ActiveRecord::Migration
       t.trackable
       # t.lockable :lock_strategy => :failed_attempts, :unlock_strategy => :both
       t.string    :state,         :limit => 50, :null => :false
+      t.integer   :points,        :default => 0
       t.integer   :gender,        :default => 0
       t.string    :facebook_id,   :limit => 50
       t.string    :foursquare_id, :limit => 50

@@ -311,6 +311,7 @@ ActiveRecord::Schema.define(:version => 20100831140715) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "state",                 :limit => 50
+    t.integer  "points",                                                               :default => 0
     t.integer  "gender",                                                               :default => 0
     t.string   "facebook_id",           :limit => 50
     t.string   "foursquare_id",         :limit => 50
