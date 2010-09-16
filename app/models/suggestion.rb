@@ -1,14 +1,15 @@
 class Suggestion < ActiveRecord::Base
   has_many      :parties, :class_name => "UserSuggestion", :dependent => :destroy
-  has_one       :party1, :class_name => 'UserSuggestion', :order => 'id asc'
-  has_one       :party2, :class_name => 'UserSuggestion', :order => 'id desc'
+  has_one       :party1, :class_name => 'UserSuggestion', :order => 'user_suggestions.user_id asc'
+  has_one       :party2, :class_name => 'UserSuggestion', :order => 'user_suggestions.user_id desc'
   has_many      :users, :through => :parties, :source => :user
-  has_one       :user1, :through => :party1, :order => 'id asc',  :source => :user
-  has_one       :user2, :through => :party2, :order => 'id desc', :source => :user
+  # has_one       :user1, :through => :party1, :source => :user
+  # has_one       :user2, :through => :party2, :source => :user
   belongs_to    :creator, :class_name => 'User'
   belongs_to    :location
 
   validates     :state, :presence => true
+  validates     :location_id, :presence => true
   after_create  :after_create_callback
 
   accepts_nested_attributes_for :party1, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
@@ -56,9 +57,11 @@ class Suggestion < ActiveRecord::Base
 
   def party_declines(party, options={})
     party.decline!
+    party.event!('decline')
     party.alert!(false)
     @other_party = other_party(party) 
     @other_party.dump!
+    @other_party.event!('dump')
     @other_party.alert!
     bail!
     party.message!(I18n.t('suggestion.declined.by', :name => 'You'))
@@ -69,9 +72,11 @@ class Suggestion < ActiveRecord::Base
   def party_schedules(party, options={})
     self.scheduled_at = options[:scheduled_at]
     party.schedule!
+    party.event!(options[:event] || 'schedule')
     party.alert!(false)
     @other_party = other_party(party) 
     @other_party.schedule!
+    @other_party.event!('')
     @other_party.alert!
     talk!
     party.message!(I18n.t('suggestion.scheduled.by', :name => 'You'))
@@ -80,10 +85,14 @@ class Suggestion < ActiveRecord::Base
   end
 
   def party_reschedules(party, options={})
+    self.scheduled_at = options[:rescheduled_at]
     party.reschedule!
+    party.event!(options[:event] || 'reschedule')
     @other_party = other_party(party) 
     @other_party.reschedule!
+    @other_party.event!('')
     @other_party.alert!
+    save!
     party.message!(I18n.t('suggestion.rescheduled.by', :name => 'You'))
     @other_party.message!(I18n.t('suggestion.rescheduled.to', :name => party.handle))
     log(:ok, "#{party.handle} rescheduled, suggestion #{self.state}")
@@ -91,6 +100,7 @@ class Suggestion < ActiveRecord::Base
 
   def party_confirms(party, options={})
     party.confirm!
+    party.event!(options[:event] || 'confirm')
     @other_party = other_party(party)
     log(:ok, "#{party.handle} confirmed, suggestion #{self.state}")
     case options[:message]
@@ -101,6 +111,7 @@ class Suggestion < ActiveRecord::Base
       party.message!(I18n.t('suggestion.confirmed.by', :name => 'You'))
       @other_party.message!(I18n.t('suggestion.confirmed.to', :name => party.handle))
     end
+    @other_party.event!('')
     @other_party.alert!
     if party.confirmed? and @other_party.confirmed?
       # both parties have confirmed
@@ -136,7 +147,7 @@ class Suggestion < ActiveRecord::Base
   end
 
   def log(level, s, options={})
-    SUGGESTIONS_LOGGER.debug("#{Time.now}: [#{level}] suggestion:#{self.id} #{s}")
+    SUGGESTIONS_LOGGER.debug("#{Time.now}: [#{level}] [suggestion:#{self.id}] #{s}")
   end
 
 end

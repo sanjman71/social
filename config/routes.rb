@@ -26,7 +26,9 @@ Social::Application.routes.draw do
     put :decline, :on => :member
     put :confirm, :on => :member
     post :schedule, :on => :member
+    put :schedule, :on => :member
     post :reschedule, :on => :member
+    put :reschedule, :on => :member
   end
 
   match 'ping', :to => "home#ping", :via => [:get]

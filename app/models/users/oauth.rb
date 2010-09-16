@@ -14,7 +14,7 @@ module Users::Oauth
       rescue Exception => e
         # whoops
         data = nil
-        log(:error, "facebook oauth error #{e.message}")
+        log(:error, "facebook oauth error #{e.message}") rescue nil
         return signed_in_resource
       end
 
@@ -31,7 +31,7 @@ module Users::Oauth
       rescue Exception => e
         # whoops
         data = nil
-        log(:error, "foursquare oauth error #{e.message}")
+        log(:error, "foursquare oauth error #{e.message}") rescue nil
         return signed_in_resource
       end
       
@@ -51,11 +51,11 @@ module Users::Oauth
         oauth.access_token        = access_token.token
         oauth.access_token_secret = (access_token.secret rescue nil)
         oauth.save
-        log(:ok, "updated oauth token for user #{user.handle}:#{user.email_address}:#{user.phone_number}")
+        user.log(:ok, "[#{user.handle}] updated oauth token")
       else
         # create oauth object with token
         oauth = user.oauths.create(:name => service, :access_token => access_token.token, :access_token_secret => (access_token.secret rescue nil))
-        log(:ok, "created oauth #{service} token for user #{user.handle}:#{user.email_address}:#{user.phone_number}")
+        user.log(:ok, "[#{user.handle}] created oauth #{service} token")
       end
       user
     end
@@ -72,7 +72,7 @@ module Users::Oauth
         gender    = data['gender']
         options   = Hash[:handle => handle, :gender => gender, :facebook_id => fbid]
         user      = User.create!(options)
-        log(:ok, "created user #{user.handle}")
+        user.log(:ok, "[#{user.handle}] created")
       end
       user
     end
@@ -87,7 +87,7 @@ module Users::Oauth
         gender  = data['gender']
         options = Hash[:handle => fname, :gender => gender, :foursquare_id => fsid]
         user    = User.create!(options)
-        log(:ok, "created user #{user.handle}")
+        user.log(:ok, "[#{user.handle}] created")
       end
       user
     end
@@ -112,14 +112,14 @@ module Users::Oauth
       if data['id'] and self.facebook_id.blank?
         # add user facebook id
         self.facebook_id = data['id']
-        self.class.log(:ok, "added facebook id #{self.facebook_id} to #{self.handle}")
+        log(:ok, "[#{self.handle}] added facebook id #{self.facebook_id}")
       end
       if data['location'] and !self.mappable?
         # add user location city
         begin
           city = Locality.resolve(data['location']['name'], :create => true)
           self.city = city
-          self.class.log(:ok, "added city #{city.name} to #{self.handle}")
+          log(:ok, "[#{self.handle}] added city #{city.name}")
         rescue Exception => e
           
         end
@@ -134,15 +134,15 @@ module Users::Oauth
       return if data.blank?
       if data['id'] and self.foursquare_id.blank?
         self.foursquare_id = data['id']
-        self.class.log(:ok, "added foursquare id #{self.foursquare_id} to #{self.handle}")
+        log(:ok, "[#{self.handle}] added foursquare id #{self.foursquare_id}")
       end
       if data['email'] and !self.email_addresses.collect(&:address).include?(data['email'])
         self.email_addresses.build(:address => data['email'])
-        self.class.log(:ok, "added email #{data['email']} to #{self.handle}")
+        log(:ok, "[#{self.handle}] added email #{data['email']}")
       end
       if data['phone'] and !self.phone_numbers.collect(&:address).include?(data['phone'])
         self.phone_numbers.build(:address => data['phone'], :name => 'Mobile')
-        self.class.log(:ok, "added phone #{data['phone']} to #{self.handle}")
+        log(:ok, "[#{self.handle}] added phone #{data['phone']}")
       end
       self.save
     end
@@ -158,10 +158,6 @@ module Users::Oauth
                   :authorize_path     => "/oauth/authorize"
                 })
       consumer
-    end
-
-    def base.log(level, s, options={})
-      USERS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
     end
   end
 

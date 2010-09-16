@@ -13,6 +13,7 @@ class AddSuggestions < ActiveRecord::Migration
       t.references  :user
       t.references  :suggestion
       t.string      :state,     :limit => 50, :null => false
+      t.string      :event,     :limit => 50
       t.string      :message,   :limit => 200
       t.boolean     :alert,     :default => false
     end

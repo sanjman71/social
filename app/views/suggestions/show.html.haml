@@ -4,41 +4,88 @@
 
 .span-23.prepend-1.mat
   %h2== Suggestion
+  %h4= link_to 'Back', suggestions_path, :class => 'admin'
 
 %hr.space
 
 .span.24.last
   = display_flash(:all)
 
-.span-15.prepend-1#title
-  %h3= @party.message
-  
-- form_for(@suggestion, :html => {:id => 'suggestion_form', "data-schedule-url" => schedule_suggestion_path(@suggestion, :format => 'js'), :url => schedule_suggestion_path(@suggestion)}) do |f|
+-# build links based on suggestion state
+- links = []
 
-  .span-15.prepend-1.last.padding-bottom-10#with
-    .span-2.label.block.light
-      %h4.bigger.block.bottom== With:
-    .span-11.text.big.last
-      = @other_party.handle
+.span-23.prepend-1.last
+  .suggestion.text#text
+    - case
+    - when @suggestion.initialized?
+      == outlate.ly suggests meeting #{@other_party.user.handle} at #{@suggestion.location.name} #{@suggestion.when}.
+      %br
+      == Pick a date as your next step.
+      -# add 'No Changes' link
+      - links.push(link_to('No Changes', suggestions_path, :class => 'admin big', :id => 'suggestion_back'))
+    - when @suggestion.talking?
+      - if @party.event == 'schedule'
+        -# you scheduled a datetime
+        == You suggested meeting #{@other_party.user.handle} at #{@suggestion.location.name} on #{@suggestion.scheduled_at.to_s(:datetime_dow)}.
+        %br
+        == We are waiting for #{@other_party.user.handle} to confirm.  You can re-schedule at any time.
+      - if @party.event.blank? and @other_party.event == 'schedule'
+        -# other party scheduled a datetime
+        == #{@other_party.user.handle} suggested meeting at #{@suggestion.location.name} on #{@suggestion.scheduled_at.to_s(:datetime_dow)}.
+        == Its your turn to confirm.
+      - if @party.event == 'reschedule'
+        -# you rescheduled
+        == You rescheduled at #{@suggestion.location.name} for #{@suggestion.scheduled_at.to_s(:datetime_dow)}.
+        %br
+        == We are waiting for #{@other_party.user.handle} to confirm.
+        -# add 'No Changes' link
+        - links.push(link_to('No Changes', suggestions_path, :class => 'admin big', :id => 'suggestion_back'))
+      - if @party.event.blank? and @other_party.event == 'reschedule'
+        -# other party rescheduled
+        == #{@other_party.user.handle} rescheduled at #{@suggestion.location.name} for #{@suggestion.scheduled_at.to_s(:datetime_dow)}.
+        %br
+        == Now you just need to confirm.
+    - when @suggestion.bailed?
+      - if @party.declined?
+        == outlate.ly suggests meeting #{@other_party.user.handle} at #{@suggestion.location.name} #{@suggestion.when}.
+        %br
+        == You declined this suggestion.
+      - else
+        == outlate.ly suggests meeting #{@other_party.user.handle} at #{@suggestion.location.name} #{@suggestion.when}.
+        %br
+        == They declined this suggestion.
+    - else
+      == foo
 
-  .span-15.prepend-1.last.padding-bottom-10#where
-    .span-2.label.block.light
-      %h4.bigger.block.bottom== Where:
-    .span-11.text.big.last
-      = @suggestion.location.name
-    
-  .span-15.prepend-1.last.padding-bottom-10#when
-    .span-2.label.block.light
-      %h4.bigger.block.bottom== When:
-    .span-11.text.big.last
-      = @suggestion.scheduled_at.try(:to_s, :datetime) || @suggestion.when
+= form_for(@suggestion, :html => {:id => 'suggestion_form', "data-schedule-url" => schedule_suggestion_path(@suggestion, :format => 'js'), "data-reschedule-url" => reschedule_suggestion_path(@suggestion, :format => 'js')}) do |f|
+
+  / .span-15.prepend-1.last.padding-bottom-10#with
+  /   .span-2.label.block.light
+  /     %h4.bigger.block.bottom== With:
+  /   .span-11.text.big.last
+  /     = @other_party.handle
+  / 
+  / .span-15.prepend-1.last.padding-bottom-10#where
+  /   .span-2.label.block.light
+  /     %h4.bigger.block.bottom== Where:
+  /   .span-11.text.big.last
+  /     = @suggestion.location.name
+  /   
+  / .span-15.prepend-1.last.padding-bottom-10#when
+  /   .span-2.label.block.light
+  /     %h4.bigger.block.bottom== When:
+  /   .span-11.text.big.last
+  /     = @suggestion.scheduled_at.try(:to_s, :datetime) || @suggestion.when
 
   .span-15.prepend-1.last.padding-top-10#options
-    - links = []
     - if @party.aasm_events_for_current_state.include?(:schedule)
-      - links.push(link_to('Pick a Date', '#', :class => 'admin big', :id => 'pick_suggestion_date'))
+      - links.push(link_to('Pick a Date', '#', :class => 'admin big', :id => 'suggestion_pick_date'))
+    - if @party.aasm_events_for_current_state.include?(:reschedule)
+      - links.push(link_to('Re-schedule', '#', :class => 'admin big', :id => 'suggestion_repick_date'))
+    - if @party.aasm_events_for_current_state.include?(:confirm)
+      - links.push(link_to('Confirm', confirm_suggestion_path(@suggestion), :class => 'admin big', :id => 'suggestion_confirm', :method => :put))
     - if @party.aasm_events_for_current_state.include?(:decline)
-      - links.push(link_to('Decline', decline_suggestion_path(@suggestion), :class => 'admin big', :method => :put, :confirm => 'Are you sure'))
+      - links.push(link_to('Decline', decline_suggestion_path(@suggestion), :class => 'admin big', :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure'))
     - links.each_with_index do |link, index|
       = link
       - unless index == links.size-1
@@ -58,6 +105,11 @@
       = text_field_tag 'suggestion[message]', '', :class => 'big top', :style => 'padding: 3px; margin: 0px;', :size => 50, :autocomplete => 'off'
   
   .span-15.prepend-1.last.padding-bottom-10.hide#schedule_submit
-    = submit_tag 'Schedule', :id => 'schedule_suggestion_date'
+    = submit_tag 'Schedule', :id => 'suggestion_schedule_date'
     ==&nbsp;or&nbsp;
-    = link_to 'Nevermind', '#', :id => 'pick_suggestion_date_nevermind', :class => 'admin'
+    = link_to 'Nevermind', '#', :id => 'suggestion_pick_date_nevermind', :class => 'admin'
+
+  .span-15.prepend-1.last.padding-bottom-10.hide#reschedule_submit
+    = submit_tag 'Reschedule', :id => 'suggestion_reschedule_date'
+    ==&nbsp;or&nbsp;
+    = link_to 'Nevermind', '#', :id => 'suggestion_repick_date_nevermind', :class => 'admin'

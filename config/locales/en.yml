@@ -7,6 +7,7 @@ en:
     error:
       flash: "Whoops, that's not allowed"
     title:
+      simple: "meet %{name} @ %{location}"
       outlately: "outlate.ly suggests meeting %{name} at %{location}"
     initialized:
       outlately: "Here's a suggestion from outlate.ly"

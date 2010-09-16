@@ -37,12 +37,16 @@ class UserSuggestion < ActiveRecord::Base
   end
 
   aasm_event :confirm do
-    transitions :to => :confirmed, :from => [:scheduled, :confirmed]
+    transitions :to => :confirmed, :from => [:scheduled]
   end
   # END acts_as_state_machine
 
   def message!(s)
     self.update_attribute(:message, s)
+  end
+
+  def event!(s)
+    self.update_attribute(:event, s)
   end
 
   def alert!(b=true)

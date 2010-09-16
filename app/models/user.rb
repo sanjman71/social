@@ -41,6 +41,7 @@ class User < ActiveRecord::Base
 
   before_save               :before_save_callback
   after_create              :manage_user_roles
+  after_create              :send_signup_email
   # after_update              :after_update_callback
 
   # prevents a user from submitting a crafted form that bypasses activation
@@ -262,12 +263,10 @@ class User < ActiveRecord::Base
     self.class.to_s.tableize
   end
   
-  # def reset_cal_dav_token
-  #   cal_dav_token_will_change!
-  #   # We generate a token with no forward slashes in it, by substituting for / with |.
-  #   self.cal_dav_token = ActiveSupport::SecureRandom.base64(50).gsub('/', '|')
-  # end
-  
+  def log(level, s, options={})
+    USERS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
+  end
+
   protected
     
   # password is not required
@@ -300,6 +299,10 @@ class User < ActiveRecord::Base
     #   # all users can manage themselves
     #   self.grant_role('user manager', self)
     # end
+  end
+
+  def send_signup_email
+    UserMailer.user_signup(self).deliver
   end
 
   # def activate_user

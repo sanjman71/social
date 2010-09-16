@@ -14,7 +14,7 @@ class FacebookCheckin
     # find foursquare oauth tokens
     oauth  = user.oauths.where(:name => source).first
     if oauth.blank?
-      log(:notice, "user #{user.handle}: no #{source} oauth token")
+      log(:notice, "[#{user.handle}] no #{source} oauth token")
       return nil
     end
 
@@ -31,14 +31,14 @@ class FacebookCheckin
       mm = 0
     when (last_check_at + last_check_mins) > Time.zone.now
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
-      log(:ok, "user #{user.handle}: importing #{source} skipped because last check was about #{mm} minutes ago")
+      log(:ok, "[#{user.handle}] importing #{source} skipped because last check was about #{mm} minutes ago")
       return checkin_log
     else
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
     end
   
     begin
-      log(:ok, "user #{user.handle}: importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
+      log(:ok, "[#{user.handle}] importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
 
       # initialize facebook client
       facebook = FacebookClient.new(oauth.access_token)
@@ -52,7 +52,7 @@ class FacebookCheckin
         when :last
           # find last facebok checkin's timestamp
           options[:since] = user.checkins.facebook.recent.limit(1).first.try(:checkin_at).to_s(:datetime_schedule) rescue Time.zone.now.to_s(:datetime)
-          log(:ok, "user #{user.handle}: importing since #{options[:since]}")
+          log(:ok, "[#{user.handle}] importing since #{options[:since]}")
         end
       end
 
@@ -62,12 +62,12 @@ class FacebookCheckin
         import_checkin(user, checkin_hash)
       end
     rescue Exception => e
-      log(:error, "user #{user.handle}: #{e.message}")
+      log(:error, "[#{user.handle}] #{e.message}")
       checkin_log.update_attributes(:state => 'error', :last_check_at => Time.zone.now)
     else
       checkins_added = user.checkins.count - checkins_start
       checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
-      log(:ok, "user #{user.handle}: imported #{checkins_added} #{source} checkins")
+      log(:ok, "[#{user.handle}] imported #{checkins_added} #{source} checkins")
       if checkins_added > 0
         # create suggestions
         SuggestionAlgorithm.send_later(:create_for, user, Hash[:algorithm => [:checkins, :radius, :gender], :limit => 1])
@@ -96,7 +96,7 @@ class FacebookCheckin
     checkin_at  = Time.parse(checkin_hash['created_time']).utc # created_time is in utc format
     options     = Hash[:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'].to_s, :source_type => Source.facebook]
     @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
-    log(:ok, "user #{user.handle}: added checkin #{@location.name}") if @checkin.blank?
+    log(:ok, "[#{user.handle}] added checkin #{@location.name}") if @checkin.blank?
     @checkin ||= user.checkins.create(options)
   end
 
