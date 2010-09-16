@@ -16,6 +16,8 @@
         %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
         = link_to('Locations', locations_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Profile', user_path(current_user), :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Accounts', accounts_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Logout', logout_path, :class => 'header link')

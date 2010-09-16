@@ -155,6 +155,10 @@ class User < ActiveRecord::Base
     password
   end
 
+  def self.valid_facebook_handle?(s)
+    s.blank? ? false : s.match(/^\w+$/)
+  end
+
   # the special user 'anyone'
   def self.anyone(name = 'Anyone')
     r = User.new do |o|

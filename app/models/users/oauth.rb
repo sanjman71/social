@@ -65,10 +65,11 @@ module Users::Oauth
       user    = self.find_by_facebook_id(fbid)
       
       if user.blank?
-        # create user, default handle is firstname
+        # create user
         fname     = data['first_name']
         username  = data['link'].try(:split, '/').try(:last)
-        handle    = username || fname # try username first, default to first name
+        # try setting handle to facebook username, default to first name
+        handle    = User.valid_facebook_handle?(username) ? username : fname
         gender    = data['gender']
         options   = Hash[:handle => handle, :gender => gender, :facebook_id => fbid]
         user      = User.create!(options)

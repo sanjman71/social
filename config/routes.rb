@@ -20,7 +20,8 @@ Social::Application.routes.draw do
   match 'locations', :to => "locations#index"
   match 'accounts', :to => "accounts#index"
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
-  match 'users', :to => "users#index"
+
+  resources :users
 
   resources :suggestions, :only => [:index, :show] do
     put :decline, :on => :member

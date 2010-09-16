@@ -143,7 +143,7 @@ class Suggestion < ActiveRecord::Base
   protected
 
   def after_create_callback
-    log(:ok, "creator:#{creator.try(:id).to_i}, users:#{party1.try(:user_id)},#{party2.try(:user_id)}, when:#{self.when}")
+    log(:ok, "creator:#{creator.try(:id).to_i}, users:#{party1.try(:user).try(:handle)}:#{party2.try(:user).try(:handle)}, when:#{self.when}")
   end
 
   def log(level, s, options={})
