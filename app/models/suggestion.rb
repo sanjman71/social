@@ -64,8 +64,6 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('dump')
     @other_party.alert!
     bail!
-    party.message!(I18n.t('suggestion.declined.by', :name => 'You'))
-    @other_party.message!(I18n.t('suggestion.declined.to', :name => party.handle))
     log(:ok, "#{party.handle} declined, #{@other_party.handle} dumped, suggestion bailed")
   end
 
@@ -79,8 +77,6 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     talk!
-    party.message!(I18n.t('suggestion.scheduled.by', :name => 'You'))
-    @other_party.message!(I18n.t('suggestion.scheduled.to', :name => party.handle))
     log(:ok, "#{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion talking")
   end
 
@@ -93,8 +89,6 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     save!
-    party.message!(I18n.t('suggestion.rescheduled.by', :name => 'You'))
-    @other_party.message!(I18n.t('suggestion.rescheduled.to', :name => party.handle))
     log(:ok, "#{party.handle} rescheduled, suggestion #{self.state}")
   end
 
@@ -103,22 +97,12 @@ class Suggestion < ActiveRecord::Base
     party.event!(options[:event] || 'confirm')
     @other_party = other_party(party)
     log(:ok, "#{party.handle} confirmed, suggestion #{self.state}")
-    case options[:message]
-    when :keep
-      # don't change the message
-    else
-      # set party messages
-      party.message!(I18n.t('suggestion.confirmed.by', :name => 'You'))
-      @other_party.message!(I18n.t('suggestion.confirmed.to', :name => party.handle))
-    end
     @other_party.event!('')
     @other_party.alert!
     if party.confirmed? and @other_party.confirmed?
       # both parties have confirmed
       go_out!
       log(:ok, "suggestion going out")
-      party.message!(I18n.t('suggestion.goingout.by', :name => 'You'))
-      @other_party.message!(I18n.t('suggestion.goingout.to', :name => party.handle))
     end
   end
 

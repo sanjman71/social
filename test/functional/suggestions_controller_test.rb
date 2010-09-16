@@ -169,7 +169,7 @@ class SuggestionsControllerTest < ActionController::TestCase
     end
 
     context 'js' do
-      should "set scheduled_at date, change party states, send message to other party, set alert for other party" do
+      should "set scheduled_at date, change party states, set alert for other party" do
         # party1 schedules
         sign_in @user1
         set_beta
@@ -184,8 +184,6 @@ class SuggestionsControllerTest < ActionController::TestCase
         assert_equal '', @suggestion.reload.party2.event
         assert_false @suggestion.reload.party1.alert?
         assert_true @suggestion.reload.party2.alert?
-        # assert_equal 'You suggested a date and time', @suggestion.party1.message
-        # assert_equal "#{@user1.handle} suggested a date and time", @suggestion.party2.message
         # assert_content_type "text/javascript"
         assert_response :success
       end
@@ -222,6 +220,7 @@ class SuggestionsControllerTest < ActionController::TestCase
         # should set party2 event, clear party1 event
         assert_equal '', @suggestion.reload.party1.event
         assert_equal 'reschedule', @suggestion.reload.party2.event
+        # assert_content_type "text/javascript"
         assert_response :success
       end
     end

@@ -12,7 +12,7 @@ class SuggestionTest < ActiveSupport::TestCase
   end
 
   context "create" do
-    should "start in initialized state with default messages" do
+    should "start in initialized state" do
       @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                       :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
@@ -20,10 +20,9 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'initialized', @suggestion.state
       assert_equal 'initialized', @suggestion.party1.state
       assert_equal 'initialized', @suggestion.party2.state
+      # should set alert flags
       assert_true @suggestion.party1.alert?
       assert_true @suggestion.party2.alert?
-      assert_equal "Here's a suggestion from outlate.ly", @suggestion.party1.message
-      assert_equal "Here's a suggestion from outlate.ly", @suggestion.party2.message
       # assert_equal @user1, @suggestion.user1
       # assert_equal @user2, @suggestion.user2
       assert_equal [:bail, :talk], @suggestion.aasm_events_for_current_state.sort
@@ -56,8 +55,6 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'declined', @suggestion.party1.state
       assert_equal 'dumped', @suggestion.party2.state
       assert_equal 'bailed', @suggestion.reload.state
-      assert_equal "You said no to this suggestion", @suggestion.party1.message
-      assert_equal "user1 said no to this suggestion", @suggestion.party2.message
       assert_equal [], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [], @suggestion.party2.aasm_events_for_current_state.sort
     end
@@ -74,8 +71,6 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'talking', @suggestion.reload.state
       # compare times without subsec
       assert_equal @tomorrow.to_s(:datetime_schedule), @suggestion.scheduled_at.to_s(:datetime_schedule)
-      assert_equal "You suggested a date and time", @suggestion.party1.message
-      assert_equal "user1 suggested a date and time", @suggestion.party2.message
       assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
       # party1 confirms - should change party2 state to 'scheduled'
@@ -83,8 +78,6 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'confirmed', @suggestion.party1.state
       assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
-      assert_equal "You confirmed the date and time", @suggestion.party1.message
-      assert_equal "user1 confirmed the date and time", @suggestion.party2.message
       assert_equal [:decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
       # party2 confirms
@@ -92,8 +85,6 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'confirmed', @suggestion.party2.state
       assert_equal 'confirmed', @suggestion.party1.state
       assert_equal 'going_out', @suggestion.reload.state
-      assert_equal "You confirmed and are going out", @suggestion.party2.message
-      assert_equal "user2 confirmed so you're going out", @suggestion.party1.message
       assert_equal [:decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
     end
@@ -109,8 +100,6 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'scheduled', @suggestion.party1.state
       assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
-      assert_equal "You suggested a different date and time", @suggestion.party2.message
-      assert_equal "user2 suggested a different date and time", @suggestion.party1.message
       assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
     end

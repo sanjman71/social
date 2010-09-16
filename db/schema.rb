@@ -291,10 +291,9 @@ ActiveRecord::Schema.define(:version => 20100831140715) do
   create_table "user_suggestions", :force => true do |t|
     t.integer "user_id"
     t.integer "suggestion_id"
-    t.string  "state",         :limit => 50,                     :null => false
+    t.string  "state",         :limit => 50,                    :null => false
     t.string  "event",         :limit => 50
-    t.string  "message",       :limit => 200
-    t.boolean "alert",                        :default => false
+    t.boolean "alert",                       :default => false
   end
 
   create_table "users", :force => true do |t|

@@ -41,10 +41,6 @@ class UserSuggestion < ActiveRecord::Base
   end
   # END acts_as_state_machine
 
-  def message!(s)
-    self.update_attribute(:message, s)
-  end
-
   def event!(s)
     self.update_attribute(:event, s)
   end
@@ -61,12 +57,6 @@ class UserSuggestion < ActiveRecord::Base
 
   def before_create_callback
     self.alert = true
-    if self.message.blank?
-      # set default message
-      if suggestion.creator.blank?
-        self.message = I18n.t('suggestion.initialized.outlately')
-      end
-    end
   end
 
   def log(level, s, options={})
