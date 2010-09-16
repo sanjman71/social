@@ -11,7 +11,7 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    @show_handle_message = true
+    @show_handle_message = params[:handle].to_i == 1
 
     @user = User.find(params[:id])
   end

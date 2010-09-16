@@ -263,10 +263,15 @@ class User < ActiveRecord::Base
     !self.encrypted_password.blank?
   end
 
+  # return true if the user was created in the past few minutes
+  def created_recently?(minutes=1)
+    self.created_at > Time.zone.now-minutes.minutes
+  end
+
   def tableize
     self.class.to_s.tableize
   end
-  
+
   def log(level, s, options={})
     USERS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
   end

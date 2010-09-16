@@ -11,8 +11,8 @@
     %h4{:style => 'line-height: 1.5em;'}
       == Your handle is your name on the site.
       %br
-      == Please select your handle name or leave it unchanged if this one works.
-      == You can change it later as well.
+      == Please choose a handle name if this one doesn't work for you.
+      == You will be able to change it later as well.
 
 .span-24.last
   = form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
