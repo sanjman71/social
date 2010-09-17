@@ -10,7 +10,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100831140715) do
+ActiveRecord::Schema.define(:version => 20100917030956) do
+
+  create_table "alerts", :force => true do |t|
+    t.integer "user_id",                  :null => false
+    t.integer "sender_id"
+    t.string  "level",     :limit => 50,  :null => false
+    t.string  "subject",   :limit => 50,  :null => false
+    t.string  "message",   :limit => 200, :null => false
+  end
 
   create_table "badges_privileges", :force => true do |t|
     t.string   "name",         :limit => 50

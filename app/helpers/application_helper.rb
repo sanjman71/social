@@ -25,6 +25,16 @@ module ApplicationHelper
     end
   end
 
+  def display_alerts
+    @alerts = current_user.try(:alerts)
+    if !@alerts.blank? and (@alerts_displayed.nil? || @alerts_displayed == false)
+      @alerts_displayed = true
+      # remove each alert before displaying
+      @alerts.each { |a| a.destroy rescue nil }
+      render :partial => "shared/alerts.html.haml", :locals => {:alerts => @alerts}
+    end
+  end
+
   def picture_url(user, options={})
     case
     when !user.facebook_id.blank?

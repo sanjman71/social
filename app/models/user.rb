@@ -32,9 +32,9 @@ class User < ActiveRecord::Base
   has_many                  :checkins, :after_add => :after_add_checkin
   has_many                  :locations, :through => :checkins
   has_many                  :checkin_logs
-
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
+  has_many                  :alerts
 
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
@@ -42,7 +42,6 @@ class User < ActiveRecord::Base
   before_save               :before_save_callback
   after_create              :manage_user_roles
   after_create              :send_signup_email
-  # after_update              :after_update_callback
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
@@ -310,6 +309,7 @@ class User < ActiveRecord::Base
     # end
   end
 
+  # send email after a user signup - use delayed job
   def send_signup_email
     UserMailer.user_signup(self).deliver
   end
