@@ -8,7 +8,7 @@ namespace :db do
     password            = ActiveRecord::Base.configurations[Rails.env]['password']
     host                = ActiveRecord::Base.configurations[Rails.env]['host']
     database_name       = ENV["DB"].to_s
-    backup_dir          = ENV["BACKUP_DIR"] ? ENV["BACKUP_DIR"] : Rails.root
+    backup_dir          = ENV["BACKUP_DIR"] ? ENV["BACKUP_DIR"] : "#{Rails.root}/backups"
     
     if database_name.blank?
       puts "no DB specified"
@@ -16,7 +16,7 @@ namespace :db do
     end
 
     timestamp           = Time.now.strftime("%Y%m%d%H%M%S")
-    backup_dir          = "#{backup_dir}/backups"
+    backup_dir          = "#{backup_dir}"
     backup_file         = "#{database_name}_#{timestamp}.sql.gz"
     
     cmd = "#{mysqldump} #{mysqldump_options} -u#{username} -p#{password} -h#{host} #{database_name} | gzip -c > #{backup_dir}/#{backup_file}"

@@ -32,6 +32,10 @@ Social::Application.routes.draw do
     put :reschedule, :on => :member
   end
 
+  match 'jobs', :to => 'jobs#index', :as => :jobs
+  match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
+  match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
+
   match 'ping', :to => "home#ping", :via => [:get]
   match 'beta', :to => "home#beta", :via => [:get, :post]
 
