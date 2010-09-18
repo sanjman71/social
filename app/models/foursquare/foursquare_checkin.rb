@@ -15,7 +15,7 @@ class FoursquareCheckin
 
     # compare last check timestamp + check interval vs current timestamp
     last_check_at   = checkin_log.last_check_at
-    last_check_mins = options[:minutes_since] ? options.delete(:minutes_since).to_i.minutes : Checkin.minimum_check_interval
+    last_check_mins = options[:minutes_since] ? options.delete(:minutes_since).to_i.minutes : Checkin.poll_interval
     
     case
     when last_check_at.blank?
@@ -71,10 +71,19 @@ class FoursquareCheckin
       checkins_added = user.checkins.count - checkins_start
       checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
       log(:ok, "[#{user.handle}] imported #{checkins_added} #{source} checkins")
-      if checkins_added > 0
-        # create suggestions
+
+      if user.reload.suggestionable?
+        # use dj to create suggestions
         SuggestionAlgorithm.send_later(:create_for, user, Hash[:algorithm => [:checkins, :radius, :gender], :limit => 1])
-        # rebuild sphinx index
+      end
+      
+      if user.low_activity_alertable?
+        # send low activity alert
+        user.send_low_activity_alert
+      end
+
+      if checkins_added > 0
+        # use dj to rebuild sphinx index
         Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
       end
     end
@@ -98,7 +107,7 @@ class FoursquareCheckin
     options     = Hash[:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'].to_s, :source_type => Source.foursquare]
     @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
     log(:ok, "[#{user.handle}] added checkin #{@location.name}") if @checkin.blank?
-    @checkin ||= user.checkins.create(options)
+    @checkin    ||= user.checkins.create(options)
   end
 
   def self.log(level, s, options={})

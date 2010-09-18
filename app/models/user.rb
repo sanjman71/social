@@ -71,16 +71,14 @@ class User < ActiveRecord::Base
                                                                   :conditions => ["LOWER(users.name) LIKE ? OR LOWER(email_addresses.address) LIKE ? OR phone_numbers.address LIKE ?", '%' + s.downcase + '%', '%' + s.downcase + '%', '%' + s.downcase + '%']
                                                                   }}
 
-  # include other required user modules
-  # include UserSubscription
-  # include UserAppointment
-  # include UserInvitation
 
   define_index do
     has :id, :as => :user_id
     indexes handle, :as => :handle
     has :gender, :as => :gender
     has locations(:id), :as => :location_ids, :facet => true
+    has checkins(:id), :as => :checkin_ids, :facet => true
+    has :checkins_count, :as => :checkins_count
     # convert degrees to radians for sphinx
     has 'RADIANS(users.lat)', :as => :lat,  :type => :float
     has 'RADIANS(users.lng)', :as => :lng,  :type => :float
@@ -267,6 +265,24 @@ class User < ActiveRecord::Base
     self.created_at > Time.zone.now-minutes.minutes
   end
 
+  # returns true if the user is ready to receive suggestions
+  def suggestionable?
+    self.checkins_count >= Checkin.min_checkins_for_suggestion
+  end
+
+  # returns true if the user can be sent a low activity alert message
+  def low_activity_alertable?
+    # no alerts if user can receive suggestions
+    return false if suggestionable?
+    # check last alert
+    (Time.zone.now - (self.low_activity_alert_at || Time.zone.now-1.year)) > Checkin.min_low_activity_alert_interval
+  end
+
+  def send_low_activity_alert
+    self.alerts.create(:level => 'notice', :subject => 'checkins', :message => I18n.t('checkins.low_activity_alert'))
+    self.update_attribute(:low_activity_alert_at, Time.zone.now)
+  end
+
   def tableize
     self.class.to_s.tableize
   end
@@ -309,26 +325,10 @@ class User < ActiveRecord::Base
     # end
   end
 
-  # send email after a user signup - use delayed job
+  # send email after a user signup using delayed job
   def send_signup_email
-    UserMailer.user_signup(self).deliver
+    Delayed::Job.enqueue(EmailJob.new(:user_id => self.id, :object => 'user', :action => 'signup'), 0)
   end
-
-  # def activate_user
-  #   if self.password.blank? and self.crypted_password.blank? and self.state == 'passive'
-  #     # force state to active
-  #     self.update_attribute(:state, 'active')
-  #   elsif self.state == 'passive'
-  #     # register and activate all users
-  #     self.register!
-  #     self.activate!
-  #   end
-  # 
-  #   # check if user is missing any data
-  #   if self.reload.email_missing? or self.reload.phone_missing?
-  #     self.profile_data_missing!
-  #   end
-  # end
 
   def after_add_email_address(email_address)
     return if email_address.new_record?
@@ -352,4 +352,5 @@ class User < ActiveRecord::Base
     self.points += Point.checkin_points(checkin.location_id, count)
     self.save
   end
+  
 end

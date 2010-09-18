@@ -24,7 +24,7 @@ class CheckinTest < ActiveSupport::TestCase
 
   context "import foursquare checkins" do
     context "all user checkins" do
-      should "create checkin log, add checkin" do
+      should "create checkin log, add checkin, create checkin alert, delay sphinx rebuild" do
         ThinkingSphinx::Test.run do
           # create user oauth token
           @oauth    = @user.oauths.create(:name => 'foursquare', :access_token => '12345')
@@ -42,12 +42,16 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 'success', @checkin_log.state
           assert_equal 'foursquare', @checkin_log.source
           assert_equal 1, @user.checkins.count
+          assert_equal 1, @user.checkins_count
+          # should create activity alert for too few checkins
+          assert_equal 1, @user.reload.alerts.count
+          assert @user.reload.low_activity_alert_at
           # should add user points
           assert_equal 5, @user.reload.points
-          # should add delayed_job to add suggestion and rebuild sphinx
-          delayed_jobs = Delayed::Job.limit(2).order('id desc').collect(&:handler)
+          # should add sphinx delayed_job
+          delayed_jobs = Delayed::Job.limit(1).order('id desc').collect(&:handler)
           assert delayed_jobs[0].match(/SphinxJob/)
-          assert delayed_jobs[1].match(/SuggestionAlgorithm/)
+          # assert delayed_jobs[1].match(/SuggestionAlgorithm/)
         end
       end
       
@@ -76,9 +80,11 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 'foursquare', @checkin.source_type
           # user should have 1 checkin
           assert_equal 1, @user.reload.checkins.count
+          assert_equal 1, @user.reload.checkins_count
           # location should have 1 checkin
           @location = @checkin.location
           assert_equal 1, @location.reload.checkins.count
+          assert_equal 1, @location.reload.checkins_count
           # should return same checkin object and use same location if we try it again
           @checkin2 = FoursquareCheckin.import_checkin(@user, @hash)
           assert_equal @checkin, @checkin2
@@ -108,10 +114,13 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 1, @checkin_log.checkins
           assert_equal 'success', @checkin_log.state
           assert_equal 'facebook', @checkin_log.source
-          # should add delayed_job to add suggestion and rebuild sphinx
-          delayed_jobs = Delayed::Job.limit(2).order('id desc').collect(&:handler)
+          # should create activity alert for too few checkins
+          assert_equal 1, @user.reload.alerts.count
+          assert @user.reload.low_activity_alert_at
+          # should add sphinx delayed_job
+          delayed_jobs = Delayed::Job.limit(1).order('id desc').collect(&:handler)
           assert delayed_jobs[0].match(/SphinxJob/)
-          assert delayed_jobs[1].match(/SuggestionAlgorithm/)
+          # assert delayed_jobs[1].match(/SuggestionAlgorithm/)
         end
       end
     end
@@ -131,9 +140,11 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 'facebook', @checkin.source_type
           # user should have 1 checkin
           assert_equal 1, @user.reload.checkins.count
+          assert_equal 1, @user.reload.checkins_count
           # location should have 1 checkin
           @location = @checkin.location
           assert_equal 1, @location.reload.checkins.count
+          assert_equal 1, @location.reload.checkins_count
           # should return same checkin object and use same location if we try it again
           @checkin2 = FacebookCheckin.import_checkin(@user, @hash)
           assert_equal @checkin, @checkin2

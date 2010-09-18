@@ -3,6 +3,8 @@
 
 en:
   hello: "Hello world"
+  checkins:
+    low_activity_alert: "You need to checkin at a few more places before we can send you suggestions."
   suggestion:
     error:
       flash: "Whoops, that's not allowed"

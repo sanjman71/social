@@ -20,6 +20,9 @@ ActiveRecord::Schema.define(:version => 20100917030956) do
     t.string  "message",   :limit => 200, :null => false
   end
 
+  add_index "alerts", ["sender_id"], :name => "index_alerts_on_sender_id"
+  add_index "alerts", ["user_id"], :name => "index_alerts_on_user_id"
+
   create_table "badges_privileges", :force => true do |t|
     t.string   "name",         :limit => 50
     t.datetime "created_at"
@@ -187,6 +190,7 @@ ActiveRecord::Schema.define(:version => 20100917030956) do
     t.integer  "zip_id"
     t.integer  "country_id"
     t.integer  "timezone_id"
+    t.integer  "checkins_count",                                                      :default => 0
     t.integer  "neighborhoods_count",                                                 :default => 0
     t.integer  "phone_numbers_count",                                                 :default => 0
     t.integer  "email_addresses_count",                                               :default => 0
@@ -323,6 +327,8 @@ ActiveRecord::Schema.define(:version => 20100917030956) do
     t.integer  "gender",                                                               :default => 0
     t.string   "facebook_id",           :limit => 50
     t.string   "foursquare_id",         :limit => 50
+    t.integer  "checkins_count",                                                       :default => 0
+    t.datetime "low_activity_alert_at"
     t.integer  "city_id"
     t.decimal  "lat",                                  :precision => 15, :scale => 10
     t.decimal  "lng",                                  :precision => 15, :scale => 10

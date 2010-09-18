@@ -92,6 +92,7 @@ class CreateSocial < ActiveRecord::Migration
       t.references  :zip
       t.references  :country
       t.references  :timezone
+      t.integer     :checkins_count,        :default => 0   # counter cache
       t.integer     :neighborhoods_count,   :default => 0   # counter cache
       t.integer     :phone_numbers_count,   :default => 0   # counter cache
       t.integer     :email_addresses_count, :default => 0   # counter cache

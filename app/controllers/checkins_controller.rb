@@ -18,7 +18,7 @@ class CheckinsController < ApplicationController
   # GET /poll
   def poll
     # find checkin_logs that need to be polled
-    @checkin_logs  = CheckinLog.where("last_check_at < ?", Time.zone.now - Checkin.minimum_check_interval).group_by(&:user)
+    @checkin_logs  = CheckinLog.where("last_check_at < ?", Time.zone.now - Checkin.poll_interval).group_by(&:user)
 
     @checkin_logs.each_pair do |user, logs|
       logs.each do |log|
