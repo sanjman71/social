@@ -5,7 +5,7 @@ gem 'rails', '3.0.0'
 # Mysql gem for ruby 1.9.2
 gem 'ruby-mysql'
 
-gem 'aasm',                   '>= 2.1.7'
+gem 'aasm',                   '>= 2.2.0'
 gem 'delayed_job'
 gem 'foursquare'
 gem 'geokit',                 '>= 1.5.0'
