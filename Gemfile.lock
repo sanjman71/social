@@ -37,6 +37,7 @@ GEM
       activemodel (= 3.0.0)
       activesupport (= 3.0.0)
     activesupport (3.0.0)
+    acts-as-taggable-on (2.0.6)
     addressable (2.2.0)
     archive-tar-minitar (0.5.2)
     arel (1.0.1)
@@ -157,6 +158,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm (>= 2.2.0)
+  acts-as-taggable-on (>= 2.0.6)
   capistrano
   delayed_job
   devise!

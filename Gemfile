@@ -6,6 +6,7 @@ gem 'rails', '3.0.0'
 gem 'ruby-mysql'
 
 gem 'aasm',                   '>= 2.2.0'
+gem 'acts-as-taggable-on',    '>= 2.0.6'
 gem 'delayed_job'
 gem 'foursquare'
 gem 'geokit',                 '>= 1.5.0'
