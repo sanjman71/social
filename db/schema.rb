@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100917030956) do
+ActiveRecord::Schema.define(:version => 20100920132121) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -175,12 +175,15 @@ ActiveRecord::Schema.define(:version => 20100917030956) do
     t.integer  "location_id"
     t.string   "source_id"
     t.string   "source_type", :limit => 50
+    t.integer  "tag_count"
+    t.datetime "tagged_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "location_sources", ["location_id"], :name => "index_location_sources_on_location_id"
   add_index "location_sources", ["source_id", "source_type"], :name => "index_location_sources_on_source_id_and_source_type"
+  add_index "location_sources", ["tagged_at"], :name => "index_location_sources_on_tagged_at"
 
   create_table "locations", :force => true do |t|
     t.string   "name",                  :limit => 30
@@ -291,6 +294,23 @@ ActiveRecord::Schema.define(:version => 20100917030956) do
     t.datetime "scheduled_at"
     t.integer  "creator_id"
     t.string   "match",        :limit => 50
+  end
+
+  create_table "taggings", :force => true do |t|
+    t.integer  "tag_id"
+    t.integer  "taggable_id"
+    t.string   "taggable_type"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context"
+    t.datetime "created_at"
+  end
+
+  add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
+  add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
+
+  create_table "tags", :force => true do |t|
+    t.string "name"
   end
 
   create_table "timezones", :force => true do |t|
