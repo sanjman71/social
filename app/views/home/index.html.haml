@@ -25,9 +25,13 @@
       %h4= link_to "Link your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'
 - else
   .span-23.prepend-1.last
+    %h2#tagline{:style => 'color: #00B;'}
+      == 'You are what you do'
+    %h2#tagline{:style => 'color: #00B;'}
+      == 'The love of your life is one check-in away'
     %h3
       -# always sign in with facebook
-      == Sign in with your
+      == Try the beta by signing in with your
       = link_to 'Facebook account', user_oauth_authorize_url(:facebook), :class => 'admin'
       -#== or
       -#= link_to "Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'  
