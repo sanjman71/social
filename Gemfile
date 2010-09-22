@@ -7,7 +7,7 @@ gem 'ruby-mysql'
 
 gem 'aasm',                   '>= 2.2.0'
 gem 'acts-as-taggable-on',    '>= 2.0.6'
-gem 'delayed_job'
+gem 'delayed_job',            :git => 'git://github.com/collectiveidea/delayed_job.git'
 gem 'foursquare'
 gem 'geokit',                 '>= 1.5.0'
 # hashie required by foursquare gem
