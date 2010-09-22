@@ -24,7 +24,7 @@ module Users::Search
   end
 
   def search(options={})
-    klass       = User
+    klass       = options[:klass] ? options[:klass] : User
     page        = options[:page] ? options[:page].to_i : 1
     per_page    = options[:limit] ? options[:limit] : 20
     method      = :search
@@ -34,15 +34,22 @@ module Users::Search
     conditions  = Hash[]
     geo         = Hash[]
 
-    if options[:with_gender] # e.g. 1, [1]
-      with.update(:gender => Array(options[:with_gender]))
+    case klass.to_s
+    when 'Location'
+      # parse location specific options
+    when 'User'
+      # parse user specific options
+      if options[:with_gender] # e.g. 1, [1]
+        with.update(:gender => Array(options[:with_gender]))
+      end
+      if options[:with_location_ids] # e.g. [1,3,5]
+        with.update(:location_ids => options[:with_location_ids])
+      end
+      if options[:without_user_ids] # e.g. [1,2,3]
+        without.update(:user_id => options[:without_user_ids])
+      end
     end
-    if options[:with_location_ids] # e.g. [1,3,5]
-      with.update(:location_ids => options[:with_location_ids])
-    end
-    if options[:without_user_ids] # e.g. [1,2,3]
-      without.update(:user_id => options[:without_user_ids])
-    end
+
     if options[:geo_origin] and options[:geo_distance]
       geo[:geo] = options[:geo_origin] # e.g. [lat, lng] (in radians)
       with['@geodist'] = options[:geo_distance]  # e.g. 0..5000 (in meters)

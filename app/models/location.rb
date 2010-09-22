@@ -11,30 +11,23 @@ class Location < ActiveRecord::Base
   belongs_to              :timezone
   has_many                :location_neighborhoods, :dependent => :destroy
   has_many                :neighborhoods, :through => :location_neighborhoods, :after_add => :after_add_neighborhood, :before_remove => :before_remove_neighborhood
-  # has_many                :location_places, :dependent => :destroy
-  # has_many                :places, :through => :location_places
-  # has_one                 :place, :through => :location_places, :order => 'id asc'
-  # accepts_nested_attributes_for :place, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
   has_many                :email_addresses, :as => :emailable, :dependent => :destroy, :order => "priority asc"
   has_one                 :primary_email_address, :class_name => 'EmailAddress', :as => :emailable, :order => "priority asc"
   accepts_nested_attributes_for :email_addresses, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
   has_many                :phone_numbers, :as => :callable, :dependent => :destroy, :order => "priority asc"
   has_one                 :primary_phone_number, :class_name => 'PhoneNumber', :as => :callable, :order => "priority asc"
   accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
-  # has_one                 :event_venue, :dependent => :destroy
   has_many                :location_neighbors, :dependent => :destroy
   has_many                :neighbors, :through => :location_neighbors
   has_many                :location_sources, :dependent => :destroy
-  # has_many                :sources, :through => :location_sources
   has_one                 :location_source, :class_name => 'LocationSource', :order => 'id desc'
 
   has_many                :checkins
   has_many                :users, :through => :checkins
 
-  # delegate                :tags, :to => '(place or return [])'
-  # delegate                :tag_list, :to => '(place or return nil)'
+  acts_as_taggable
 
-  # Note: the after_save_callback is deprecated, but its left here commented out for now for documentation purposes
+  # Note: the after_save_callback is deprecated, but its left here commented out for documentation purposes
   # after_save              :after_save_callback
 
   serialized_hash         :preferences

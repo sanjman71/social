@@ -3,8 +3,13 @@ class HomeController < ApplicationController
 
   # GET /
   def index
-    @oauth      = current_user.try(:oauths)
-    @locations  = Location.limit(50).order('RAND()')
+    # find all user's oauths
+    @oauth = current_user.try(:oauths)
+
+    if user_signed_in?
+      # find nearby locations
+      @locations = current_user.search_radius(:limit => 20, :miles => 5, :klass => Location)
+    end
   end
 
   # GET /beta

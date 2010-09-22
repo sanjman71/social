@@ -12,4 +12,12 @@ class LocationSource < ActiveRecord::Base
   scope :with_source_type,   lambda { |source_type| { :conditions => {:source_type => source_type} }}
   scope :facebook,           where("source_type = 'facebook'")
   scope :foursquare,         where("source_type = 'foursquare'")
+
+  def facebook?
+    self.source_type == 'facebook'
+  end
+  
+  def foursquare?
+    self.source_type == 'foursquare'
+  end
 end

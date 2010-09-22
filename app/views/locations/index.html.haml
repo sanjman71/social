@@ -2,6 +2,7 @@
 
 .span-23.prepend-1.mat
   %h2== Locations
+  %h4= link_to 'Import Tags', '#', :class => 'admin'
 
 %hr.space
 
@@ -10,5 +11,7 @@
     .span-24.last#location.padding-bottom-10
       .span-5.prepend-1#name
         = location.name
-      .span-15.last
+      .span-7#address
         = location.street_address
+      .span-11.last#tags
+        = location.tag_list.blank? ? 'No Tags' : location.tag_list.join(', ')

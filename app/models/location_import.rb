@@ -86,6 +86,21 @@ class LocationImport
     @location       = Location.create(options)
   end
 
+  def self.import_tags(locations = :all)
+    locations = locations == :all ? Location.all : locations
+
+    locations.each do |location|
+      location.location_sources.each do |ls|
+        case
+        when ls.facebook?
+          FacebookLocation.import_tags(:location_sources => [ls])
+        when ls.foursquare?
+          FoursquareLocation.import_tags(:location_sources => [ls])
+        end
+      end
+    end
+  end
+
   def self.log(level, s, options={})
     CHECKINS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
   end

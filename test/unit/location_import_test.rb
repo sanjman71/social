@@ -93,4 +93,22 @@ class LocationImportTest < ActiveSupport::TestCase
       assert_equal -87.9042318, @location.lng
     end
   end
+
+  context "import foursquare location tags" do
+    setup do
+      # create location, location source
+      @location = Location.create(:name => 'Starbucks - State St and Ohio St', :address => '600 N State St',
+                                  :state => @il, :country => @us)
+      @source   = @location.location_sources.create(:source_id => '108207', :source_type => 'foursquare')
+    end
+    
+    should "import tags" do
+      FoursquareLocation.import_tags(:location_sources => [@source])
+      # should add location tags
+      assert_equal ['cafe', 'food'], @location.reload.tag_list
+      # should mark location source tag_count, tagged_at
+      assert_equal 2, @source.reload.tag_count
+      assert @source.reload.tagged_at
+    end
+  end
 end

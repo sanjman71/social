@@ -1,7 +1,11 @@
 class FacebookLocation
   
   def self.import_tags(oauth=nil)
-    LocationSource.facebook.all(:include => :location).each do |ls|
+
+    # initialize location sources
+    location_sources = options[:location_sources] ? options[:location_sources] : LocationSource.facebook.all(:include => :location)
+
+    location_sources.each do |ls|
       location = ls.location
       oauth    ||= User.last.oauths.facebook.first
       

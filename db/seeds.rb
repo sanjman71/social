@@ -1,3 +1,5 @@
+# coding: utf-8
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -27,7 +29,7 @@ puts "#{Time.now}: initialized #{State.count} states"
 
 # locations - coffee, pizza, bar
 [
- # coffee
+ # coffee - chicago
  {"id"=>108207, "name"=>"Starbucks - State St and Ohio St",
    "primarycategory"=>{"id"=>79049, "fullpathname"=>"Food:Cafe", "nodename"=>"Cafe", "iconurl"=>"http://foursquare.com/img/categories/food/cafe.png"},
    "address"=>"600 N State St", "crossstreet"=>"State St and Ohio St", "city"=>"Chicago", "state"=>"IL", "zip"=>"60654",
@@ -40,7 +42,7 @@ puts "#{Time.now}: initialized #{State.count} states"
   "primarycategory"=>{"id"=>79107, "fullpathname"=>"Food:Tea Room", "nodename"=>"Tea Room", "iconurl"=>"http://foursquare.com/img/categories/food/tearoom.png"},
   "address"=>"819 N Rush St", "crossstreet"=>"Rush & Pearson", "city"=>"Chicago", "state"=>"IL", "zip"=>"60611",
   "geolat"=>41.897146, "geolong"=>-87.625386, "stats"=>{"herenow"=>"0"}, "distance"=>490},
- # pizza
+ # pizza - chicago
  {"id"=>153168, "name"=>"Lou Malnati's Pizzeria",
   "primarycategory"=>{"id"=>79081, "fullpathname"=>"Food:Pizza", "nodename"=>"Pizza", "iconurl"=>"http://foursquare.com/img/categories/food/pizza.png"},
   "address"=>"439 N. Wells St.", "crossstreet"=>"Hubbard St.", "city"=>"Chicago", "state"=>"IL", "zip"=>"60654",
@@ -78,14 +80,51 @@ puts "#{Time.now}: initialized #{State.count} states"
  {"id"=>131820, "name"=>"Volare",
    "primarycategory"=>{"id"=>79069, "fullpathname"=>"Food:Italian", "nodename"=>"Italian", "iconurl"=>"http://foursquare.com/img/categories/food/default.png"},
    "address"=>"201 E Grand Ave", "city"=>"Chicago", "state"=>"IL", "geolat"=>41.891518, "geolong"=>-87.622492, 
-   "stats"=>{"herenow"=>"0"}, "distance"=>904}
+   "stats"=>{"herenow"=>"0"}, "distance"=>904},
+ # coffee - boston
+ {"id"=> 109090, "name"=>"Starbucks",
+   "primarycategory"=>{"id"=>79049, "fullpathname"=>"Food:Café", "nodename"=>"Café","iconurl"=>"http://foursquare.com/img/categories/food/cafe.png"},
+   "address"=>"100 Cambridgeside Pl","city"=>"Cambridge","state"=>"MA","zip"=>"02142","verified"=>true,
+   "geolat"=>42.367406794909705,"geolong"=>-71.07631802558899,
+   "stats"=>{"herenow"=>"0"},"phone"=>"6176219507","twitter"=>"Starbucks","distance"=>1661},
+ {"id"=>1897522,"name"=>"Pavement Coffeehouse",
+   "primarycategory"=>{"id"=>79052,"fullpathname"=>"Food:Coffee Shop","nodename"=>"Coffee Shop",
+                       "iconurl"=>"http://foursquare.com/img/categories/food/coffeeshop.png"},
+   "address"=>"1096 Boylston St", "crossstreet"=>"btw Hemenway & Mass Ave","city"=>"Boston","state"=>"MA",
+   "zip"=>"02115", "verified"=>false,"geolat"=>42.34680938399482,"geolong"=>-71.08903169631958,
+   "stats"=>{"herenow"=>"0"},"phone"=>"6178597080","twitter"=>"Pavementcoffee","distance"=>2690},
+ {"id"=>83701,"name"=>"Boston Common Coffee Co.",
+   "primarycategory"=>{"id"=>79052,"fullpathname"=>"Food:Coffee Shop","nodename"=>"Coffee Shop",
+                      "iconurl"=>"http://foursquare.com/img/categories/food/coffeeshop.png"},
+   "address"=>"515 Washington Street","crossstreet"=>"West Street","city"=>"Boston","state"=>"MA","zip"=>"02110",
+   "verified"=>false,"geolat"=>42.3543,"geolong"=>-71.0621,"stats"=>{"herenow"=>"0"},
+   "phone"=>"6176959700","distance"=>473},
+  # pizza - boston
+  {"id"=>212915,"name"=>"Ducali Pizzeria & Bar",
+    "primarycategory"=>{"id"=>79081,"fullpathname"=>"Food:Pizza","nodename"=>"Pizza",
+                       "iconurl"=>"http://foursquare.com/img/categories/food/pizza.png"},
+    "address"=>"289 Causeway St","city"=>"Boston","state"=>"MA","zip"=>"02113","verified"=>false,
+    "geolat"=>42.367123,"geolong"=>-71.058133,"stats"=>{"herenow"=>"0"},"phone"=>"6177424144","twitter"=>"Ducali",
+    "distance"=>994},
+  {"id"=>66142,"name"=>"New York Pizza",
+    "primarycategory"=>{"id"=>79081,"fullpathname"=>"Food:Pizza","nodename"=>"Pizza",
+                       "iconurl"=>"http://foursquare.com/img/categories/food/pizza.png"},
+    "address"=>"224 Tremont St","crossstreet"=>"btw Stuart & Boylston","city"=>"Boston","state"=>"MA",
+    "zip"=>"02116","verified"=>false,"geolat"=>42.3514,"geolong"=>-71.0646,"stats"=>{"herenow"=>"0"},
+    "distance"=>849},
+  {"id"=>69904,"name"=>"Santarpio's Pizza",
+    "primarycategory"=>{"id"=>79081,"fullpathname"=>"Food:Pizza","nodename"=>"Pizza",
+                       "iconurl"=>"http://foursquare.com/img/categories/food/pizza.png"},
+    "address"=>"111 Chelsea St.","crossstreet"=>"Chelsea & Porter","city"=>"Boston","state"=>"MA",
+    "verified"=>false,"geolat"=>42.3726,"geolong"=>-71.0353,"stats"=>{"herenow"=>"0"},"distance"=>2596},
 ].each do |hash|
   LocationImport.import_foursquare_venue(hash)
 end
 puts "#{Time.now}: imported #{Location.count} locations"
 
 # users
-@chicago = Locality.resolve("Chicago, IL", :create => true)
+@chicago  = Locality.resolve("Chicago, IL", :create => true)
+@boston   = Locality.resolve("Boston, MA", :create => true)
 [{"handle" => "chicago_coffee_gal", 'gender' => 'female', "password" => 'coffee', 'password_confirmation' => 'coffee',
   'city' => @chicago},
  {"handle" => "chicago_coffee_guy", 'gender' => 'male', "password" => 'coffee', 'password_confirmation' => 'coffee',
@@ -101,13 +140,17 @@ puts "#{Time.now}: imported #{Location.count} locations"
  {"handle" => "chicago_foodie_gal", 'gender' => 'female', "password" => 'foodie', 'password_confirmation' => 'foodie',
   'city' => @chicago},
  {"handle" => "chicago_foodie_guy", 'gender' => 'male', "password" => 'foodie', 'password_confirmation' => 'foodie',
-  'city' => @chicago}
+  'city' => @chicago},
+ {"handle" => "boston_coffee_gal", 'gender' => 'female', "password" => 'coffee', 'password_confirmation' => 'coffee',
+  'city' => @boston},
+ {"handle" => "boston_coffee_guy", 'gender' => 'male', "password" => 'coffee', 'password_confirmation' => 'coffee',
+  'city' => @boston},
 ].each do |hash|
   User.create(hash)
 end
 puts "#{Time.now}: imported #{User.count} users"
 
-# checkins
+# chicago checkins
 @offset = 0
 ['coffee', 'pizza', 'bar', 'foodie'].each do |s|
   @gal = User.find_by_handle("chicago_#{s}_gal")
@@ -120,5 +163,11 @@ puts "#{Time.now}: imported #{User.count} users"
   end
   @offset += 3
 end
+
+# boston checkins
+['coffee', 'pizza'].each do |s|
+  
+end
+
 puts "#{Time.now}: imported #{Checkin.count} checkins"
 
