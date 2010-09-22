@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   badges_authorized_user
 
   include Users::Oauth
+  include Users::Points
   include Users::Search
 
   validates_presence_of     :password,  :if => :password_required?
@@ -347,10 +348,8 @@ class User < ActiveRecord::Base
   end
 
   def after_add_checkin(checkin)
-    # add points based on the number of checkins for this location
-    count = checkins.where(:location_id => checkin.location_id).count
-    self.points += Point.checkin_points(checkin.location_id, count)
-    self.save
+    # add points for checkin
+    self.add_points_for_checkin(checkin)
   end
   
 end

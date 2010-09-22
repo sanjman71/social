@@ -4,13 +4,15 @@ class Oauth < ActiveRecord::Base
   validates     :name, :presence => true
 
   after_create  :after_create_callback
-  
+
   scope :facebook,      where("name = 'facebook'")
   scope :foursquare,    where("name = 'foursquare'")
-  
+
   protected
-  
+
   def after_create_callback
+    # add user points
+    self.user.add_points_for_oauth(self)
     # import user checkins
     case name
     when 'foursquare', 'fs'

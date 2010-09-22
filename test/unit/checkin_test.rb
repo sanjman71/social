@@ -32,6 +32,8 @@ class CheckinTest < ActiveSupport::TestCase
                            "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago",
                                      "state"=>"Illinois", "geolat"=>41.8964066, "geolong"=>-87.6312161}
                           ]
+          # should add user points for oauth
+          assert_equal 5, @user.reload.points
           # stub oauth calls
           Foursquare::Base.any_instance.stubs(:test).returns(Hash['response' => 'ok'])
           Foursquare::Base.any_instance.stubs(:history).returns([@hash])
@@ -46,8 +48,8 @@ class CheckinTest < ActiveSupport::TestCase
           # should create activity alert for too few checkins
           assert_equal 1, @user.reload.alerts.count
           assert @user.reload.low_activity_alert_at
-          # should add user points
-          assert_equal 5, @user.reload.points
+          # should add user points for checkin
+          assert_equal 10, @user.reload.points
           # should add sphinx delayed_job
           delayed_jobs = Delayed::Job.limit(1).order('id desc').collect(&:handler)
           assert delayed_jobs[0].match(/SphinxJob/)
