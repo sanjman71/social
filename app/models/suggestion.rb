@@ -131,7 +131,7 @@ class Suggestion < ActiveRecord::Base
   end
 
   def log(level, s, options={})
-    SUGGESTIONS_LOGGER.debug("#{Time.now}: [#{level}] [suggestion:#{self.id}] #{s}")
+    SUGGESTIONS_LOGGER.info("#{Time.now}: [#{level}] [suggestion:#{self.id}] #{s}")
   end
 
 end

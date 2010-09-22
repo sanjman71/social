@@ -26,9 +26,9 @@ class FoursquareLocation
         ls.tagged_at  = Time.zone.now
         ls.tag_count  = tag_list.size
         ls.save
-        LOCATIONS_LOGGER.debug("#{Time.now}: [location:#{location.id}] #{location.name} tags:#{tag_list.join(',')}")
+        LOCATIONS_LOGGER.info("#{Time.now}: [location:#{location.id}] #{location.name} tags:#{tag_list.join(',')}")
       rescue Exception => e
-        EXCEPTIONS_LOGGER.debug("#{Time.now}: [foursquare tags] #{e.message}")
+        EXCEPTIONS_LOGGER.info("#{Time.now}: [foursquare tags] #{e.message}")
       end
 
       nil

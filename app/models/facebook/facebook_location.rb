@@ -15,7 +15,7 @@ class FacebookLocation
         place    = facebook.place(ls.source_id)
         puts place.inspect
       rescue Exception => e
-        puts "exception: #{e.message}"
+        EXCEPTIONS_LOGGER.info("#{Time.now}: [facebook tags] #{e.message}")
       end
 
       nil
