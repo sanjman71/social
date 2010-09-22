@@ -5,7 +5,14 @@ class OauthController < ApplicationController
   def initiate
     # generate request token
     @service        = params[:service]
-    @consumer       = User.foursquare_oauth_consumer
+    case @service
+    when 'foursquare'
+      @consumer = User.oauth_consumer_foursquare
+    when 'twitter'
+      @consumer = User.oauth_consumer_twitter
+    else
+      raise Exception, "unsupported service #{@service}"
+    end
     # build callback url using request host + port
     @host_port      = "http://#{request.host}" + (request.port == 80 ? '' : ":#{request.port}")
     @request_token  = @consumer.get_request_token(:oauth_callback => "#{@host_port}/oauth/#{@service}/callback")

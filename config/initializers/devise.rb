@@ -13,11 +13,10 @@
 # end
 
 # Oauth keys
-# FACEBOOK_KEY        = "148886775135034"
-# FACEBOOK_SECRET     = "b67635266ea25fcc6b613b1b38d893bd"
+
 case Rails.env
 when 'development', 'test'
-  # http://localhost.outlate.ly:5001
+  # http://local.outlate.ly:5001
   FACEBOOK_KEY        = "116164955103409"
   FACEBOOK_SECRET     = "74539e3aab96c99d88ac4739b0ab5553"
 when 'production'
@@ -26,17 +25,26 @@ when 'production'
   FACEBOOK_SECRET     = "7855c8949c684c4246bc1abb2e0e5af5"
 end
 
-# FOURSQUARE_KEY      = "UOPQQXD1M02JZLS1RZMCJCC23GUO0GEEOV53JANCP11ZCPFE" 
-# FOURSQUARE_SECRET   = "ZTYPX202I5GKITAPGTMWHE4S3ITOWYKIOBHYOPYE2VGMZ51I"
 case Rails.env
 when 'development', 'test'
-  # http://localhost.outlate.ly:5001
+  # http://local.outlate.ly:5001
   FOURSQUARE_KEY      = "SJ3XA21S2SMTJHJAHR3HAQJWRQKSD5EFY32O35V0IJRV0XGY" 
   FOURSQUARE_SECRET   = "SLTSPUZUXCINMPBGYFCTGUVTGJBRMZUSYXE5H1BD1NNMH5E3"
 when 'production'
   # http://outlate.ly
   FOURSQUARE_KEY      = "JY5LNKYLEYNMQU5WOE2JALFV3LTY2UDIS10PHI3ML1NDQMWK"
   FOURSQUARE_SECRET   = "4IDPZKE2XDYEVSOEW4OOWJYNKXJ3XRLMD2AINIGL3GDT3NYH"
+end
+
+case Rails.env
+when 'development', 'test'
+  # http://local.outlate.ly:5001
+  TWITTER_KEY         = "yV8cZBSAsuAXRMNsHTILfQ" 
+  TWITTER_SECRET      = "tihx2ZjPLrRIKgoXA15IwcCA33e2K2DeuyyVOjgdE"
+when 'production'
+  # http://outlate.ly
+  TWITTER_KEY         = "ldHXoenIWk7VK6ggWyJmg"
+  TWITTER_SECRET      = "ZFUk580BW0sKMJmQLa2WaekLbomXOZ3C7sJmuYtGw"
 end
 
 GITHUB_KEY          = "6aff6b46cf25d31469dc"
@@ -183,5 +191,12 @@ Devise.setup do |config|
     :authorize_path     => '/login/oauth/authorize',
     :access_token_path  => '/login/oauth/access_token',
     :scope              => ['user', 'public_repo']
+
+  # twitter - uses oauth
+  config.oauth :twitter, TWITTER_KEY, TWITTER_SECRET,
+    :site               => 'http://twitter.com',
+    :authorize_path     => '/oauth/authorize',
+    :access_token_path  => '/oauth/access_token',
+    :scope              => ''
   
 end

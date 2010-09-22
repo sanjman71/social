@@ -23,13 +23,19 @@
   - if current_user.foursquare_id.blank?
     .span-23.prepend-1.last
       %h4= link_to "Link your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'
+  - if current_user.twitter_id.blank?
+    .span-23.prepend-1.last
+      %h4= link_to "Link your Twitter account", oauth_initiate_path(:twitter), :class => 'admin'
+
 - else
   .span-23.prepend-1.last
     %h2#tagline{:style => 'color: #00B;'}
       == 'You are what you do'
     %h2#tagline{:style => 'color: #00B;'}
+      == 'Meet people who do, not say'
+    %h2#tagline{:style => 'color: #00B;'}
       == 'The love of your life is one check-in away'
-    %h3
+    %h3{:style => 'padding-top: 40px;'}
       -# always sign in with facebook
       == Try the beta by signing in with your
       = link_to 'Facebook account', user_oauth_authorize_url(:facebook), :class => 'admin'

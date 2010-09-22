@@ -9,6 +9,9 @@ module Users::Points
     when 'foursquare'
       self.points += 5
       self.save
+    when 'twitter'
+      self.points += 5
+      self.save
     end
   end
 

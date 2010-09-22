@@ -14,6 +14,8 @@ class CreateUsers < ActiveRecord::Migration
       t.integer   :gender,                :default => 0
       t.string    :facebook_id,           :limit => 50
       t.string    :foursquare_id,         :limit => 50
+      t.string    :twitter_id,            :limit => 50
+      t.string    :twitter_screen_name,   :limit => 50
       t.integer   :checkins_count,        :default => 0 # counter cache
       t.datetime  :low_activity_alert_at
       t.integer   :city_id

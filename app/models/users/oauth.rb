@@ -41,6 +41,24 @@ module Users::Oauth
       find_for_service_oauth('foursquare', access_token, user)
     end
 
+    # devise oauth callback to map access token to a resource/user
+    def base.find_for_twitter_oauth(access_token, signed_in_resource=nil)
+      begin
+        # get account info
+        data = ActiveSupport::JSON.decode(access_token.get('http://api.twitter.com/1/account/verify_credentials.json').body)
+      rescue Exception => e
+        # whoops
+        data = nil
+        log(:error, "foursquare oauth error #{e.message}") rescue nil
+        return signed_in_resource
+      end
+
+      user = signed_in_resource || find_or_create_twitter_user(data)
+      user.update_from_twitter(data)
+      # initialize oauth object
+      find_for_service_oauth('twitter', access_token, user)
+    end
+
     # generic method to create or update user's oauth token for the specified service
     def base.find_for_service_oauth(service, access_token, user=nil)
       return unless user
@@ -148,10 +166,52 @@ module Users::Oauth
       self.save
     end
 
-    def base.foursquare_oauth_consumer
+    # e.g. {"profile_background_image_url"=>"http://s.twimg.com/a/1285097693/images/themes/theme1/bg.png",
+    #       "followers_count"=>4, "description"=>nil, "profile_text_color"=>"333333",
+    #       "status"=>{"retweet_count"=>nil, "contributors"=>nil, "geo"=>nil, "favorited"=>false, "place"=>nil,
+    #       "source"=>"web", "in_reply_to_screen_name"=>nil, "retweeted"=>false, "truncated"=>false,
+    #       "in_reply_to_user_id"=>nil, "id"=>3390797913, "coordinates"=>nil, "in_reply_to_status_id"=>nil,
+    #       "text"=>"just signed up to check it out", "created_at"=>"Tue Aug 18 21:13:19 +0000 2009"},
+    #       "show_all_inline_media"=>false, "following"=>false, "notifications"=>false,
+    #       "profile_background_tile"=>false, "friends_count"=>0, "statuses_count"=>1,
+    #       "profile_link_color"=>"0084B4",
+    #       "profile_image_url"=>"http://s.twimg.com/a/1284949838/images/default_profile_0_normal.png",
+    #       "favourites_count"=>0, "listed_count"=>0, "contributors_enabled"=>false,
+    #       "profile_sidebar_fill_color"=>"DDEEF6", "screen_name"=>"sanjman71", "geo_enabled"=>true,
+    #       "time_zone"=>nil, "profile_sidebar_border_color"=>"C0DEED", "protected"=>false, "verified"=>false,
+    #       "url"=>nil, "name"=>"Sanjay Kapoor", "follow_request_sent"=>false, "profile_use_background_image"=>true,
+    #       "id"=>66800741, "lang"=>"en", "utc_offset"=>nil, "created_at"=>"Tue Aug 18 21:03:45 +0000 2009",
+    #       "profile_background_color"=>"C0DEED", "location"=>nil}
+    def update_from_twitter(data)
+      return if data.blank?
+      if data['id'] and self.twitter_id.blank?
+        self.twitter_id = data['id']
+        log(:ok, "[#{self.handle}] added twitter id #{self.twitter_id}")
+      end
+      if data['screen_name'] and self.twitter_screen_name.blank?
+        self.twitter_screen_name = data['screen_name']
+        log(:ok, "[#{self.handle}] added twitter screen name #{self.twitter_screen_name}")
+      end
+      self.save
+    end
+
+    def base.oauth_consumer_foursquare
       consumer = OAuth::Consumer.new(FOURSQUARE_KEY, FOURSQUARE_SECRET,
                 {
                   :site               => "http://foursquare.com",
+                  :scheme             => :header,
+                  :http_method        => :post,
+                  :request_token_path => "/oauth/request_token",
+                  :access_token_path  => "/oauth/access_token",
+                  :authorize_path     => "/oauth/authorize"
+                })
+      consumer
+    end
+
+    def base.oauth_consumer_twitter
+      consumer = OAuth::Consumer.new(TWITTER_KEY, TWITTER_SECRET,
+                {
+                  :site               => "http://twitter.com",
                   :scheme             => :header,
                   :http_method        => :post,
                   :request_token_path => "/oauth/request_token",
