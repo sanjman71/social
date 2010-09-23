@@ -72,19 +72,17 @@ class FoursquareCheckin
       checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
       log(:ok, "[#{user.handle}] imported #{checkins_added} #{source} checkins")
 
-      if user.reload.suggestionable?
-        # use dj to create suggestions
-        SuggestionAlgorithm.send_later(:create_for, user, Hash[:algorithm => [:checkins, :radius, :gender], :limit => 1])
-      end
-      
-      if user.low_activity_alertable?
-        # send low activity alert
-        user.send_low_activity_alert
-      end
-
       if checkins_added > 0
         # use dj to rebuild sphinx index
         Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
+      end
+
+      if user.reload.suggestionable?
+        # use dj to create suggestions
+        SuggestionAlgorithm.send_later(:create_for, user, Hash[:algorithm => [:checkins, :radius_tags, :tags, :gender], :limit => 1])
+      else
+        # send alert
+        user.send_alert(:id => :need_checkins)
       end
     end
     checkin_log

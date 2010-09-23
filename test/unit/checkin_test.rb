@@ -34,6 +34,8 @@ class CheckinTest < ActiveSupport::TestCase
                           ]
           # should add user points for oauth
           assert_equal 5, @user.reload.points
+          # should add alert
+          assert_equal 1, @user.reload.alerts.count
           # stub oauth calls
           Foursquare::Base.any_instance.stubs(:test).returns(Hash['response' => 'ok'])
           Foursquare::Base.any_instance.stubs(:history).returns([@hash])
@@ -45,9 +47,10 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 'foursquare', @checkin_log.source
           assert_equal 1, @user.checkins.count
           assert_equal 1, @user.checkins_count
-          # should create activity alert for too few checkins
+          # should add alert
+          assert_false @user.suggestionable?
           assert_equal 1, @user.reload.alerts.count
-          assert @user.reload.low_activity_alert_at
+          # assert @user.reload.low_activity_alert_at
           # should add user points for checkin
           assert_equal 10, @user.reload.points
           # should add sphinx delayed_job
@@ -108,6 +111,10 @@ class CheckinTest < ActiveSupport::TestCase
                                                   "latitude"=>41.890177, "longitude"=>-87.633815}}, 
                            "application"=>nil, "created_time"=>"2010-08-28T22:33:53+0000"
                           ]
+          # should add user points for oauth
+          assert_equal 5, @user.reload.points
+          # should add alert
+          assert_equal 1, @user.reload.alerts.count
           # stub facebook client calls
           FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [@hash]])
           @checkin_log = FacebookCheckin.import_checkins(@user)
@@ -116,9 +123,10 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 1, @checkin_log.checkins
           assert_equal 'success', @checkin_log.state
           assert_equal 'facebook', @checkin_log.source
-          # should create activity alert for too few checkins
+          # should add alert
+          assert_false @user.suggestionable?
           assert_equal 1, @user.reload.alerts.count
-          assert @user.reload.low_activity_alert_at
+          # assert @user.reload.low_activity_alert_at
           # should add sphinx delayed_job
           delayed_jobs = Delayed::Job.limit(1).order('id desc').collect(&:handler)
           assert delayed_jobs[0].match(/SphinxJob/)

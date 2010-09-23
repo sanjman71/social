@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
                             :after_add => :after_add_phone_number, :after_remove => :after_remove_phone_number
   has_one                   :primary_phone_number, :class_name => 'PhoneNumber', :as => :callable, :order => "priority asc"
   accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
-
+  
   belongs_to                :city
 
   has_many                  :oauths
@@ -78,6 +78,8 @@ class User < ActiveRecord::Base
     indexes handle, :as => :handle
     has :gender, :as => :gender
     has locations(:id), :as => :location_ids, :facet => true
+    indexes locations.tags(:name), :as => :tags
+    has locations.tags(:id), :as => :tag_ids, :facet => true
     has checkins(:id), :as => :checkin_ids, :facet => true
     has :checkins_count, :as => :checkins_count
     # convert degrees to radians for sphinx
@@ -271,17 +273,26 @@ class User < ActiveRecord::Base
     self.checkins_count >= Checkin.min_checkins_for_suggestion
   end
 
-  # returns true if the user can be sent a low activity alert message
-  def low_activity_alertable?
-    # no alerts if user can receive suggestions
-    return false if suggestionable?
-    # check last alert
-    (Time.zone.now - (self.low_activity_alert_at || Time.zone.now-1.year)) > Checkin.min_low_activity_alert_interval
-  end
+  def send_alert(options)
+    case options[:id]
+    when :linked_account
+      options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.linked_account'))
+    when :need_checkins
+      options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.need_checkins'))
+    end
 
-  def send_low_activity_alert
-    self.alerts.create(:level => 'notice', :subject => 'checkins', :message => I18n.t('checkins.low_activity_alert'))
-    self.update_attribute(:low_activity_alert_at, Time.zone.now)
+    User.transaction do
+      # find any existing alerts with same subject
+      objects = self.alerts.where("alerts.subject = ?", options[:subject])
+
+      if objects
+        # remove old alerts
+        objects.each { |o| o.destroy }
+      end
+
+      # create alert
+      self.alerts.create(options)
+    end
   end
 
   def tableize
@@ -289,11 +300,11 @@ class User < ActiveRecord::Base
   end
 
   def log(level, s, options={})
-    USERS_LOGGER.debug("#{Time.now}: [#{level}] #{s}")
+    USERS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
   end
 
   protected
-    
+
   # password is not required
   def password_required?
     return false

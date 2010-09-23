@@ -1,15 +1,32 @@
 module Users::Search
   
   def search_checkins(options={})
-    options.update(:with_gender => default_gender) unless options[:with_gender]
+    # find user location ids
     options.update(:with_location_ids => [self.locations.collect(&:id)])
+    options.update(:with_gender => default_gender) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
   end
-  
+
+  def search_tags(options={})
+    # find user location tag ids
+    tag_ids = self.locations.collect(&:tag_ids).flatten
+    options.update(:with_tag_ids => tag_ids) unless options[:with_tag_ids]
+    if options[:meters] or options[:miles] and self.mappable?
+      # restrict search to nearby tags
+      meters = options[:meters] ? options[:meters].to_f : Math.miles_to_meters(options[:miles]).to_f
+      origin = [Math.degrees_to_radians(self.lat), Math.degrees_to_radians(self.lng)]
+      options.update(:geo_origin => origin, :geo_distance => 0.0..meters)
+    end
+    options.update(:with_gender => default_gender) unless options[:with_gender]
+    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    search(options)
+  end
+
   def search_radius(options={})
     # check that user is mappable
     return [] unless self.mappable?
+    raise Exception, "missing radius meters or miles" if options[:meters].blank? and options[:miles].blank?
     meters = options[:meters] ? options[:meters].to_f : Math.miles_to_meters(options[:miles]).to_f
     origin = [Math.degrees_to_radians(self.lat), Math.degrees_to_radians(self.lng)]
     options.update(:geo_origin => origin, :geo_distance => 0.0..meters)
@@ -44,6 +61,9 @@ module Users::Search
       end
       if options[:with_location_ids] # e.g. [1,3,5]
         with.update(:location_ids => options[:with_location_ids])
+      end
+      if options[:with_tag_ids] # e.g. [1,3,5]
+        with.update(:tag_ids => options[:with_tag_ids])
       end
       if options[:without_user_ids] # e.g. [1,2,3]
         without.update(:user_id => options[:without_user_ids])

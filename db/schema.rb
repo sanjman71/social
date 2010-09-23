@@ -350,7 +350,6 @@ ActiveRecord::Schema.define(:version => 20100920132121) do
     t.string   "twitter_id",            :limit => 50
     t.string   "twitter_screen_name",   :limit => 50
     t.integer  "checkins_count",                                                       :default => 0
-    t.datetime "low_activity_alert_at"
     t.integer  "city_id"
     t.decimal  "lat",                                  :precision => 15, :scale => 10
     t.decimal  "lng",                                  :precision => 15, :scale => 10

@@ -13,14 +13,16 @@ class Oauth < ActiveRecord::Base
   def after_create_callback
     # add user points
     self.user.add_points_for_oauth(self)
+    # send user alert
+    self.user.send_alert(:id => :linked_account)
     # import user checkins
     case name
     when 'foursquare', 'fs'
       # get all checkins - max of 250
-      FoursquareCheckin.send_later(:import_checkins, self.user, :limit => 250)
+      FoursquareCheckin.delay.import_checkins(self.user, :limit => 250)
     when 'facebook', 'fb'
       # get all checkins
-      FacebookCheckin.send_later(:import_checkins, self.user, :limit => 250)
+      FacebookCheckin.delay.import_checkins(self.user, :limit => 250)
     end
   end
 end
