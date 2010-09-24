@@ -11,7 +11,12 @@
     .span-24.last#location.padding-bottom-10
       .span-5.prepend-1#name
         = location.name
+        %br
+        %span{:style => 'font-size: 0.9em; color: #999;'}= location.location_sources.collect(&:source_type).join(", ")
       .span-7#address
-        = location.street_address
+        == #{location.street_address}, #{location.city}
       .span-11.last#tags
-        = location.tag_list.blank? ? 'No Tags' : location.tag_list.join(', ')
+        - if location.tag_list.blank?
+          = link_to 'Import Tags', import_tags_location_path(location), :class => 'admin'
+        - else
+        = location.tag_list.join(', ')

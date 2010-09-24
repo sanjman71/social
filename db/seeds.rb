@@ -10,6 +10,7 @@
 
 # remove log files
 system "rm #{Rails.root}/log/checkins.*.log"
+system "rm #{Rails.root}/log/locations.*.log"
 system "rm #{Rails.root}/log/suggestions.*.log"
 system "rm #{Rails.root}/log/users.*.log"
 puts "#{Time.now}: removed log files"

@@ -43,7 +43,7 @@ class LocationImport
     if @location
       # add location source
       @location.location_sources.create(:source_id => id.to_s, :source_type => type)
-      log(:ok, "added location #{@location.name}")
+      log(:ok, "[location:#{@location.id}] added location #{@location.name}")
     end
 
     @location
@@ -84,21 +84,6 @@ class LocationImport
     options         = Hash[:name => hash['name'], :country => @country, :state => @state, :city => @city, 
                            :street_address => @address, :lat => @lat, :lng => @lng]
     @location       = Location.create(options)
-  end
-
-  def self.import_tags(locations = :all)
-    locations = locations == :all ? Location.all : locations
-
-    locations.each do |location|
-      location.location_sources.each do |ls|
-        case
-        when ls.facebook?
-          FacebookLocation.import_tags(:location_sources => [ls])
-        when ls.foursquare?
-          FoursquareLocation.import_tags(:location_sources => [ls])
-        end
-      end
-    end
   end
 
   def self.log(level, s, options={})

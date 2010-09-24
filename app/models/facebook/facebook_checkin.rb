@@ -111,7 +111,7 @@ class FacebookCheckin
   def self.log(level, s, options={})
     CHECKINS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
     if level == :error
-      EXCEPTIONS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
     end
   end
 

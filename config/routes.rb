@@ -17,11 +17,13 @@ Social::Application.routes.draw do
   match '/users/:user_id/checkins', :to => "checkins#index", :as => :user_checkins
   match 'checkins/poll', :to => "checkins#poll", :as => :poll_checkins
   match 'sightings', :to => "sightings#index"
-  match 'locations', :to => "locations#index"
   match 'accounts', :to => "accounts#index"
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
 
   resources :users
+  resources :locations, :only => [:index] do
+    get :import_tags, :on => :member
+  end
 
   resources :suggestions, :only => [:index, :show] do
     put :decline, :on => :member

@@ -5,6 +5,7 @@ class LocationSource < ActiveRecord::Base
   validates_presence_of   :source_id
   validates_presence_of   :source_type
   validates_uniqueness_of :location_id, :scope => [:source_id, :source_type]
+  after_create            :add_tags
 
   # find location with the specified source
   scope :with_source,        lambda { |source| { :conditions => {:source_id => source.id, :source_type => source.class.to_s} }}
@@ -16,8 +17,21 @@ class LocationSource < ActiveRecord::Base
   def facebook?
     self.source_type == 'facebook'
   end
-  
+
   def foursquare?
     self.source_type == 'foursquare'
   end
+
+  # add tags to this location
+  def add_tags
+    # check if already tagged
+    return false if self.tagged_at?
+    case
+    when facebook?
+      FacebookLocation.import_tags(:location_sources => [self])
+    when foursquare?
+      FoursquareLocation.import_tags(:location_sources => [self])
+    end
+  end
+
 end

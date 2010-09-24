@@ -1,3 +1,4 @@
+# coding: utf-8
 class FoursquareLocation
   
   def self.import_tags(options={})
@@ -15,8 +16,8 @@ class FoursquareLocation
         venue         = foursquare.venue_details(:vid => ls.source_id)
         category      = venue['venue']['primarycategory']
         # parse category fullpathname, nodename
-        fullpathname  = category['fullpathname']
-        nodename      = category['nodename']
+        fullpathname  = category['fullpathname'] rescue nil
+        nodename      = category['nodename'] rescue nil
         tag_list      = (Tagger.normalize(fullpathname) + Tagger.normalize(nodename)).uniq.sort
         location      = ls.location
         # set location tags
@@ -28,11 +29,11 @@ class FoursquareLocation
         ls.save
         LOCATIONS_LOGGER.info("#{Time.now}: [location:#{location.id}] #{location.name} tags:#{tag_list.join(',')}")
       rescue Exception => e
-        EXCEPTIONS_LOGGER.info("#{Time.now}: [foursquare tags] #{e.message}")
+        EXCEPTIONS_LOGGER.info("#{Time.now}: [error] [import tags:#{ls.id}] #{e.message}:#{e.backtrace}")
       end
-
-      nil
     end
+
+    true
   end
 
 end

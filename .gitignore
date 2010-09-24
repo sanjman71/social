@@ -1,4 +1,5 @@
 .bundle
+.rdebugrc
 .rvmrc
 backups/*
 config/*.sphinx.conf
