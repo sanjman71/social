@@ -7,8 +7,10 @@ class HomeController < ApplicationController
     @oauth = current_user.try(:oauths)
 
     if user_signed_in?
+      # find user profiles
+      @profiles   = User.all - [current_user]
       # find nearby locations
-      @locations = current_user.search_radius(:limit => 20, :miles => 5, :klass => Location)
+      @locations  = current_user.search_radius(:limit => 20, :miles => 5, :klass => Location)
     end
   end
 

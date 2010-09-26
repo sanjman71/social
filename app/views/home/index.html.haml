@@ -5,9 +5,27 @@
   - javascript 'mapiconmaker', 'markermanager'
   - javascript 'jquery.metadata'
   - javascript 'jquery.jmapping.min'
+  - javascript 'jquery.cycle.all.min'
+  - javascript 'users'
+
+- if user_signed_in?
+  -# check if any oauths are mssing
+  - add_oauths = []
+  - if current_user.facebook_id.blank?
+    - add_oauths << link_to("Link your Facebook account", user_oauth_authorize_url(:facebook), :class => 'admin')
+  - if current_user.foursquare_id.blank?
+    - add_oauths << link_to("Link your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin')
+  - if current_user.twitter_id.blank?
+    - add_oauths << link_to("Link your Twitter account", oauth_initiate_path(:twitter), :class => 'admin')
 
 .span-23.prepend-1.mat
   %h2== Home
+  - unless add_oauths.blank?
+    %h4
+      - add_oauths.each_with_index do |link, i|
+        %span{:style => 'padding-right: 5px;'}= link
+        - unless i == add_oauths.size-1
+          ==:&nbsp;
 
 %hr.space
 
@@ -15,19 +33,7 @@
   = display_flash(:all)
   = display_alerts
 
-- if user_signed_in?
-  -# check oauths
-  - if current_user.facebook_id.blank?
-    .span-23.prepend-1.last
-      %h4= link_to "Link your Facebook account", user_oauth_authorize_url(:facebook), :class => 'admin'
-  - if current_user.foursquare_id.blank?
-    .span-23.prepend-1.last
-      %h4= link_to "Link your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'
-  - if current_user.twitter_id.blank?
-    .span-23.prepend-1.last
-      %h4= link_to "Link your Twitter account", oauth_initiate_path(:twitter), :class => 'admin'
-
-- else
+- if !user_signed_in?
   .span-23.prepend-1.last
     %h2#tagline{:style => 'color: #00B;'}
       == 'You are what you do'
@@ -39,15 +45,22 @@
       -# always sign in with facebook
       == Try the beta by signing in with your
       = link_to 'Facebook account', user_oauth_authorize_url(:facebook), :class => 'admin'
-      -#== or
-      -#= link_to "Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin'  
 
+- if user_signed_in?
+  .span-23.prepend-1.last{:style => 'height: 70px;'}
+    .span-8#pics
+      - @profiles.each do |user|
+        = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}", :handle => user.handle, :city => "#{user.city.try(:name)}")
+    .span-10.last#caption
+      #handle==
+      #city==
+      
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions
     - if current_user.suggestions.active.count > 0
       %h3== You have #{link_to(pluralize(current_user.suggestions.active.count, 'suggestion'), suggestions_path, :style => 'color: #0000BB;')}
     - else
-      %h3== No suggestions at the moment, but we're working on finding you some.
+      %h3== No suggestions at the moment, but we're working on it.
 
   .span-23.prepend-1.last
     #map

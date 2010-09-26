@@ -21,6 +21,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def redirect_back_to(path)
+    redirect_to(params[:return_to] || path)
+  end
+
   protected
   
   # check that user has signed up for the beta

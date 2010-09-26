@@ -9,12 +9,16 @@ class UserTest < ActiveSupport::TestCase
         assert @user1.valid?
       end
 
-      should "create user in active state, no gender, no points" do
+      should "create user in active state, no points, no picture, default radius" do
         assert_equal "active", @user1.state
         assert_false @user1.gender?
         assert_equal 0, @user1.gender
         assert_equal '', @user1.gender_name
         assert_equal 0, @user1.points
+        assert_equal '', @user1.primary_photo_url
+        assert_equal 0, @user1.radius
+        assert_equal 0, @user1.user_density
+        assert_equal 0, @user1.suggestion_density
       end
     end
 
@@ -269,7 +273,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     context "gender" do
-      should "male" do
+      should "set female, default picture" do
         @user1 = User.create(:name => "User 1", :handle => 'user1')
         assert @user1.valid?
         assert_equal 0, @user1.gender
@@ -277,9 +281,10 @@ class UserTest < ActiveSupport::TestCase
         @user1.save
         assert_equal 1, @user1.reload.gender
         assert @user1.reload.female?
+        assert_equal "http://foursquare.com/img/blank_girl.png", @user1.primary_photo_url
       end
       
-      should "male" do
+      should "set male, default picture" do
         @user1 = User.create(:name => "User 1", :handle => 'user1')
         assert @user1.valid?
         assert_equal 0, @user1.gender
@@ -287,6 +292,7 @@ class UserTest < ActiveSupport::TestCase
         @user1.save
         assert_equal 2, @user1.reload.gender
         assert @user1.reload.male?
+        assert_equal "http://foursquare.com/img/blank_boy.png", @user1.primary_photo_url
       end
     end
 

@@ -24,6 +24,9 @@ class CreateUsers < ActiveRecord::Migration
       t.boolean   :delta,                 :default => 0
       t.integer   :email_addresses_count, :default => 0 # counter cache
       t.integer   :phone_numbers_count,   :default => 0 # counter cache
+      t.integer   :radius,                :default => 0
+      t.integer   :user_density,          :default => 0
+      t.integer   :suggestion_density,    :default => 0
       t.timestamps
     end
 
@@ -54,16 +57,16 @@ class CreateUsers < ActiveRecord::Migration
       t.references  :location
       t.datetime    :checkin_at
       t.string      :source_id                    # checkin id
-      t.string      :source_type, :limit => 50    # checkin source (e.g. 'fs', 'fb')
+      t.string      :source_type, :limit => 50    # checkin source (e.g. 'facebook', 'foursquare')
       t.timestamps
     end
-    
+
     add_index :checkins, :user_id
     add_index :checkins, :location_id
 
     create_table :checkin_logs do |t|
       t.references  :user
-      t.string      :source,  :limit => 50   # e.g. 'fs', 'fb'
+      t.string      :source,  :limit => 50   # e.g. 'facebook', 'foursquare'
       t.string      :state,   :limti => 50
       t.integer     :checkins
       t.datetime    :last_check_at
@@ -72,6 +75,18 @@ class CreateUsers < ActiveRecord::Migration
 
     add_index :checkin_logs, :user_id
     add_index :checkin_logs, :source
+
+    create_table :photos do |t|
+      t.references  :user
+      t.string      :source,    :limit => 50   # e.g. 'facebook', 'foursquare'
+      t.string      :url,       :limit => 100
+      t.integer     :priority,  :default => 10
+      t.timestamp
+    end
+
+    add_index :photos, :user_id
+    add_index :photos, :source
+    add_index :photos, :priority
   end
 
   def self.down

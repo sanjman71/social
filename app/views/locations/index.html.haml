@@ -14,9 +14,11 @@
         %br
         %span{:style => 'font-size: 0.9em; color: #999;'}= location.location_sources.collect(&:source_type).join(", ")
       .span-7#address
-        == #{location.street_address}, #{location.city}
+        %span{:style => 'font-size: 0.9em;'}== #{location.street_address}, #{location.city}
       .span-11.last#tags
         - if location.tag_list.blank?
-          = link_to 'Import Tags', import_tags_location_path(location), :class => 'admin'
+          -# check if location was checked for tags
+          - if location.location_sources.any? { |ls| ls.tagged_at.blank? }
+            = link_to 'Import Tags', import_tags_location_path(location), :class => 'admin'
         - else
-        = location.tag_list.join(', ')
+        %span{:style => 'font-size: 0.9em;'}= location.tag_list.join(', ')

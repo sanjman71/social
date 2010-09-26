@@ -24,17 +24,13 @@ class UsersController < ApplicationController
     else
       flash[:error]  = "There was an error updating your profile"
     end
-    redirect_to(redirect_path(user_path(@user)))
+    redirect_back_to(user_path(@user))
   end
 
   protected
 
   def init_user
     @user = User.find(params[:id])
-  end
-
-  def redirect_path(default)
-    params[:return_to] ? params[:return_to] : default
   end
 
 end

@@ -33,6 +33,8 @@ class User < ActiveRecord::Base
   has_many                  :checkins, :after_add => :after_add_checkin
   has_many                  :locations, :through => :checkins
   has_many                  :checkin_logs
+  has_many                  :photos
+  has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
   has_many                  :alerts
@@ -198,7 +200,7 @@ class User < ActiveRecord::Base
   def male?
     self.gender == 2
   end
-  
+
   def gender_name
     case self.gender
     when 1
@@ -218,6 +220,10 @@ class User < ActiveRecord::Base
   def mappable?
     return true if self.lat and self.lng
     false
+  end
+
+  def primary_photo_url
+    primary_photo.try(:url) || Photo.send("default_#{gender_name}") rescue nil || ''
   end
 
   # def profile_complete?

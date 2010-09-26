@@ -254,6 +254,17 @@ ActiveRecord::Schema.define(:version => 20100920132121) do
   add_index "phone_numbers", ["address"], :name => "index_phone_numbers_on_address"
   add_index "phone_numbers", ["callable_id", "callable_type"], :name => "index_phone_numbers_on_callable"
 
+  create_table "photos", :force => true do |t|
+    t.integer "user_id"
+    t.string  "source",   :limit => 50
+    t.string  "url",      :limit => 100
+    t.integer "priority",                :default => 10
+  end
+
+  add_index "photos", ["priority"], :name => "index_photos_on_priority"
+  add_index "photos", ["source"], :name => "index_photos_on_source"
+  add_index "photos", ["user_id"], :name => "index_photos_on_user_id"
+
   create_table "places", :force => true do |t|
     t.string  "name",                :limit => 50
     t.integer "locations_count",                   :default => 0
@@ -357,6 +368,9 @@ ActiveRecord::Schema.define(:version => 20100920132121) do
     t.boolean  "delta",                                                                :default => false
     t.integer  "email_addresses_count",                                                :default => 0
     t.integer  "phone_numbers_count",                                                  :default => 0
+    t.integer  "radius",                                                               :default => 0
+    t.integer  "user_density",                                                         :default => 0
+    t.integer  "suggestion_density",                                                   :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end

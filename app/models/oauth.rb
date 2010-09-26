@@ -7,6 +7,7 @@ class Oauth < ActiveRecord::Base
 
   scope :facebook,      where("name = 'facebook'")
   scope :foursquare,    where("name = 'foursquare'")
+  scope :twitter,       where("name = 'twitter'")
 
   protected
 

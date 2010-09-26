@@ -34,7 +34,7 @@ module Users::Oauth
         log(:error, "foursquare oauth error #{e.message}") rescue nil
         return signed_in_resource
       end
-      
+
       user = signed_in_resource || find_or_create_foursquare_user(data)
       user.update_from_foursquare(data)
       # initialize oauth object
@@ -81,7 +81,7 @@ module Users::Oauth
     def base.find_or_create_facebook_user(data)
       fbid    = data['id']
       user    = self.find_by_facebook_id(fbid)
-      
+  
       if user.blank?
         # create user
         fname     = data['first_name']
@@ -133,14 +133,20 @@ module Users::Oauth
         self.facebook_id = data['id']
         log(:ok, "[#{self.handle}] added facebook id #{self.facebook_id}")
       end
+      if data['id'] and self.photos.facebook.count == 0
+        # add user facebook photo
+        self.photos.create(:source => 'facebook', :priority => 1,
+                           :url => "https://graph.facebook.com/#{self.facebook_id}/picture?type=square")
+        log(:ok, "[#{self.handle}] added facebook photo")
+      end
       if data['location'] and !self.mappable?
-        # add user location city
         begin
+          # add user location city
           city = Locality.resolve(data['location']['name'], :create => true)
           self.city = city
           log(:ok, "[#{self.handle}] added city #{city.name}")
         rescue Exception => e
-          
+          log(:error, "#[#{self.handle}] facebook city error #{e.message}")
         end
       end
       self.save
@@ -162,6 +168,11 @@ module Users::Oauth
       if data['phone'] and !self.phone_numbers.collect(&:address).include?(data['phone'])
         self.phone_numbers.build(:address => data['phone'], :name => 'Mobile')
         log(:ok, "[#{self.handle}] added phone #{data['phone']}")
+      end
+      if data['photo'] and self.photos.foursquare.count == 0
+        # add user foursquare photo, set priority lower than facebook
+        self.photos.create(:source => 'foursquare', :priority => 3, :url => data['photo'])
+        log(:ok, "[#{self.handle}] added foursquare photo")
       end
       self.save
     end
@@ -191,6 +202,11 @@ module Users::Oauth
       if data['screen_name'] and self.twitter_screen_name.blank?
         self.twitter_screen_name = data['screen_name']
         log(:ok, "[#{self.handle}] added twitter screen name #{self.twitter_screen_name}")
+      end
+      if data['profile_image_url'] and self.photos.twitter.count == 0
+        # add user twitter photo, set priority lower than the others
+        self.photos.create(:source => 'twitter', :priority => 5, :url => data['profile_image_url'])
+        log(:ok, "[#{self.handle}] added twitter photo")
       end
       self.save
     end
