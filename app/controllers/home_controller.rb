@@ -8,9 +8,9 @@ class HomeController < ApplicationController
 
     if user_signed_in?
       # find user profiles
-      @profiles   = User.all - [current_user]
+      @profiles   = current_user.search_radius(:limit => 20, :miles => current_user.radius, :klass => User)
       # find nearby locations
-      @locations  = current_user.search_radius(:limit => 20, :miles => 5, :klass => Location)
+      @locations  = current_user.search_radius(:limit => 20, :miles => current_user.radius, :klass => Location)
     end
   end
 
