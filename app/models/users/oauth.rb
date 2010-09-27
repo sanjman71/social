@@ -169,10 +169,17 @@ module Users::Oauth
         self.phone_numbers.build(:address => data['phone'], :name => 'Mobile')
         log(:ok, "[#{self.handle}] added phone #{data['phone']}")
       end
-      if data['photo'] and self.photos.foursquare.count == 0
-        # add user foursquare photo, set priority lower than facebook
-        self.photos.create(:source => 'foursquare', :priority => 3, :url => data['photo'])
-        log(:ok, "[#{self.handle}] added foursquare photo")
+      if data['photo']
+        photo = self.foursquare_photo
+        if photo.blank?
+          # add user foursquare photo, set priority lower than facebook
+          self.photos.create(:source => 'foursquare', :priority => 3, :url => data['photo'])
+          log(:ok, "[#{self.handle}] added foursquare photo")
+        elsif photo.url != data['photo']
+          # update user foursquare photo
+          photo.url = data['photo']
+          log(:ok, "[#{self.handle}] updated foursquare photo")
+        end
       end
       self.save
     end
@@ -203,10 +210,17 @@ module Users::Oauth
         self.twitter_screen_name = data['screen_name']
         log(:ok, "[#{self.handle}] added twitter screen name #{self.twitter_screen_name}")
       end
-      if data['profile_image_url'] and self.photos.twitter.count == 0
-        # add user twitter photo, set priority lower than the others
-        self.photos.create(:source => 'twitter', :priority => 5, :url => data['profile_image_url'])
-        log(:ok, "[#{self.handle}] added twitter photo")
+      if data['profile_image_url']
+        photo = self.twitter_photo
+        if photo.blank?
+          # add user twitter photo, set priority lower than the others
+          self.photos.create(:source => 'twitter', :priority => 5, :url => data['profile_image_url'])
+          log(:ok, "[#{self.handle}] added twitter photo")
+        elsif photo.url != data['profile_image_url']
+          # update user twitter photo
+          photo.url = data['profile_image_url']
+          log(:ok, "[#{self.handle}] updated twitter photo")
+        end
       end
       self.save
     end

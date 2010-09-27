@@ -16,7 +16,7 @@ class UserTest < ActiveSupport::TestCase
         assert_equal '', @user1.gender_name
         assert_equal 0, @user1.points
         assert_equal '', @user1.primary_photo_url
-        assert_equal 0, @user1.radius
+        assert_equal 50, @user1.radius
         assert_equal 0, @user1.user_density
         assert_equal 0, @user1.suggestion_density
       end

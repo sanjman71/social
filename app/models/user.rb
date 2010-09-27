@@ -35,6 +35,9 @@ class User < ActiveRecord::Base
   has_many                  :checkin_logs
   has_many                  :photos
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
+  has_one                   :facebook_photo, :class_name => 'Photo', :conditions => {:source => 'facebook'}
+  has_one                   :foursquare_photo, :class_name => 'Photo', :conditions => {:source => 'foursquare'}
+  has_one                   :twitter_photo, :class_name => 'Photo', :conditions => {:source => 'twitter'}
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
   has_many                  :alerts
@@ -329,6 +332,9 @@ class User < ActiveRecord::Base
     if self.lat.blank? and self.lng.blank? and self.city
       self.lat = self.city.lat
       self.lng = self.city.lng
+    end
+    if self.radius.to_i == 0
+      self.radius = 50
     end
   end
 
