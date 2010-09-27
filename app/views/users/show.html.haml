@@ -1,5 +1,6 @@
 .span-23.prepend-1.mat
   %h2== My Profile
+  %h4= render(:partial => 'shared/oauth_links')
 
 %hr.space
 
@@ -23,6 +24,14 @@
         %h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Handle'
       .span-17.last
         = f.text_field :handle, :class => 'text title', :style => "width: 300px;"
+    .span-20.last
+      .span-3.text-align-right
+        %h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Pictures'
+      .span-17.last{:style => 'padding-top: 20px;'}
+        - @user.photos.each do |photo|
+          = image_tag(photo.url, :size => '50x50')
+          = photo.source
+        -#%h3= @user.photos.count
     .span-19.prepend-1.last
       = f.submit 'Update', :class => 'big'
       ==&nbsp;or&nbsp;

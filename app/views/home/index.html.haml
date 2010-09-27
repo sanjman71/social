@@ -8,24 +8,9 @@
   - javascript 'jquery.cycle.all.min'
   - javascript 'users'
 
-- if user_signed_in?
-  -# check if any oauths are mssing
-  - add_oauths = []
-  - if current_user.facebook_id.blank?
-    - add_oauths << link_to("Link your Facebook account", user_oauth_authorize_url(:facebook), :class => 'admin')
-  - if current_user.foursquare_id.blank?
-    - add_oauths << link_to("Link your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin')
-  - if current_user.twitter_id.blank?
-    - add_oauths << link_to("Link your Twitter account", oauth_initiate_path(:twitter), :class => 'admin')
-
 .span-23.prepend-1.mat
   %h2== Home
-  - unless add_oauths.blank?
-    %h4
-      - add_oauths.each_with_index do |link, i|
-        %span{:style => 'padding-right: 5px;'}= link
-        - unless i == add_oauths.size-1
-          ==:&nbsp;
+  %h4= render(:partial => 'shared/oauth_links')
 
 %hr.space
 

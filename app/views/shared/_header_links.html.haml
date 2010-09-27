@@ -1,5 +1,14 @@
 .span-24
-  .span-24.last#header_links{:style => 'text-align: right;'}
+  .span-5#header_data
+    - if user_signed_in?
+      %span{:style => 'color: #fff;'}
+        = current_user.handle
+        %br
+        == #{current_user.points} points
+    - else
+      ==&nbsp;
+
+  .span-19.last#header_links{:style => 'text-align: right;'}
     -# show these links always
     = link_to 'Home', root_path, :class => 'header link'
 
@@ -23,12 +32,7 @@
       = link_to('Accounts', accounts_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Logout', logout_path, :class => 'header link')
-      %span{:class => 'vertical bar'}== &nbsp;:&nbsp;
-      %span{:style => 'color: #fff;'}= current_user.handle
     - else
       -#%span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       -#= link_to('Login', login_path, :class => 'header link', :rel => 'nofollow')
-      
-  - if user_signed_in?
-    .span-24.last#header_data{:style => 'text-align: right;'}
-      %span{:style => 'color: #fff;'}== #{current_user.points} points
+
