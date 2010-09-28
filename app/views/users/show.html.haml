@@ -21,7 +21,7 @@
 
 .span-23.prepend-1.last{:style => 'padding-top: 10px;'}
   - @checkins.each_pair do |source, checkins|
-    .span-12.last#checkins_banner{:style => 'background: #e0e0e0; padding: 10px 5px 10px 10px; margin-bottom: 5px; margin-top: 10px;'}
+    .span-12.last#checkins_banner{:style => 'background: #f3f3f3; padding: 10px 5px 10px 10px; margin-bottom: 5px; margin-top: 10px;'}
       %h4.bottom== #{source.titleize} checkins / #{checkins.size}
     -# sort checkins most recent first
     - gsize  = checkins.size.even? ? checkins.size/2 : checkins.size/2+1
@@ -41,4 +41,11 @@
               = checkin1.location.try(:name)
             .span-4.last
               = checkin1.checkin_at.to_s(:datetime_short)
+
+.span-23.prepend-1.last{:style => 'padding-top: 10px;'}
+  .span-12.last#tags_banner{:style => 'background: #f3f3f3; padding: 10px 5px 10px 10px; margin-bottom: 5px; margin-top: 10px;'}
+    %h4.bottom== Tags
+  .span-20.last#tags
+    - tags = @user.locations.collect(&:tag_list).flatten.uniq.compact.sort
+    = tags.join(', ')
           
