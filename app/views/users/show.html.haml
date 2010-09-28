@@ -1,38 +1,44 @@
-.span-23.prepend-1.mat
-  %h2== My Profile
-  %h4= render(:partial => 'shared/oauth_links')
+- content_for :mat do
+  %h2
+    == #{user_display_name(@user, current_user, 'Me')}
+    %span{:style => 'font-size: 0.5em; padding-left: 3px;'}= link_to 'Edit', edit_user_path(@user), :class => 'admin'
+  - if current_user == @user
+    %h4= render(:partial => 'shared/oauth_links')
 
 %hr.space
 
-.span.24.last
+.span-24.last
   = display_flash(:all)
   = display_alerts
 
-- if @show_handle_message
-  .span-23.prepend-1.last#handle_message
-    %h4{:style => 'line-height: 1.5em;'}
-      == Your handle is your name on the site.
-      %br
-      == Please choose a handle name if this one doesn't work for you.
-      == You will be able to change it later as well.
+.span-24.last#basics
+  .span-2.prepend-1#picture
+    = image_tag @user.primary_photo_url, :size => '50x50'
+  .span-7#handle{:style => 'padding-top: 10px; font-size: 1.1em;'}
+    = user_profile_blurb(@user)
+  .span-5#points{:style => 'padding-top: 10px; font-size: 1.1em;'}
+    = pluralize(@user.points, 'point')
 
-.span-24.last
-  = form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
-    -# handle
-    .span-20.last
-      .span-3.text-align-right
-        %h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Handle'
-      .span-17.last
-        = f.text_field :handle, :class => 'text title', :style => "width: 300px;"
-    .span-20.last
-      .span-3.text-align-right
-        %h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Pictures'
-      .span-17.last{:style => 'padding-top: 20px;'}
-        - @user.photos.each do |photo|
-          = image_tag(photo.url, :size => '50x50')
-          = photo.source
-        -#%h3= @user.photos.count
-    .span-19.prepend-1.last
-      = f.submit 'Update', :class => 'big'
-      ==&nbsp;or&nbsp;
-      = link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em'
+.span-23.prepend-1.last{:style => 'padding-top: 10px;'}
+  - @checkins.each_pair do |source, checkins|
+    .span-12.last#checkins_banner{:style => 'background: #e0e0e0; padding: 10px 5px 10px 10px; margin-bottom: 5px; margin-top: 10px;'}
+      %h4.bottom== #{source.titleize} checkins / #{checkins.size}
+    -# sort checkins most recent first
+    - gsize  = checkins.size.even? ? checkins.size/2 : checkins.size/2+1
+    - groups = checkins.sort_by{|c| -1 * c.checkin_at.to_i}.in_groups_of(gsize)
+    .span-23.last.padding-bottom-5#checkins
+      - 0.upto(gsize-1) do |i|
+        - checkin0 = groups[0][i]
+        - checkin1 = groups[1][i] rescue nil
+        .span-10#checkin
+          .span-6
+            = checkin0.location.try(:name)
+          .span-4.last
+            = checkin0.checkin_at.to_s(:datetime_short)
+        .span-10.prepend-1.last#checkin
+          - if checkin1
+            .span-6
+              = checkin1.location.try(:name)
+            .span-4.last
+              = checkin1.checkin_at.to_s(:datetime_short)
+          

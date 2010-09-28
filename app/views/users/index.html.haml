@@ -11,7 +11,7 @@
       .span-5.prepend-1#name
         = user.handle
       .span-3#checkins
-        = link_to pluralize(user.checkins.count, 'checkin'), user_checkins_path(user), :class => 'admin'
+        = link_to pluralize(user.checkins.count, 'checkin'), user_path(user), :class => 'admin'
       .span-3#points
         = pluralize(user.points, 'point')
       .span-12.last

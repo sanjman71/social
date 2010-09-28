@@ -1,6 +1,6 @@
 - title('Suggestions')
 
-.span-23.prepend-1.mat
+- content_for :mat do
   %h2== Suggestions
   %h4== My Suggestions
 
@@ -12,7 +12,7 @@
       .span-2.prepend-1#picture
         - my_party    = suggestion.my_party(current_user)
         - other_party = suggestion.other_party(current_user)
-        = image_tag(picture_url(other_party.user), :size => '50x50')
+        = image_tag(other_party.user.primary_photo_url, :size => '50x50')
       .span-1#icons
         - if my_party.alert?
           = link_to image_tag('circle-alert.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)

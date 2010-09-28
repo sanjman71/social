@@ -35,10 +35,9 @@
   .span-23.prepend-1.last{:style => 'height: 70px;'}
     .span-8#pics
       - @profiles.each do |user|
-        = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}", :handle => user.handle, :city => "#{user.city.try(:name)}")
+        = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}", :handle => user.handle, :city => user.city.try(:name), :gender => user.gender_name.try(:titleize))
     .span-10.last#caption
-      #handle==
-      #city==
+      #blurb==
       
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions

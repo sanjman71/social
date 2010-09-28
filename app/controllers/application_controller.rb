@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
     when :user, User
       if resource_or_scope.created_recently?(1)
         # allow user to change handle
-        user_path(resource_or_scope, :handle => 1)
+        edit_user_path(resource_or_scope, :handle => 1)
       else
         # the default post login page
         root_url

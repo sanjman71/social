@@ -62,4 +62,7 @@ module ApplicationHelper
     missing_oauths
   end
 
+  def user_profile_blurb(user)
+    "#{user.handle} / #{user.gender_name.try(:titleize)} / #{user.city.try(:name) || 'Unknown'}"
+  end
 end

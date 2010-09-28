@@ -1,0 +1,37 @@
+- content_for :mat do
+  %h2== My Profile
+  %h4= render(:partial => 'shared/oauth_links')
+
+%hr.space
+
+.span.24.last
+  = display_flash(:all)
+  = display_alerts
+
+- if @show_handle_message
+  .span-23.prepend-1.last#handle_message
+    %h4{:style => 'line-height: 1.5em;'}
+      == Your handle is your name on the site.
+      %br
+      == Choose a different handle name if this one doesn't work for you.
+      == You can change it later as well.
+
+.span-24.last
+  = form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
+    -# handle
+    .span-20.last
+      .span-3.text-align-right
+        %h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Handle'
+      .span-17.last
+        = f.text_field :handle, :class => 'text title', :style => "width: 300px;"
+    -#.span-20.last
+      -#.span-3.text-align-right
+        -#%h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Pictures'
+      -#.span-17.last{:style => 'padding-top: 20px;'}
+        -#- @user.photos.each do |photo|
+          -#= image_tag(photo.url, :size => '50x50')
+          -#= photo.source
+    .span-19.prepend-1.last
+      = f.submit 'Update', :class => 'big'
+      ==&nbsp;or&nbsp;
+      = link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em'
