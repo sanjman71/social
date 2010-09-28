@@ -14,6 +14,12 @@ GIT
       bcrypt-ruby (~> 2.1.2)
       warden (~> 0.10.7)
 
+GIT
+  remote: git://github.com/sanjman71/crack.git
+  revision: 2dce74b455ef220ffb1baa3605f902ffc4070ceb
+  specs:
+    crack (0.1.7)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -61,7 +67,6 @@ GEM
     chronic (0.2.3)
       hoe (>= 1.2.1)
     columnize (0.3.1)
-    crack (0.1.8)
     daemons (1.1.0)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -166,6 +171,7 @@ DEPENDENCIES
   aasm (>= 2.2.0)
   acts-as-taggable-on (>= 2.0.6)
   capistrano
+  crack!
   delayed_job!
   devise!
   factory_girl_rails
