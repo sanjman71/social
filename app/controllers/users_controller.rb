@@ -13,14 +13,8 @@ class UsersController < ApplicationController
   def show
     # @user initialized in before filter
 
-    # group checkins by source
-    @checkins     = @user.checkins.group_by(&:source_type)
-    @checkin_logs = @user.checkin_logs.inject(Hash[]) do |hash, log|
-      mm, ss = (Time.zone.now-log.last_check_at).divmod(60)
-      # track minutes ago
-      hash[log.source] = mm
-      hash
-    end
+    # find user checkins
+    @checkins = @user.checkins
   end
 
   # GET /users/1/edit

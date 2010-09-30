@@ -21,11 +21,11 @@ class User < ActiveRecord::Base
   has_many                  :email_addresses, :as => :emailable, :dependent => :destroy, :order => "priority asc",
                             :after_add => :after_add_email_address, :after_remove => :after_remove_email_address
   has_one                   :primary_email_address, :class_name => 'EmailAddress', :as => :emailable, :order => "priority asc"
-  accepts_nested_attributes_for :email_addresses, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
+  accepts_nested_attributes_for :email_addresses, :allow_destroy => true, :reject_if => :all_blank
   has_many                  :phone_numbers, :as => :callable, :dependent => :destroy, :order => "priority asc",
                             :after_add => :after_add_phone_number, :after_remove => :after_remove_phone_number
   has_one                   :primary_phone_number, :class_name => 'PhoneNumber', :as => :callable, :order => "priority asc"
-  accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
+  accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => :all_blank
   
   belongs_to                :city
 
@@ -34,6 +34,7 @@ class User < ActiveRecord::Base
   has_many                  :locations, :through => :checkins
   has_many                  :checkin_logs
   has_many                  :photos
+  accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
   has_one                   :facebook_photo, :class_name => 'Photo', :conditions => {:source => 'facebook'}
   has_one                   :foursquare_photo, :class_name => 'Photo', :conditions => {:source => 'foursquare'}
@@ -52,7 +53,8 @@ class User < ActiveRecord::Base
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
   attr_accessible           :handle, :password, :password_confirmation, :gender, :rpx, :facebook_id, :city, :city_id,
-                            :email_addresses_attributes, :phone_numbers_attributes, :preferences_phone, :preferences_email
+                            :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
+                            :preferences_phone, :preferences_email
 
   # BEGIN acts_as_state_machine
   include AASM

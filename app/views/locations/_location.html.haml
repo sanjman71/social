@@ -1,0 +1,13 @@
+.span-5.prepend-1#name
+  = location.name
+  %br
+  %span{:style => 'font-size: 0.9em; color: #999;'}= source
+.span-7#address
+  %span{:style => 'font-size: 0.9em;'}== #{location.street_address}, #{location.city}
+.span-7.last#tags
+  - if location.tag_list.blank? and import
+    -# check if location was checked for tags
+    - if location.location_sources.any? { |ls| ls.tagged_at.blank? }
+      = link_to 'Import Tags', import_tags_location_path(location), :class => 'admin'
+  - else
+  %span{:style => 'font-size: 0.9em;'}= location.tag_list.join(', ')

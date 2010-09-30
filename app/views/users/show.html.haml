@@ -14,38 +14,28 @@
 .span-24.last#basics
   .span-2.prepend-1#picture
     = image_tag @user.primary_photo_url, :size => '50x50'
-  .span-7#handle{:style => 'padding-top: 10px; font-size: 1.1em;'}
-    = user_profile_blurb(@user)
+  .span-4#user{:style => 'padding-top: 10px;'}
+    #handle= @user.handle
+    #data= user_profile_blurb(@user)
   .span-5#points{:style => 'padding-top: 10px; font-size: 1.1em;'}
     = pluralize(@user.points, 'point')
 
-.span-23.prepend-1.last{:style => 'padding-top: 10px;'}
-  - @checkins.each_pair do |source, checkins|
-    .span-12.last#checkins_banner{:style => 'background: #f3f3f3; padding: 10px 5px 10px 10px; margin-bottom: 5px; margin-top: 10px;'}
-      %h4.bottom== #{source.titleize} checkins / #{checkins.size}
-    -# sort checkins most recent first
-    - gsize  = checkins.size.even? ? checkins.size/2 : checkins.size/2+1
-    - groups = checkins.sort_by{|c| -1 * c.checkin_at.to_i}.in_groups_of(gsize)
-    .span-23.last.padding-bottom-5#checkins
-      - 0.upto(gsize-1) do |i|
-        - checkin0 = groups[0][i]
-        - checkin1 = groups[1][i] rescue nil
-        .span-10#checkin
-          .span-6
-            = checkin0.location.try(:name)
-          .span-4.last
-            = checkin0.checkin_at.to_s(:datetime_short)
-        .span-10.prepend-1.last#checkin
-          - if checkin1
-            .span-6
-              = checkin1.location.try(:name)
-            .span-4.last
-              = checkin1.checkin_at.to_s(:datetime_short)
+%hr.space
 
-.span-23.prepend-1.last{:style => 'padding-top: 10px;'}
-  .span-12.last#tags_banner{:style => 'background: #f3f3f3; padding: 10px 5px 10px 10px; margin-bottom: 5px; margin-top: 10px;'}
-    %h4.bottom== Tags
-  .span-20.last#tags
+.span-24.last#checkins
+  .span-2.prepend-1.border
+    %h4== Checkins
+  .span-20.last
+    - @checkins.each do |checkin|
+      .span-20.last
+        = render(:partial => 'locations/location', :locals => {:location => checkin.location, :source => checkin.source_type, :import => false})
+
+%hr.space
+
+.span-24.last
+  .span-2.prepend-1.border
+    %h4== Tags
+  .span-20.prepend-1.last#tags
     - tags = @user.locations.collect(&:tag_list).flatten.uniq.compact.sort
     = tags.join(', ')
           

@@ -1,5 +1,5 @@
 class Photo < ActiveRecord::Base
-  validates   :user_id,   :presence => true
+  # validates   :user_id,   :presence => true # validation doesn't work when using nested attributes
   validates   :priority,  :presence => true
   validates   :url,       :presence => true
 

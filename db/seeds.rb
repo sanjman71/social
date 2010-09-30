@@ -29,6 +29,15 @@ File.open(file).lines.each do |row|
 end
 puts "#{Time.now}: initialized #{State.count} states"
 
+# pics
+@girl_pics = ['http://i774.photobucket.com/albums/yy29/electricxxxheart/Photography/photography-7.jpg',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/b207297326.jpg',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/bdc.png',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/cosmicdress.jpg',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/hgfgf.jpg',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/photo2.jpg'
+             ]
+
 # locations - coffee, pizza, bar
 [
  # coffee - chicago
@@ -128,23 +137,23 @@ puts "#{Time.now}: imported #{Location.count} locations"
 @chicago  = Locality.resolve("Chicago, IL", :create => true)
 @boston   = Locality.resolve("Boston, MA", :create => true)
 [{"handle" => "chicago_coffee_gal", 'gender' => 'female', "password" => 'coffee', 'password_confirmation' => 'coffee',
-  'city' => @chicago},
+  'city' => @chicago, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @girl_pics[0]}]},
  {"handle" => "chicago_coffee_guy", 'gender' => 'male', "password" => 'coffee', 'password_confirmation' => 'coffee',
   'city' => @chicago},
  {"handle" => "chicago_pizza_gal", 'gender' => 'female', "password" => 'pizza', 'password_confirmation' => 'pizza',
-  'city' => @chicago},
+  'city' => @chicago, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @girl_pics[1]}]},
  {"handle" => "chicago_pizza_guy", 'gender' => 'male', "password" => 'pizza', 'password_confirmation' => 'pizza',
   'city' => @chicago},
  {"handle" => "chicago_bar_gal", 'gender' => 'female', "password" => 'bar', 'password_confirmation' => 'bar',
-  'city' => @chicago},
+  'city' => @chicago, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @girl_pics[2]}]},
  {"handle" => "chicago_bar_guy", 'gender' => 'male', "password" => 'bar', 'password_confirmation' => 'bar',
   'city' => @chicago},
  {"handle" => "chicago_foodie_gal", 'gender' => 'female', "password" => 'foodie', 'password_confirmation' => 'foodie',
-  'city' => @chicago},
+  'city' => @chicago, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @girl_pics[3]}]},
  {"handle" => "chicago_foodie_guy", 'gender' => 'male', "password" => 'foodie', 'password_confirmation' => 'foodie',
   'city' => @chicago},
  {"handle" => "boston_coffee_gal", 'gender' => 'female', "password" => 'coffee', 'password_confirmation' => 'coffee',
-  'city' => @boston},
+  'city' => @boston, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @girl_pics[4]}]},
  {"handle" => "boston_coffee_guy", 'gender' => 'male', "password" => 'coffee', 'password_confirmation' => 'coffee',
   'city' => @boston},
 ].each do |hash|
