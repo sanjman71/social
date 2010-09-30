@@ -18,7 +18,7 @@ class SuggestionAlgorithm
         # find matches based on common checkin locations
         users = user.search_checkins(:limit => @remaining, :without_user_ids => @without_user_ids)
         users.each { |u| @users_hash[u.id] = 'checkin'}
-      when :radius_tags
+      when :geo_tags
         # find matches based on location tags within a specified radius from user
         users = user.search_tags(:limit => @remaining, :without_user_ids => @without_user_ids, :miles => default_radius)
         users.each { |u| @users_hash[u.id] = 'radius_tag'}
@@ -26,9 +26,9 @@ class SuggestionAlgorithm
         # find matches based on location tags
         users = user.search_tags(:limit => @remaining, :without_user_ids => @without_user_ids)
         users.each { |u| @users_hash[u.id] = 'tag'}
-      when :radius
+      when :geo
         # find matches based on radius from user
-        users = user.search_radius(:limit => @remaining, :without_user_ids => @without_user_ids, :miles => default_radius)
+        users = user.search_geo(:limit => @remaining, :without_user_ids => @without_user_ids, :miles => default_radius)
         users.each { |u| @users_hash[u.id] = 'radius'}
       when :gender
         # find matches based on user gender preferences

@@ -36,7 +36,7 @@
     .span-8#pics
       - @profiles.each do |user|
         = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}", :handle => user.handle, :city => user.city.try(:name), :gender => user.gender_name.try(:titleize))
-    .span-10.last#caption
+    .span-10.last#caption{:style => 'font-size: 0.9em;'}
       #blurb==
       
 - if user_signed_in?

@@ -1,6 +1,6 @@
 - title('Sightings')
 
-.span-23.prepend-1.mat
+- content_for :mat do
   %h2== Sightings
   %h4== People who hang out where you do
 
@@ -10,6 +10,6 @@
   - @sightings.each do |sighting|
     .span-24.last#sighting
       .span-2.prepend-1#picture
-        = image_tag(picture_url(sighting), :size => '50x50')
-      .span-10.last{:style => 'padding-top: 15px;'}
-        = sighting.handle
+        = image_tag(sighting.primary_photo_url, :size => '50x50')
+      .span-10.last{:style => 'padding-top: 15px; font-size: 0.9em;'}
+        = user_profile_blurb(sighting)

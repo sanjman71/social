@@ -2,7 +2,8 @@ module Users::Search
   
   def search_checkins(options={})
     # find user location ids
-    options.update(:with_location_ids => [self.locations.collect(&:id)])
+    loc_ids = self.locations.collect(&:id)
+    options.update(:with_location_ids => [loc_ids])
     options.update(:with_gender => default_gender) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
@@ -23,7 +24,7 @@ module Users::Search
     search(options)
   end
 
-  def search_radius(options={})
+  def search_geo(options={})
     # check that user is mappable
     return [] unless self.mappable?
     raise Exception, "missing radius meters or miles" if options[:meters].blank? and options[:miles].blank?
@@ -71,19 +72,25 @@ module Users::Search
     end
 
     if options[:geo_origin] and options[:geo_distance]
-      geo[:geo] = options[:geo_origin] # e.g. [lat, lng] (in radians)
-      with['@geodist'] = options[:geo_distance]  # e.g. 0..5000 (in meters)
+      geo[:geo]         = options[:geo_origin] # e.g. [lat, lng] (in radians)
+      with['@geodist']  = options[:geo_distance]  # e.g. 0..5000 (in meters)
     end
 
-    sort_mode   = :extended
-    sort_order  = "@relevance DESC"
-    
-    if !geo.blank?
-      sort_order = "@geodist ASC, @relevance DESC"
+    if options[:order]
+      case options[:order]
+      when :checkins_tags
+        sort_order = order_checkins_tags
+      end
+      sort_mode   = :expr
+    else
+      # default sort
+      sort_mode   = :extended
+      sort_order  = geo.blank? ? "@relevance DESC" : "@geodist ASC, @relevance DESC"
     end
 
-    args        = Hash[:without => without, :with => with, :conditions => conditions, :sort_mode => sort_mode, :order => sort_order,
-                       :match_mode => :extended, :page => page, :per_page => per_page].update(geo)
+    args        = Hash[:without => without, :with => with, :conditions => conditions, :match_mode => :extended,
+                       :sort_mode => sort_mode, :order => sort_order,
+                       :page => page, :per_page => per_page].update(geo)
     objects     = klass.send(method, query, args)
     begin
       objects.results # query sphinx and populate results
@@ -91,6 +98,13 @@ module Users::Search
     rescue
       []
     end
+  end
+
+  def order_checkins_tags(hash={})
+    loc_ids   = self.locations.collect(&:id)
+    tag_ids   = self.locations.collect(&:tag_ids).flatten
+    # weigth checkin matches more than tag matches
+    sort_expr = ["5 * IN(location_ids, %s)" % loc_ids.join(','), "3 * IN(tag_ids, %s)" % tag_ids.join(',')].join(" + ")
   end
 
   def default_gender
