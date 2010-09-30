@@ -6,15 +6,15 @@ class FacebookLocation
     location_sources = options[:location_sources] ? options[:location_sources] : LocationSource.facebook.all(:include => :location)
 
     location_sources.each do |ls|
-      location = ls.location
-      # not sure we need to be authenticated for this
-      oauth    ||= User.last.oauths.facebook.first
+      # check if we have already imported tags from this source
+      next if ls.tagged_at?
       
       begin
-        # initialize facebook client
-        facebook = FacebookClient.new(oauth.access_token)
-        place    = facebook.place(ls.source_id)
-        puts place.inspect
+        # initialize facebook client, no token required
+        facebook  = FacebookClient.new(nil)
+        place     = facebook.place(ls.source_id)
+        location  = ls.location
+        LOCATIONS_LOGGER.info("#{Time.now}: [location:#{location.id}] #{location.name} ... no tags for facebook locations")
       rescue Exception => e
         EXCEPTIONS_LOGGER.info("#{Time.now}: [error] [import tags:#{ls.id}] #{e.message}:#{e.backtrace}")
       end
