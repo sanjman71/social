@@ -13,10 +13,12 @@
     = link_to 'Home', root_path, :class => 'header link'
 
     - if user_signed_in?
-      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
-      = link_to('Checkins', checkins_path, :class => 'header link')
+      -#%span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      -#= link_to('Checkins', checkins_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Suggestions', suggestions_path, :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Profile', user_path(current_user), :class => 'header link')
       - if current_user.has_role?('admin')
         %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
         = link_to('Sightings', sightings_path, :class => 'header link')
@@ -26,8 +28,6 @@
         = link_to('Locations', locations_path, :class => 'header link')
         %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
         = link_to('Jobs', jobs_path, :class => 'header link')
-      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
-      = link_to('Profile', user_path(current_user), :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Accounts', accounts_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
