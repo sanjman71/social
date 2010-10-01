@@ -79,7 +79,7 @@ class FoursquareCheckin
 
       if user.reload.suggestionable?
         # use dj to create suggestions
-        SuggestionAlgorithm.send_later(:create_for, user, Hash[:algorithm => [:checkins, :radius_tags, :tags, :gender], :limit => 1])
+        SuggestionFactory.send_later(:create, user, Hash[:algorithm => [:checkins, :radius_tags, :tags, :gender], :limit => 1])
       else
         # send alert
         user.send_alert(:id => :need_checkins)

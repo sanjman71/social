@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class SuggestionAlgorithmTest < ActiveSupport::TestCase
+class SuggestionFactoryTest < ActiveSupport::TestCase
 
   # turn off transactional fixtures here so we can test sphinx
   self.use_transactional_fixtures = false
@@ -52,7 +52,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
     Suggestion.delete_all
   end
 
-  context "checkins, radius algorithm" do
+  context "checkins, geo algorithm" do
     context "with only checkin matches" do
       setup do
         # create chicago checkins
@@ -63,7 +63,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
       should "create 1 suggestion with chicago female checkin match" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index 'user_core'
-          @suggestions = SuggestionAlgorithm.create_for(@chicago_male1, :algorithm => [:checkins, :radius], :limit => 10)
+          @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo], :limit => 10)
           assert_equal 1, @suggestions.size
           assert_equal [[@chicago_male1, @chicago_female1]], @suggestions.collect(&:users)
           assert_equal ['checkin'], @suggestions.collect(&:match)
@@ -71,7 +71,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
       end
     end
 
-    context "with checkin and radius matches" do
+    context "with checkin and geo matches" do
       setup do
         # create chicago checkins
         @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
@@ -80,10 +80,10 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
         @chicago_female2  = User.create(:name => "Chicago Female 2", :handle => 'chicago_female_2', :gender => 1, :city => @chicago)
       end
 
-      should "create 2 suggestions with chicago female checkin and radius match" do
+      should "create 2 suggestions with chicago female checkin and geo match" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index 'user_core'
-          @suggestions = SuggestionAlgorithm.create_for(@chicago_male1, :algorithm => [:checkins, :radius], :limit => 10)
+          @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo], :limit => 10)
           assert_equal 2, @suggestions.size
           assert_equal [[@chicago_male1, @chicago_female1], [@chicago_male1, @chicago_female2]], @suggestions.collect(&:users)
           assert_equal ['checkin', 'radius'], @suggestions.collect(&:match)
@@ -92,7 +92,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
     end
   end
 
-  context "checkins, radius tag" do
+  context "checkins, geo tag" do
     context "with untagged locations" do
       setup do
         # remove location tags
@@ -106,13 +106,13 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
       should "create 0 suggestions" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index 'user_core'
-          @suggestions = SuggestionAlgorithm.create_for(@chicago_male1, :algorithm => [:checkins, :radius_tags], :limit => 10)
+          @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo_tags], :limit => 10)
           assert_equal 0, @suggestions.size
         end
       end
     end
 
-    context "with radius tag matches" do
+    context "with geo tag matches" do
       setup do
         # create chicago coffee checkins
         @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
@@ -122,7 +122,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
       should 'create 1 suggestion with chicago female coffee tag' do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index 'user_core'
-          @suggestions = SuggestionAlgorithm.create_for(@chicago_male1, :algorithm => [:checkins, :radius_tags], :limit => 10)
+          @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo_tags], :limit => 10)
           assert_equal 1, @suggestions.size
           assert_equal [[@chicago_male1, @chicago_female1]], @suggestions.collect(&:users)
           assert_equal ['radius_tag'], @suggestions.collect(&:match)
@@ -130,7 +130,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
       end
     end
 
-    context "with no radius tag matches, but tag matches outside radius" do
+    context "with no geo tag matches, but tag matches outside radius" do
       setup do
         # create chicago + boston coffee checkins
         @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
@@ -140,7 +140,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
       should "create 0 suggestions" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index 'user_core'
-          @suggestions = SuggestionAlgorithm.create_for(@chicago_male1, :algorithm => [:checkins, :radius_tags], :limit => 10)
+          @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo_tags], :limit => 10)
           assert_equal 0, @suggestions.size
         end
       end
@@ -157,7 +157,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
     should "create 1 suggestion" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index 'user_core'
-        @suggestions = SuggestionAlgorithm.create_for(@chicago_male1, :algorithm => [:checkins, :tags], :limit => 10)
+        @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :tags], :limit => 10)
         assert_equal 1, @suggestions.size
         assert_equal [[@chicago_male1, @boston_female1]], @suggestions.collect(&:users)
         assert_equal ['tag'], @suggestions.collect(&:match)
@@ -165,8 +165,8 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
     end
   end
 
-  context "checkins, radius, gender algorithm" do
-    context "with radius and gender matches" do
+  context "checkins, geo, gender algorithm" do
+    context "with geo and gender matches" do
     
     end
 
@@ -181,7 +181,7 @@ class SuggestionAlgorithmTest < ActiveSupport::TestCase
       should "create 2 suggestions with female users" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index 'user_core'
-          @suggestions = SuggestionAlgorithm.create_for(@boston_male1, :algorithm => [:checkins, :radius, :gender], :limit => 10)
+          @suggestions = SuggestionFactory.create(@boston_male1, :algorithm => [:checkins, :geo, :gender], :limit => 10)
           assert_equal 2, @suggestions.size
           assert_equal [[@boston_male1, @chicago_female1], [@boston_male1, @newyork_female1]], @suggestions.collect(&:users)
           assert_equal ['gender', 'gender'], @suggestions.collect(&:match)

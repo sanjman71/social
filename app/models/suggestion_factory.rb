@@ -1,6 +1,6 @@
-class SuggestionAlgorithm
+class SuggestionFactory
   
-  def self.create_for(user, options={})
+  def self.create(user, options={})
     @algorithm        = options[:algorithm] ? options[:algorithm] : [:checkins]
     @limit            = options[:limit] ? options[:limit].to_i : 1
     @remaining        = @limit
