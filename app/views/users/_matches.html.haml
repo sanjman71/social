@@ -1,0 +1,7 @@
+.span-3#pics
+  - users.each do |user|
+    = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}", 'data-handle' => user.handle, 'data-city' => user.city.try(:name), 'data-gender' => user.gender_name.try(:titleize), 'data-matchie' => I18n.t("user.matchie.#{user.matchie.to_s}"))
+.span-5.last#match{:style => 'font-size: 0.9em;'}
+  #handle
+  #data
+  #matchie

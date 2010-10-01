@@ -1,3 +1,6 @@
+- javascript 'jquery.cycle.all.min'
+- javascript 'users'
+
 - content_for :mat do
   %h2
     == #{user_display_name(@user, current_user, 'Me')}
@@ -17,8 +20,10 @@
   .span-4#user{:style => 'padding-top: 10px;'}
     #handle= @user.handle
     #data= user_profile_blurb(@user)
-  .span-5#points{:style => 'padding-top: 10px; font-size: 1.1em;'}
-    = pluralize(@user.points, 'point')
+  .span-2.border
+    %h4{:style => 'padding-top: 15px;'}== Matches
+  .span-10.prepend-1.last{:style => 'height: 70px;'}
+    = render(:partial => 'users/matches', :locals => {:users => @matches || []})
 
 %hr.space
 

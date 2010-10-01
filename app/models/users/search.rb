@@ -100,6 +100,26 @@ module Users::Search
     end
   end
 
+  # return the object's matchie type based on search expression value
+  def matchie(default = :default)
+    begin
+      case sphinx_attributes['@expr']
+      when 5.0..100.0
+        :checkin
+      when 3.0..5.0
+        :tag
+      else
+        if sphinx_attributes['@geodist']
+          :geo
+        else
+          default
+        end
+      end
+    rescue Exception => e
+      default
+    end
+  end
+
   def order_checkins_tags(hash={})
     loc_ids   = self.locations.collect(&:id)
     tag_ids   = self.locations.collect(&:tag_ids).flatten

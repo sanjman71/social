@@ -1,2 +1,4 @@
-div#user div#handle     { color: #F40; font-size: 1.1em; }
-div#user div#data       { color: #111; font-size: 1.0em; }
+div#user div#handle, div#match div#handle     { color: #F40; font-size: 1.1em; }
+div#user div#data, div#match div#data         { color: #111; font-size: 1.0em; }
+
+div.border.dark                               { border-right: 1px solid #3A2313; }

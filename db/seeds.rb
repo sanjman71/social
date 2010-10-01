@@ -30,13 +30,16 @@ end
 puts "#{Time.now}: initialized #{State.count} states"
 
 # pics
-@girl_pics = ['http://i774.photobucket.com/albums/yy29/electricxxxheart/Photography/photography-7.jpg',
-              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/b207297326.jpg',
-              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/bdc.png',
-              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/cosmicdress.jpg',
-              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/hgfgf.jpg',
+@girl_pics = ['http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/hgfgf.jpg',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/10578-815ba9-450-349.jpg',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/b215752279.jpg',
+              'http://i972.photobucket.com/albums/ae209/yoshidoll_69/scene%20hair/5950259972a11818015567l.jpg',
               'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/photo2.jpg'
              ]
+
+@guy_pics = ['http://i972.photobucket.com/albums/ae209/yoshidoll_69/Decorated%20images/9437.jpg',
+             'http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/tumblr_l3iion0YYZ1qzfya1o1_500.jpg'
+            ]
 
 # locations - coffee, pizza, bar
 [

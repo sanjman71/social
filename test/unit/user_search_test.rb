@@ -73,12 +73,13 @@ class UserSearchTest < ActiveSupport::TestCase
           assert_equal 3, @users.size
           assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
           assert_equal [8.0, 3.0, 0.0], @users.results[:matches].collect{ |o| o[:attributes]["@expr"] }
+          assert_equal [:checkin, :tag, :geo], @users.collect(&:matchie)
         end
       end
     end
 
     context "order by geodist, relevance" do
-      should "find 2 geo coffee matches" do
+      should "find 3 geo coffee matches" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index 'user_core'
           @users = @chicago_male1.search_geo(:miles => 10)
@@ -86,6 +87,7 @@ class UserSearchTest < ActiveSupport::TestCase
           assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }.sort_by(&:id)
           assert_equal [nil, nil, nil], @users.results[:matches].collect{ |o| o[:attributes]["@expr"] }
           assert_equal [1, 1, 1], @users.results[:matches].collect{ |o| o[:weight] }
+          assert_equal [:geo, :geo, :geo], @users.collect(&:matchie)
         end
       end
     end
