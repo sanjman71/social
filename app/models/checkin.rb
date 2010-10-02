@@ -13,6 +13,21 @@ class Checkin < ActiveRecord::Base
   scope       :facebook, where(:source_type => 'facebook')
   scope       :recent, :order => 'checkins.checkin_at desc'
 
+  def self.after_import_checkins(user, new_checkins)
+    if new_checkins.any?
+      # use dj to rebuild sphinx index
+      Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
+    end
+
+    if user.reload.suggestionable?
+      # use dj to create suggestions
+      SuggestionFactory.send_later(:create, user, Hash[:algorithm => [:checkins, :radius_tags, :tags, :gender], :limit => 1])
+    else
+      # send alert
+      user.send_alert(:id => :need_checkins)
+    end
+  end
+
   def self.poll_interval
     60.minutes
   end

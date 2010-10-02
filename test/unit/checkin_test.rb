@@ -90,9 +90,10 @@ class CheckinTest < ActiveSupport::TestCase
           @location = @checkin.location
           assert_equal 1, @location.reload.checkins.count
           assert_equal 1, @location.reload.checkins_count
-          # should return same checkin object and use same location if we try it again
+          # should use same checkin if we try it again
           @checkin2 = FoursquareCheckin.import_checkin(@user, @hash)
-          assert_equal @checkin, @checkin2
+          assert_nil @checkin1
+          assert_equal 1, Checkin.count
           assert_equal 1, Location.count
         end
       end
@@ -155,9 +156,10 @@ class CheckinTest < ActiveSupport::TestCase
           @location = @checkin.location
           assert_equal 1, @location.reload.checkins.count
           assert_equal 1, @location.reload.checkins_count
-          # should return same checkin object and use same location if we try it again
+          # should use same checkin if we try it again
           @checkin2 = FacebookCheckin.import_checkin(@user, @hash)
-          assert_equal @checkin, @checkin2
+          assert_nil @checkin2
+          assert_equal 1, Checkin.count
           assert_equal 1, Location.count
         end
       end

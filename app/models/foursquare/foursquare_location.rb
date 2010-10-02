@@ -42,7 +42,7 @@ class FoursquareLocation
     return if location.tag_list.empty?
     location.users.each do |user|
       # add tag badges for each user linked to this location
-      user.send_later(:add_tag_badges)
+      user.delay.add_tag_badges
     end
   end
 

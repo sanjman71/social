@@ -11,7 +11,6 @@ class FoursquareCheckin
 
     # find checkin log
     checkin_log     = user.checkin_logs.find_or_create_by_source(source)
-    checkins_start  = user.checkins.count
 
     # compare last check timestamp + check interval vs current timestamp
     last_check_at   = checkin_log.last_check_at
@@ -59,31 +58,21 @@ class FoursquareCheckin
         options[:l] = options.delete(:limit)
       end
 
-      # get checkins
-      checkins = foursquare.history(options)
-      checkins.each do |checkin_hash|
-        import_checkin(user, checkin_hash)
-      end
+      # get checkin history
+      checkins    = foursquare.history(options)
+      collection  = checkins.inject([]) do |array, checkin_hash|
+        array.push(import_checkin(user, checkin_hash))
+        array
+      end.compact
     rescue Exception => e
       log(:error, "[#{user.handle}] #{e.message}")
       checkin_log.update_attributes(:state => 'error', :checkins => 0, :last_check_at => Time.zone.now)
     else
-      checkins_added = user.checkins.count - checkins_start
-      checkin_log.update_attributes(:state => 'success', :checkins => checkins_added, :last_check_at => Time.zone.now)
-      log(:ok, "[#{user.handle}] imported #{checkins_added} #{source} checkins")
+      checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
+      log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
 
-      if checkins_added > 0
-        # use dj to rebuild sphinx index
-        Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
-      end
-
-      if user.reload.suggestionable?
-        # use dj to create suggestions
-        SuggestionFactory.send_later(:create, user, Hash[:algorithm => [:checkins, :radius_tags, :tags, :gender], :limit => 1])
-      else
-        # send alert
-        user.send_alert(:id => :need_checkins)
-      end
+      # after import callback
+      Checkin.after_import_checkins(user, collection)
     end
     checkin_log
   end
@@ -100,12 +89,14 @@ class FoursquareCheckin
       raise Exception, "invalid location #{checkin_hash['venue']}"
     end
     
-    # add checkin
+    # find/add checkin
     checkin_at  = Time.parse(checkin_hash['created']).utc # xxx - need to account for 'timezone' attribute
     options     = Hash[:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'].to_s, :source_type => Source.foursquare]
     @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
-    log(:ok, "[#{user.handle}] added checkin #{@location.name}") if @checkin.blank?
-    @checkin    ||= user.checkins.create(options)
+    return nil if @checkin
+    # add checkin
+    log(:ok, "[#{user.handle}] added checkin #{@location.name}")
+    @checkin    = user.checkins.create(options)
   end
 
   def self.log(level, s, options={})
