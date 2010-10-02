@@ -15,10 +15,13 @@ class UsersController < ApplicationController
 
     # find user checkins
     @checkins = @user.checkins
-    
+
     # find matching user profiles
     @matches  = @user.search_geo(:limit => 20, :miles => @user.radius, :order => :checkins_tags,
                                  :klass => User)
+
+    # find user tag badges
+    @tag_badges = @user.tag_badges
   end
 
   # GET /users/1/edit

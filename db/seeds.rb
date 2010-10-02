@@ -185,3 +185,12 @@ end
 
 puts "#{Time.now}: imported #{Checkin.count} checkins"
 
+# tag badges
+TagBadge.create(:regex => "airport|travel", :name => 'JetSetter')
+TagBadge.create(:regex => "american", :name => 'Meat and Potatoes')
+TagBadge.create(:regex => "bar", :name => 'Booze Hound')
+TagBadge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+TagBadge.create(:regex => "corporate|office", :name => 'Office Space')
+TagBadge.create(:regex => "event space|nightlife", :name => 'Socialite')
+TagBadge.create(:regex => "indian|mexican", :name => 'Adventurous Pallette')
+TagBadge.create(:regex => "shops", :name => 'Shopaholic')

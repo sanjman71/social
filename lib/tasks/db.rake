@@ -1,6 +1,6 @@
 namespace :db do
 
-  desc "Backup the database to the /backups directory"
+  desc "Backup the database, (options: DB=xyz, BACKUP_DIR=home/backups)"
   task :backup => :environment do
     mysqldump           = 'mysqldump'
     mysqldump_options   = '--single-transaction --quick'
@@ -39,7 +39,7 @@ namespace :db do
     puts "#{Time.now}: deleted #{unwanted_backups.length} backups, #{all_backups.length - unwanted_backups.length} backups available" 
   end
 
-  desc "Restore the database from the specified sql dump file"
+  desc "Restore the database from the specified file (options: FILE=xyz.sql, DB=xyz)"
   task :restore => :environment do
     if ENV["FILE"].blank?
       puts "no FILE specified"

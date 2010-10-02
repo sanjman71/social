@@ -42,6 +42,8 @@ class User < ActiveRecord::Base
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
   has_many                  :alerts
+  has_many                  :tag_badgings
+  has_many                  :tag_badges, :through => :tag_badgings
 
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
@@ -282,6 +284,16 @@ class User < ActiveRecord::Base
   # returns true if the user is ready to receive suggestions
   def suggestionable?
     self.checkins_count >= Checkin.min_checkins_for_suggestion
+  end
+
+  def add_tag_badges
+    tag_names = locations.collect(&:tags).flatten.collect(&:name)
+    TagBadge.all.each do |tb|
+      matches = tag_names.grep(Regexp.new(tb.regex))
+      if !matches.blank?
+        tag_badgings.create(:tag_badge => tb)
+      end
+    end
   end
 
   def send_alert(options)

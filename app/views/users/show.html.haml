@@ -14,6 +14,7 @@
   = display_flash(:all)
   = display_alerts
 
+-# show user basic profile info, and matches
 .span-24.last#basics
   .span-2.prepend-1#picture
     = image_tag @user.primary_photo_url, :size => '50x50'
@@ -27,6 +28,17 @@
 
 %hr.space
 
+-# show user tag badges
+- unless @tag_badges.blank?
+  .span-24.last#checkins
+    .span-2.prepend-1.border
+      %h4== Badges
+    .span-20.prepend-1.last
+      = @tag_badges.collect(&:name).join(' : ')
+
+  %hr.space
+
+-# show user checkins
 .span-24.last#checkins
   .span-2.prepend-1.border
     %h4== Checkins
