@@ -158,12 +158,6 @@ class Location < ActiveRecord::Base
     self.lat, self.lng = geo.lat, geo.lng
     self.save
   end
-  
-  # return md5 location digest
-  def to_digest
-    s = "#{self.name}:#{self.street_address}:#{self.city ? self.city.name : ''}:#{self.state ? self.state.name : ''}:#{self.zip ? self.zip.name : ''}:#{self.country ? self.country.name : ''}"
-    Digest::MD5.hexdigest(s)
-  end
 
   protected
   
@@ -234,18 +228,5 @@ class Location < ActiveRecord::Base
     Neighborhood.decrement_counter(:locations_count, hood.id)
     Location.decrement_counter(:neighborhoods_count, self.id)
   end
-
-  def add_venue_tag
-    return unless @place = self.place
-    # add tag 'venue'
-    @place.tag_list.add("venue")
-    @place.save
-  end
   
-  def remove_venue_tag
-    return unless @place = self.place
-    # remove tag 'venue'
-    @place.tag_list.remove("venue")
-    @place.save
-  end
 end

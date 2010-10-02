@@ -28,9 +28,9 @@ class LocationSource < ActiveRecord::Base
     return false if self.tagged_at?
     case
     when facebook?
-      FacebookLocation.import_tags(:location_sources => [self])
+      FacebookLocation.send_later(:import_tags, :location_sources => [self])
     when foursquare?
-      FoursquareLocation.import_tags(:location_sources => [self])
+      FoursquareLocation.send_later(:import_tags, :location_sources => [self])
     end
   end
 

@@ -34,7 +34,7 @@
     .span-2.prepend-1.border
       %h4== Badges
     .span-20.prepend-1.last
-      = @tag_badges.collect(&:name).join(' : ')
+      %span{:style => 'font-size: 0.9em;'}= @tag_badges.collect(&:name).sort.join(' : ')
 
   %hr.space
 

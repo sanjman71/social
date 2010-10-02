@@ -28,12 +28,22 @@ class FoursquareLocation
         ls.tag_count  = tag_list.size
         ls.save
         LOCATIONS_LOGGER.info("#{Time.now}: [location:#{location.id}] #{location.name} tags:#{tag_list.join(',')}")
+        after_import_tags(location)
       rescue Exception => e
         EXCEPTIONS_LOGGER.info("#{Time.now}: [error] [import tags:#{ls.id}] #{e.message}:#{e.backtrace}")
       end
     end
 
     true
+  end
+
+  # called after importing tags
+  def self.after_import_tags(location)
+    return if location.tag_list.empty?
+    location.users.each do |user|
+      # add tag badges for each user linked to this location
+      user.send_later(:add_tag_badges)
+    end
   end
 
 end
