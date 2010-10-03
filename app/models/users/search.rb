@@ -13,7 +13,7 @@ module Users::Search
     # find user location tag ids
     tag_ids = self.locations.collect(&:tag_ids).flatten
     options.update(:with_tag_ids => tag_ids) unless options[:with_tag_ids]
-    if options[:meters] or options[:miles] and self.mappable?
+    if (options[:meters] or options[:miles]) and self.mappable?
       # restrict search to nearby tags
       meters = options[:meters] ? options[:meters].to_f : Math.miles_to_meters(options[:miles]).to_f
       origin = [Math.degrees_to_radians(self.lat), Math.degrees_to_radians(self.lng)]
@@ -27,10 +27,12 @@ module Users::Search
   def search_geo(options={})
     # check that user is mappable
     return [] unless self.mappable?
-    raise Exception, "missing radius meters or miles" if options[:meters].blank? and options[:miles].blank?
-    meters = options[:meters] ? options[:meters].to_f : Math.miles_to_meters(options[:miles]).to_f
-    origin = [Math.degrees_to_radians(self.lat), Math.degrees_to_radians(self.lng)]
-    options.update(:geo_origin => origin, :geo_distance => 0.0..meters)
+    if (options[:meters] or options[:miles]) and options[:geo_origin].blank? and options[:geo_distance].blank?
+      meters = options[:meters] ? options[:meters].to_f : Math.miles_to_meters(options[:miles]).to_f
+      origin = [Math.degrees_to_radians(self.lat), Math.degrees_to_radians(self.lng)]
+      options.update(:geo_origin => origin, :geo_distance => 0.0..meters)
+    end
+    raise Exception, "missing geo origin and/or geo distance" if options[:geo_origin].blank? or options[:geo_origin].blank?
     options.update(:with_gender => default_gender) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
@@ -55,6 +57,12 @@ module Users::Search
     case klass.to_s
     when 'Location'
       # parse location specific options
+      if options[:with_location_id] # e.g. [1,3,5]
+        with.update(:location_id => options[:with_location_id])
+      end
+      if options[:without_location_id] # e.g. [1,3,5]
+        without.update(:location_id => options[:without_location_id])
+      end
     when 'User'
       # parse user specific options
       if options[:with_gender] # e.g. 1, [1]
@@ -62,6 +70,9 @@ module Users::Search
       end
       if options[:with_location_ids] # e.g. [1,3,5]
         with.update(:location_ids => options[:with_location_ids])
+      end
+      if options[:without_location_ids] # e.g. [1,3,5]
+        without.update(:location_ids => options[:without_location_ids])
       end
       if options[:with_tag_ids] # e.g. [1,3,5]
         with.update(:tag_ids => options[:with_tag_ids])

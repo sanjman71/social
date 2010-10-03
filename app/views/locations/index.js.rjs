@@ -1,0 +1,3 @@
+page["#map-side-bar"].append(render(:partial => 'locations/locations_map',
+                                    :locals => {:locations => @locations, :category => 'async'}))
+page['#map'].jMapping('update');

@@ -8,10 +8,10 @@ class HomeController < ApplicationController
 
     if user_signed_in?
       # find matching user profiles
-      @matches   = current_user.search_geo(:limit => 20, :miles => current_user.radius, :order => :checkins_tags,
+      @matches    = current_user.search_geo(:limit => 10, :miles => current_user.radius, :order => :checkins_tags,
                                             :klass => User)
       # find nearby locations
-      @locations  = current_user.search_geo(:limit => 20, :miles => current_user.radius, :klass => Location)
+      @locations  = current_user.search_geo(:limit => 5, :miles => current_user.radius, :klass => Location)
     end
   end
 

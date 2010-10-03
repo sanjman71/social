@@ -66,6 +66,7 @@ class Location < ActiveRecord::Base
   scope :recommended,           { :conditions => ["recommendations_count > 0"] }
 
   define_index do
+    has :id, :as => :location_id
     indexes name, :as => :name
     indexes street_address, :as => :address
     # this doesn't work; don't think mva string attributes are supported

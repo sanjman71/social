@@ -7,6 +7,7 @@
   - javascript 'jquery.jmapping.min'
   - javascript 'jquery.cycle.all.min'
   - javascript 'users'
+  - javascript 'locations'
 
 .span-23.prepend-1.mat
   %h2== Home
@@ -34,7 +35,7 @@
 - if user_signed_in?
   .span-23.prepend-1.last{:style => 'height: 70px;'}
     = render(:partial => 'users/matches', :locals => {:users => @matches})
-      
+
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions
     - if current_user.suggestions.active.count > 0
@@ -45,15 +46,8 @@
   .span-23.prepend-1.last
     #map
     #map-side-bar
-      - @locations.each do |location|
-        - next unless location.mappable?
-        .map-location{'data-jmapping' => "{id: #{location.id}, point: {lat: #{location.lat}, lng: #{location.lng}}, category: 'Location'}"}
-          = link_to location.name, '#', :class => 'map-link', :style => 'color: #999;'
-          .info-box
-            %p== #{location.name}, #{location.city}
+      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
 
 :javascript
-  var mapping = #{user_signed_in?};
-  $(document).ready(function() {
-    if (mapping) { $('#map').jMapping(); }
-  });
+  var mapping            = #{user_signed_in?};
+  var geo_locations_path = "/locations/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"

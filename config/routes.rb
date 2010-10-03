@@ -14,13 +14,20 @@ Social::Application.routes.draw do
   match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
 
   match 'checkins', :to => "checkins#index"
-  match '/users/:user_id/checkins', :to => "checkins#index", :as => :user_checkins
+  match 'users/:user_id/checkins', :to => "checkins#index", :as => :user_checkins
   match 'checkins/poll', :to => "checkins#poll", :as => :poll_checkins
   match 'sightings', :to => "sightings#index"
   match 'accounts', :to => "accounts#index"
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
 
   resources :users
+
+  # location routes
+  match 'locations/:geo/:radius', :to => 'locations#index',
+    :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_locations
+  match 'locations/:city/:radius', :to => 'locations#index',
+    :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_locations
+
   resources :locations, :only => [:index] do
     get :import_tags, :on => :member
   end
