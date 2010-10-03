@@ -1,3 +1,6 @@
+# unhighlight all locations
+page["a.map-link.highlight"].removeClass('highlight')
+# add new location and update map
 page["#map-side-bar"].append(render(:partial => 'locations/locations_map',
-                                    :locals => {:locations => @locations, :category => 'async'}))
+                                    :locals => {:locations => @locations, :category => 'async', :highlight => 'highlight'}))
 page['#map'].jMapping('update');

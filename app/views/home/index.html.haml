@@ -50,4 +50,5 @@
 
 :javascript
   var mapping            = #{user_signed_in?};
+  var max_locations      = #{@locations.size+@max_poll};
   var geo_locations_path = "/locations/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"

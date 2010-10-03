@@ -1,7 +1,9 @@
-- category = 'default' unless local_assigns[:category]
+- category  = 'default' unless local_assigns[:category]
+- highlight = '' unless local_assigns[:highlight]
+ 
 - locations.each do |location|
   - next unless location.mappable?
   .map-location{'data-location-id' => location.id, 'data-jmapping' => "{id: #{location.id}, point: {lat: #{location.lat}, lng: #{location.lng}}, category: '#{category}'}"}
-    = link_to location.name, '#', :class => 'map-link', :style => 'color: #999;'
+    = link_to location.name, '#', :class => ['map-link', highlight]
     .info-box
       %p== #{location.name}, #{location.city}

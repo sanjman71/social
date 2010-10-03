@@ -2,7 +2,7 @@ class LocationsController < ApplicationController
   before_filter :authenticate_user!
 
   # GET /locations
-  # GET /locations/geo:1.23..-23.89/radius:10?limit=5&without_location_id=1,3,5
+  # GET /locations/geo:1.23..-23.89/radius:10?limit=5&without_location_id=1,5,3
   def index
     # check generic parameters
     @without_location_id  = params[:without_location_id] ? params[:without_location_id].split(',').map(&:to_i).uniq.sort : nil
@@ -30,7 +30,8 @@ class LocationsController < ApplicationController
       @options.update(:geo_origin => @geo_origin, :geo_distance => @geo_distance)
       @locations    = current_user.search_geo(@options)
     else
-      @locations = Location.all
+      # default
+      @locations    = Location.all
     end
 
     respond_to do |format|
