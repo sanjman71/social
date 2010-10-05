@@ -44,6 +44,7 @@ deploy.task :config, :roles => [:app, :db] do
   run "ln -s #{deploy_to}/shared/config/unicorn.rb #{current_release}/config/unicorn.rb"
   run "rm -f #{current_release}/config/production.sphinx.conf"
   run "ln -s #{deploy_to}/shared/config/production.sphinx.conf #{current_release}/config/production.sphinx.conf"
+  run "rm -rf #{current_release}/tmp/sockets"
   run "ln -s #{deploy_to}/shared/sockets #{current_release}/tmp/sockets"
 end
 
