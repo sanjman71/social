@@ -13,11 +13,16 @@ $(document).ready(function() {
   }
 
   function updateLocations() {
+    removeLocationHighlights();
     var ids = getLocationIds();
     if (ids.length < max_locations) {
       $.getScript(geo_locations_path+"?without_location_id="+ids.join(',')+"&limit=1");
       setTimeout(updateLocations, 5000);
     }
+  }
+
+  function removeLocationHighlights() {
+    $("a.map-link.highlight").removeClass('highlight');
   }
 
   function getLocationIds() {
