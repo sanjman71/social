@@ -17,6 +17,7 @@ class LocationImportTest < ActiveSupport::TestCase
     State.delete_all
     User.delete_all
     Location.delete_all
+    Delayed::Job.delete_all
   end
 
   context "import foursquare location" do
@@ -94,19 +95,22 @@ class LocationImportTest < ActiveSupport::TestCase
     end
   end
 
-  context "import foursquare location tags" do
-    setup do
+  context "foursquare location tags" do
+    should "import tags after adding a location source" do
+      Delayed::Job.delete_all
       # create location, location source
       @location = Location.create(:name => 'Starbucks - State St and Ohio St', :address => '600 N State St',
                                   :state => @il, :country => @us)
+      # should call location.after_tagging after tagging location source
+      Location.any_instance.expects(:after_tagging).once
       @source   = @location.location_sources.create(:source_id => '108207', :source_type => 'foursquare')
-    end
-    
-    should "import tags" do
-      FoursquareLocation.import_tags(:location_sources => [@source])
+      # should add dj to import tags
+      assert_equal 1, Delayed::Job.all.select { |dj| dj.handler.match(/import_tags/) }.size
+      Delayed::Worker.new.work_off(1)
       # should add location tags
       assert_equal ['cafe', 'food'], @location.reload.tag_list
-      # should mark location source tag_count, tagged_at
+      # should mark location_source tag_count, tagged_at
+      assert @source.reload.tagged?
       assert_equal 2, @source.reload.tag_count
       assert @source.reload.tagged_at
     end

@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20101001183637) do
     t.integer  "location_id"
     t.string   "source_id"
     t.string   "source_type", :limit => 50
+    t.string   "state",       :limit => 50
     t.integer  "tag_count"
     t.datetime "tagged_at"
     t.datetime "created_at"
@@ -183,6 +184,7 @@ ActiveRecord::Schema.define(:version => 20101001183637) do
 
   add_index "location_sources", ["location_id"], :name => "index_location_sources_on_location_id"
   add_index "location_sources", ["source_id", "source_type"], :name => "index_location_sources_on_source_id_and_source_type"
+  add_index "location_sources", ["state"], :name => "index_location_sources_on_state"
   add_index "location_sources", ["tagged_at"], :name => "index_location_sources_on_tagged_at"
 
   create_table "locations", :force => true do |t|

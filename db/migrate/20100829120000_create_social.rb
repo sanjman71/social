@@ -179,6 +179,7 @@ class CreateSocial < ActiveRecord::Migration
       t.references  :location
       t.string      :source_id                    # source id
       t.string      :source_type, :limit => 50    # source type (e.g. 'fs', 'fb')
+      t.string      :state, :limit => 50
       t.integer     :tag_count
       t.datetime    :tagged_at
       t.timestamps
@@ -186,6 +187,7 @@ class CreateSocial < ActiveRecord::Migration
 
     add_index :location_sources, :location_id
     add_index :location_sources, [:source_id, :source_type]
+    add_index :location_sources, :state
     add_index :location_sources, :tagged_at
   end
 

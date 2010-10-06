@@ -160,6 +160,14 @@ class Location < ActiveRecord::Base
     self.save
   end
 
+  # called after location is tagged
+  def after_tagging
+    users.each do |user|
+      # add tag badges for each user linked to this location
+      user.delay.add_tag_badges
+    end
+  end
+
   protected
   
   # after_save callback to:
