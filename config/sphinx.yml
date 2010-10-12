@@ -35,7 +35,7 @@ staging:
   mem_limit: 128M
   morphology: stem_en
 test:
-  port: 3313
+  port: 7313
   max_matches: 200
   searchd_log_file: log/searchd.test.log
   query_log_file: log/searchd.query.test.log

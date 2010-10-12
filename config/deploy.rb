@@ -51,6 +51,7 @@ end
 # after deploy
 after "deploy", "deploy:config"
 after "deploy", "bundle:config"
+after "deploy", "dj:restart"
 after "deploy", "deploy:cleanup"
 
 after "deploy:stop",  "dj:stop"
