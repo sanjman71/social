@@ -14,6 +14,10 @@ class FoursquareLocation
 
       begin
         venue         = foursquare.venue_details(:vid => ls.source_id)
+        if venue['error']
+          # foursquare returned an error, raise an exception
+          raise Exception, venue['error']
+        end
         category      = venue['venue']['primarycategory']
         # parse category fullpathname, nodename
         fullpathname  = category['fullpathname'] rescue nil
