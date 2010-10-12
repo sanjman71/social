@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+["bundle install",
+ "cp config/templates/database.ci.yml config/database.yml",
+ "rake db:create:all",
+ "rake db:schema:load",
+ "rake db:migrate", 
+ "rake db:test:prepare",
+ "rake test"
+].each do |stage|
+  system(stage) or exit 1
+end
+   
