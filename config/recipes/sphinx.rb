@@ -1,4 +1,4 @@
-namespace :sphinx do
+namespace :ts do
   
   desc "Create the sphinx config file"
   task :configure, :roles => :sphinx do
@@ -13,6 +13,11 @@ namespace :sphinx do
   desc "Start the sphinx searchd daemon"
   task :start, :roles => :sphinx do
     run "bash -ic 'cd #{current_path}; rake ts:start'"
+  end
+
+  desc "Rebuild the sphinx searchd daemon"
+  task :rebuild, :roles => :sphinx do
+    run "bash -ic 'cd #{current_path}; rake ts:rebuild'"
   end
 
   desc "Restart the sphinx searchd daemon"
