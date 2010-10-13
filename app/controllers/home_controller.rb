@@ -14,6 +14,9 @@ class HomeController < ApplicationController
       @locations  = current_user.search_geo(:limit => 5, :miles => current_user.radius, :klass => Location)
       @max_poll   = 5
     end
+
+    # check for growl messages
+    @growls = params[:growls].to_i
   end
 
   # GET /beta

@@ -1,17 +1,17 @@
 - title('Home')
 - stylesheet 'map'
--#- stylesheet 'growl'
+- stylesheet 'growl'
 
 - if user_signed_in?
-  - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
-  - javascript 'mapiconmaker', 'markermanager'
-  - javascript 'jquery.metadata'
-  - javascript 'jquery.jmapping.min'
-  - javascript 'jquery.cycle.all.min'
-  - javascript 'users'
-  - javascript 'locations'
-
--#= render(:partial => 'shared/growls', :locals => {:growls => growls})
+  - if @locations.try(:any?)
+    - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
+    - javascript 'mapiconmaker', 'markermanager'
+    - javascript 'jquery.metadata'
+    - javascript 'jquery.jmapping.min'
+    - javascript 'jquery.cycle.all.min'
+    - javascript 'users'
+    - javascript 'locations'
+  - javascript 'growls'
 
 .span-23.prepend-1.mat
   %h2== Home
@@ -53,6 +53,7 @@
       = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
 
 :javascript
+  var growls             = #{@growls};
   var mapping            = #{user_signed_in?};
   var max_locations      = #{@locations ? @locations.size+@max_poll : 0};
   var geo_locations_path = "/locations/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"

@@ -19,6 +19,7 @@ Social::Application.routes.draw do
   match 'sightings', :to => "sightings#index"
   match 'accounts', :to => "accounts#index"
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
+  match 'growls', :to => "growls#index"
 
   resources :users
 

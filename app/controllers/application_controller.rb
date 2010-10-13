@@ -2,6 +2,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :check_beta
 
+  include Growl
+
+  helper_method :growls
+
   # default application layout
   layout 'application'
 

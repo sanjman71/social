@@ -43,3 +43,4 @@ end
 
 require "#{Rails.root}/lib/math.rb"
 require "#{Rails.root}/lib/string.rb"
+require "#{Rails.root}/lib/growl.rb"
