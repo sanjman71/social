@@ -46,12 +46,12 @@ class TagBadgeTest < ActiveSupport::TestCase
     # create chicago checkins
     @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
     # should not add tag badges
-    @chicago_male1.add_tag_badges
+    @chicago_male1.async_add_tag_badges
     assert_equal [], @chicago_male1.tag_badges.collect(&:name)
     # create tag badge
     @tb1 = TagBadge.create(:regex => "cheese|pizza", :name => 'Caffeine Junkie')
     # should not add tag badges
-    @chicago_male1.add_tag_badges
+    @chicago_male1.async_add_tag_badges
     assert_equal [], @chicago_male1.tag_badges.collect(&:name)
   end
 
@@ -60,7 +60,7 @@ class TagBadgeTest < ActiveSupport::TestCase
     @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
     # create tag badge
     @tb1 = TagBadge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
-    @chicago_male1.add_tag_badges
+    @chicago_male1.async_add_tag_badges
     assert_equal ['Caffeine Junkie'], @chicago_male1.tag_badges.collect(&:name)
   end
 

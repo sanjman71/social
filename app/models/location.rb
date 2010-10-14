@@ -164,7 +164,7 @@ class Location < ActiveRecord::Base
   def after_tagging
     users.each do |user|
       # add tag badges for each user linked to this location
-      user.delay.add_tag_badges
+      user.delay.async_add_tag_badges
     end
   end
 

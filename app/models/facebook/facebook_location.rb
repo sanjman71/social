@@ -1,6 +1,8 @@
 class FacebookLocation
-  
-  def self.import_tags(options={})
+
+  # import tags for the specific location sources
+  # note: usually called asynchronously
+  def self.async_import_tags(options={})
 
     # initialize location sources
     location_sources = options[:location_sources] ? options[:location_sources] : LocationSource.facebook.all(:include => :location)

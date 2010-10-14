@@ -47,9 +47,9 @@ class LocationsController < ApplicationController
     @location.location_sources.each do |ls|
       case
       when ls.facebook?
-        FacebackLocation.import_tags(:location_sources => [ls])
+        FacebookLocation.delay.async_import_tags(:location_sources => [ls])
       when ls.foursquare?
-        FoursquareLocation.import_tags(:location_sources => [ls])
+        FoursquareLocation.delay.async_import_tags(:location_sources => [ls])
       end
     end
 

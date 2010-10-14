@@ -45,9 +45,9 @@ class LocationSource < ActiveRecord::Base
     return false if tagged?
     case
     when facebook?
-      FacebookLocation.delay.import_tags(:location_sources => [self.id])
+      FacebookLocation.delay.async_import_tags(:location_sources => [self.id])
     when foursquare?
-      FoursquareLocation.delay.import_tags(:location_sources => [self.id])
+      FoursquareLocation.delay.async_import_tags(:location_sources => [self.id])
     end
     tagging!
   end

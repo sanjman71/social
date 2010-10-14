@@ -1,7 +1,9 @@
 # coding: utf-8
 class FoursquareLocation
   
-  def self.import_tags(options={})
+  # import tags for the specific location sources
+  # note: usually called asynchronously
+  def self.async_import_tags(options={})
     # initialize foursquare client, no auth required
     foursquare = FoursquareClient.new
 
