@@ -24,9 +24,9 @@ class CheckinsController < ApplicationController
       logs.each do |log|
         case log.source
         when 'facebook'
-          FacebookCheckin.send_later(:import_checkins, user, Hash[:since => :last, :limit => 250])
+          FacebookCheckin.delay.async_import_checkins(user, Hash[:since => :last, :limit => 250])
         when 'foursquare'
-          FoursquareCheckin.send_later(:import_checkins, user, Hash[:sinceid => :last, :limit => 250])
+          FoursquareCheckin.delay.async_import_checkins(user, Hash[:sinceid => :last, :limit => 250])
         end
       end
     end

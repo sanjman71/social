@@ -1,7 +1,7 @@
 class FacebookCheckin
   
-  # import all checkins for the specfied user
-  def self.import_checkins(user, options={})
+  # import all checkins for the specfied user, usually called asynchronously
+  def self.async_import_checkins(user, options={})
     source = 'facebook'
     # find user
     if user.is_a?(String)

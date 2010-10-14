@@ -39,7 +39,7 @@ class CheckinTest < ActiveSupport::TestCase
           # stub oauth calls
           Foursquare::Base.any_instance.stubs(:test).returns(Hash['response' => 'ok'])
           Foursquare::Base.any_instance.stubs(:history).returns([@hash])
-          @checkin_log = FoursquareCheckin.import_checkins(@user)
+          @checkin_log = FoursquareCheckin.async_import_checkins(@user)
           assert @checkin_log.valid?
           # should have 1 checkin
           assert_equal 1, @checkin_log.checkins
@@ -67,7 +67,7 @@ class CheckinTest < ActiveSupport::TestCase
         @checkin_log1 = @user.checkin_logs.create(:source => 'foursquare', :state => 'success', :checkins => 1,
                                                   :last_check_at => Time.zone.now-30.minutes)
         # checkin log timestamp should be the same
-        @checkin_log2 = FoursquareCheckin.import_checkins(@user)
+        @checkin_log2 = FoursquareCheckin.async_import_checkins(@user)
         assert_equal @checkin_log1.last_check_at, @checkin_log2.last_check_at                    
       end
     end
@@ -118,7 +118,7 @@ class CheckinTest < ActiveSupport::TestCase
           assert_equal 1, @user.reload.alerts.count
           # stub facebook client calls
           FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [@hash]])
-          @checkin_log = FacebookCheckin.import_checkins(@user)
+          @checkin_log = FacebookCheckin.async_import_checkins(@user)
           assert @checkin_log.valid?
           # should have 1 checkin
           assert_equal 1, @checkin_log.checkins
