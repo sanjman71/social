@@ -12,7 +12,7 @@ class HomeController < ApplicationController
                                             :klass => User)
       # find nearby locations
       @locations  = current_user.search_geo(:limit => 5, :miles => current_user.radius, :klass => Location)
-      @max_poll   = 5
+      @max_poll   = 3
     end
 
     # check for growl messages

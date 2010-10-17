@@ -8,16 +8,15 @@ $(document).ready(function() {
   }); }
 
   if ($(".map-location").length > 0) {
-    getLocationIds();
-    setTimeout(updateLocations, 5000);
+    setTimeout(getLocations, 5000);
   }
 
-  function updateLocations() {
+  // get new, unique locations; setCurrentLocations is the callback used to update the current locations collection
+  function getLocations() {
     removeLocationHighlights();
-    var ids = getLocationIds();
-    if (ids.length < max_locations) {
-      $.getScript(geo_locations_path+"?without_location_id="+ids.join(',')+"&limit=1");
-      setTimeout(updateLocations, 5000);
+    if (cur_locations.length < max_locations) {
+      $.getScript(geo_locations_path+"?without_location_ids="+cur_locations.join(',')+"&limit=1", setCurrentLocations);
+      setTimeout(getLocations, 5000);
     }
   }
 
@@ -25,14 +24,16 @@ $(document).ready(function() {
     $("a.map-link.highlight").removeClass('highlight');
   }
 
-  function getLocationIds() {
-    // build, then sort
-    location_ids = [];
+  // update the global cur_locations array
+  function setCurrentLocations() {
+    //console.log(cur_locations.join(','));
+    // reset current locations array, build new list, then sort
+    cur_locations = [];
     $("div.map-location").each(function() {
       location_id = $(this).attr('data-location-id');
-      location_ids.push(location_id);
+      cur_locations.push(location_id);
     })
-    location_ids.sort(function (a,b) { return a-b });
-    return location_ids;
+    cur_locations.sort(function (a,b) { return a-b });
+    //console.log(cur_locations.join(','));
   }
 })

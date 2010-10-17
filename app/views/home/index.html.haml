@@ -1,5 +1,6 @@
 - title('Home')
 - stylesheet 'map'
+- stylesheet 'home'
 - stylesheet 'growl'
 
 - if user_signed_in?
@@ -8,10 +9,9 @@
     - javascript 'mapiconmaker', 'markermanager'
     - javascript 'jquery.metadata'
     - javascript 'jquery.jmapping.min'
-    - javascript 'jquery.cycle.all.min'
-    - javascript 'users'
     - javascript 'locations'
   - javascript 'growls'
+  - javascript 'home'
 
 .span-23.prepend-1.mat
   %h2== Home
@@ -37,10 +37,6 @@
       = link_to 'Facebook account', user_oauth_authorize_url(:facebook), :class => 'admin'
 
 - if user_signed_in?
-  .span-23.prepend-1.last{:style => 'height: 70px;'}
-    = render(:partial => 'users/matches', :locals => {:users => @matches})
-
-- if user_signed_in?
   .span-23.prepend-1.last#suggestions
     - if current_user.suggestions.active.count > 0
       %h3== You have #{link_to(pluralize(current_user.suggestions.active.count, 'suggestion'), suggestions_path, :style => 'color: #0000BB;')}
@@ -48,12 +44,27 @@
       %h3== No suggestions at the moment, but we're working on it.
 
   .span-23.prepend-1.last
-    #map
-    #map-side-bar
-      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
+    .span-10.objects
+      - (@matches+@locations).sort_by{ rand }.each do |object|
+        - case object.class.to_s.downcase
+        - when 'location'
+          = render(:partial => 'home/location', :locals => {:location => object})
+        - when 'user'
+          = render(:partial => 'home/user', :locals => {:user => object})
+        
+      / - @matches.each do |user|
+      /   = render(:partial => 'home/user', :locals => {:user => user})
+      / - @locations.each do |location|
+      /   = render(:partial => 'home/location', :locals => {:location => location})
+
+    .span-13.last
+      .span-13.last#map
+      .span-13.last#map-side-bar
+        = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
 
 :javascript
   var growls             = #{@growls};
   var mapping            = #{user_signed_in?};
+  var cur_locations      = #{@locations ? [@locations.collect(&:id).sort.join(',')] : []};
   var max_locations      = #{@locations ? @locations.size+@max_poll : 0};
   var geo_locations_path = "/locations/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"

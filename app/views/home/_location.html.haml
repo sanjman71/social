@@ -1,0 +1,8 @@
+- visible = 'show' unless local_assigns[:visible]
+
+.span-10.home.location[location]{:class => visible}
+  .span-2#picture
+    = image_tag('icon-blank.jpg', :size => '50x50')
+  .span-8.last{:style => 'font-size: 0.9em;'}
+    #location_name= location.name
+    #location_city= location.city

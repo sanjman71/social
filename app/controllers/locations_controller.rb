@@ -2,12 +2,13 @@ class LocationsController < ApplicationController
   before_filter :authenticate_user!
 
   # GET /locations
-  # GET /locations/geo:1.23..-23.89/radius:10?limit=5&without_location_id=1,5,3
+  # GET /locations/geo:1.23..-23.89/radius:10?limit=5&without_location_ids=1,5,3
+  # GET /locations/city:chicago/radius:10?limit=5&without_location_ids=1,5,3
   def index
-    # check generic parameters
-    @without_location_id  = params[:without_location_id] ? params[:without_location_id].split(',').map(&:to_i).uniq.sort : nil
+    # check general parameters
+    @without_location_ids = params[:without_location_ids] ? params[:without_location_ids].split(',').map(&:to_i).uniq.sort : nil
     @limit                = params[:limit] ? params[:limit].to_i : 5
-    @options              = Hash[:without_location_id => @without_location_id, :limit => @limit,
+    @options              = Hash[:without_location_id => @without_location_ids, :limit => @limit,
                                  :klass => Location]
     case
     when (params[:geo] and params[:radius])
