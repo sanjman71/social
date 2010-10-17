@@ -2,7 +2,9 @@ class LocationsController < ApplicationController
   before_filter :authenticate_user!
 
   # GET /locations
+  # GET /locations/geo:1.23..-23.89?limit=5&without_location_ids=1,5,3
   # GET /locations/geo:1.23..-23.89/radius:10?limit=5&without_location_ids=1,5,3
+  # GET /locations/city:chicago?limit=5&without_location_ids=1,5,3
   # GET /locations/city:chicago/radius:10?limit=5&without_location_ids=1,5,3
   def index
     # check general parameters
@@ -11,24 +13,15 @@ class LocationsController < ApplicationController
     @options              = Hash[:without_location_id => @without_location_ids, :limit => @limit,
                                  :klass => Location]
     case
-    when (params[:geo] and params[:radius])
-      match_geo     = params[:geo].to_s.match(/geo:(\d+\.\d+)..(-{0,1}\d+\.\d+)/)
-      match_radius  = params[:radius].to_s.match(/radius:(\d+)/)
-      @lat, @lng    = match_geo[1].to_f, match_geo[2].to_f
-      @geo_origin   = [Math.degrees_to_radians(@lat), Math.degrees_to_radians(@lng)]
-      @geo_distance = Math.miles_to_meters(0)..Math.miles_to_meters(match_radius[1].to_i)
-      @radius       = match_radius[1].to_i
-      @options.update(:geo_origin => @geo_origin, :geo_distance => @geo_distance)
+    when params[:geo]
+      @lat, @lng    = find_lat_lng
+      @radius       = find_radius
+      @options.update(:geo_origin => build_geo_origin(@lat, @lng), :geo_distance => build_geo_distance(@radius))
       @locations    = current_user.search_geo(@options)
-    when (params[:city] and params[:radius])
-      match_city    = params[:city].to_s.match(/city:([a-z-]+)/)
-      match_radius  = params[:radius].to_s.match(/radius:(\d+)/)
-      @city         = match_city[1]
-      @geoloc       = City.geocode(@city)
-      @geo_origin   = [Math.degrees_to_radians(@lat), Math.degrees_to_radians(@lng)]
-      @geo_distance = Math.miles_to_meters(0)..Math.miles_to_meters(match_radius[1].to_i)
-      @radius       = match_radius[1].to_i
-      @options.update(:geo_origin => @geo_origin, :geo_distance => @geo_distance)
+    when params[:city]
+      @city         = find_city
+      @radius       = find_radius
+      @options.update(:geo_origin => build_geo_origin(@city.lat, @city.lng), :geo_distance => build_geo_distance(@radius))
       @locations    = current_user.search_geo(@options)
     else
       # default

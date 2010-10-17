@@ -2,11 +2,37 @@ class UsersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :find_user, :only => [:edit, :show, :update]
 
-  privilege_required 'admin', :only => [:index]
+  # privilege_required 'admin', :only => [:index]
 
   # GET /users
+  # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_location_ids=1,5,3
+  # GET /users/city:chicago?limit=5&without_location_ids=1,5,3
+  # GET /users/city:chicago/radius:10?limit=5&without_location_ids=1,5,3
   def index
-    @users = User.all
+    # check general parameters
+    @without_location_ids = params[:without_location_ids] ? params[:without_location_ids].split(',').map(&:to_i).uniq.sort : nil
+    @limit                = params[:limit] ? params[:limit].to_i : 5
+    @options              = Hash[:without_location_id => @without_location_ids, :limit => @limit, :klass => User]
+
+    case
+    when params[:geo]
+      @lat, @lng    = find_lat_lng
+      @radius       = find_radius
+      @options.update(:geo_origin => build_geo_origin(@lat, @lng), :geo_distance => build_geo_distance(@radius))
+      @users        = current_user.search_geo(@options)
+    when params[:city]
+      @city         = find_city
+      @radius       = find_radius
+      @options.update(:geo_origin => build_geo_origin(@city.lat, @city.lng), :geo_distance => build_geo_distance(@radius))
+      @users        = current_user.search_geo(@options)
+    else
+      @users        = User.all
+    end
+
+    respond_to do |format|
+      format.html
+      format.js
+    end
   end
 
   # GET /users/1

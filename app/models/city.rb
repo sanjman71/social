@@ -84,6 +84,19 @@ class City < ActiveRecord::Base
     [self.name, self.state.code, self.lat, self.lng].join("|")
   end
 
+  # find city name or create if it doesn't exist
+  def self.find_by_name_or_geocode(s)
+    city = self.find_by_name(s)
+    return city if city
+    
+    # multi-geocoder geocode does not throw an exception on failure
+    geo = Geokit::Geocoders::MultiGeocoder.geocode("#{s}")
+    return nil unless geo.success
+    
+    state = State.find_by_code(geo.state) 
+    city  = self.create(:name => geo.city || geo.district, :lat => geo.lat, :lng => geo.lng, :state => state)
+  end
+
   # set city zips using sphinx facets 
   def set_zips(limit=nil)
     limit       ||= ::Search.max_matches
@@ -115,7 +128,7 @@ class City < ActiveRecord::Base
   # import cities
   def self.import(options={})
     imported  = 0
-    file      = options[:file] ? options[:file] : "#{RAILS_ROOT}/data/cities.txt"
+    file      = options[:file] ? options[:file] : "#{Rails.root}/data/cities.txt"
     
     CSV.foreach(file, :col_sep => '|') do |row|
       city_name, state_code, lat, lng = row

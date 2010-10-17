@@ -30,7 +30,37 @@ class ApplicationController < ActionController::Base
   end
 
   protected
-  
+
+  # find city using params[:city]
+  def find_city
+    match_city = params[:city].to_s.match(/city:([a-z-]+)/)
+    match_city ? City.find_by_name_or_geocode(match_city[1]) : nil
+  end
+
+  # find lat, lng using params[:geo]
+  def find_lat_lng
+    match_geo  = params[:geo].to_s.match(/geo:(\d+\.\d+)..(-{0,1}\d+\.\d+)/)
+    match_geo ? (@lat, @lng = match_geo[1].to_f, match_geo[2].to_f) : [nil, nil]
+  end
+
+  # find radius using params[:radius]
+  def find_radius
+    match_radius = params[:radius].to_s.match(/radius:(\d+)/)
+    match_radius ? match_radius[1].to_i : default_radius
+  end
+
+  def build_geo_origin(lat, lng)
+    [Math.degrees_to_radians(lat), Math.degrees_to_radians(lng)]
+  end
+
+  def build_geo_distance(radius)
+    Math.miles_to_meters(0)..Math.miles_to_meters(radius)
+  end
+
+  def default_radius
+    50
+  end
+
   # check that user has signed up for the beta
   def check_beta
     if session[:beta].to_i != 1

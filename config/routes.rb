@@ -21,12 +21,19 @@ Social::Application.routes.draw do
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
   match 'growls', :to => "growls#index"
 
+  # user routes
+
+  match 'users/:geo(/:radius)', :to => 'users#index',
+    :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_users
+  match 'users/:city(/:radius)', :to => 'users#index',
+    :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_users
+
   resources :users
 
   # location routes
-  match 'locations/:geo/:radius', :to => 'locations#index',
+  match 'locations/:geo(/:radius)', :to => 'locations#index',
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_locations
-  match 'locations/:city/:radius', :to => 'locations#index',
+  match 'locations/:city(/:radius)', :to => 'locations#index',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_locations
 
   resources :locations, :only => [:index] do

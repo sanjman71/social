@@ -1,18 +1,18 @@
 require 'test_helper'
 
-class LocationsControllerTest < ActionController::TestCase
+class UsersControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   # turn off transactional fixtures here so we can test sphinx
   self.use_transactional_fixtures = false
 
   context "routes" do
-    should route(:get, "/locations/geo:1.23..-77.89/radius:50").to(
-      :controller => 'locations', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
-    should route(:get, "/locations/city:chicago/radius:50").to(
-      :controller => 'locations', :action => 'index', :city => 'city:chicago', :radius => 'radius:50')
-    should route(:get, "/locations/city:chicago").to(
-      :controller => 'locations', :action => 'index', :city => 'city:chicago')
+    should route(:get, "/users/geo:1.23..-77.89/radius:50").to(
+      :controller => 'users', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
+    should route(:get, "/users/city:chicago/radius:75").to(
+      :controller => 'users', :action => 'index', :city => 'city:chicago', :radius => 'radius:75')
+    should route(:get, "/users/city:chicago").to(
+      :controller => 'users', :action => 'index', :city => 'city:chicago')
   end
 
   def setup
@@ -54,7 +54,7 @@ class LocationsControllerTest < ActionController::TestCase
           assert_equal 50, assigns(:radius)
           assert_equal [Math.degrees_to_radians(@chicago.lat), Math.degrees_to_radians(@chicago.lng)], assigns(:options)[:geo_origin]
           assert_equal 0..Math.miles_to_meters(50), assigns(:options)[:geo_distance]
-          assert_equal [], assigns(:locations)
+          assert_equal [@user2], assigns(:users)
           assert_template "index"
         end
       end
@@ -73,11 +73,10 @@ class LocationsControllerTest < ActionController::TestCase
           assert_equal 50, assigns(:radius)
           assert_equal [Math.degrees_to_radians(@chicago.lat), Math.degrees_to_radians(@chicago.lng)], assigns(:options)[:geo_origin]
           assert_equal 0..Math.miles_to_meters(50), assigns(:options)[:geo_distance]
-          assert_equal [], assigns(:locations)
+          assert_equal [@user2], assigns(:users)
           assert_template "index"
         end
       end
     end
   end
-
 end
