@@ -51,11 +51,6 @@
           = render(:partial => 'home/location', :locals => {:location => object})
         - when 'user'
           = render(:partial => 'home/user', :locals => {:user => object})
-        
-      / - @matches.each do |user|
-      /   = render(:partial => 'home/user', :locals => {:user => user})
-      / - @locations.each do |location|
-      /   = render(:partial => 'home/location', :locals => {:location => location})
 
     .span-13.last
       .span-13.last#map
@@ -66,5 +61,7 @@
   var growls             = #{@growls};
   var mapping            = #{user_signed_in?};
   var cur_locations      = #{@locations ? [@locations.collect(&:id).sort.join(',')] : []};
+  var cur_users          = #{@users ? [@users.collect(&:id).sort.join(',')] : []};
   var max_locations      = #{@locations ? @locations.size+@max_poll : 0};
   var geo_locations_path = "/locations/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"
+  var geo_users_path     = "/users/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"

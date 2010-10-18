@@ -5,14 +5,14 @@ class UsersController < ApplicationController
   # privilege_required 'admin', :only => [:index]
 
   # GET /users
-  # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_location_ids=1,5,3
-  # GET /users/city:chicago?limit=5&without_location_ids=1,5,3
-  # GET /users/city:chicago/radius:10?limit=5&without_location_ids=1,5,3
+  # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_user_ids=1,5,3
+  # GET /users/city:chicago?limit=5&without_user_ids=1,5,3
+  # GET /users/city:chicago/radius:10?limit=5&without_user_ids=1,5,3
   def index
     # check general parameters
-    @without_location_ids = params[:without_location_ids] ? params[:without_location_ids].split(',').map(&:to_i).uniq.sort : nil
-    @limit                = params[:limit] ? params[:limit].to_i : 5
-    @options              = Hash[:without_location_id => @without_location_ids, :limit => @limit, :klass => User]
+    @without_user_ids = params[:without_user_ids] ? params[:without_user_ids].split(',').map(&:to_i).uniq.sort : nil
+    @limit            = params[:limit] ? params[:limit].to_i : 5
+    @options          = Hash[:without_user_ids => @without_user_ids, :limit => @limit, :klass => User]
 
     case
     when params[:geo]

@@ -8,20 +8,30 @@ $(document).ready(function() {
   }); }
 
   if ($(".map-location").length > 0) {
-    setTimeout(getLocations, 5000);
+    // start the timer
+    setTimeout(addObjects, 5000);
   }
 
-  // get new, unique locations; setCurrentLocations is the callback used to update the current locations collection
-  function getLocations() {
-    removeLocationHighlights();
+  function addObjects() {
+    // add locations
+    addLocations();
+    //addUsers();
+    // reset timer
+    setTimeout(addLocations, 5000);
+  }
+
+  // add unique locations
+  function addLocations() {
     if (cur_locations.length < max_locations) {
       $.getScript(geo_locations_path+"?without_location_ids="+cur_locations.join(',')+"&limit=1", setCurrentLocations);
-      setTimeout(getLocations, 5000);
     }
   }
 
-  function removeLocationHighlights() {
-    $("a.map-link.highlight").removeClass('highlight');
+  // add unique users
+  function addUsers() {
+    if (cur_locations.length < max_locations) {
+      $.getScript(geo_users_path+"?without_user_ids="+cur_users.join(',')+"&limit=1", setCurrentUsers);
+    }
   }
 
   // update the global cur_locations array
@@ -35,5 +45,18 @@ $(document).ready(function() {
     })
     cur_locations.sort(function (a,b) { return a-b });
     //console.log(cur_locations.join(','));
+  }
+  
+  // update the global cur_users array
+  function setCurrentUsers() {
+    //console.log(cur_users.join(','));
+    // reset current users array, build new list, then sort
+    cur_users = [];
+    $("div.home.match").each(function() {
+      user_id = $(this).attr('id').replace('user_', '');
+      cur_users.push(user_id);
+    })
+    cur_users.sort(function (a,b) { return a-b });
+    //console.log(cur_users.join(','));
   }
 })

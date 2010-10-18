@@ -2,12 +2,9 @@
   # add location to objects collection; start with object hidden, then show by sliding down
   page[".objects"].prepend(render(:partial => 'home/location', :locals => {:location => location, :visible => 'hide'}))
   page["#location_#{location.id}"].slideDown(2000)
-  page["cur_locations.push(#{location.id})"]
 end
 
-# unhighlight all locations
-page["a.map-link.highlight"].removeClass('highlight')
 # add new location and update map
 page["#map-side-bar"].append(render(:partial => 'locations/locations_map',
-                                    :locals => {:locations => @locations, :category => 'async', :highlight => 'highlight'}))
+                                    :locals => {:locations => @locations, :category => 'async'}))
 page['#map'].jMapping('update');
