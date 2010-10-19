@@ -2,7 +2,7 @@ namespace :bundle do
 
   desc "Install bundled gems"
   task :install, :roles => [:app, :db] do
-    run "bash -ic 'cd #{current_path}; bundle install --deployment --without development test'"
+    run "bash -ic 'cd #{current_path}; bundle install'"
   end
  
   # after deploy task

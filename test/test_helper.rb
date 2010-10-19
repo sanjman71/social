@@ -26,9 +26,14 @@ class ActiveSupport::TestCase
 
   def assert_not_valid(x)
     assert !x.valid?
-  end  
+  end
 
   def assert_nil(x)
     assert_equal nil, x
+  end
+
+  def work_off_delayed_jobs
+    @worker ||= Delayed::Worker.new(:quiet => true)
+    @worker.work_off(Delayed::Job.count)
   end
 end
