@@ -39,12 +39,19 @@
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions
     - if current_user.suggestions.active.count > 0
-      %h3== You have #{link_to(pluralize(current_user.suggestions.active.count, 'suggestion'), suggestions_path, :style => 'color: #0000BB;')}
+      %h3= link_to I18n.t('home.suggestions.title'), suggestions_path, :style => 'color: #0000BB;'
     - else
       %h3== No suggestions at the moment, but we're working on it.
 
+  -# column titles
   .span-23.prepend-1.last
-    .span-10.objects
+    .span-10
+      %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.stream.title')
+    .span-13.last
+      %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.map.title')
+
+  .span-23.prepend-1.last
+    .span-10.stream
       - (@matches+@locations).sort_by{ rand }.each do |object|
         - case object.class.to_s.downcase
         - when 'location'

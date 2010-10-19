@@ -1,5 +1,5 @@
 @users.each do |user|
   # add location to objects collection; start with object hidden, then show by sliding down
-  page[".objects"].prepend(render(:partial => 'home/user', :locals => {:user => user, :visible => 'hide'}))
+  page[".stream"].prepend(render(:partial => 'home/user', :locals => {:user => user, :visible => 'hide'}))
   page["#user_#{user.id}"].slideDown(2000)
 end

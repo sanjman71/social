@@ -1,6 +1,6 @@
 @locations.each do |location|
-  # add location to objects collection; start with object hidden, then show by sliding down
-  page[".objects"].prepend(render(:partial => 'home/location', :locals => {:location => location, :visible => 'hide'}))
+  # add location to stream; start by hiding new object, then show with slidedown effect
+  page[".stream"].prepend(render(:partial => 'home/location', :locals => {:location => location, :visible => 'hide'}))
   page["#location_#{location.id}"].slideDown(2000)
 end
 

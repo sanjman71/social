@@ -3,6 +3,13 @@
 
 en:
   hello: "Hello world"
+  home:
+    stream:
+      title: Who's Out and About
+    map:
+      title: What Places are Hot
+    suggestions:
+      title: Who You Should Meet
   alert:
     linked_account: "You're just a few checkins from being matched."
     need_checkins: "You are just a few checkins from being matched."
