@@ -1,7 +1,8 @@
-.home.match                     { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
-.home.match.hover               { background-color: #eee; }
-.home.match #user_handle        { color: #FF6600; }
+.stream .match                      { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
+.stream .match.hover                { background-color: #eee; }
+.stream .match #user_handle         { color: #FF6600; }
 
-.home.location                  { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
-.home.location.hover            { background-color: #efefef; }
-.home.location #location_name   { color: #0000BB; }
+.stream .location                   { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
+.stream .location.hover             { background-color: #efefef; }
+.stream .location #location_name    { color: #0000BB; }
+.stream .location #location_toggle  { font-size: 0.9em; }

@@ -16,15 +16,15 @@ $(document).ready(function() {
     // add locations
     addLocations();
     //addUsers();
-    // reset timer
-    setTimeout(addLocations, 5000);
+    if (cur_locations.length < max_locations-1) {
+      // reset timer
+      setTimeout(addObjects, 5000);
+    }
   }
 
   // add unique locations
   function addLocations() {
-    if (cur_locations.length < max_locations) {
-      $.getScript(geo_locations_path+"?without_location_ids="+cur_locations.join(',')+"&limit=1", setCurrentLocations);
-    }
+    $.getScript(geo_locations_path+"?without_location_ids="+cur_locations.join(',')+"&limit=1", setCurrentLocations);
   }
 
   // add unique users
@@ -39,8 +39,14 @@ $(document).ready(function() {
     //console.log(cur_locations.join(','));
     // reset current locations array, build new list, then sort
     cur_locations = [];
+    /*
     $("div.map-location").each(function() {
       location_id = $(this).attr('data-location-id');
+      cur_locations.push(location_id);
+    })
+    */
+    $("div.stream .location").each(function() {
+      location_id = $(this).attr('id').replace('location_', '');
       cur_locations.push(location_id);
     })
     cur_locations.sort(function (a,b) { return a-b });
@@ -52,7 +58,7 @@ $(document).ready(function() {
     //console.log(cur_users.join(','));
     // reset current users array, build new list, then sort
     cur_users = [];
-    $("div.home.match").each(function() {
+    $("div.stream .match").each(function() {
       user_id = $(this).attr('id').replace('user_', '');
       cur_users.push(user_id);
     })

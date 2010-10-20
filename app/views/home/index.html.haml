@@ -69,6 +69,6 @@
   var mapping            = #{user_signed_in?};
   var cur_locations      = #{@locations ? [@locations.collect(&:id).sort.join(',')] : []};
   var cur_users          = #{@users ? [@users.collect(&:id).sort.join(',')] : []};
-  var max_locations      = #{@locations ? @locations.size+@max_poll : 0};
+  var max_locations      = #{@max_objects};
   var geo_locations_path = "/locations/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"
   var geo_users_path     = "/users/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"

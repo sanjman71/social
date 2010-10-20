@@ -1,10 +1,12 @@
 $(document).ready(function() {
 
-  $(".home.location,.home.match").live('mouseover mouseout', function(event) {
+  $(".stream .location, .stream .match").live('mouseover mouseout', function(event) {
     if (event.type == 'mouseover') {
       $(this).addClass('hover');
+      $(this).find("#location_toggle").show();
     } else {
       $(this).removeClass('hover');
+      $(this).find("#location_toggle").hide();
     }
   })
 

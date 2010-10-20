@@ -1,4 +1,4 @@
-.span-10.home.match[user]
+.span-10.match[user]
   .span-2#picture
     = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}", 'data-handle' => user.handle, 'data-city' => user.city.try(:name), 'data-gender' => user.gender_name.try(:titleize), 'data-matchie' => I18n.t("user.matchie.#{user.matchie.to_s}"))
   .span-8.last{:style => 'font-size: 0.9em;'}

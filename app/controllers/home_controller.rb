@@ -8,11 +8,11 @@ class HomeController < ApplicationController
 
     if user_signed_in?
       # find matching user profiles
-      @matches    = current_user.search_geo(:limit => 10, :miles => current_user.radius, :order => :checkins_tags,
-                                            :klass => User)
+      @matches      = current_user.search_geo(:limit => 10, :miles => current_user.radius, :order => :checkins_tags,
+                                              :klass => User)
       # find nearby locations
-      @locations  = current_user.search_geo(:limit => 5, :miles => current_user.radius, :klass => Location)
-      @max_poll   = 3
+      @locations    = current_user.search_geo(:limit => 2, :miles => current_user.radius, :klass => Location)
+      @max_objects  = @locations.size + 5
     end
 
     # check for growl messages

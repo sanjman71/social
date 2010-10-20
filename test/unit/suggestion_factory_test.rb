@@ -42,14 +42,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
   end
 
   def teardown
-    Country.delete_all
-    State.delete_all
-    City.delete_all
-    User.delete_all
-    Location.delete_all
-    Checkin.delete_all
-    CheckinLog.delete_all
-    Suggestion.delete_all
+    [Suggestion, Checkin, CheckinLog, Location, Country, State, City, User].each { |o| o.delete_all }
   end
 
   context "checkins, geo algorithm" do

@@ -61,7 +61,7 @@ class LocationsControllerTest < ActionController::TestCase
     end
 
     context "geo" do
-      should "find geo users within default radiius" do
+      should "find geo users within default radius" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index
           sleep(0.25)

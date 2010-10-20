@@ -26,13 +26,15 @@ class User < ActiveRecord::Base
                             :after_add => :after_add_phone_number, :after_remove => :after_remove_phone_number
   has_one                   :primary_phone_number, :class_name => 'PhoneNumber', :as => :callable, :order => "priority asc"
   accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => :all_blank
-  
+
   belongs_to                :city
 
   has_many                  :oauths
   has_many                  :checkins, :after_add => :after_add_checkin
   has_many                  :locations, :through => :checkins
   has_many                  :checkin_logs
+  has_many                  :plans
+  has_many                  :planned_locations, :through => :plans, :source => :location
   has_many                  :photos
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
@@ -86,11 +88,14 @@ class User < ActiveRecord::Base
     has :id, :as => :user_id
     indexes handle, :as => :handle
     has :gender, :as => :gender
+    # checkin locations
     has locations(:id), :as => :location_ids, :facet => true
     indexes locations.tags(:name), :as => :tags
     has locations.tags(:id), :as => :tag_ids, :facet => true
     has checkins(:id), :as => :checkin_ids, :facet => true
     has :checkins_count, :as => :checkins_count
+    # planned locations
+    has planned_locations(:id), :as => :planned_location_ids, :facet => true
     # convert degrees to radians for sphinx
     has 'RADIANS(users.lat)', :as => :lat,  :type => :float
     has 'RADIANS(users.lng)', :as => :lng,  :type => :float
