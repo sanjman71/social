@@ -5,8 +5,7 @@ class UserTest < ActiveSupport::TestCase
   context "create user" do
     context "with no password or confirmation" do
       setup do
-        @user1 = User.create(:name => "User 1", :handle => 'user1')
-        assert @user1.valid?
+        @user1 = User.create!(:name => "User 1", :handle => 'user1')
       end
 
       should "create user in active state, no points, no picture, default radius" do
@@ -24,8 +23,7 @@ class UserTest < ActiveSupport::TestCase
 
     context "with an empty password and confirmation" do
       setup do
-        @user1 = User.create(:name => "User 1", :handle => 'user1', :password => '', :password_confirmation => '')
-        assert @user1.valid?
+        @user1 = User.create!(:name => "User 1", :handle => 'user1', :password => '', :password_confirmation => '')
       end
 
       should "create user in active state" do
@@ -36,7 +34,7 @@ class UserTest < ActiveSupport::TestCase
     context "with password and confirmation mismatch" do
       setup do
         @user1 = User.create(:name => "User 1", :handle => 'user1', :password => "secret", :password_confirmation => "secretx")
-        assert_false @user1.valid?
+        assert @user1.invalid?
       end
 
       should "require password" do
@@ -62,6 +60,7 @@ class UserTest < ActiveSupport::TestCase
         options = Hash[:name => "User 1", :handle => 'user1', :password => 'secret', :password_confirmation => 'secret',
                        :email_addresses_attributes => { "0" => {:address => "xyz"}}]
         @user1  = User.create(options)
+        assert @user1.invalid?
       end
 
       should "not create user or email address" do
@@ -76,6 +75,7 @@ class UserTest < ActiveSupport::TestCase
         options = Hash[:name => "User 1", :handle => 'user1', :password => 'secret', :password_confirmation => 'secret',
                        :email_addresses_attributes => { "0" => {:address => "user1@walnut.com"}}]
         @user1  = User.create(options)
+        assert @user1.invalid?
       end
 
       should "not create user" do
@@ -87,11 +87,10 @@ class UserTest < ActiveSupport::TestCase
       setup do
         options = Hash[:name => "User 1", :handle => 'user1', :password => 'secret', :password_confirmation => 'secret',
                        :email_addresses_attributes => { "0" => {:address => "user1@walnut.com"}}]
-        @user1  = User.create(options)
+        @user1  = User.create!(options)
       end
 
       should "create user and email address" do
-        assert @user1.valid?
         assert_equal 1, @user1.reload.email_addresses.size
       end
 
@@ -123,16 +122,11 @@ class UserTest < ActiveSupport::TestCase
 
       # should not send user created message
       # should_not_change("delayed job count") { Delayed::Job.count }
-
-      context "then delete user" do
-        setup do
-          @user1.destroy
-        end
-
-        should "delete user and email address" do
-          assert_nil User.find_by_id(@user1.id)
-          assert_nil EmailAddress.find_by_address('user1@walnut.com')
-        end
+      
+      should "delete email address after destroying user" do
+        @user1.destroy
+        assert_nil User.find_by_id(@user1.id)
+        assert_nil EmailAddress.find_by_address('user1@walnut.com')
       end
     end
 
@@ -140,8 +134,7 @@ class UserTest < ActiveSupport::TestCase
       setup do
         options = Hash[:name => "User 1", :handle => 'user1', :password => 'secret', :password_confirmation => 'secret',
                        :email_addresses_attributes => [{:address => "user1@walnut.com"}]]
-        @user1  = User.create(options)
-        assert @user1.valid?
+        @user1  = User.create!(options)
       end
     
       should "increment user.email_addresses_count" do
@@ -182,11 +175,10 @@ class UserTest < ActiveSupport::TestCase
       setup do
         options = Hash[:name => "User 1", :handle => 'user1', :password => 'secret', :password_confirmation => 'secret',
                        :phone_numbers_attributes => [{:address => "", :name => ""}]]
-        @user1  = User.create(options)
+        @user1  = User.create!(options)
       end
 
       should "create user but not phone number" do
-        assert @user1.valid?
         assert_equal [], @user1.reload.phone_numbers
       end
     end
@@ -207,8 +199,7 @@ class UserTest < ActiveSupport::TestCase
       setup do
         options = Hash[:name => "User 1", :handle => 'user1', :password => 'secret', :password_confirmation => 'secret',
                        :phone_numbers_attributes => [{:address => "3125551212", :name => "Mobile"}]]
-        @user1  = User.create(options)
-        assert @user1.valid?
+        @user1  = User.create!(options)
       end
 
       should "increment user.phone_numbers_count" do
@@ -223,21 +214,17 @@ class UserTest < ActiveSupport::TestCase
         assert_equal "3125551212", @user1.reload.phone_number
       end
 
-      context "then delete user" do
-        setup do
-          @user1.destroy
-        end
-
-        should "delete user and email address" do
-          assert_nil User.find_by_id(@user1.id)
-          assert_nil PhoneNumber.find_by_address('3125551212')
-        end
+      should "delete email address after user destroy" do
+        @user1.destroy
+        assert_nil User.find_by_id(@user1.id)
+        assert_nil PhoneNumber.find_by_address('3125551212')
       end
     end
 
     context "with rpx" do
       setup do
-        @user1 = User.create_rpx("User 1", "user1@walnut.com", "https://www.google.com/accounts/o8/id?id=AItOawmaOlyYezg_WfbgP_qjaUyHjmqZD9qNIVM")
+        @token = "https://www.google.com/accounts/o8/id?id=AItOawmaOlyYezg_WfbgP_qjaUyHjmqZD9qNIVM"
+        @user1 = User.create_rpx("User 1", "user1@walnut.com", @token)
         assert @user1.valid?
       end
 
@@ -248,7 +235,7 @@ class UserTest < ActiveSupport::TestCase
 
       should "add to user.email_addresses collection" do
         assert_equal ["user1@walnut.com"], @user1.reload.email_addresses.collect(&:address)
-        assert_equal ["https://www.google.com/accounts/o8/id?id=AItOawmaOlyYezg_WfbgP_qjaUyHjmqZD9qNIVM"], @user1.email_addresses.collect(&:identifier)
+        assert_equal [@token], @user1.email_addresses.collect(&:identifier)
       end
 
       should "have user.email_address" do
