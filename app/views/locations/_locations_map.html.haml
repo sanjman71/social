@@ -3,6 +3,7 @@
  
 - locations.each do |location|
   - next unless location.mappable?
+  - category = location.hotness > 10 ? 'hot' : category
   .map-location{'data-location-id' => location.id, 'data-jmapping' => "{id: #{location.id}, point: {lat: #{location.lat}, lng: #{location.lng}}, category: '#{category}'}"}
     = link_to location.name, '#', :class => ['map-link', highlight]
     .info-box

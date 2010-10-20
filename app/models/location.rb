@@ -25,6 +25,8 @@ class Location < ActiveRecord::Base
   has_many                :checkins
   has_many                :users, :through => :checkins
 
+  has_many                :plans
+
   acts_as_taggable
 
   # Note: the after_save_callback is deprecated, but its left here commented out for documentation purposes
@@ -158,6 +160,10 @@ class Location < ActiveRecord::Base
     return false unless geo.success
     self.lat, self.lng = geo.lat, geo.lng
     self.save
+  end
+
+  def hotness
+    @hotness ||= 5*checkins.count + 2*plans.count
   end
 
   # called after location is tagged

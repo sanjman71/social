@@ -55,7 +55,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
       
       should "create 1 suggestion with chicago female checkin match" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index 'user_core'
+          ThinkingSphinx::Test.index
           sleep(0.25)
           @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo], :limit => 10)
           assert_equal 1, @suggestions.size
@@ -76,7 +76,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
       should "create 2 suggestions with chicago female checkin and geo match" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index 'user_core'
+          ThinkingSphinx::Test.index
           sleep(0.25)
           @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo], :limit => 10)
           assert_equal 2, @suggestions.size
@@ -100,7 +100,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
       should "create 0 suggestions" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index 'user_core'
+          ThinkingSphinx::Test.index
           sleep(0.25)
           @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo_tags], :limit => 10)
           assert_equal 0, @suggestions.size
@@ -117,7 +117,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
       should 'create 1 suggestion with chicago female coffee tag' do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index 'user_core'
+          ThinkingSphinx::Test.index
           sleep(0.25)
           @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo_tags], :limit => 10)
           assert_equal 1, @suggestions.size
@@ -136,7 +136,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
       should "create 0 suggestions" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index 'user_core'
+          ThinkingSphinx::Test.index
           sleep(0.25)
           @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :geo_tags], :limit => 10)
           assert_equal 0, @suggestions.size
@@ -154,7 +154,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
     should "create 1 suggestion" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index 'user_core'
+        ThinkingSphinx::Test.index
         sleep(0.25)
         @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:checkins, :tags], :limit => 10)
         assert_equal 1, @suggestions.size
@@ -179,7 +179,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
       should "create 2 suggestions with female users" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index 'user_core'
+          ThinkingSphinx::Test.index
           sleep(0.25)
           @suggestions = SuggestionFactory.create(@boston_male1, :algorithm => [:checkins, :geo, :gender], :limit => 10)
           assert_equal 2, @suggestions.size

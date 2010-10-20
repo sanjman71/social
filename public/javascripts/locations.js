@@ -1,9 +1,11 @@
 $(document).ready(function() {
   
+  // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
   if (mapping) { $('#map').jMapping({
     category_icon_options: {
-      'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB'},
-      'default': {primaryColor: '#465AE0'}
+      'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
+      'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
+      'default': {primaryColor: '#465AE0', height: '32', width: '32'}
     }
   }); }
 

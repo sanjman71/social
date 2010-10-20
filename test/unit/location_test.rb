@@ -55,7 +55,7 @@ class LocationTest < ActiveSupport::TestCase
   #   end
   # end
 
-  context "location with country" do
+  fast_context "location with country" do
     setup do
       @location = Location.create(:country => @us)
       assert @location.valid?
@@ -86,7 +86,7 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
   
-  context "location with state" do
+  fast_context "location with state" do
     setup do
       @location = Location.create(:name => "Home", :state => @il, :country => @us)
       assert @location.valid?
@@ -98,7 +98,7 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal 1, @il.locations_count
     end
     
-    context "change state" do
+    fast_context "change state" do
       setup do
         @location.state = @on
         @location.country = @canada
@@ -121,7 +121,7 @@ class LocationTest < ActiveSupport::TestCase
       end
     end
     
-    context "remove state" do
+    fast_context "remove state" do
       setup do
         @location.state = nil
         @location.save
@@ -134,7 +134,7 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
   
-  context "location with a pre-defined city" do
+  fast_context "location with a pre-defined city" do
     setup do
       @location = Location.create(:name => "Home", :city => @chicago, :country => @us)
       assert @location.valid?
@@ -149,7 +149,7 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal [@location], @chicago.locations
     end
 
-    context "remove city" do
+    fast_context "remove city" do
       setup do
         @location.city = nil
         @location.save
@@ -162,7 +162,7 @@ class LocationTest < ActiveSupport::TestCase
       end
     end
     
-    context "change city" do
+    fast_context "change city" do
       setup do
         @location.city = @toronto
         @location.state = @on
@@ -195,27 +195,7 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
 
-  # context "location with city and state" do
-  #   setup do
-  #     @location = Location.create(:city => @chicago, :state => @il, :country => @us)
-  #   end
-  # 
-  #   should_change("Location.count", :by => 1) { Location.count }
-  # 
-  #   should "increment city locations_count" do
-  #     assert_equal 1, @chicago.reload.locations_count
-  #   end
-  # 
-  #   should "increment state locations_count" do
-  #     assert_equal 1, @il.reload.locations_count
-  #   end
-  # 
-  #   should "increment country locations_count" do
-  #     assert_equal 1, @us.reload.locations_count
-  #   end
-  # end
-  
-  context "location with a zip" do
+  fast_context "location with a zip" do
     setup do
       @location = Location.create(:name => "Home", :zip => @zip, :country => @us)
       assert @location.valid?
@@ -236,7 +216,7 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal 1, @us.locations_count
     end
     
-    context "remove zip" do
+    fast_context "remove zip" do
       setup do
         @location.zip = nil
         @location.save
@@ -252,7 +232,7 @@ class LocationTest < ActiveSupport::TestCase
       end
     end
     
-    context "change zip" do
+    fast_context "change zip" do
       setup do
         @zip2 = Factory(:zip, :name => "60610", :state => @il)
         @location.zip = @zip2
@@ -271,7 +251,7 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
   
-  context "location with a neighborhood" do
+  fast_context "location with a neighborhood" do
     setup do
       @location = Location.create(:name => "Home", :country => @us)
       assert @location.valid?
@@ -312,7 +292,7 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal 1, @location.country.locations_count
     end
 
-    context "remove neighborhood" do
+    fast_context "remove neighborhood" do
       setup do
         @location.neighborhoods.delete(@river_north)
         @location.reload
@@ -330,7 +310,7 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
   
-  context "location with a phone number" do
+  fast_context "location with a phone number" do
     setup do
       @location = Location.create(:name => "My Location", :country => @us)
       assert @location.valid?
@@ -350,20 +330,15 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal "9991234567", @location.reload.primary_phone_number.address
     end
     
-    context "then remove phone number" do
-      setup do
-        @location.phone_numbers.delete(@phone)
-      end
-
-      should "have no phone number, decrement counter cache" do
-        assert_nil PhoneNumber.find_by_id(@phone.id)
-        assert_equal [], @location.reload.phone_numbers
-        assert_equal 0, @location.reload.phone_numbers_count
-      end
+    should "cleanup after removing phone number" do
+      @location.phone_numbers.delete(@phone)
+      assert_nil PhoneNumber.find_by_id(@phone.id)
+      assert_equal [], @location.reload.phone_numbers
+      assert_equal 0, @location.reload.phone_numbers_count
     end
   end
 
-  context "location with an email address" do
+  fast_context "location with an email address" do
     setup do
       @location = Location.create(:name => "My Location", :country => @us)
       assert @location.valid?
@@ -383,20 +358,15 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal "boozer@jarna.com", @location.primary_email_address.address
     end
 
-    context "then remove email address" do
-      setup do
-        @location.email_addresses.delete(@email)
-      end
-      
-      should "have no email address, decrement counter cache" do
-        assert_nil EmailAddress.find_by_id(@email.id)
-        assert_equal [], @location.email_addresses
-        assert_equal 0, @location.reload.email_addresses_count
-      end
+    should "cleanup after removing email address" do
+      @location.email_addresses.delete(@email)
+      assert_nil EmailAddress.find_by_id(@email.id)
+      assert_equal [], @location.email_addresses
+      assert_equal 0, @location.reload.email_addresses_count
     end
   end
 
-  context "location without refer_to" do
+  fast_context "location without refer_to" do
     setup do
       @location = Location.create(:name => "Home", :country => @us)
     end
@@ -404,7 +374,7 @@ class LocationTest < ActiveSupport::TestCase
     should "have refer_to? == false" do
       assert_equal false, @location.refer_to?
     end
-    
+
     context "and add refer_to" do
       setup do
         @location.refer_to = 1001
@@ -447,6 +417,27 @@ class LocationTest < ActiveSupport::TestCase
       should "have no timezone" do
         assert_equal nil, @location.timezone
       end
+    end
+  end
+
+  context "hotness" do
+    should "be 10 for location with 2 checkins" do
+      @location = Location.create(:country => @us, :state => @illinois)
+      @location.stubs(:checkins).returns([1, 2])
+      assert_equal 10, @location.hotness
+    end
+
+    should "be 4 for location with 2 plans" do
+      @location = Location.create(:country => @us, :state => @illinois)
+      @location.stubs(:plans).returns([1, 2])
+      assert_equal 4, @location.hotness
+    end
+
+    should "be 19 for location with 3 locations + 2 plans" do
+      @location = Location.create(:country => @us, :state => @illinois)
+      @location.stubs(:checkins).returns([1, 2, 3])
+      @location.stubs(:plans).returns([1, 2])
+      assert_equal 19, @location.hotness
     end
   end
 
