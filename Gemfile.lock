@@ -81,6 +81,11 @@ GEM
       httparty (= 0.4.3)
     geokit (1.5.0)
     haml (3.0.18)
+    haml-rails (0.3.4)
+      actionpack (~> 3.0)
+      activesupport (~> 3.0)
+      haml (~> 3.0)
+      railties (~> 3.0)
     hashie (0.3.1)
     highline (1.6.1)
     hoe (2.6.1)
@@ -180,6 +185,7 @@ DEPENDENCIES
   foursquare (>= 0.3.1)
   geokit (>= 1.5.0)
   haml (>= 3.0.18)
+  haml-rails
   hashie (>= 0.3.1)
   httparty (= 0.4.3)
   linecache19
