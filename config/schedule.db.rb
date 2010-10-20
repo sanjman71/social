@@ -19,5 +19,5 @@ set :path, '/usr/apps/social/current'
 set :output, '/usr/apps/social/current/log/backups.log'
 
 every 2.hours do
-  rake "db:backup DB=social_production BACKUP_DIR=/usr/apps/social/current/shared"
+  rake "db:backup DB=social_production BACKUP_DIR=/usr/apps/social/shared/backups"
 end
