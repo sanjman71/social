@@ -13,7 +13,7 @@
   - javascript 'growls'
   - javascript 'home'
 
-.span-23.prepend-1.mat
+- content_for :mat do
   %h2== Home
   %h4= render(:partial => 'shared/oauth_links')
 
@@ -63,6 +63,8 @@
       .span-13.last#map
       .span-13.last#map-side-bar
         = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
+
+= render(:partial => 'home/meet_user_dialog')
 
 :javascript
   var growls             = #{@growls};

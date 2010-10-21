@@ -10,4 +10,13 @@ $(document).ready(function() {
     }
   })
 
+  // initialize dialog
+  $("#meet_user_dialog").dialog({modal: true, autoOpen: false, width: 350, height: 150, show: 'fadeIn(slow)'});
+
+  $("a#meet_user").click(function() {
+    handle = $(this).parents('.match').attr('data-handle');
+    $("#meet_user_dialog #handle").text("We'll connect you with " + handle);
+    $("#meet_user_dialog").dialog('open');
+    return false;
+  })
 })

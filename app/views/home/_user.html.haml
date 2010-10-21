@@ -1,4 +1,4 @@
-.span-10.match[user]
+.span-10.match[user]{'data-handle' => user.handle}
   .span-2#picture
     = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}", 'data-handle' => user.handle, 'data-city' => user.city.try(:name), 'data-gender' => user.gender_name.try(:titleize), 'data-matchie' => I18n.t("user.matchie.#{user.matchie.to_s}"))
   .span-5{:style => 'font-size: 0.9em;'}
@@ -6,4 +6,4 @@
     #user_meta= user_profile_blurb(user)
     #user_matchie= I18n.t("user.matchie.#{user.matchie.to_s}")
   .span-3.last.hide#user_toggle
-    = link_to I18n.t("home.stream.user_meet", :name => user.singular_object), '#', :class => 'admin'
+    = link_to I18n.t("home.stream.user_meet", :name => user.singular_object), '#', :class => 'admin', :id => 'meet_user'
