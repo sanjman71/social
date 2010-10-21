@@ -224,6 +224,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def singular_object
+    male? ? 'him' : 'her'
+  end
+
   def rpx?
     self.rpx == 1
   end

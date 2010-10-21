@@ -6,6 +6,8 @@ en:
   home:
     stream:
       title: Who's Out and About
+      location_plan: "I plan to go here"
+      user_meet: "Meet %{name}"
     map:
       title: What Places are Hot
     suggestions:
