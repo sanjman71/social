@@ -1,6 +1,6 @@
 - visible = 'show' unless local_assigns[:visible]
 
-.span-10.location[location]{:class => visible}
+.span-10.location[location]{'data-id' => location.id, :class => visible}
   .span-2#picture
     = image_tag('icon-blank.jpg', :size => '50x50')
   .span-5{:style => 'font-size: 0.9em;'}

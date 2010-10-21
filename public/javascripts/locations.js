@@ -48,8 +48,8 @@ $(document).ready(function() {
     })
     */
     $("div.stream .location").each(function() {
-      location_id = $(this).attr('id').replace('location_', '');
-      cur_locations.push(location_id);
+      id = $(this).attr('data-id');
+      cur_locations.push(id);
     })
     cur_locations.sort(function (a,b) { return a-b });
     //console.log(cur_locations.join(','));
@@ -61,8 +61,8 @@ $(document).ready(function() {
     // reset current users array, build new list, then sort
     cur_users = [];
     $("div.stream .match").each(function() {
-      user_id = $(this).attr('id').replace('user_', '');
-      cur_users.push(user_id);
+      id = $(this).attr('data-id');
+      cur_users.push(id);
     })
     cur_users.sort(function (a,b) { return a-b });
     //console.log(cur_users.join(','));
