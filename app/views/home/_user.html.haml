@@ -6,4 +6,4 @@
     #user_meta= user_profile_blurb(user)
     #user_matchie= I18n.t("user.matchie.#{user.matchie.to_s}")
   .span-3.last.hide#user_toggle
-    = link_to I18n.t("home.stream.user_meet", :name => user.singular_object), '#', :class => 'admin', :id => 'meet_user'
+    = link_to I18n.t("home.stream.meet_user", :name => user.singular_object), '#', :class => 'admin', :id => 'meet_user'
