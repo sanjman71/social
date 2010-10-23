@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require "rubygems"
+require "net/sftp"
+
+# credentials
+server  = "indcalendar1"
+user    = "app"
+
+today       = Time.now.strftime("%Y%m%d")
+backup_path = "/usr/apps/social/shared/backups"
+backups     = []
+environment = ENV["RAILS_ENV"] || "development"
+
+if environment == 'production'
+  puts "#{Time.now}: not allowed in production environment"
+  exit
+end
+
+puts "#{Time.now}: searching for backups ..."
+
+Net::SFTP.start(server, user, :port => 30001) do |sftp|
+  sftp.dir.foreach(backup_path) do |entry|
+    # keep backups made today
+    next unless entry.name.match(/social_production_#{today}/)
+    backups.push(entry.name)
+  end
+
+  # find most recent backup
+  backup = backups.sort_by{ |s| s }.last
+
+  if backup.nil?
+    puts "#{Time.now}: no backup found"
+    exit
+  end
+
+  puts "#{Time.now}: downloading backup: #{backup}"
+  sftp.download!("#{backup_path}/#{backup}", backup)
+  puts "#{Time.now}: restoring backup to #{environment} environment"
+  system "rake db:restore DB=social_#{environment} FILE=#{backup}"
+  system "rake ts:index"
+end
+
