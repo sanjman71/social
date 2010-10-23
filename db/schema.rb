@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101019174930) do
+ActiveRecord::Schema.define(:version => 20101023172443) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -323,6 +323,19 @@ ActiveRecord::Schema.define(:version => 20101019174930) do
   end
 
   add_index "tag_badges", ["name"], :name => "index_tag_badges_on_name"
+
+  create_table "tag_badging_votes", :force => true do |t|
+    t.integer  "user_id",      :null => false
+    t.integer  "tag_badge_id", :null => false
+    t.integer  "voter_id",     :null => false
+    t.integer  "vote",         :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tag_badging_votes", ["user_id", "tag_badge_id"], :name => "index_tag_badging_votes_on_user_id_and_tag_badge_id"
+  add_index "tag_badging_votes", ["user_id", "voter_id"], :name => "index_tag_badging_votes_on_user_id_and_voter_id"
+  add_index "tag_badging_votes", ["user_id"], :name => "index_tag_badging_votes_on_user_id"
 
   create_table "tag_badgings", :force => true do |t|
     t.integer "user_id",      :null => false

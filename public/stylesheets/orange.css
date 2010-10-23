@@ -1,6 +1,7 @@
 /* color palette */
 
-div#header                                        { background-color: #EA6934; }
+/*div#header                                        { background-color: #EA6934; } */
+div#header                                        { background-color: #FF6C00; }
 
 div#tabs a                                        { border-color: #EA6F34; background-color: #EA6F34; border-bottom-color: #EA6F34; }
 

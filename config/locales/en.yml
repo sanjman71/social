@@ -47,3 +47,14 @@ en:
     goingout:
       by: "%{name} confirmed and are going out"
       to: "%{name} confirmed so you're going out"
+  badges:
+    title: Social DNA
+  badge:
+    adventurous_pallette: "Around the world in twenty bites"
+    booze_hound: "Less talking, more drinking"
+    caffeine_junkie: "Mainlines espresso"
+    jetsetter: "Planes, trains and automobiles"
+    meat_and_potatoes: "Sushi is good, but steak is better"
+    office_space: "Work hard, play harder"
+    shopaholic: "Excels at commerce"
+    socialite: "Knows all the hot spots"

@@ -46,6 +46,7 @@ class User < ActiveRecord::Base
   has_many                  :alerts
   has_many                  :tag_badgings
   has_many                  :tag_badges, :through => :tag_badgings
+  has_many                  :tag_badging_votes
 
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}

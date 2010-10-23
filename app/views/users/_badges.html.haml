@@ -1,0 +1,10 @@
+- badges.each do |badge|
+  .span-20.last.badge
+    %h4#badge_name
+      = badge.name
+      -# agree, disagree buttons
+      %span#agree_disagree
+        = link_to 'agree', '#', :id => 'badge_agree'
+        = link_to 'disagree', '#', :id => 'badge_disagree'
+    #badge_label
+      = I18n.t("badge.#{badge.translation}")

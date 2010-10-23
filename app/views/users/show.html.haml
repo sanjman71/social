@@ -1,3 +1,4 @@
+- stylesheet 'users'
 - javascript 'jquery.cycle.all.min'
 - javascript 'users'
 
@@ -28,19 +29,19 @@
 
 %hr.space
 
--# show user tag badges
+-# show user badges
 - unless @tag_badges.blank?
-  .span-24.last#checkins
-    .span-2.prepend-1.border
-      %h4== Badges
-    .span-20.prepend-1.last
-      %span{:style => 'font-size: 0.9em;'}= @tag_badges.collect(&:name).sort.join(' : ')
+  .span-24.last#badges
+    .span-3.prepend-1.border
+      %h4= I18n.t("badges.title")
+    .span-19.prepend-1.last
+      = render(:partial => 'badges', :locals => {:badges => @tag_badges})
 
   %hr.space
 
 -# show user checkins
 .span-24.last#checkins
-  .span-2.prepend-1.border
+  .span-3.prepend-1.border
     %h4== Checkins
   .span-20.last
     - @checkins.each do |checkin|
@@ -50,9 +51,9 @@
 %hr.space
 
 .span-24.last
-  .span-2.prepend-1.border
+  .span-3.prepend-1.border
     %h4== Tags
-  .span-20.prepend-1.last#tags
+  .span-19.prepend-1.last#tags
     - tags = @user.locations.collect(&:tag_list).flatten.uniq.compact.sort
     = tags.join(', ')
           

@@ -39,15 +39,15 @@ class UsersController < ApplicationController
   def show
     # @user initialized in before filter
 
-    # find user checkins
-    @checkins = @user.checkins
+    # find user checkins, most recent first
+    @checkins = @user.checkins.order("checkin_at desc")
 
     # find matching user profiles
     @matches  = @user.search_geo(:limit => 20, :miles => @user.radius, :order => :checkins_tags,
                                  :klass => User)
 
     # find user tag badges
-    @tag_badges = @user.tag_badges
+    @tag_badges = @user.tag_badges.order("tag_badges.name asc")
   end
 
   # GET /users/1/edit
