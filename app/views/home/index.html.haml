@@ -45,13 +45,13 @@
 
   -# column titles
   .span-23.prepend-1.last
-    .span-10
+    .span-13
       %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.stream.title')
-    .span-13.last
+    .span-10.last
       %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.map.title')
 
   .span-23.prepend-1.last
-    .span-10.stream
+    .span-13.stream
       - (@matches+@locations).sort_by{ rand }.each do |object|
         - case object.class.to_s.downcase
         - when 'location'
@@ -59,9 +59,9 @@
         - when 'user'
           = render(:partial => 'home/user', :locals => {:user => object})
 
-    .span-13.last
-      .span-13.last#map
-      .span-13.last#map-side-bar
+    .span-10.last
+      .span-10.last#map
+      .span-10.last#map-side-bar
         = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
 
 = render(:partial => 'home/meet_user_dialog')

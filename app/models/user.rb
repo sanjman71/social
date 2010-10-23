@@ -232,14 +232,17 @@ class User < ActiveRecord::Base
     self.rpx == 1
   end
 
-  # returns true iff the user has a latitude and longitude 
+  # returns true iff the user has a latitude and longitude
   def mappable?
-    return true if self.lat and self.lng
-    false
+    (self.lat and self.lng) ? true : false
   end
 
   def primary_photo_url
     primary_photo.try(:url) || Photo.send("default_#{gender_name}") rescue nil || ''
+  end
+
+  def tag_badges_list
+    tag_badges.collect(&:name)
   end
 
   # def profile_complete?

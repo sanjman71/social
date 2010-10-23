@@ -53,6 +53,7 @@ class TagBadgeTest < ActiveSupport::TestCase
     # should not add tag badges
     @chicago_male1.async_add_tag_badges
     assert_equal [], @chicago_male1.tag_badges.collect(&:name)
+    assert_equal [], @chicago_male1.tag_badges_list
   end
 
   should "create user tag badgings using location tags" do
@@ -62,6 +63,7 @@ class TagBadgeTest < ActiveSupport::TestCase
     @tb1 = TagBadge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
     @chicago_male1.async_add_tag_badges
     assert_equal ['Caffeine Junkie'], @chicago_male1.tag_badges.collect(&:name)
+    assert_equal ['Caffeine Junkie'], @chicago_male1.tag_badges_list
   end
 
 end

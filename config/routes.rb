@@ -1,4 +1,6 @@
 Social::Application.routes.draw do
+  get "plans/add"
+
   root :to => "home#index"
 
   # devise
@@ -49,6 +51,10 @@ Social::Application.routes.draw do
     put :reschedule, :on => :member
   end
 
+  # plans routes
+  match 'plans/create/:location_id', :to => 'plans#create', :via => [:put], :as => :add_planned_location
+  match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_planned_location
+  
   match 'jobs', :to => 'jobs#index', :as => :jobs
   match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
   match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
