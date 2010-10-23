@@ -72,7 +72,8 @@ div.block                                         { background: #E1E0E0 none rep
                                                     color: #666666; font-size: 11px; font-weight: bold; padding: 5px 10px 5px 10px; }
 div.block.light                                   { background: #EFEFEF; }
 
-div.mat                                           { background: #EDF3FE none repeat scroll 0 0; }
+/*div.mat                                           { background: #EDF3FE none repeat scroll 0 0; } */
+div.mat                                           { background: #EEE none repeat scroll 0 0; }
 div.mat.shaded                                    { background: #E5ECF9 none repeat scroll 0 0; }
 
 h1.title                                          { font-size: 1.5em; }
