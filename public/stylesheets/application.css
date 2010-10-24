@@ -73,8 +73,11 @@ div.block                                         { background: #E1E0E0 none rep
 div.block.light                                   { background: #EFEFEF; }
 
 /*div.mat                                           { background: #EDF3FE none repeat scroll 0 0; } */
-div.mat                                           { background: #EEE none repeat scroll 0 0; }
+div.mat                                           { background: #EFEFEF none repeat scroll 0 0; }
 div.mat.shaded                                    { background: #E5ECF9 none repeat scroll 0 0; }
+div.mat a                                         { color: #111; }
+div.mat a:hover                                   { color: #FFF; background-color: #333; }
+div.mat a.small                                   { font-size: 0.9em; }
 
 h1.title                                          { font-size: 1.5em; }
 

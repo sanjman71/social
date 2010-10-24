@@ -51,13 +51,13 @@ module ApplicationHelper
     missing_oauths = []
     return missing_oauths if !user_signed_in?
     if current_user.facebook_id.blank?
-      missing_oauths << link_to("Link your Facebook account", user_oauth_authorize_url(:facebook), :class => 'admin')
+      missing_oauths << link_to("Link your Facebook account", user_oauth_authorize_url(:facebook))
     end
     if current_user.foursquare_id.blank?
-      missing_oauths << link_to("Link your Foursquare account", oauth_initiate_path(:foursquare), :class => 'admin')
+      missing_oauths << link_to("Link your Foursquare account", oauth_initiate_path(:foursquare))
     end
     if current_user.twitter_id.blank?
-      missing_oauths << link_to("Link your Twitter account", oauth_initiate_path(:twitter), :class => 'admin')
+      missing_oauths << link_to("Link your Twitter account", oauth_initiate_path(:twitter))
     end
     missing_oauths
   end

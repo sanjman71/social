@@ -5,7 +5,7 @@
 - content_for :mat do
   %h2
     == #{user_display_name(@user, current_user, 'Me')}
-    %span{:style => 'font-size: 0.5em; padding-left: 3px;'}= link_to 'Edit', edit_user_path(@user), :class => 'admin'
+    %span{:style => 'font-size: 0.5em; padding-left: 3px;'}= link_to 'Edit', edit_user_path(@user), :class => 'small'
   - if current_user == @user
     %h4= render(:partial => 'shared/oauth_links')
 
