@@ -64,7 +64,7 @@ class LocalityTest < ActiveSupport::TestCase
   end
 
   context "geocode city" do
-    context "chicago" do
+    context "chicago, precision default" do
       setup do
         @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
         @chicago  = Factory(:city, :name => "Chicago", :state => @il)
@@ -76,7 +76,7 @@ class LocalityTest < ActiveSupport::TestCase
       end
     end
     
-    context "charlotte" do
+    context "charlotte, precision default" do
       setup do
         @nc         = Factory(:state, :name => "North Carolina", :code => "NC", :country => @us)
         @charlotte  = Factory(:city, :name => "Charlotte", :state => @nc)
@@ -85,6 +85,30 @@ class LocalityTest < ActiveSupport::TestCase
 
       should "resolve to charlotte city object" do
         assert_equal @charlotte, @object
+      end
+    end
+    
+    context "street address, precision city" do
+      setup do
+        @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
+        @chicago  = Factory(:city, :name => "Chicago", :state => @il)
+        @object   = Locality.resolve("200 w grand, chicago", :precision => :city)
+      end
+      
+      should "resolve to chicago city object" do
+        assert_equal @chicago, @object
+      end
+    end
+
+    context "street address, precision city, create city" do
+      setup do
+        @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
+        @object   = Locality.resolve("200 w grand, chicago", :precision => :city, :create => true)
+      end
+      
+      should "create chicago city object" do
+        assert @object.is_a?(City)
+        assert_equal 'Chicago', @object.name
       end
     end
   end

@@ -55,10 +55,14 @@ class FacebookCheckin
         end
       end
 
-      # get checkins
+      # get checkins, handle and log exceptions
       checkins    = facebook.checkins(user.facebook_id, options)
       collection  = checkins['data'].inject([]) do |array, checkin_hash|
-        array.push(import_checkin(user, checkin_hash))
+        begin
+          array.push(import_checkin(user, checkin_hash))
+        rescue Exception => e
+          log(:error, "[#{user.handle}] #{e.message}")
+        end
         array
       end.compact
     rescue Exception => e
@@ -67,7 +71,6 @@ class FacebookCheckin
     else
       checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
       log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
-
       # after import callback
       Checkin.after_import_checkins(user, collection)
     end
@@ -82,10 +85,15 @@ class FacebookCheckin
   #                              "latitude"=>41.890177, "longitude"=>-87.633815}},
   #       "application"=>nil, "created_time"=>"2010-08-28T22:33:53+0000"}
   def self.import_checkin(user, checkin_hash)
-    # import location
-    @location = LocationImport.import_facebook_place(checkin_hash['place'])
+    # normalize facebook place hash and import location
+    @place    = checkin_hash['place']
+    @hash     = Hash['name' => @place['name'], 'address' => @place['location']['street'],
+                     'city' => @place['location']['city'], 'state' => @place['location']['state'],
+                     'zip' => @place['location']['zip'],
+                     'lat' => @place['location']['latitude'], 'lng' => @place['location']['longitude']]
+    @location = LocationImport.import_location(@place['id'].to_s, Source.foursquare, @hash)
     if @location.blank?
-      raise Exception, "invalid location #{checkin_hash['place']}"
+      raise Exception, "invalid location #{checkin_hash}"
     end
 
     # add checkin

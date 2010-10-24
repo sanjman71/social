@@ -8,11 +8,13 @@ class Locality
     create = options[:create] ? options[:create] : false
 
     begin
-      geoloc = geocode(s)
-      
+      # geocode and set precision type
+      geoloc    = geocode(s)
+      precision = options[:precision] ? options[:precision].to_s : geoloc.precision
+
       case geoloc.provider
       when 'google', 'yahoo'
-        case geoloc.precision
+        case precision
         when 'country'
           # find database object
           object = Country.find_by_code(geoloc.country_code)

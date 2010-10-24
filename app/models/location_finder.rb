@@ -19,6 +19,7 @@ class LocationFinder
   # use sphinx to match the specified object hash to an existing location
   def self.match(object, options={})
     @name           = object['name']            # e.g. kerryman
+    @address        = object['address']         # e.g. 200 w chicago
     @state          = object["state"].to_s      # e.g. il, illinois
     @city           = object['city'].to_s       # e.g. chicago
     @phone          = object['phone']           # e.g. 3125559999
@@ -28,7 +29,7 @@ class LocationFinder
 
     puts "*** object: #{object.inspect}" if @log
 
-    # find state, city
+    # find state by name or code
     @state          = @state.match(/^[a-zA-Z]{2,2}$/) ? State.find_by_code(@state.upcase) : State.find_by_name(@state)
 
     if @state.blank?
@@ -36,7 +37,9 @@ class LocationFinder
       return []
     end
 
-    @city           = @state.cities.find_by_name(@city) || Locality.resolve(@city, :create => true)
+    # find city by name, or by resolving with 'address, city' or 'city'
+    @resolvable     = @address ? "#{@address}, #{@city}" : @city
+    @city           = @state.cities.find_by_name(@city) || Locality.resolve(@resolvable, :precision => :city, :create => true)
 
     if @city.blank?
       puts "[error] missing city" if @log

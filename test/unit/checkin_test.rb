@@ -45,7 +45,6 @@ class CheckinTest < ActiveSupport::TestCase
           # should add alert
           assert_false @user.suggestionable?
           assert_equal 1, @user.reload.alerts.count
-          # assert @user.reload.low_activity_alert_at
           # should add user points for checkin
           assert_equal 10, @user.reload.points
           # should add sphinx delayed_job
@@ -122,7 +121,6 @@ class CheckinTest < ActiveSupport::TestCase
           # should add alert
           assert_false @user.suggestionable?
           assert_equal 1, @user.reload.alerts.count
-          # assert @user.reload.low_activity_alert_at
           # should add sphinx delayed_job
           delayed_jobs = Delayed::Job.limit(1).order('id desc').collect(&:handler)
           assert delayed_jobs[0].match(/SphinxJob/)
@@ -132,12 +130,12 @@ class CheckinTest < ActiveSupport::TestCase
     end
 
     context "single checkin" do
-      should "create location, add checkin" do
+      should "create chicago location, add checkin" do
         ThinkingSphinx::Test.run do
           @hash     = Hash["id"=>"461630895812", "from"=>{"name"=>"Sanjay Kapoor", "id"=>"633015812"},
                            "place"=>{"id"=>"117669674925118", "name"=>"Bull & Bear",
-                                     "location"=>{"street"=>"431 N Wells St", "city"=>"Chicago", "state"=>"IL", "zip"=>"60654-4512",
-                                                  "latitude"=>41.890177, "longitude"=>-87.633815}}, 
+                                     "location"=>{"street"=>"431 N Wells St", "city"=>"Chicago", "state"=>"IL",
+                                                  "zip"=>"60654-4512", "latitude"=>41.890177, "longitude"=>-87.633815}}, 
                            "application"=>nil, "created_time"=>"2010-08-28T22:33:53+0000"
                           ]
           @checkin  = FacebookCheckin.import_checkin(@user, @hash)
@@ -147,8 +145,10 @@ class CheckinTest < ActiveSupport::TestCase
           # user should have 1 checkin
           assert_equal 1, @user.reload.checkins.count
           assert_equal 1, @user.reload.checkins_count
-          # location should have 1 checkin
+          # location should have correct city, state and have 1 checkin
           @location = @checkin.location
+          assert_equal 'Chicago', @location.city.name
+          assert_equal 'IL', @location.state.code
           assert_equal 1, @location.reload.checkins.count
           assert_equal 1, @location.reload.checkins_count
           # should use same checkin if we try it again
@@ -156,6 +156,26 @@ class CheckinTest < ActiveSupport::TestCase
           assert_nil @checkin2
           assert_equal 1, Checkin.count
           assert_equal 1, Location.count
+        end
+      end
+      
+      should "create massachusetts location, add checkin" do
+        # create state
+        @ma = Factory(:state, :name => 'Massachusetts', :code => "MA", :country => @us)
+        ThinkingSphinx::Test.run do
+          @hash     = Hash["id"=>"9999999999", "from"=>{"name"=>"Sanjay Kapoor", "id"=>"633015812"},
+                           "place"=>{"id"=>"108154322559927", "name"=>"L'aroma Cafe Bakery",
+                                     "location"=>{"street"=>"15 Spencer St", "city"=>"West Newton", "state"=>"MA",
+                                      "zip"=>"02465-2428", "latitude"=>42.348691, "longitude"=>-71.225649}}, 
+                           "application"=>nil, "created_time"=>"2010-08-28T22:33:53+0000"
+                          ]
+          # should create checkin with valid location
+          @checkin  = FacebookCheckin.import_checkin(@user, @hash)
+          assert @checkin.valid?
+          @location = @checkin.location
+          assert @location.valid?
+          assert_equal 'West Newton', @location.city.name
+          assert_equal 'MA', @location.state.code
         end
       end
     end

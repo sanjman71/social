@@ -59,10 +59,14 @@ class FoursquareCheckin
         options[:l] = options.delete(:limit)
       end
 
-      # get checkin history
+      # get checkins, handle and log exceptions
       checkins    = foursquare.history(options)
       collection  = checkins.inject([]) do |array, checkin_hash|
-        array.push(import_checkin(user, checkin_hash))
+        begin
+          array.push(import_checkin(user, checkin_hash))
+        rescue Exception => e
+          log(:error, "[#{user.handle}] #{e.message}")
+        end
         array
       end.compact
     rescue Exception => e
@@ -71,7 +75,6 @@ class FoursquareCheckin
     else
       checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
       log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
-
       # after import callback
       Checkin.after_import_checkins(user, collection)
     end
@@ -84,10 +87,13 @@ class FoursquareCheckin
   #                 "geolat"=>41.8964066, "geolong"=>-87.6312161}
   #      }
   def self.import_checkin(user, checkin_hash)
-    # map foursquare venue to a location
-    @location = LocationImport.import_foursquare_venue(checkin_hash['venue'])
+    # normalize foursquare venue hash and import location
+    @venue  = checkin_hash['venue']
+    @hash   = Hash['name' => @venue['name'], 'address' => @venue['address'], 'city' => @venue['city'],
+                   'state' => @venue['state'], 'lat' => @venue['geolat'], 'lng' => @venue['geolong']]
+    @location = LocationImport.import_location(@venue['id'].to_s, Source.foursquare, @hash)
     if @location.blank?
-      raise Exception, "invalid location #{checkin_hash['venue']}"
+      raise Exception, "invalid location #{checkin_hash}"
     end
     
     # find/add checkin
