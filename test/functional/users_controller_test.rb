@@ -79,4 +79,47 @@ class UsersControllerTest < ActionController::TestCase
       end
     end
   end
+  
+  context "show" do
+    setup do
+      # create user with tag badge
+      @user1      = Factory.create(:user, :handle => 'User1', :city => @chicago)
+      @voter      = Factory.create(:user, :handle => "Voter", :city => @chicago)
+      @tag_badge  = TagBadge.create!(:name => "Shopaholic", :regex => "shopping")
+      @badging    = @user1.tag_badges.push(@tag_badge)
+    end
+
+    context "badge voting" do
+      should "show agree/disagree if user has not voted yet" do
+        ThinkingSphinx::Test.run do
+          ThinkingSphinx::Test.index
+          sleep(0.25)
+          sign_in @voter
+          set_beta
+          get :show, :id => @user1.id
+          assert_template 'show'
+          assert_select "span#badge_name", :text => 'Shopaholic'
+          assert_select "span#badge_votes", 1
+          assert_select "span#agree_disagree", 1
+        end
+      end
+
+      should "not show agree/disagree if user has already voted" do
+        # add tag badge vote
+        @user1.tag_badging_votes.create!(:tag_badge => @tag_badge, :voter => @voter, :vote => 1)
+        ThinkingSphinx::Test.run do
+          ThinkingSphinx::Test.index
+          sleep(0.25)
+          sign_in @voter
+          set_beta
+          get :show, :id => @user1.id
+          assert_template 'show'
+          assert_select "span#badge_name", :text => 'Shopaholic'
+          assert_select "span#badge_votes", 1
+          assert_select "span#agree_disagree", 0
+        end
+      end
+      
+    end
+  end
 end

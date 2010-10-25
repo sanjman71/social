@@ -13,7 +13,7 @@ class VotingController < ApplicationController
     when 'disagree'
       2
     end
-    
+
     @user.tag_badging_votes.create(:tag_badge => @tag_badge, :voter => @voter, :vote => @vote)
   
     respond_with(@user, :location => user_path(@user))

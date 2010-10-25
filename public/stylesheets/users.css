@@ -1,5 +1,6 @@
-.badge                    { padding-bottom: 10px; }
-.badge #badge_name        { margin-bottom: 0px; padding-bottom: 0px; }
-.badge #badge_name a      { color: #00F; font-size: 0.9em; }
-.badge #badge_label       { font-size: 0.9em; }
-.badge #agree_disagree    { padding-left: 3px; }
+.badge                        { padding-bottom: 10px; }
+.badge #badge_name_wrapper a  { color: #00F; font-size: 0.9em; }
+.badge #badge_name            { margin-bottom: 0px; padding-bottom: 0px; font-size: 1.2em; line-height: 1.2em; }
+.badge #badge_votes           { font-size: 0.9em; color: #555; }
+.badge #badge_label           { font-size: 0.9em; }
+.badge #agree_disagree        { padding-left: 3px; }

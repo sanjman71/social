@@ -22,7 +22,7 @@ class VotingControllerTest < ActionController::TestCase
       set_beta
       put :create, :user_id => @user.id, :badge_id => @tag_badge.id, :vote => 'agree'
     end
-    
+
     should "add vote" do
       assert_equal @tag_badge, assigns(:tag_badge)
       assert_equal @user, assigns(:user)
@@ -31,10 +31,5 @@ class VotingControllerTest < ActionController::TestCase
       assert_equal 1, @user.reload.tag_badging_votes.size
     end
   end
-
-  # test "should get vote" do
-  #   get :vote
-  #   assert_response :success
-  # end
 
 end

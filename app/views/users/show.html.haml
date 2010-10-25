@@ -35,7 +35,7 @@
     .span-3.prepend-1.border
       %h4= I18n.t("badges.title")
     .span-19.prepend-1.last
-      = render(:partial => 'badges', :locals => {:badges => @tag_badges})
+      = render(:partial => 'badges', :locals => {:user => @user, :badges => @tag_badges})
 
   %hr.space
 
