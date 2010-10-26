@@ -1,25 +1,17 @@
 class FacebookCheckin
-  
+
+  def self.source
+    'facebook'
+  end
+
   # import all checkins for the specfied user, usually called asynchronously
   def self.async_import_checkins(user, options={})
-    source = 'facebook'
-    # find user
-    if user.is_a?(String)
-      user = User.find_by_handle(user)
-    end
-    if user.blank?
-      log(:notice, "invalid user #{user.inspect}")
-      return nil
-    end
-    # find facebook oauth tokens
-    oauth  = user.oauths.where(:name => source).first
-    if oauth.blank?
-      log(:notice, "[#{user.handle}] no #{source} oauth token")
-      return nil
-    end
+    # find user oauth object
+    oauth           = Checkin.find_user_oauth(user, source)
+    return nil if oauth.blank?
 
     # find checkin log
-    checkin_log    = user.checkin_logs.find_or_create_by_source(source)
+    checkin_log     = user.checkin_logs.find_or_create_by_source(source)
 
     # compare last check timestamp + check interval vs current timestamp
     last_check_at   = checkin_log.last_check_at

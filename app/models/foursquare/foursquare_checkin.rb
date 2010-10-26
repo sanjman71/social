@@ -1,14 +1,14 @@
 class FoursquareCheckin
   
+  def self.source
+    'foursquare'
+  end
+
   # import checkins for the specified user, usually called asynchronously
   def self.async_import_checkins(user, options={})
-    source = 'foursquare'
-    # find foursquare oauth tokens
-    oauth  = user.oauths.where(:name => source).first
-    if oauth.blank?
-      log(:notice, "[#{user.handle}] no #{source} oauth token")
-      return nil
-    end
+    # find user oauth object
+    oauth           = Checkin.find_user_oauth(user, source)
+    return nil if oauth.blank?
 
     # find checkin log
     checkin_log     = user.checkin_logs.find_or_create_by_source(source)
@@ -104,6 +104,41 @@ class FoursquareCheckin
     # add checkin
     log(:ok, "[#{user.handle}] added checkin #{@location.name}")
     @checkin    = user.checkins.create(options)
+  end
+
+  # show friend checkins
+  def self.show_friend_checkins(user, options={})
+    # find user oauth object
+    oauth = Checkin.find_user_oauth(user, source)
+    return nil if oauth.blank?
+
+    begin
+      # initiialize oauth object
+      foursquare_oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
+      foursquare_oauth.authorize_from_access(oauth.access_token, oauth.access_token_secret)
+      
+      # initialize foursquare client
+      foursquare = Foursquare::Base.new(foursquare_oauth)
+      if foursquare.test['response'] != 'ok'
+        raise Exception, "foursquare ping failed"
+      end
+      
+      # find friend checkins
+      checkins = foursquare.checkins
+      checkins.each do |checkin_hash|
+        # checkin hash keys: 'id', 'created', 'timezone', 'ismayor', 'venue', 'user', 'display', 'ping'
+        user_hash  = checkin_hash['user']
+        venue_hash = checkin_hash['venue']
+        # skip self user
+        next if user_hash['id'].to_i == user.foursquare_id.to_i
+        user_name  = "#{user_hash['firstname']} #{user_hash['lastname']}"
+        venue_name = venue_hash.try(:[], 'name')
+        puts "#{Time.now}: user #{user_name}, venue: #{venue_name}, at: #{checkin_hash['created']}"
+      end
+    rescue Exception => e
+      log(:error, "[#{user.handle}] #{e.message}")
+    else
+    end
   end
 
   def self.log(level, s, options={})

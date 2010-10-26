@@ -13,6 +13,23 @@ class Checkin < ActiveRecord::Base
   scope       :facebook, where(:source_type => 'facebook')
   scope       :recent, :order => 'checkins.checkin_at desc'
 
+  def self.find_user_oauth(user, source)
+    if user.is_a?(String)
+      # map handle to user
+      user = User.find_by_handle(user)
+    end
+    if user.blank?
+      log(:notice, "invalid user #{user.inspect}")
+      return nil
+    end
+    oauth = user.oauths.where(:name => source).first
+    if oauth.blank?
+      log(:notice, "[#{user.handle}] no #{source} oauth token")
+      return nil
+    end
+    oauth
+  end
+
   def self.after_import_checkins(user, new_checkins)
     if new_checkins.any?
       # use dj to rebuild sphinx index
@@ -34,5 +51,12 @@ class Checkin < ActiveRecord::Base
 
   def self.min_checkins_for_suggestion
     5
+  end
+
+  def self.log(level, s, options={})
+    CHECKINS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+    if level == :error
+      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
+    end
   end
 end
