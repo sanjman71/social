@@ -51,7 +51,7 @@ Social::Application.routes.draw do
   end
 
   # plans routes
-  match 'plans/create/:location_id', :to => 'plans#create', :via => [:put], :as => :add_planned_location
+  match 'plans/add/:location_id', :to => 'plans#add', :via => [:put], :as => :add_planned_location
   match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_planned_location
   
   # voting routes
