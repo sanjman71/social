@@ -14,8 +14,9 @@ Social::Application.routes.draw do
   match 'oauth/:service/initiate', :to => "oauth#initiate", :as => :oauth_initiate
   match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
 
-  match 'checkins', :to => "checkins#index"
   match 'users/:user_id/checkins', :to => "checkins#index", :as => :user_checkins
+  match 'checkins', :to => "checkins#index"
+  match 'checkins/:source/:source_id/count', :to => 'checkins#count', :as => :count_checkins
   match 'checkins/poll', :to => "checkins#poll", :as => :poll_checkins
   match 'sightings', :to => "sightings#index"
   match 'accounts', :to => "accounts#index"
@@ -50,6 +51,9 @@ Social::Application.routes.draw do
     put :reschedule, :on => :member
   end
 
+  # friends routes
+  resources :friends, :only => [:index]
+  
   # plans routes
   match 'plans/add/:location_id', :to => 'plans#add', :via => [:put], :as => :add_planned_location
   match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_planned_location

@@ -1,0 +1,22 @@
+- stylesheet 'users'
+- javascript 'checkins'
+
+- content_for :mat do
+  %h2= user_display_name(@user, current_user, 'My') + " Friends"
+
+%hr.space
+
+.span-24.last
+  = display_flash(:all)
+  = display_alerts
+
+.span-24.last
+  - @friends.sort_by{ |o| o['name'] }.each_with_index do |friend, i|
+    .span-8.friend{:class => i%3==2 ? 'last' : ''}
+      .span-2.prepend-1#friend_picture
+        = image_tag user_facebook_picture(friend['id'])
+      .span-5.last#friend_data
+        = friend['name']
+        %br
+        %span#checkins_count_link= link_to 'Facebook checkins count', '#', :class => 'admin', :id => 'facebook_checkins_count', "data-url" => count_checkins_path('facebook', friend['id'])
+        %span#checkins_count_data.hide Fetching ...

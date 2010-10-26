@@ -7,7 +7,7 @@ class FoursquareCheckin
   # import checkins for the specified user, usually called asynchronously
   def self.async_import_checkins(user, options={})
     # find user oauth object
-    oauth           = Checkin.find_user_oauth(user, source)
+    oauth           = Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 
     # find checkin log
@@ -109,7 +109,7 @@ class FoursquareCheckin
   # show friend checkins
   def self.show_friend_checkins(user, options={})
     # find user oauth object
-    oauth = Checkin.find_user_oauth(user, source)
+    oauth = Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 
     begin

@@ -1,7 +1,8 @@
 class CheckinsController < ApplicationController
-  before_filter :authenticate_user!, :only => [:index]
-  before_filter :init_user, :only => [:index]
-  skip_before_filter :check_beta, :only => :poll
+  before_filter       :authenticate_user!, :only => [:index]
+  before_filter       :init_user, :only => [:index]
+  skip_before_filter  :check_beta, :only => :poll
+  respond_to          :html, :json
 
   # GET /checkins
   def index
@@ -32,6 +33,35 @@ class CheckinsController < ApplicationController
     end
 
     flash[:notice] = "Polling checkins for #{@checkin_logs.keys.size} users"
+  end
+
+  # GET /checkins/facebook/9999/count
+  # GET /checkins/foursquare/9999/count
+  def count
+    @source     = params[:source]
+    @source_id  = params[:source_id]
+    @user       = current_user
+    @oauth      = Oauth.find_user_oauth(@user, @source)
+
+    begin
+      case @source
+      when 'facebook'
+        @facebook = FacebookClient.new(@oauth.access_token)
+        @since    = Time.zone.now.beginning_of_year.to_s(:datetime_schedule)
+        @limit    = 25
+        @options  = Hash[:since => @since, :limit => @limit]
+        @checkins = @facebook.checkins(@source_id, @options)['data']
+        @status   = 'ok'
+      end
+    rescue Exception => e
+      @checkins = []
+      @status   = 'error'
+      @message  = e.message
+    end
+
+    respond_with(@checkins) do |format|
+      format.json { render :json => Hash[:status => @status, :count => @checkins.size, :message => @message]}
+    end
   end
 
   protected

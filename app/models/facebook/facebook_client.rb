@@ -29,8 +29,22 @@ class FacebookClient
     options.merge!(:access_token => @token)
     self.class.get("https://graph.facebook.com/#{id}/checkins", :query => options)
   end
-  
+
+  # get list of friends
+  # e.g. {"data"=>[{"name"=>"Praveen Shanbhag", "id"=>"33630"}, {"name"=>"Alli Brian", "id"=>"208675"},
+  #                {"name"=>"Adam Marchick", "id"=>"620186040"}]}
+  def friends(options={})
+    options.merge!(:access_token => @token)
+    self.class.get("https://graph.facebook.com/me/friends", :query => options)
+  end
+
   def place(id, options={})
     self.class.get("https://graph.facebook.com/#{id}", :query => options)
+  end
+
+  # search for recent check-ins for an authorized user and his or her friends
+  def search_checkins(options={})
+    options.merge!(:access_token => @token, :type => 'checkin')
+    self.class.get("https://graph.facebook.com/search", :query => options)
   end
 end

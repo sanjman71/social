@@ -4,3 +4,7 @@
 .badge #badge_votes           { font-size: 0.9em; color: #555; }
 .badge #badge_label           { font-size: 0.9em; }
 .badge #agree_disagree        { padding-left: 3px; }
+
+.friend                       { padding-bottom: 10px; }
+.friend #checkins_count_link  { font-size: 0.9em; }
+.friend #checkins_count_data  { font-size: 0.9em; background-color: #EE0; }

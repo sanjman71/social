@@ -7,7 +7,7 @@ class FacebookCheckin
   # import all checkins for the specfied user, usually called asynchronously
   def self.async_import_checkins(user, options={})
     # find user oauth object
-    oauth           = Checkin.find_user_oauth(user, source)
+    oauth           = Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 
     # find checkin log
@@ -97,6 +97,30 @@ class FacebookCheckin
     log(:ok, "[#{user.handle}] added checkin #{@location.name}")
     # add checkin
     @checkin    = user.checkins.create(options)
+  end
+
+  # show friend checkins
+  def self.show_friend_checkins(user, options={})
+    # find user oauth object
+    oauth = Oauth.find_user_oauth(user, source)
+    return nil if oauth.blank?
+
+    begin
+      # log(:ok, "[#{user.handle}] importing #{source} friends checkin history #{options.inspect}, last checked about #{mm} minutes ago")
+
+      # initialize facebook client
+      facebook = FacebookClient.new(oauth.access_token)
+
+      # get checkins, handle and log exceptions
+      checkins = facebook.search_checkins(user.facebook_id, options)
+      checkins.each do |checkin|
+        puts checkin.inspect
+      end
+    rescue Exception => e
+      log(:error, "[#{user.handle}] #{e.message}")
+    else
+      log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
+    end
   end
 
   def self.log(level, s, options={})
