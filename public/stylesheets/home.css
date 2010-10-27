@@ -5,3 +5,7 @@
 .stream .location                   { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
 .stream .location.hover             { background-color: #efefef; }
 .stream .location #location_name    { color: #0000BB; }
+.stream .location #plan_location_pending
+                                    { font-size: 0.9em; color: #bbb; }
+.stream .location #plan_location_added
+                                    { font-size: 0.9em; color: #333; }

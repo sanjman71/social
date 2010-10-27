@@ -6,5 +6,8 @@
   .span-8{:style => 'font-size: 0.9em;'}
     #location_name= location.name
     #location_city= location.city
-  .span-3.last.hide#location_toggle
-    = link_to I18n.t("home.stream.plan_location"), '#', :class => 'admin', :id => 'plan_location'
+  .span-3.last.hide#plan_location_wrapper
+    = link_to I18n.t("home.stream.plan_location"), '#', :class => 'admin', :id => 'plan_location', "data-path" => add_planned_location_path(location.id)
+  .span-3.last.hide#plan_location_pending Updating
+  .span-3.last.hide#plan_location_added Added
+  

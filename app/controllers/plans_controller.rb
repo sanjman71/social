@@ -7,15 +7,18 @@ class PlansController < ApplicationController
     @location = Location.find(params[:location_id])
     begin
       current_user.planned_locations.push(@location)
-      flash[:notice] = "We added #{@location.name} to your list"
+      flash[:notice] = "We added #{@location.name} to your want to go list"
+      @status        = 'ok'
     rescue Exception => e
       # @location already planned
+      @status        = 'error'
+      @message       = e.message
     end
 
     respond_with(@location) do |format|
       format.html { redirect_back_to(root_path) and return }
       format.js { render(:update) { |page| page.redirect_to(root_path) } }
-      format.json { render :json => Hash[:status => 'ok'].to_json }
+      format.json { render :json => Hash[:status => @status, :message => @message].to_json }
     end
   end
 
