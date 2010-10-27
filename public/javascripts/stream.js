@@ -44,9 +44,13 @@ $.fn.init_stream_objects = function() {
     path   = $(this).attr('data-path');
     // console.log("path: " + path);
     $.put(path, {}, function(data) {
-      // console.log("status: " + data['status']);
+      // update interface
       $(parent).find("#plan_location_pending").remove();
       $(parent).find("#plan_location_added").removeClass('hide');
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
     }, 'json');
     // update interface
     $(parent).find("#plan_location_pending").removeClass('hide');

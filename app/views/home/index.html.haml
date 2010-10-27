@@ -10,7 +10,6 @@
     - javascript 'jquery.metadata'
     - javascript 'jquery.jmapping.min'
     - javascript 'stream'
-  - javascript 'growls'
 
 - content_for :mat do
   %h2== Outlately
@@ -58,7 +57,7 @@
         = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
 
 = render(:partial => 'home/meet_user_dialog')
-= render(:partial => 'home/plan_location_dialog')
+-#= render(:partial => 'home/plan_location_dialog')
 
 :javascript
   var growls             = #{@growls};

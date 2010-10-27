@@ -5,20 +5,24 @@ class PlansController < ApplicationController
   # PUT /plans/add/1
   def add
     @location = Location.find(params[:location_id])
+
     begin
       current_user.planned_locations.push(@location)
-      flash[:notice] = "We added #{@location.name} to your want to go list"
-      @status        = 'ok'
+      flash[:notice]  = "We added #{@location.name} to your want to go list"
+      @status         = 'ok'
     rescue Exception => e
       # @location already planned
-      @status        = 'error'
-      @message       = e.message
+      @status         = 'error'
+      @message        = e.message
     end
+
+    # test growl messages
+    @growls = [{:message => '-3 points', :timeout => 2000}]
 
     respond_with(@location) do |format|
       format.html { redirect_back_to(root_path) and return }
       format.js { render(:update) { |page| page.redirect_to(root_path) } }
-      format.json { render :json => Hash[:status => @status, :message => @message].to_json }
+      format.json { render :json => Hash[:status => @status, :message => @message, :growls => @growls].to_json }
     end
   end
 
