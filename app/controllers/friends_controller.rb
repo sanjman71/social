@@ -1,7 +1,7 @@
 class FriendsController < ApplicationController
   before_filter :authenticate_user!
 
-  privilege_required 'admin', :only => [:index]
+  # privilege_required 'admin', :only => [:index]
 
   # GET /friends
   def index
