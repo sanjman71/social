@@ -3,6 +3,7 @@
 
 en:
   hello: "Hello world"
+  points: "Spending Cash : $%{points}"
   home:
     stream:
       title: Social Stream

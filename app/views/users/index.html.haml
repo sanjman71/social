@@ -9,10 +9,10 @@
   - @users.each do |user|
     .span-24.last#user.padding-bottom-10
       .span-5.prepend-1#name
-        = user.handle
+        = link_to user.handle, user_path(user), :class => 'admin'
       .span-3#checkins
-        = link_to pluralize(user.checkins.count, 'checkin'), user_path(user), :class => 'admin'
-      .span-3#points
-        = pluralize(user.points, 'point')
-      .span-12.last
+        = pluralize(user.checkins.count, 'checkin')
+      .span-5#points
+        = I18n.t("points", :points => user.points)
+      .span-10.last
         = pluralize(user.checkin_logs.error.count, 'error')

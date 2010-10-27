@@ -4,7 +4,7 @@
       %span{:style => 'color: #fff;'}
         = current_user.handle
         %br
-        == #{current_user.points} points
+        = I18n.t("points", :points => current_user.try(:points).to_i)
     - else
       ==&nbsp;
 
