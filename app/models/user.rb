@@ -48,6 +48,11 @@ class User < ActiveRecord::Base
   has_many                  :tag_badges, :through => :tag_badgings
   has_many                  :tag_badging_votes
 
+  has_many                  :friendships
+  has_many                  :friends, :through => :friendships
+  has_many                  :inverse_friendships, :class_name => "Friendship", :foreign_key => "friend_id"
+  has_many                  :inverse_friends, :through => :inverse_friendships, :source => :user
+
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
 

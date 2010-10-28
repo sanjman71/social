@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101023172443) do
+ActiveRecord::Schema.define(:version => 20101027135245) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -154,6 +154,17 @@ ActiveRecord::Schema.define(:version => 20101023172443) do
   add_index "email_addresses", ["emailable_id", "emailable_type", "priority"], :name => "index_email_on_emailable_and_priority"
   add_index "email_addresses", ["emailable_id", "emailable_type"], :name => "index_email_addresses_on_emailable_id_and_emailable_type"
   add_index "email_addresses", ["emailable_type"], :name => "index_email_addresses_on_emailable_type"
+
+  create_table "friendships", :force => true do |t|
+    t.integer  "user_id",    :null => false
+    t.integer  "friend_id",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "friendships", ["friend_id"], :name => "index_friendships_on_friend_id"
+  add_index "friendships", ["user_id", "friend_id"], :name => "index_friendships_on_user_id_and_friend_id"
+  add_index "friendships", ["user_id"], :name => "index_friendships_on_user_id"
 
   create_table "location_neighborhoods", :force => true do |t|
     t.integer "location_id"
