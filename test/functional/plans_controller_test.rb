@@ -24,17 +24,22 @@ class PlansControllerTest < ActionController::TestCase
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
-      assert_equal [@sbux], @user1.reload.planned_locations
+      assert_equal 1, @user1.reload.locationships.count
+      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
+      assert_equal [true], @user1.reload.locationships.collect(&:plan)
       assert_redirected_to '/'
     end
-    
-    should "fail gracefully if location already planned" do
+
+    should "ignore if location already planned" do
       @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
-      @user1.planned_locations.push(@sbux)
+      @user1.locationships.create!(:location => @sbux, :plan => true)
+      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
+      assert_equal [true], @user1.reload.locationships.collect(&:plan)
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
-      assert_equal [@sbux], @user1.reload.planned_locations
+      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
+      assert_equal [true], @user1.reload.locationships.collect(&:plan)
       assert_redirected_to '/'
     end
   end

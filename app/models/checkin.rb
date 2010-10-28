@@ -1,17 +1,19 @@
 class Checkin < ActiveRecord::Base
   # ensure unique checkins, using the facebook, foursquare, whatever source_id
-  validates   :user_id,       :presence => true, :uniqueness => {:scope => [:location_id, :source_id, :source_type]}
-  validates   :location_id,   :presence => true
-  validates   :checkin_at,    :presence => true
-  validates   :source_id,     :presence => true
-  validates   :source_type,   :presence => true
+  validates     :user_id,       :presence => true, :uniqueness => {:scope => [:location_id, :source_id, :source_type]}
+  validates     :location_id,   :presence => true
+  validates     :checkin_at,    :presence => true
+  validates     :source_id,     :presence => true
+  validates     :source_type,   :presence => true
 
-  belongs_to  :location, :counter_cache => :checkins_count
-  belongs_to  :user, :counter_cache => :checkins_count
+  belongs_to    :location, :counter_cache => :checkins_count
+  belongs_to    :user, :counter_cache => :checkins_count
 
-  scope       :foursquare, where(:source_type => 'foursquare')
-  scope       :facebook, where(:source_type => 'facebook')
-  scope       :recent, :order => 'checkins.checkin_at desc'
+  after_create  :update_locationship
+
+  scope         :foursquare, where(:source_type => 'foursquare')
+  scope         :facebook, where(:source_type => 'facebook')
+  scope         :recent, :order => 'checkins.checkin_at desc'
 
   def self.after_import_checkins(user, new_checkins)
     if new_checkins.any?
@@ -42,4 +44,20 @@ class Checkin < ActiveRecord::Base
       EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
     end
   end
+  
+  protected
+  
+  # find or create locationships and update counters
+  def update_locationship
+    # check user locationships
+    locationship = user.locationships.find_or_create_by_location_id(location.id)
+    locationship.increment!(:checkins)
+    # check friend locationships
+    friends = user.friends + user.inverse_friendships
+    friends.each do |friend|
+      locationship = friend.locationships.find_or_create_by_location_id(location.id)
+      locationship.increment!(:friend_checkins)
+    end
+  end
+
 end

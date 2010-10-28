@@ -53,6 +53,8 @@ class User < ActiveRecord::Base
   has_many                  :inverse_friendships, :class_name => "Friendship", :foreign_key => "friend_id"
   has_many                  :inverse_friends, :through => :inverse_friendships, :source => :user
 
+  has_many                  :locationships
+
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
 
@@ -105,6 +107,8 @@ class User < ActiveRecord::Base
     # convert degrees to radians for sphinx
     has 'RADIANS(users.lat)', :as => :lat,  :type => :float
     has 'RADIANS(users.lng)', :as => :lng,  :type => :float
+    set_property :latitude_attr => "lat"
+    set_property :longitude_attr => "lng"
     # real time indexing with delayed_job
     # set_property :delta => :delayed
     # only index active users

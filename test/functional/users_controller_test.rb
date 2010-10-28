@@ -37,43 +37,46 @@ class UsersControllerTest < ActionController::TestCase
 
   context "index" do
     setup do
-      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
-      @user2 = Factory.create(:user, :handle => "User2", :city => @chicago)
-      @user3 = Factory.create(:user, :handle => "User3", :city => @boston)
+      @chicago1 = Factory.create(:user, :handle => 'chicago1', :city => @chicago)
+      @chicago2 = Factory.create(:user, :handle => "chicago2", :city => @chicago)
+      @boston1  = Factory.create(:user, :handle => "boston1", :city => @boston)
     end
 
     context "city" do
-      should "find city users within default radius" do
+      should "find 1 user within default radius of city" do
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index
           sleep(0.25)
-          sign_in @user1
+          sign_in @chicago1
           set_beta
           get :index, :city => 'city:chicago'
           assert_equal @chicago, assigns(:city)
           assert_equal 50, assigns(:radius)
           assert_equal [Math.degrees_to_radians(@chicago.lat), Math.degrees_to_radians(@chicago.lng)], assigns(:options)[:geo_origin]
-          assert_equal 0..Math.miles_to_meters(50), assigns(:options)[:geo_distance]
-          assert_equal [@user2], assigns(:users)
+          assert_equal 0.0..50.miles.meters.value, assigns(:options)[:geo_distance]
+          assert_equal [@chicago2], assigns(:users)
           assert_template "index"
         end
       end
     end
 
     context "geo" do
-      should "find geo users within default radiius" do
+      should "find 2 users within 5 mile radius of lat, lng" do
+        # change 60610 city to zip later
+        @z60610   = Factory(:city, :name => "60610", :state => @il, :lat => 41.9028369, :lng => -87.6359125)
+        @chicago3 = Factory.create(:user, :handle => "chicago3", :city => @z60610)
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index
           sleep(0.25)
-          sign_in @user1
+          sign_in @chicago1
           set_beta
-          get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}"
+          get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:5"
           assert_equal 41.850033, assigns(:lat)
           assert_equal -87.6500523, assigns(:lng)
-          assert_equal 50, assigns(:radius)
-          assert_equal [Math.degrees_to_radians(@chicago.lat), Math.degrees_to_radians(@chicago.lng)], assigns(:options)[:geo_origin]
-          assert_equal 0..Math.miles_to_meters(50), assigns(:options)[:geo_distance]
-          assert_equal [@user2], assigns(:users)
+          assert_equal 5, assigns(:radius)
+          assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
+          assert_equal 0.0..5.miles.meters.value, assigns(:options)[:geo_distance]
+          assert_equal [@chicago2, @chicago3], assigns(:users)
           assert_template "index"
         end
       end

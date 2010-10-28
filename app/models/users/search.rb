@@ -15,8 +15,8 @@ module Users::Search
     options.update(:with_tag_ids => tag_ids) unless options[:with_tag_ids]
     if (options[:meters] or options[:miles]) and self.mappable?
       # restrict search to nearby tags
-      meters = options[:meters] ? options[:meters].to_f : Math.miles_to_meters(options[:miles]).to_f
-      origin = [Math.degrees_to_radians(self.lat), Math.degrees_to_radians(self.lng)]
+      meters = options[:meters] ? options[:meters].to_f : options[:miles].miles.meters.value
+      origin = [lat.radians, lng.radians]
       options.update(:geo_origin => origin, :geo_distance => 0.0..meters)
     end
     options.update(:with_gender => default_gender) unless options[:with_gender]
@@ -28,8 +28,8 @@ module Users::Search
     # check that user is mappable
     return [] unless self.mappable?
     if (options[:meters] or options[:miles]) and options[:geo_origin].blank? and options[:geo_distance].blank?
-      meters = options[:meters] ? options[:meters].to_f : Math.miles_to_meters(options[:miles]).to_f
-      origin = [Math.degrees_to_radians(self.lat), Math.degrees_to_radians(self.lng)]
+      meters = options[:meters] ? options[:meters].to_f : options[:miles].miles.meters.value
+      origin = [lat.radians, lng.radians]
       options.update(:geo_origin => origin, :geo_distance => 0.0..meters)
     end
     raise Exception, "missing geo origin and/or geo distance" if options[:geo_origin].blank? or options[:geo_origin].blank?
@@ -95,7 +95,7 @@ module Users::Search
       sort_mode   = :expr
     else
       # default sort
-      sort_mode   = :extended
+      sort_mode   = :extended2 #:extended
       sort_order  = geo.blank? ? "@relevance DESC" : "@geodist ASC, @relevance DESC"
     end
 

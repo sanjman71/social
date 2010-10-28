@@ -94,6 +94,8 @@ class Location < ActiveRecord::Base
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
+    set_property :latitude_attr => "lat"
+    set_property :longitude_attr => "lng"
     # used delayed job for almost real time indexing using
     # set_property :delta => :delayed
     # only index valid locations

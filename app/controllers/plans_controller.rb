@@ -5,9 +5,12 @@ class PlansController < ApplicationController
   # PUT /plans/add/1
   def add
     @location = Location.find(params[:location_id])
+    @user     = current_user
 
     begin
-      current_user.planned_locations.push(@location)
+      # update locationship
+      @locationship = @user.locationships.find_or_create_by_location_id(@location.id)
+      @locationship.update_attribute(:plan, true)
       flash[:notice]  = "We added #{@location.name} to your want to go list"
       @status         = 'ok'
     rescue Exception => e
@@ -29,9 +32,11 @@ class PlansController < ApplicationController
   # PUT /plans/remove/1
   def remove
     @location = Location.find(params[:location_id])
+    @user     = current_user
 
     begin
-      current_user.planned_locations.delete(@location)
+      @locationship = @user.locationships.find_location_id(@location.id)
+      @locationship.try(:update_attribute, :plan, false)
     rescue Exception => e
       # @location not planned
     end

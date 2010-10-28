@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101027135245) do
+ActiveRecord::Schema.define(:version => 20101028014729) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -230,6 +230,19 @@ ActiveRecord::Schema.define(:version => 20101027135245) do
   add_index "locations", ["status"], :name => "index_locations_on_status"
   add_index "locations", ["timezone_id"], :name => "index_locations_on_timezone_id"
   add_index "locations", ["updated_at"], :name => "index_locations_on_updated_at"
+
+  create_table "locationships", :force => true do |t|
+    t.integer  "location_id",                        :null => false
+    t.integer  "user_id",                            :null => false
+    t.integer  "checkins",        :default => 0
+    t.boolean  "plan",            :default => false
+    t.integer  "friend_checkins", :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "locationships", ["location_id"], :name => "index_locationships_on_location_id"
+  add_index "locationships", ["user_id"], :name => "index_locationships_on_user_id"
 
   create_table "neighborhoods", :force => true do |t|
     t.string  "name",            :limit => 50

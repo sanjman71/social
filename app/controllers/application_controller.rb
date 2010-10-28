@@ -49,13 +49,13 @@ class ApplicationController < ActionController::Base
     match_radius ? match_radius[1].to_i : default_radius
   end
 
-  def build_geo_origin(lat, lng)
-    [Math.degrees_to_radians(lat), Math.degrees_to_radians(lng)]
-  end
+  # def build_geo_origin(lat_degrees, lng_degrees)
+  #   [lat_degrees.radians, lng_degrees.radians]
+  # end
 
-  def build_geo_distance(radius)
-    Math.miles_to_meters(0)..Math.miles_to_meters(radius)
-  end
+  # def geo_distance(radius)
+  #   0.0..radius.miles.meters.value
+  # end
 
   def default_radius
     50
