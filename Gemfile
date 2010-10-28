@@ -7,6 +7,7 @@ gem 'ruby-mysql'
 
 gem 'aasm',                   '>= 2.2.0'
 gem 'acts-as-taggable-on',    '>= 2.0.6'
+gem 'alchemist',              '>= 0.1.2'
 # crack version that fixes parser errors by using ActiveSupport yaml parser
 gem 'crack',                  :git => 'git://github.com/sanjman71/crack.git'
 gem 'daemons',                '1.0.10' # dj doesn't start with 1.1.0
