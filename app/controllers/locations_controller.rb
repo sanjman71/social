@@ -16,12 +16,14 @@ class LocationsController < ApplicationController
     when params[:geo]
       @lat, @lng    = find_lat_lng
       @radius       = find_radius
-      @options.update(:geo_origin => build_geo_origin(@lat, @lng), :geo_distance => build_geo_distance(@radius))
+      @options.update(:geo_origin => [@lat.radians, @lng.radians],
+                      :geo_distance => 0.0..@radius.miles.meters.value)
       @locations    = current_user.search_geo(@options)
     when params[:city]
       @city         = find_city
       @radius       = find_radius
-      @options.update(:geo_origin => build_geo_origin(@city.lat, @city.lng), :geo_distance => build_geo_distance(@radius))
+      @options.update(:geo_origin => [@city.lat.radians, @city.lng.radians],
+                      :geo_distance => 0.0..@radius.miles.meters.value)
       @locations    = current_user.search_geo(@options)
     else
       # default

@@ -52,8 +52,8 @@ class LocationsControllerTest < ActionController::TestCase
           get :index, :city => 'city:chicago'
           assert_equal @chicago, assigns(:city)
           assert_equal 50, assigns(:radius)
-          assert_equal [Math.degrees_to_radians(@chicago.lat), Math.degrees_to_radians(@chicago.lng)], assigns(:options)[:geo_origin]
-          assert_equal 0..Math.miles_to_meters(50), assigns(:options)[:geo_distance]
+          assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
+          assert_equal 0..50.miles.meters.value, assigns(:options)[:geo_distance]
           assert_equal [], assigns(:locations)
           assert_template "index"
         end
@@ -71,8 +71,8 @@ class LocationsControllerTest < ActionController::TestCase
           assert_equal 41.850033, assigns(:lat)
           assert_equal -87.6500523, assigns(:lng)
           assert_equal 50, assigns(:radius)
-          assert_equal [Math.degrees_to_radians(@chicago.lat), Math.degrees_to_radians(@chicago.lng)], assigns(:options)[:geo_origin]
-          assert_equal 0..Math.miles_to_meters(50), assigns(:options)[:geo_distance]
+          assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
+          assert_equal 0..50.miles.meters.value, assigns(:options)[:geo_distance]
           assert_equal [], assigns(:locations)
           assert_template "index"
         end

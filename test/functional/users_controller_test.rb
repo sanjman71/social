@@ -52,7 +52,7 @@ class UsersControllerTest < ActionController::TestCase
           get :index, :city => 'city:chicago'
           assert_equal @chicago, assigns(:city)
           assert_equal 50, assigns(:radius)
-          assert_equal [Math.degrees_to_radians(@chicago.lat), Math.degrees_to_radians(@chicago.lng)], assigns(:options)[:geo_origin]
+          assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
           assert_equal 0.0..50.miles.meters.value, assigns(:options)[:geo_distance]
           assert_equal [@chicago2], assigns(:users)
           assert_template "index"

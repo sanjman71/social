@@ -20,7 +20,6 @@ class UsersController < ApplicationController
       @radius       = find_radius
       @options.update(:geo_origin => [@lat.radians, @lng.radians],
                       :geo_distance => 0.0..@radius.miles.meters.value)
-      debugger # xxx
       @users        = current_user.search_geo(@options)
     when params[:city]
       @city         = find_city
