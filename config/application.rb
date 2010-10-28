@@ -48,6 +48,7 @@ module Social
   end
 end
 
-require "#{Rails.root}/lib/math.rb"
+require "#{Rails.root}/lib/big_decimal.rb"
+require "#{Rails.root}/lib/float.rb"
 require "#{Rails.root}/lib/string.rb"
 require "#{Rails.root}/lib/growl.rb"
