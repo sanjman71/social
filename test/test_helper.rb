@@ -33,7 +33,15 @@ class ActiveSupport::TestCase
     assert_equal nil, x
   end
 
-  def work_off_delayed_jobs
+  def match_delayed_jobs(regex)
+    Delayed::Job.all.select{ |dj| dj.handler.match(regex) }.size
+  end
+
+  def work_off_delayed_jobs(regex=nil)
+    if regex
+      # delete jobs not matching regex
+      Delayed::Job.all.each { |dj| dj.handler.match(regex) ? nil : dj.delete }
+    end
     @worker ||= Delayed::Worker.new(:quiet => true)
     @worker.work_off(Delayed::Job.count)
   end

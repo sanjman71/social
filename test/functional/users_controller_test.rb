@@ -61,8 +61,8 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     context "geo" do
-      should "find 2 users within 5 mile radius of lat, lng" do
-        # change 60610 city to zip later
+      should "find 2 users within 1 mile radius of lat, lng" do
+        # 60610 is < 1 mile from chicago; change 60610 city to zip later
         @z60610   = Factory(:city, :name => "60610", :state => @il, :lat => 41.9028369, :lng => -87.6359125)
         @chicago3 = Factory.create(:user, :handle => "chicago3", :city => @z60610)
         ThinkingSphinx::Test.run do
@@ -70,12 +70,12 @@ class UsersControllerTest < ActionController::TestCase
           sleep(0.25)
           sign_in @chicago1
           set_beta
-          get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:5"
+          get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:1"
           assert_equal 41.850033, assigns(:lat)
           assert_equal -87.6500523, assigns(:lng)
-          assert_equal 5, assigns(:radius)
+          assert_equal 1, assigns(:radius)
           assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
-          assert_equal 0.0..5.miles.meters.value, assigns(:options)[:geo_distance]
+          assert_equal 0.0..1.miles.meters.value, assigns(:options)[:geo_distance]
           assert_equal [@chicago2, @chicago3], assigns(:users)
           assert_template "index"
         end

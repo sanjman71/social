@@ -10,7 +10,7 @@ class CheckinTest < ActiveSupport::TestCase
     @us       = Factory(:us)
     @il       = Factory(:il, :country => @us)
     @chicago  = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
-    @user     = Factory.create(:user)
+    @user     = Factory(:user)
   end
 
   def teardown
@@ -26,6 +26,7 @@ class CheckinTest < ActiveSupport::TestCase
     end
 
     should "create location, add checkin, add locationship" do
+      Delayed::Job.delete_all
       ThinkingSphinx::Test.run do
         @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
         assert @checkin.valid?
@@ -38,6 +39,9 @@ class CheckinTest < ActiveSupport::TestCase
         @location = @checkin.location
         assert_equal 1, @location.reload.checkins.count
         assert_equal 1, @location.reload.checkins_count
+        # should add delayed job to update locationships
+        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
+        work_off_delayed_jobs(/async_update_locationships/)
         # should add locationship, increment checkins count
         assert_equal 1, @user.locationships.count
         assert_equal [@location.id], @user.locationships.collect(&:location_id)
@@ -49,20 +53,44 @@ class CheckinTest < ActiveSupport::TestCase
         assert_equal 1, Location.count
       end
     end
-    
-    should "add locationship friend checkins for user's friends" do
+
+    should "update locationship friend_checkins for a user's existing friends" do
+      Delayed::Job.delete_all
       ThinkingSphinx::Test.run do
         # create user friendship(s)
         @friend   = Factory.create(:user)
         @user.friendships.create!(:friend => @friend)
+        # TK we shouldn't have to do this, these actions should be idempotent
+        # work off jobs related to locationships
+        work_off_delayed_jobs
         @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
         assert @checkin.valid?
         @location = @checkin.location
-        # should add friend locationship
+        # should add delayed job to update locationships
+        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
+        work_off_delayed_jobs(/async_update_locationships/)
+        # should add locationship for friend
         assert_equal 1, @friend.locationships.count
         assert_equal [@location.id], @friend.locationships.collect(&:location_id)
         assert_equal [1], @friend.locationships.collect(&:friend_checkins)
         assert_equal [0], @friend.locationships.collect(&:checkins)
+      end
+    end
+
+    should "update locationship friend_checkins for friends added later" do
+      Delayed::Job.delete_all
+      ThinkingSphinx::Test.run do
+        @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
+        assert @checkin.valid?
+        @location = @checkin.location
+        # user add's a friend
+        @friend   = Factory.create(:user)
+        @user.friendships.create!(:friend => @friend)
+        # should add delayed job to update locationships
+        assert_equal 2, match_delayed_jobs(/async_update_locationships/)
+        work_off_delayed_jobs(/async_update_locationships/)
+        # should add locationship for friend
+        assert_equal 1, @friend.locationships.count
       end
     end
   end
@@ -102,16 +130,16 @@ class CheckinTest < ActiveSupport::TestCase
         # assert delayed_jobs[1].match(/SuggestionAlgorithm/)
       end
     end
-      
+
     should "skip check if last check was within x minutes" do
       # create user oauth token
       @oauth        = @user.oauths.create(:name => 'foursquare', :access_token => '12345')
       # create checkin 30 minutes ago
       @checkin_log1 = @user.checkin_logs.create(:source => 'foursquare', :state => 'success', :checkins => 1,
                                                 :last_check_at => Time.zone.now-30.minutes)
-      # checkin log timestamp should be the same
+      # should not change checkin log timestamp
       @checkin_log2 = FoursquareCheckin.async_import_checkins(@user)
-      assert_equal @checkin_log1.last_check_at, @checkin_log2.last_check_at                    
+      assert_equal @checkin_log1.last_check_at, @checkin_log2.last_check_at
     end
   end
 

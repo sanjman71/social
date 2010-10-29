@@ -9,7 +9,7 @@ class Checkin < ActiveRecord::Base
   belongs_to    :location, :counter_cache => :checkins_count
   belongs_to    :user, :counter_cache => :checkins_count
 
-  after_create  :update_locationship
+  after_create  lambda { self.delay.async_update_locationships }
 
   scope         :foursquare, where(:source_type => 'foursquare')
   scope         :facebook, where(:source_type => 'facebook')
@@ -48,15 +48,13 @@ class Checkin < ActiveRecord::Base
   protected
   
   # find or create locationships and update counters
-  def update_locationship
-    # check user locationships
-    locationship = user.locationships.find_or_create_by_location_id(location.id)
-    locationship.increment!(:checkins)
-    # check friend locationships
+  def async_update_locationships
+    # update user locationships
+    Locationship.async_increment(user, location, :checkins)
+    # update friend locationships
     friends = user.friends + user.inverse_friendships
     friends.each do |friend|
-      locationship = friend.locationships.find_or_create_by_location_id(location.id)
-      locationship.increment!(:friend_checkins)
+      Locationship.async_increment(friend, location, :friend_checkins)
     end
   end
 
