@@ -1,7 +1,7 @@
 class EmailJob < Struct.new(:params)
 
   def logger
-    case RAILS_ENV
+    case Rails.env
     when 'development'
       @logger ||= Logger.new(STDOUT)
     else
