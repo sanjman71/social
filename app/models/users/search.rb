@@ -95,7 +95,7 @@ module Users::Search
       sort_mode   = :expr
     else
       # default sort
-      sort_mode   = :extended2 #:extended
+      sort_mode   = :extended
       sort_order  = geo.blank? ? "@relevance DESC" : "@geodist ASC, @relevance DESC"
     end
 
