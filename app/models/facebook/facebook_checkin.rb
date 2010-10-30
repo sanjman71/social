@@ -7,7 +7,7 @@ class FacebookCheckin
   # import all checkins for the specfied user, usually called asynchronously
   def self.async_import_checkins(user, options={})
     # find user oauth object
-    oauth           = Oauth.find_user_oauth(user, source)
+    oauth           = options[:oauth_id] ? Oauth.find_by_id(params[:oauth_id]) : Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 
     # find checkin log
@@ -58,7 +58,7 @@ class FacebookCheckin
         array
       end.compact
     rescue Exception => e
-      log(:error, "[#{user.handle}] #{e.message}")
+      log(:error, "[#{user.handle}] #{__method__.to_s}: #{e.message}")
       checkin_log.update_attributes(:state => 'error', :last_check_at => Time.zone.now)
     else
       checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
@@ -117,7 +117,7 @@ class FacebookCheckin
         puts checkin.inspect
       end
     rescue Exception => e
-      log(:error, "[#{user.handle}] #{e.message}")
+      log(:error, "[#{user.handle}] #{__method__.to_s}: #{e.message}")
     else
       log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
     end

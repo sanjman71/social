@@ -18,6 +18,12 @@ class FacebookClient
     self.class.get("https://graph.facebook.com/me", :query => {:access_token => @token})
   end
 
+  # get basic information about the specified user
+  # e.g. - see 'me' example
+  def user(id)
+    self.class.get("https://graph.facebook.com/#{id}", :query => {:access_token => @token})
+  end
+
   def picture(id)
     self.class.get("https://graph.facebook.com/#{id}/picture", :query => {:access_token => @token})
   end

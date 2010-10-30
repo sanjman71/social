@@ -22,7 +22,7 @@ class UsersControllerTest < ActionController::TestCase
     @il         = Factory(:il, :country => @us)
     @ny         = Factory(:ny, :country => @us)
     @ma         = Factory(:ma, :country => @us)
-    @chicago    = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.850033, :lng => -87.6500523)
+    @chicago    = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.8781136, :lng => -87.6297982)
     @newyork    = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
     @boston     = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
   end
@@ -61,21 +61,24 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     context "geo" do
-      should "find 2 users within 1 mile radius of lat, lng" do
-        # 60610 is < 1 mile from chicago; change 60610 city to zip later
+      should "find 2 users within 2 mile radius of lat, lng" do
+        # 60610 is ~ 1.7 miles from chicago; change city to zip later
         @z60610   = Factory(:city, :name => "60610", :state => @il, :lat => 41.9028369, :lng => -87.6359125)
         @chicago3 = Factory.create(:user, :handle => "chicago3", :city => @z60610)
+        # 60613 is ~ 5.4 miles from chicago; change city to zip later
+        @z60613   = Factory(:city, :name => "60613", :state => @il, :lat => 41.9529209, :lng => -87.6605791)
+        @chicago4 = Factory.create(:user, :handle => "chicago4", :city => @z60613)
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index
           sleep(0.25)
           sign_in @chicago1
           set_beta
-          get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:1"
-          assert_equal 41.850033, assigns(:lat)
-          assert_equal -87.6500523, assigns(:lng)
-          assert_equal 1, assigns(:radius)
+          get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:2"
+          assert_equal @chicago.lat, assigns(:lat)
+          assert_equal @chicago.lng, assigns(:lng)
+          assert_equal 2, assigns(:radius)
           assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
-          assert_equal 0.0..1.miles.meters.value, assigns(:options)[:geo_distance]
+          assert_equal 0.0..2.miles.meters.value, assigns(:options)[:geo_distance]
           assert_equal [@chicago2, @chicago3], assigns(:users)
           assert_template "index"
         end

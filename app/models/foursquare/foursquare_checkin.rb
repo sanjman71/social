@@ -7,7 +7,7 @@ class FoursquareCheckin
   # import checkins for the specified user, usually called asynchronously
   def self.async_import_checkins(user, options={})
     # find user oauth object
-    oauth           = Oauth.find_user_oauth(user, source)
+    oauth           = options[:oauth_id] ? Oauth.find_by_id(params[:oauth_id]) : Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 
     # find checkin log

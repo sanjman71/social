@@ -4,7 +4,22 @@ class Friendship < ActiveRecord::Base
   validates     :user_id, :presence => true, :unique_friend => true
   validates     :friend_id, :presence => true, :uniqueness => {:scope => :user_id}
 
-  after_create  lambda { self.delay.async_update_locationships }
+  after_create  :event_friendship_created
+
+  # after create filter
+  def event_friendship_created
+    self.class.log(:ok, "[#{user.handle}] added friend #{friend.handle}")
+    self.class.log(:ok, "[#{friend.handle}] added inverse friend #{user.handle}")
+    # call async event handlers
+    self.delay.async_update_locationships
+  end
+
+  def self.log(level, s, options={})
+    USERS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+    if level == :error
+      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
+    end
+  end
 
   protected
   

@@ -3,7 +3,7 @@ class Oauth < ActiveRecord::Base
   validates     :access_token, :presence => true, :uniqueness => {:scope => :user_id}
   validates     :name, :presence => true
 
-  after_create  :after_create_callback
+  after_create  :event_oauth_created
 
   scope :facebook,      where("name = 'facebook'")
   scope :foursquare,    where("name = 'foursquare'")
@@ -27,21 +27,27 @@ class Oauth < ActiveRecord::Base
     oauth
   end
 
+  def self.log(level, s, options={})
+    USERS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+  end
+
   protected
 
-  def after_create_callback
+  def event_oauth_created
     # add user points
     self.user.add_points_for_oauth(self)
     # send user alert
     self.user.send_alert(:id => :linked_account)
     # import user checkins
     case name
-    when 'foursquare', 'fs'
-      # get all checkins - max of 250
+    when 'foursquare'
+      # import all checkins, max of 250
       FoursquareCheckin.delay.async_import_checkins(self.user, :limit => 250)
-    when 'facebook', 'fb'
-      # get all checkins
+    when 'facebook'
+      # import all checkins, max of 250
       FacebookCheckin.delay.async_import_checkins(self.user, :limit => 250)
+      # import friends
+      FacebookFriend.delay.async_import_friends(self.user)
     end
   end
 end

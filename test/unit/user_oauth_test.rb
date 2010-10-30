@@ -2,12 +2,11 @@ require 'test_helper'
 
 class UserOauthTest < ActiveSupport::TestCase
 
-  context "facebook oauth create" do
-    setup do
-      @user1 = User.create(:name => "User 1", :handle => 'user1')
-      assert @user1.valid?
-    end
+  def setup
+    @user1 = User.create!(:name => "User 1", :handle => 'user1')
+  end
 
+  context "facebook oauth create" do
     should "create oauth, set user facebook id, facebook photo" do
       json_data    = File.open("#{Rails.root}/test/data/facebook_user.json")
       access_token = OAuth2::AccessToken.new('1', '2')
@@ -22,15 +21,19 @@ class UserOauthTest < ActiveSupport::TestCase
       assert_equal 1, @user1.photos.facebook.count
       assert_equal [1], @user1.photos.facebook.collect(&:priority)
       assert_equal ["https://graph.facebook.com/633015812/picture?type=square"], @user1.photos.facebook.collect(&:url)
+      # should queue delayed job to import facebook friends
+      assert_equal 1, match_delayed_jobs(/async_import_friends/)
+      friend_data = YAML::load_file("#{Rails.root}/test/data/facebook_friends.txt")
+      FacebookClient.any_instance.stubs(:friends).returns(friend_data)
+      FacebookClient.any_instance.stubs(:user).returns(Hash['gender' => 'male', 'id' => 'fbid',
+                                                            'link' => "http://www.facebook.com/handle"])
+      work_off_delayed_jobs(/async_import_friends/)
+      # should add 3 friends
+      assert_equal 3, @user1.reload.friends.size
     end
   end
 
   context "foursquare oauth create" do
-    setup do
-      @user1 = User.create(:name => "User 1", :handle => 'user1')
-      assert @user1.valid?
-    end
-
     should "create oauth, set user foursquare id, foursquare photo" do
       json_data    = File.open("#{Rails.root}/test/data/foursquare_user.json")
       access_token = OAuth2::AccessToken.new('1', '2')
@@ -52,11 +55,6 @@ class UserOauthTest < ActiveSupport::TestCase
   end
 
   context "twitter oauth create" do
-    setup do
-      @user1 = User.create(:name => "User 1", :handle => 'user1')
-      assert @user1.valid?
-    end
-
     should "create oauth, set user twitter id, twitter photo" do
       json_data    = File.open("#{Rails.root}/test/data/twitter_user.json")
       access_token = OAuth2::AccessToken.new('1', '2')

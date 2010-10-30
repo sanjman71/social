@@ -27,18 +27,18 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
       o.save
     end
     # create users
-    @chicago_male1    = User.create(:name => "Chicago Male 1", :handle => 'chicago_male_1', :gender => 2, :city => @chicago)
-    assert @chicago_male1.valid?
-    @chicago_female1  = User.create(:name => "Chicago Female 1", :handle => 'chicago_female_1', :gender => 1, :city => @chicago)
-    assert @chicago_female1.valid?
-    @newyork_male1    = User.create(:name => "New York Male 1", :handle => 'newyork_male_1', :gender => 2, :city => @newyork)
-    assert @newyork_male1.valid?
-    @newyork_female1  = User.create(:name => "New York Female 1", :handle => 'newyork_female_1', :gender => 1, :city => @newyork)
-    assert @newyork_female1.valid?
-    @boston_male1     = User.create(:name => "Boston Male 1", :handle => 'boston_male_1', :gender => 2, :city => @boston)
-    assert @boston_male1.valid?
-    @boston_female1   = User.create(:name => "Boston Female 1", :handle => 'boston_female_1', :gender => 1, :city => @boston)
-    assert @boston_male1.valid?
+    @chicago_male1    = User.create!(:name => "Chicago Male 1", :handle => 'chicago_male_1', :gender => 2,
+                                     :city => @chicago)
+    @chicago_female1  = User.create!(:name => "Chicago Female 1", :handle => 'chicago_female_1', :gender => 1,
+                                     :city => @chicago)
+    @newyork_male1    = User.create!(:name => "New York Male 1", :handle => 'newyork_male_1', :gender => 2,
+                                     :city => @newyork)
+    @newyork_female1  = User.create!(:name => "New York Female 1", :handle => 'newyork_female_1', :gender => 1,
+                                     :city => @newyork)
+    @boston_male1     = User.create!(:name => "Boston Male 1", :handle => 'boston_male_1', :gender => 2,
+                                     :city => @boston)
+    @boston_female1   = User.create!(:name => "Boston Female 1", :handle => 'boston_female_1', :gender => 1,
+                                     :city => @boston)
   end
 
   def teardown
@@ -49,8 +49,10 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     context "with only checkin matches" do
       setup do
         # create chicago checkins
-        @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
-        @chicago_female1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
+        @chicago_male1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                        :source_id => 'sbux', :source_type => 'foursquare')
+        @chicago_female1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                          :source_id => 'sbux', :source_type => 'foursquare')
       end
       
       should "create 1 suggestion with chicago female checkin match" do
@@ -68,10 +70,13 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     context "with checkin and geo matches" do
       setup do
         # create chicago checkins
-        @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
-        @chicago_female1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
+        @chicago_male1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                        :source_id => 'sbux', :source_type => 'foursquare')
+        @chicago_female1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                          :source_id => 'sbux', :source_type => 'foursquare')
         # create another chicago user
-        @chicago_female2  = User.create(:name => "Chicago Female 2", :handle => 'chicago_female_2', :gender => 1, :city => @chicago)
+        @chicago_female2  = User.create!(:name => "Chicago Female 2", :handle => 'chicago_female_2', :gender => 1,
+                                         :city => @chicago)
       end
 
       should "create 2 suggestions with chicago female checkin and geo match" do
@@ -94,8 +99,10 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
         @chicago_sbux.tag_list = []
         @chicago_sbux.save
         # create chicago coffee checkins
-        @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
-        @chicago_female1.checkins.create(:location => @chicago_coffee, :checkin_at => 3.days.ago, :source_id => 'coffee', :source_type => 'foursquare')
+        @chicago_male1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                        :source_id => 'sbux', :source_type => 'foursquare')
+        @chicago_female1.checkins.create!(:location => @chicago_coffee, :checkin_at => 3.days.ago,
+                                          :source_id => 'coffee', :source_type => 'foursquare')
       end
 
       should "create 0 suggestions" do
@@ -111,8 +118,10 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     context "with geo tag matches" do
       setup do
         # create chicago coffee checkins
-        @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
-        @chicago_female1.checkins.create(:location => @chicago_coffee, :checkin_at => 3.days.ago, :source_id => 'coffee', :source_type => 'foursquare')
+        @chicago_male1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                        :source_id => 'sbux', :source_type => 'foursquare')
+        @chicago_female1.checkins.create!(:location => @chicago_coffee, :checkin_at => 3.days.ago,
+                                          :source_id => 'coffee', :source_type => 'foursquare')
       end
 
       should 'create 1 suggestion with chicago female coffee tag' do
@@ -130,8 +139,10 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     context "with no geo tag matches, but tag matches outside radius" do
       setup do
         # create chicago + boston coffee checkins
-        @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
-        @boston_female1.checkins.create(:location => @boston_coffee, :checkin_at => 3.days.ago, :source_id => 'coffee', :source_type => 'foursquare')
+        @chicago_male1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                        :source_id => 'sbux', :source_type => 'foursquare')
+        @boston_female1.checkins.create!(:location => @boston_coffee, :checkin_at => 3.days.ago,
+                                         :source_id => 'coffee', :source_type => 'foursquare')
       end
 
       should "create 0 suggestions" do
@@ -148,8 +159,10 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
   context "checkins, tag" do
     setup do
       # create chicago + boston coffee checkins
-      @chicago_male1.checkins.create(:location => @chicago_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
-      @boston_female1.checkins.create(:location => @boston_coffee, :checkin_at => 3.days.ago, :source_id => 'coffee', :source_type => 'foursquare')
+      @chicago_male1.checkins.create!(:location => @chicago_sbux, :checkin_at => 3.days.ago,
+                                      :source_id => 'sbux', :source_type => 'foursquare')
+      @boston_female1.checkins.create!(:location => @boston_coffee, :checkin_at => 3.days.ago,
+                                       :source_id => 'coffee', :source_type => 'foursquare')
     end
 
     should "create 1 suggestion" do
@@ -172,7 +185,8 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     context "with only gender matches" do
       setup do
         # create at least 1 boston checkin
-        @boston_male1.checkins.create(:location => @boston_sbux, :checkin_at => 3.days.ago, :source_id => 'sbux', :source_type => 'foursquare')
+        @boston_male1.checkins.create!(:location => @boston_sbux, :checkin_at => 3.days.ago,
+                                       :source_id => 'sbux', :source_type => 'foursquare')
         # remove boston female
         @boston_female1.destroy
       end

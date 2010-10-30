@@ -12,6 +12,7 @@ class Zip < ActiveRecord::Base
   has_many                    :tags, :through => :geo_tag_counts
   
   # acts_as_mappable
+  include Geokit::Mappable
 
   # include GeoTagCountModule
   include NameParam

@@ -4,6 +4,10 @@ class Locationship < ActiveRecord::Base
   validates   :location_id, :presence => true, :uniqueness => {:scope => :user_id}
   validates   :user_id, :presence => true
   
+  scope       :checkins, where("locationships.checkins > 0")
+  scope       :friend_checkins, where("locationships.friend_checkins > 0")
+  scope       :plans, where("locationships.plan > 0")
+
   # find or create locationship and increment the specified counter
   # usually called asynchronously by delayed_job
   # counter - e.g. :checkins, :friend_checkins

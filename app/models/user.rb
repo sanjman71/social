@@ -31,10 +31,7 @@ class User < ActiveRecord::Base
 
   has_many                  :oauths
   has_many                  :checkins, :after_add => :after_add_checkin
-  has_many                  :locations, :through => :checkins
   has_many                  :checkin_logs
-  has_many                  :plans
-  has_many                  :planned_locations, :through => :plans, :source => :location
   has_many                  :photos
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
@@ -54,13 +51,15 @@ class User < ActiveRecord::Base
   has_many                  :inverse_friends, :through => :inverse_friendships, :source => :user
 
   has_many                  :locationships
+  has_many                  :locations, :through => :locationships
 
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
 
   before_save               :before_save_callback
-  after_create              :manage_user_roles
+  # after_create              :manage_user_roles
   after_create              :send_signup_email
+  after_save                :after_add_facebook_id
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
@@ -102,8 +101,6 @@ class User < ActiveRecord::Base
     has locations.tags(:id), :as => :tag_ids, :facet => true
     has checkins(:id), :as => :checkin_ids, :facet => true
     has :checkins_count, :as => :checkins_count
-    # planned locations
-    has planned_locations(:id), :as => :planned_location_ids, :facet => true
     # convert degrees to radians for sphinx
     has 'RADIANS(users.lat)', :as => :lat,  :type => :float
     has 'RADIANS(users.lng)', :as => :lng,  :type => :float
@@ -346,7 +343,7 @@ class User < ActiveRecord::Base
     self.class.to_s.tableize
   end
 
-  def log(level, s, options={})
+  def self.log(level, s, options={})
     USERS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
   end
 
@@ -376,16 +373,12 @@ class User < ActiveRecord::Base
     end
   end
 
-  def manage_user_roles
-    # check admin users
-    if self.facebook_id == '633015812' # sanjay
-      self.grant_role('admin')
-    end
-    # unless self.has_role?('user manager', self)
-    #   # all users can manage themselves
-    #   self.grant_role('user manager', self)
-    # end
-  end
+  # def manage_user_roles
+  #   unless self.has_role?('user manager', self)
+  #     # all users can manage themselves
+  #     self.grant_role('user manager', self)
+  #   end
+  # end
 
   # send email after a user signup using delayed job
   def send_signup_email
@@ -408,6 +401,17 @@ class User < ActiveRecord::Base
     return if phone_number.new_record?
   end
 
+  # after_save callback to check for a facebook id
+  def after_add_facebook_id
+    if fbid = changes['facebook_id'].try(:[], 1)
+      # check admin users
+      if ADMIN_FACEBOOK_IDS.include?(fbid)
+        self.grant_role('admin')
+      end
+    end
+  end
+
+  # user added a checkin
   def after_add_checkin(checkin)
     # add points for checkin
     self.add_points_for_checkin(checkin)
