@@ -13,20 +13,31 @@ class FacebookFriend
       # initialize facebook client
       facebook  = FacebookClient.new(oauth.access_token)
       friends   = facebook.friends['data']
-      log(:ok, "[#{user.handle}] importing #{friends.try(:size).to_i} facebook friends")
+      log(:ok, "[#{user.handle}] importing facebook friends with checkins")
       friends.each do |friend|
+        # testing - just import 1 friend
+        next if user.reload.friends.count == 1 # xxx
         begin
-          friend_name   = friend['name']
-          friend_fbid   = friend['id']
+          friend_name     = friend['name']
+          friend_fbid     = friend['id']
+          # check if user already exists
+          next if User.find_by_facebook_id(friend_fbid)
+          # check user's checkin data
+          friend_checkins = facebook.checkins(friend_fbid, options)['data']
+          # skip if friend has no checkins
+          next if friend_checkins.size == 0
           # get basic user data from facebook
-          friend_data   = facebook.user(friend_fbid)
-          friend_gender = friend_data.try(:[], 'gender')
+          friend_data     = facebook.user(friend_fbid)
+          friend_gender   = friend_data.try(:[], 'gender')
+          # create friend
           user.friends.create!(:handle => friend_name, :name => friend_name, :facebook_id => friend_fbid)
           log(:ok, "[#{user.handle}] imported facebook friend #{friend_fbid}:#{friend_name}")
         rescue Exception => e
           log(:error, "[#{user.handle}] #{__method__.to_s} exception: #{e.message}")
         end
       end
+      # send event
+      Friendship.event_friends_imported(user, source)
     rescue Exception => e
       log(:error, "[#{user.handle}] #{__method__.to_s} exception: #{e.message}")
     end

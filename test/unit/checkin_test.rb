@@ -14,7 +14,7 @@ class CheckinTest < ActiveSupport::TestCase
   end
 
   def teardown
-    [Checkin, CheckinLog, Location, Country, State, City, User].each { |o| o.delete_all }
+    [Checkin, CheckinLog, Location, Country, State, City, User, Delayed::Job].each { |o| o.delete_all }
   end
 
   context "import single foursquare checkin" do
@@ -45,7 +45,7 @@ class CheckinTest < ActiveSupport::TestCase
         # should add locationship, increment checkins count
         assert_equal 1, @user.locationships.count
         assert_equal [@location.id], @user.locationships.collect(&:location_id)
-        assert_equal [1], @user.locationships.collect(&:checkins)
+        assert_equal [1], @user.locationships.collect(&:my_checkins)
         # should use same checkin if we try it again
         @checkin2 = FoursquareCheckin.import_checkin(@user, @checkin_hash)
         assert_nil @checkin1
@@ -57,23 +57,22 @@ class CheckinTest < ActiveSupport::TestCase
     should "update locationship friend_checkins for a user's existing friends" do
       Delayed::Job.delete_all
       ThinkingSphinx::Test.run do
-        # create user friendship(s)
+        # create user friendship
         @friend   = Factory.create(:user)
-        @user.friendships.create!(:friend => @friend)
-        # TK we shouldn't have to do this, these actions should be idempotent
-        # work off jobs related to locationships
-        work_off_delayed_jobs
+        @fship    = @user.friendships.create!(:friend => @friend)
+        # should add delayed job to update locationships
+        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
         @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
         assert @checkin.valid?
         @location = @checkin.location
-        # should add delayed job to update locationships
-        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
+        # should add another delayed job to update locationships
+        assert_equal 2, match_delayed_jobs(/async_update_locationships/)
         work_off_delayed_jobs(/async_update_locationships/)
-        # should add locationship for friend
+        # should add friend locationship
         assert_equal 1, @friend.locationships.count
         assert_equal [@location.id], @friend.locationships.collect(&:location_id)
         assert_equal [1], @friend.locationships.collect(&:friend_checkins)
-        assert_equal [0], @friend.locationships.collect(&:checkins)
+        assert_equal [0], @friend.locationships.collect(&:my_checkins)
       end
     end
 
@@ -82,21 +81,26 @@ class CheckinTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
         assert @checkin.valid?
+        # should add delayed job to update locationships
+        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
         @location = @checkin.location
-        # user add's a friend
+        # user adds friend
         @friend   = Factory.create(:user)
         @user.friendships.create!(:friend => @friend)
-        # should add delayed job to update locationships
+        # should add another delayed job to update locationships
         assert_equal 2, match_delayed_jobs(/async_update_locationships/)
         work_off_delayed_jobs(/async_update_locationships/)
-        # should add locationship for friend
+        # should add friend locationship
         assert_equal 1, @friend.locationships.count
+        assert_equal [@location.id], @friend.locationships.collect(&:location_id)
+        assert_equal [1], @friend.locationships.collect(&:friend_checkins)
+        assert_equal [0], @friend.locationships.collect(&:my_checkins)
       end
     end
   end
 
   context "import all foursquare checkins" do
-    should "create checkin log, add checkin, create checkin alert, delay sphinx rebuild" do
+    should "create checkin log, add checkin, create checkin alert, add delay sphinx rebuild" do
       ThinkingSphinx::Test.run do
         # create user oauth token
         @oauth    = @user.oauths.create(:name => 'foursquare', :access_token => '12345')
@@ -104,10 +108,6 @@ class CheckinTest < ActiveSupport::TestCase
                          "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago",
                                    "state"=>"Illinois", "geolat"=>41.8964066, "geolong"=>-87.6312161}
                         ]
-        # should add user points for oauth
-        assert_equal 5, @user.reload.points
-        # should add alert
-        assert_equal 1, @user.reload.alerts.count
         # stub oauth calls
         Foursquare::Base.any_instance.stubs(:test).returns(Hash['response' => 'ok'])
         Foursquare::Base.any_instance.stubs(:history).returns([@hash])
@@ -123,10 +123,9 @@ class CheckinTest < ActiveSupport::TestCase
         assert_false @user.suggestionable?
         assert_equal 1, @user.reload.alerts.count
         # should add user points for checkin
-        assert_equal 10, @user.reload.points
+        assert_equal 5, @user.reload.points
         # should add sphinx delayed_job
-        delayed_jobs = Delayed::Job.limit(1).order('id desc').collect(&:handler)
-        assert delayed_jobs[0].match(/SphinxJob/)
+        assert_equal 1, match_delayed_jobs(/SphinxJob/)
         # assert delayed_jobs[1].match(/SuggestionAlgorithm/)
       end
     end
@@ -195,20 +194,21 @@ class CheckinTest < ActiveSupport::TestCase
   end
 
   context "import all facebook checkins" do
-    should "create checkin log, add checkin" do
+    setup do
+      # create user oauth token
+      @oauth  = @user.oauths.create!(:name => 'facebook', :access_token => '12345')
+      # setup checkin hash
+      @hash   = Hash["id"=>"461630895812", "from"=>{"name"=>"Sanjay Kapoor", "id"=>"633015812"},
+                     "place"=>{"id"=>"117669674925118", "name"=>"Bull & Bear",
+                               "location"=>{"street"=>"431 N Wells St", "city"=>"Chicago", "state"=>"IL",
+                                            "zip"=>"60654-4512", "latitude"=>41.890177, "longitude"=>-87.633815}}, 
+                     "application"=>nil, "created_time"=>"2010-08-28T22:33:53+0000"
+                    ]
+    end
+
+    should "create checkin log, add checkin, create checkin alert, add delay sphinx rebuild" do
+      Delayed::Job.delete_all
       ThinkingSphinx::Test.run do
-        # create user oauth token
-        @oauth  = @user.oauths.create(:name => 'facebook', :access_token => '12345')
-        @hash   = Hash["id"=>"461630895812", "from"=>{"name"=>"Sanjay Kapoor", "id"=>"633015812"},
-                       "place"=>{"id"=>"117669674925118", "name"=>"Bull & Bear",
-                                 "location"=>{"street"=>"431 N Wells St", "city"=>"Chicago", "state"=>"IL",
-                                              "zip"=>"60654-4512", "latitude"=>41.890177, "longitude"=>-87.633815}}, 
-                       "application"=>nil, "created_time"=>"2010-08-28T22:33:53+0000"
-                      ]
-        # should add user points for oauth
-        assert_equal 5, @user.reload.points
-        # should add alert
-        assert_equal 1, @user.reload.alerts.count
         # stub facebook client calls
         FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [@hash]])
         @checkin_log = FacebookCheckin.async_import_checkins(@user)
@@ -217,13 +217,30 @@ class CheckinTest < ActiveSupport::TestCase
         assert_equal 1, @checkin_log.checkins
         assert_equal 'success', @checkin_log.state
         assert_equal 'facebook', @checkin_log.source
-        # should add alert
+        # should add suggestions alert
         assert_false @user.suggestionable?
         assert_equal 1, @user.reload.alerts.count
         # should add sphinx delayed_job
-        delayed_jobs = Delayed::Job.limit(1).order('id desc').collect(&:handler)
-        assert delayed_jobs[0].match(/SphinxJob/)
-        # assert delayed_jobs[1].match(/SuggestionAlgorithm/)
+        assert_equal 1, match_delayed_jobs(/SphinxJob/)
+      end
+    end
+    
+    should "add delayed job to import friend checkins" do
+      Delayed::Job.delete_all
+      ThinkingSphinx::Test.run do
+        # create user friendship
+        @friend   = Factory.create(:user)
+        @fship    = @user.friendships.create!(:friend => @friend)
+        # should add delayed job to update locationships
+        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
+        # stub facebook client calls
+        FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [@hash]])
+        @checkin_log = FacebookCheckin.async_import_checkins(@user)
+        assert @checkin_log.valid?
+        # should add delayed job to import friend checkins
+        assert_equal 1, match_delayed_jobs(/async_import_checkins/)
+        # should add sphinx delayed_job
+        assert_equal 1, match_delayed_jobs(/SphinxJob/)
       end
     end
   end

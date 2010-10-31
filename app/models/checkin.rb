@@ -9,17 +9,31 @@ class Checkin < ActiveRecord::Base
   belongs_to    :location, :counter_cache => :checkins_count
   belongs_to    :user, :counter_cache => :checkins_count
 
-  after_create  lambda { self.delay.async_update_locationships }
+  after_create  :event_checkin_added
 
   scope         :foursquare, where(:source_type => 'foursquare')
   scope         :facebook, where(:source_type => 'facebook')
   scope         :recent, :order => 'checkins.checkin_at desc'
 
-  def self.after_import_checkins(user, new_checkins)
+  # user checkin was added
+  def event_checkin_added
+    # log data
+    self.class.log(:ok, "[#{user.handle}] added checkin:#{self.id} to #{location.name}")
+    # update locationships
+    self.delay.async_update_locationships
+  end
+
+  # user checkins were imported
+  def self.event_checkins_imported(user, new_checkins, source)
+    log(:ok, "[#{user.handle}] imported #{new_checkins.size} #{source} #{new_checkins.size == 1 ? 'checkin' : 'checkins'}")
+
     if new_checkins.any?
       # use dj to rebuild sphinx index
       Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
     end
+
+    # trigger friend checkins
+    trigger_event_friend_checkins(user, source)
 
     if user.reload.suggestionable?
       # use dj to create suggestions
@@ -27,6 +41,17 @@ class Checkin < ActiveRecord::Base
     else
       # send alert
       user.send_alert(:id => :need_checkins)
+    end
+  end
+
+  # trigger checking friend checkins
+  def self.trigger_event_friend_checkins(user, source)
+    if source == 'facebook'
+      # import checkins for friends without facebook oauths
+      user.friends.select{ |o| o.facebook_oauth.nil? }.each do |friend|
+        log(:ok, "[#{user.handle}] triggering import of facebook checkins for friend #{friend.handle}")
+        FacebookCheckin.delay.async_import_checkins(friend, Hash[:since => :last, :limit => 250, :oauth_id => user.facebook_oauth.try(:id)])
+      end
     end
   end
 
@@ -44,16 +69,15 @@ class Checkin < ActiveRecord::Base
       EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
     end
   end
-  
+
   protected
   
   # find or create locationships and update counters
   def async_update_locationships
     # update user locationships
-    Locationship.async_increment(user, location, :checkins)
+    Locationship.async_increment(user, location, :my_checkins)
     # update friend locationships
-    friends = user.friends + user.inverse_friendships
-    friends.each do |friend|
+    (user.friends + user.inverse_friends).each do |friend|
       Locationship.async_increment(friend, location, :friend_checkins)
     end
   end

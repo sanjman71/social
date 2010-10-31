@@ -26,20 +26,20 @@ class PlansControllerTest < ActionController::TestCase
       put :add, :location_id => @sbux.id
       assert_equal 1, @user1.reload.locationships.count
       assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [true], @user1.reload.locationships.collect(&:plan)
+      assert_equal [1], @user1.reload.locationships.collect(&:planned_checkins)
       assert_redirected_to '/'
     end
 
     should "ignore if location already planned" do
       @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
-      @user1.locationships.create!(:location => @sbux, :plan => true)
+      @user1.locationships.create!(:location => @sbux, :planned_checkins => 1)
       assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [true], @user1.reload.locationships.collect(&:plan)
+      assert_equal [1], @user1.reload.locationships.collect(&:planned_checkins)
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
       assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [true], @user1.reload.locationships.collect(&:plan)
+      assert_equal [1], @user1.reload.locationships.collect(&:planned_checkins)
       assert_redirected_to '/'
     end
   end

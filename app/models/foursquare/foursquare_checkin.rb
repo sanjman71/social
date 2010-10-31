@@ -74,9 +74,8 @@ class FoursquareCheckin
       checkin_log.update_attributes(:state => 'error', :checkins => 0, :last_check_at => Time.zone.now)
     else
       checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
-      log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
-      # after import callback
-      Checkin.after_import_checkins(user, collection)
+      # after import event
+      Checkin.event_checkins_imported(user, collection, source)
     end
     checkin_log
   end
@@ -102,7 +101,6 @@ class FoursquareCheckin
     @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
     return nil if @checkin
     # add checkin
-    log(:ok, "[#{user.handle}] added checkin #{@location.name}")
     @checkin    = user.checkins.create(options)
   end
 

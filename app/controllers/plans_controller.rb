@@ -10,7 +10,7 @@ class PlansController < ApplicationController
     begin
       # update locationship
       @locationship = @user.locationships.find_or_create_by_location_id(@location.id)
-      @locationship.update_attribute(:plan, true)
+      @locationship.increment!(:planned_checkins)
       flash[:notice]  = "We added #{@location.name} to your want to go list"
       @status         = 'ok'
     rescue Exception => e
@@ -36,7 +36,7 @@ class PlansController < ApplicationController
 
     begin
       @locationship = @user.locationships.find_location_id(@location.id)
-      @locationship.try(:update_attribute, :plan, false)
+      @locationship.try(:decrement!, :planned_checkins)
     rescue Exception => e
       # @location not planned
     end

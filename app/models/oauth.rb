@@ -5,6 +5,10 @@ class Oauth < ActiveRecord::Base
 
   after_create  :event_oauth_created
 
+  def self.sources
+    ['facebook', 'foursquare', 'twitter']
+  end
+
   scope :facebook,      where("name = 'facebook'")
   scope :foursquare,    where("name = 'foursquare'")
   scope :twitter,       where("name = 'twitter'")

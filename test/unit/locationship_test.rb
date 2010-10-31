@@ -10,9 +10,9 @@ class LocationshipTest < ActiveSupport::TestCase
     @user1      = Factory.create(:user)
     @location1  = Location.create(:name => "Location 1", :country => @us)
     @locship    = @user1.locationships.create!(:location => @location1)
-    assert_equal 0, @locship.checkins
+    assert_equal 0, @locship.my_checkins
     assert_equal 0, @locship.friend_checkins
-    assert_false @locship.plan
+    assert_equal 0, @locship.planned_checkins
   end
 
   should "not allow duplicates" do

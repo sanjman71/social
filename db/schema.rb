@@ -232,16 +232,19 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
   add_index "locations", ["updated_at"], :name => "index_locations_on_updated_at"
 
   create_table "locationships", :force => true do |t|
-    t.integer  "location_id",                        :null => false
-    t.integer  "user_id",                            :null => false
-    t.integer  "checkins",        :default => 0
-    t.boolean  "plan",            :default => false
-    t.integer  "friend_checkins", :default => 0
+    t.integer  "location_id",                     :null => false
+    t.integer  "user_id",                         :null => false
+    t.integer  "my_checkins",      :default => 0
+    t.integer  "friend_checkins",  :default => 0
+    t.integer  "planned_checkins", :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "locationships", ["location_id"], :name => "index_locationships_on_location_id"
+  add_index "locationships", ["user_id", "friend_checkins"], :name => "index_locationships_on_user_id_and_friend_checkins"
+  add_index "locationships", ["user_id", "my_checkins"], :name => "index_locationships_on_user_id_and_my_checkins"
+  add_index "locationships", ["user_id", "planned_checkins"], :name => "index_locationships_on_user_id_and_planned_checkins"
   add_index "locationships", ["user_id"], :name => "index_locationships_on_user_id"
 
   create_table "neighborhoods", :force => true do |t|
@@ -305,14 +308,6 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
   add_index "places", ["tag_groups_count"], :name => "index_places_on_tag_groups_count"
   add_index "places", ["taggings_count"], :name => "index_places_on_taggings_count"
   add_index "places", ["timezone_id"], :name => "index_places_on_timezone_id"
-
-  create_table "plans", :force => true do |t|
-    t.integer "user_id",     :null => false
-    t.integer "location_id", :null => false
-  end
-
-  add_index "plans", ["location_id"], :name => "index_plans_on_location_id"
-  add_index "plans", ["user_id"], :name => "index_plans_on_user_id"
 
   create_table "states", :force => true do |t|
     t.string  "name",            :limit => 30

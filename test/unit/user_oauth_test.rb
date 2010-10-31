@@ -21,6 +21,10 @@ class UserOauthTest < ActiveSupport::TestCase
       assert_equal 1, @user1.photos.facebook.count
       assert_equal [1], @user1.photos.facebook.collect(&:priority)
       assert_equal ["https://graph.facebook.com/633015812/picture?type=square"], @user1.photos.facebook.collect(&:url)
+      # should add user points for oauth
+      assert_equal 5, @user1.reload.points
+      # should add linked account alert
+      assert_equal 1, @user1.reload.alerts.count
       # should queue delayed job to import facebook friends
       assert_equal 1, match_delayed_jobs(/async_import_friends/)
       friend_data = YAML::load_file("#{Rails.root}/test/data/facebook_friends.txt")
@@ -51,6 +55,10 @@ class UserOauthTest < ActiveSupport::TestCase
       assert_equal 1, @user1.photos.foursquare.count
       assert_equal [3], @user1.photos.foursquare.collect(&:priority)
       assert_equal ["http://foursquare.com/img/blank_boy.png"], @user1.photos.foursquare.collect(&:url)
+      # should add user points for oauth
+      assert_equal 5, @user1.reload.points
+      # should add linked account alert
+      assert_equal 1, @user1.reload.alerts.count
     end
   end
 
@@ -72,6 +80,10 @@ class UserOauthTest < ActiveSupport::TestCase
       assert_equal 1, @user1.photos.twitter.count
       assert_equal [5], @user1.photos.twitter.collect(&:priority)
       assert_equal ["http://s.twimg.com/a/1284949838/images/default_profile_0_normal.png"], @user1.photos.twitter.collect(&:url)
+      # should add user points for oauth
+      assert_equal 5, @user1.reload.points
+      # should add linked account alert
+      assert_equal 1, @user1.reload.alerts.count
     end
   end
 end

@@ -3,15 +3,18 @@ class CreateLocationships < ActiveRecord::Migration
     create_table :locationships do |t|
       t.references  :location, :null => false
       t.references  :user, :null => false
-      t.integer     :checkins, :default => 0
-      t.boolean     :plan, :default => 0
+      t.integer     :my_checkins, :default => 0
       t.integer     :friend_checkins, :default => 0
+      t.integer     :planned_checkins, :default => 0
 
       t.timestamps
     end
 
     add_index :locationships, :location_id
     add_index :locationships, :user_id
+    add_index :locationships, [:user_id, :my_checkins]
+    add_index :locationships, [:user_id, :friend_checkins]
+    add_index :locationships, [:user_id, :planned_checkins]
   end
 
   def self.down

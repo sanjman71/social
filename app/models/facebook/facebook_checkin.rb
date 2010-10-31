@@ -4,10 +4,15 @@ class FacebookCheckin
     'facebook'
   end
 
+  # set default date, dating back to before facebook places was release
+  def self.default_checkin_since_timestamp
+    Time.zone.parse("August 1, 2010").to_s(:datetime_schedule)
+  end
+
   # import all checkins for the specfied user, usually called asynchronously
   def self.async_import_checkins(user, options={})
     # find user oauth object
-    oauth           = options[:oauth_id] ? Oauth.find_by_id(params[:oauth_id]) : Oauth.find_user_oauth(user, source)
+    oauth           = options[:oauth_id] ? Oauth.find_by_id(options[:oauth_id]) : Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 
     # find checkin log
@@ -27,7 +32,7 @@ class FacebookCheckin
     else
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
     end
-  
+
     begin
       log(:ok, "[#{user.handle}] importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
 
@@ -42,13 +47,19 @@ class FacebookCheckin
         case options[:since]
         when :last
           # find last facebok checkin's timestamp
-          options[:since] = user.checkins.facebook.recent.limit(1).first.try(:checkin_at).to_s(:datetime_schedule) rescue Time.zone.now.to_s(:datetime)
+          options[:since] = user.checkins.facebook.recent.limit(1).first.try(:checkin_at).to_s(:datetime_schedule) rescue default_checkin_since_timestamp
           log(:ok, "[#{user.handle}] importing since #{options[:since]}")
         end
       end
 
       # get checkins, handle and log exceptions
       checkins    = facebook.checkins(user.facebook_id, options)
+      
+      # check error condition
+      if checkins['error']
+        raise Exception, "facebook error: #{checkins['error']}"
+      end
+
       collection  = checkins['data'].inject([]) do |array, checkin_hash|
         begin
           array.push(import_checkin(user, checkin_hash))
@@ -62,9 +73,8 @@ class FacebookCheckin
       checkin_log.update_attributes(:state => 'error', :last_check_at => Time.zone.now)
     else
       checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
-      log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
-      # after import callback
-      Checkin.after_import_checkins(user, collection)
+      # after import event
+      Checkin.event_checkins_imported(user, collection, source)
     end
 
     checkin_log
@@ -83,7 +93,7 @@ class FacebookCheckin
                      'city' => @place['location']['city'], 'state' => @place['location']['state'],
                      'zip' => @place['location']['zip'],
                      'lat' => @place['location']['latitude'], 'lng' => @place['location']['longitude']]
-    @location = LocationImport.import_location(@place['id'].to_s, Source.foursquare, @hash)
+    @location = LocationImport.import_location(@place['id'].to_s, Source.facebook, @hash)
     if @location.blank?
       raise Exception, "invalid location #{checkin_hash}"
     end
@@ -93,8 +103,6 @@ class FacebookCheckin
     options     = Hash[:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'].to_s, :source_type => Source.facebook]
     @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
     return nil if @checkin
-    # add checkin
-    log(:ok, "[#{user.handle}] added checkin #{@location.name}")
     # add checkin
     @checkin    = user.checkins.create(options)
   end
@@ -118,8 +126,6 @@ class FacebookCheckin
       end
     rescue Exception => e
       log(:error, "[#{user.handle}] #{__method__.to_s}: #{e.message}")
-    else
-      log(:ok, "[#{user.handle}] imported #{collection.size} #{source} checkins")
     end
   end
 

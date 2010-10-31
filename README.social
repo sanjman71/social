@@ -1,8 +1,32 @@
+Setup
+-----
 1. Create .rvmrc in your app's root directory
   - rvm use ruby-1.9.2 --rvmrc --create
   
  
-# Libyan spider setup
+Libyan spider setup
+-------------------
+  - original ip address - 67.18.153.50
 
-- original ip address - 67.18.153.50
 
+Event Transitions
+-----------------
+- event_oauth_created
+  => import user checkins
+  => import user friends
+
+- event_checkin_added
+  
+- event_checkins_imported
+  => import friend checkins for users w/o oauth
+  
+- event_friendship_created
+  => update friend locationships
+
+- event_friends_imported
+  => import friend checkins for users w/o oauth
+
+* Todo
+  - cleanup logging
+  - change oauths.name to oauths.provider
+  - change tag_badges to badges

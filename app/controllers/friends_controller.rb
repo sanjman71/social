@@ -7,9 +7,7 @@ class FriendsController < ApplicationController
   def index
     # initialize facebook client, find friends
     @user     = current_user
-    @oauth    = Oauth.find_user_oauth(@user, 'facebook')
-    @facebook = FacebookClient.new(@oauth.access_token)
-    @friends  = @facebook.friends['data']
+    @friends  = @user.friends + @user.inverse_friends
   end
 
 end

@@ -29,15 +29,23 @@ class User < ActiveRecord::Base
 
   belongs_to                :city
 
+  # oauths
   has_many                  :oauths
+  Oauth.sources.each do |s|
+    has_one                 "#{s}_oauth".to_sym, :class_name => 'Oauth', :conditions => {:name => s}
+  end
+
   has_many                  :checkins, :after_add => :after_add_checkin
   has_many                  :checkin_logs
   has_many                  :photos
+
+  # photos
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
-  has_one                   :facebook_photo, :class_name => 'Photo', :conditions => {:source => 'facebook'}
-  has_one                   :foursquare_photo, :class_name => 'Photo', :conditions => {:source => 'foursquare'}
-  has_one                   :twitter_photo, :class_name => 'Photo', :conditions => {:source => 'twitter'}
+  Oauth.sources.each do |s|
+    has_one                 "#{s}_photo", :class_name => 'Photo', :conditions => {:source => s}
+  end
+
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
   has_many                  :alerts
@@ -54,7 +62,8 @@ class User < ActiveRecord::Base
   has_many                  :locations, :through => :locationships
 
   # Preferences
-  serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0', :phone => 'optional', :email => 'optional'}
+  serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0',
+                                           :phone => 'optional', :email => 'optional'}
 
   before_save               :before_save_callback
   # after_create              :manage_user_roles
@@ -74,6 +83,7 @@ class User < ActiveRecord::Base
   aasm_state                :active
   # END acts_as_state_machine
 
+  scope                     :with_oauths, joins(:oauths).where("oauths.id is not null").select("distinct users.id")
   scope                     :with_emails, where("users.email_addresses_count > 0")
   scope                     :no_emails, where('users.email_addresses_count' => 0)
   scope                     :with_email, lambda { |s| { :include => :email_addresses, :conditions => ["email_addresses.address = ?", s] } }

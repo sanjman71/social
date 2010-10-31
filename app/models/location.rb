@@ -165,7 +165,7 @@ class Location < ActiveRecord::Base
   end
 
   def hotness
-    @hotness ||= 5*checkins.count + 2*plans.count
+    @hotness ||= 5*checkins.count
   end
 
   # called after location is tagged
