@@ -17,7 +17,7 @@ en:
     linked_account: "You're just a few checkins from being matched."
     need_checkins: "You are just a few checkins from being matched."
   user:
-    matchie:
+    matchby:
       checkin: 'Sighting'
       tag: 'Tag'
       geo: 'Local'
