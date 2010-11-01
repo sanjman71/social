@@ -10,7 +10,7 @@ class SuggestionFactory
     @without_user_ids = ([user.id] + user.suggestions.collect(&:users).flatten.collect(&:id)).uniq.sort
 
     # check that user has at least 1 checkin
-    return [] if user.checkins.count == 0
+    # return [] if user.checkins.count == 0
 
     @algorithm.each do |algorithm|
       case algorithm

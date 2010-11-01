@@ -17,8 +17,6 @@ class Location < ActiveRecord::Base
   has_many                :phone_numbers, :as => :callable, :dependent => :destroy, :order => "priority asc"
   has_one                 :primary_phone_number, :class_name => 'PhoneNumber', :as => :callable, :order => "priority asc"
   accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
-  has_many                :location_neighbors, :dependent => :destroy
-  has_many                :neighbors, :through => :location_neighbors
   has_many                :location_sources, :dependent => :destroy
   has_one                 :location_source, :class_name => 'LocationSource', :order => 'id desc'
 
@@ -57,8 +55,6 @@ class Location < ActiveRecord::Base
   scope :urban_mapped,          { :conditions => ["urban_mapping_at <> ''"] }
   scope :not_urban_mapped,      { :conditions => ["urban_mapping_at is NULL"] }
   scope :with_events,           { :conditions => ["events_count > 0"] }
-  scope :with_neighbors,        { :joins => :location_neighbors, :conditions => ["location_neighbors.location_id > 0"] }
-  scope :no_neighbors,          { :conditions => ["id not in (select distinct location_id from location_neighbors)"] }
   scope :with_phone_numbers,    { :conditions => ["phone_numbers_count > 0"] }
   scope :no_phone_numbers,      { :conditions => ["phone_numbers_count = 0"] }
   scope :min_phone_numbers,     lambda { |x| {:conditions => ["phone_numbers_count >= ?", x] }}

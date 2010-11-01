@@ -90,12 +90,12 @@ class User < ActiveRecord::Base
   # END acts_as_state_machine
 
   scope                     :with_oauths, joins(:oauths).where("oauths.id is not null").select("distinct users.id")
-  scope                     :with_emails, where("users.email_addresses_count > 0")
-  scope                     :no_emails, where('users.email_addresses_count' => 0)
+  scope                     :with_emails, where(:email_addresses_count.gt => 0)
+  scope                     :no_emails, where(:email_addresses_count => 0)
   scope                     :with_email, lambda { |s| { :include => :email_addresses, :conditions => ["email_addresses.address = ?", s] } }
   scope                     :with_identifier, lambda { |s| { :include => :email_addresses, :conditions => ["email_addresses.identifier = ?", s] } }
-  scope                     :with_phones, where("phone_numbers_count > 0")
-  scope                     :no_phones, where('phone_numbers_count' => 0)
+  scope                     :with_phones, where(:phone_numbers_count.gt => 0)
+  scope                     :no_phones, where(:phone_numbers_count => 0)
   scope                     :with_phone, lambda { |s| { :include => :phone_numbers, :conditions => ["phone_numbers.address = ?", s] } }
 
   scope                     :search_by_name, lambda { |s| { :conditions => ["LOWER(users.name) REGEXP '%s'", s.downcase] }}

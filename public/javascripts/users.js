@@ -2,17 +2,17 @@ $(document).ready(function() {
   $("#pics").cycle({fx:'fade', timeout:5000, speed:1000, before:onBefore, after:onAfter});
   
   function onBefore() {
-    $("#match #handle,#match #data,#match #matchie").html('');
+    $("#match #handle,#match #data,#match #matchby").html('');
   }
   
   function onAfter() {
     var handle  = $(this).attr('data-handle');
     var gender  = $(this).attr('data-gender');
     var city    = $(this).attr('data-city');
-    var matchie = $(this).attr('data-matchie');
+    var matchby = $(this).attr('data-matchby');
     var data    = gender + " / " + city;
     $("#match #handle").html(handle);
     $("#match #data").html(data);
-    $("#match #matchie").html(matchie);
+    $("#match #matchby").html(matchie);
   }
 })
