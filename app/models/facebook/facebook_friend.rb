@@ -14,22 +14,28 @@ class FacebookFriend
       facebook  = FacebookClient.new(oauth.access_token)
       friends   = facebook.friends['data']
       log(:ok, "[#{user.handle}] importing facebook friends with checkins")
-      friends.each do |friend|
+      friends.each do |friend_hash|
         begin
-          friend_name     = friend['name']
-          friend_fbid     = friend['id']
+          friend_name     = friend_hash['name']
+          friend_fbid     = friend_hash['id']
           # check if user already exists
-          next if User.find_by_facebook_id(friend_fbid)
-          # check user's checkin data
-          friend_checkins = facebook.checkins(friend_fbid, options)['data']
-          # skip if friend has no checkins
-          next if friend_checkins.size == 0
-          # get basic user data from facebook
-          friend_data     = facebook.user(friend_fbid)
-          friend_gender   = friend_data.try(:[], 'gender')
-          # create friend
-          user.friends.create!(:handle => friend_name, :name => friend_name, :facebook_id => friend_fbid)
-          log(:ok, "[#{user.handle}] imported facebook friend #{friend_fbid}:#{friend_name}")
+          friend          = User.find_by_facebook_id(friend_fbid)
+          if friend
+            # user already exists, add friend relationship
+            user.friends.push(friend)
+          else
+            # check user's checkin data
+            friend_checkins = facebook.checkins(friend_fbid, options)['data']
+            # skip if friend has no checkins
+            next if friend_checkins.size == 0
+            # get basic user data from facebook
+            friend_data     = facebook.user(friend_fbid)
+            friend_gender   = friend_data.try(:[], 'gender')
+            # create friend
+            friend          = user.friends.create!(:handle => friend_name, :facebook_id => friend_fbid,
+                                                   :gender => friend_gender)
+            log(:ok, "[#{user.handle}] imported facebook friend #{friend.handle}:#{friend_fbid}")
+          end
         rescue Exception => e
           log(:error, "[#{user.handle}] #{__method__.to_s} exception: #{e.message}")
         end

@@ -64,6 +64,8 @@ class User < ActiveRecord::Base
   # locationships
   has_many                  :locationships
   has_many                  :locations, :through => :locationships
+  has_many                  :checkin_locations, :through => :locationships, :source => :location,
+                            :conditions => ["my_checkins > 0"]
 
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0',
@@ -261,7 +263,11 @@ class User < ActiveRecord::Base
   end
 
   def primary_photo_url
-    primary_photo.try(:url) || Photo.send("default_#{gender_name}") rescue nil || ''
+    primary_photo.try(:url) || facebook_photo_url || Photo.send("default_#{gender_name}") rescue nil
+  end
+
+  def facebook_photo_url
+    facebook_id ? "https://graph.facebook.com/#{facebook_id}/picture?type=square" : nil
   end
 
   def badges_list

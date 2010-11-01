@@ -66,7 +66,4 @@ module ApplicationHelper
     "#{user.gender_name.try(:titleize)} / #{user.city.try(:name) || 'Unknown'}"
   end
   
-  def user_facebook_picture(facebook_id)
-    "https://graph.facebook.com/#{facebook_id}/picture?type=square"
-  end
 end

@@ -54,6 +54,6 @@
   .span-3.prepend-1.border
     %h4== Tags
   .span-19.prepend-1.last#tags
-    - tags = @user.locations.collect(&:tag_list).flatten.uniq.compact.sort
+    - tags = @user.checkin_locations.collect(&:tag_list).flatten.uniq.compact.sort
     = tags.join(', ')
           

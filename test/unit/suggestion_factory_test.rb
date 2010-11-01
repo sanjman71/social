@@ -67,7 +67,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
     context "with checkin and geo matches" do
       setup do
-        # create chicago checkins
+        # create chicago locationships
         @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
         @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
         # create another chicago user
