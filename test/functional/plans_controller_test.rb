@@ -42,6 +42,17 @@ class PlansControllerTest < ActionController::TestCase
       assert_equal [1], @user1.reload.locationships.collect(&:planned_checkins)
       assert_redirected_to '/'
     end
+
+    should "ignore if location already checked in to" do
+      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
+      @user1.locationships.create!(:location => @sbux, :my_checkins => 1)
+      sign_in @user1
+      set_beta
+      put :add, :location_id => @sbux.id
+      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
+      assert_equal [0], @user1.reload.locationships.collect(&:planned_checkins)
+      assert_redirected_to '/'
+    end
   end
   
 end

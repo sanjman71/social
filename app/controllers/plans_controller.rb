@@ -10,7 +10,8 @@ class PlansController < ApplicationController
     begin
       # update locationship
       @locationship = @user.locationships.find_or_create_by_location_id(@location.id)
-      if @locationship.planned_checkins == 0
+      if @locationship.planned_checkins == 0 and @locationship.my_checkins == 0
+        # user hasn't checked in here or already planned to go here
         @locationship.increment!(:planned_checkins)
       end
       flash[:notice]  = "We added #{@location.name} to your want to go list"
