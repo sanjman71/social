@@ -2,7 +2,10 @@ namespace :db do
 
   desc "Reset the database, run db:seeds and rebuild sphinx"
   task :reset_all => ["db:reset", "db:seed", "ts:rebuild"] do
-    
+    puts "restarting delayed job ..."
+    system "./script/delayed_job stop"
+    sleep(3.0)
+    system "./script/delayed_job start"
   end
 
   desc "Backup the database, (options: DB=xyz, BACKUP_DIR=home/backups)"
