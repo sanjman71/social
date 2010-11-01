@@ -12,6 +12,7 @@ gem 'alchemist',              '>= 0.1.2'
 gem 'crack',                  :git => 'git://github.com/sanjman71/crack.git'
 gem 'daemons',                '1.0.10' # dj doesn't start with 1.1.0
 gem 'delayed_job',            :git => 'git://github.com/collectiveidea/delayed_job.git'
+gem 'devise',                 :git => 'git://github.com/plataformatec/devise.git' # devise with oauth support
 gem 'foursquare',             '>= 0.3.1'
 gem 'geokit',                 '>= 1.5.0'
 # hashie required by foursquare gem
@@ -19,7 +20,7 @@ gem 'hashie',                 '>= 0.3.1'
 gem 'httparty',               '0.4.3' # older version required by foursquare gem
 gem 'haml',                   '>= 3.0.18'
 gem 'haml-rails'
-gem 'devise',                 :git => 'git://github.com/plataformatec/devise.git' # devise with oauth support
+gem 'meta_where',             '>= 0.9.6'
 gem 'oauth',                  '>= 0.4.2'
 gem 'oauth2',                 '>= 0.0.13'
 gem 'ts-delayed-delta',       '>= 1.1.0'
