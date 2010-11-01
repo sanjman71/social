@@ -30,12 +30,12 @@
 %hr.space
 
 -# show user badges
-- unless @tag_badges.blank?
+- unless @badges.blank?
   .span-24.last#badges
     .span-3.prepend-1.border
       %h4= I18n.t("badges.title")
     .span-19.prepend-1.last
-      = render(:partial => 'badges', :locals => {:user => @user, :badges => @tag_badges})
+      = render(:partial => 'badges', :locals => {:user => @user, :badges => @badges})
 
   %hr.space
 

@@ -47,8 +47,8 @@ class UsersController < ApplicationController
     # find matching user profiles
     @matches  = @user.search_geo(:limit => 20, :miles => @user.radius, :order => :checkins_tags, :klass => User)
 
-    # find user tag badges
-    @tag_badges = @user.tag_badges.order("tag_badges.name asc")
+    # find user badges
+    @badges   = @user.badges.order("badges.name asc")
   end
 
   # GET /users/1/edit

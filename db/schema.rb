@@ -23,6 +23,13 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
   add_index "alerts", ["sender_id"], :name => "index_alerts_on_sender_id"
   add_index "alerts", ["user_id"], :name => "index_alerts_on_user_id"
 
+  create_table "badges", :force => true do |t|
+    t.string "regex", :limit => 200, :null => false
+    t.string "name",  :limit => 50,  :null => false
+  end
+
+  add_index "badges", ["name"], :name => "index_badges_on_name"
+
   create_table "badges_privileges", :force => true do |t|
     t.string   "name",         :limit => 50
     t.datetime "created_at"
@@ -66,6 +73,27 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
 
   add_index "badges_user_roles", ["authorizable_type", "authorizable_id"], :name => "index_on_authorizable"
   add_index "badges_user_roles", ["user_id", "role_id", "authorizable_type", "authorizable_id"], :name => "index_on_user_roles_authorizable"
+
+  create_table "badging_votes", :force => true do |t|
+    t.integer  "user_id",    :null => false
+    t.integer  "badge_id",   :null => false
+    t.integer  "voter_id",   :null => false
+    t.integer  "vote",       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "badging_votes", ["user_id", "badge_id"], :name => "index_badging_votes_on_user_id_and_badge_id"
+  add_index "badging_votes", ["user_id", "voter_id"], :name => "index_badging_votes_on_user_id_and_voter_id"
+  add_index "badging_votes", ["user_id"], :name => "index_badging_votes_on_user_id"
+
+  create_table "badgings", :force => true do |t|
+    t.integer "user_id",  :null => false
+    t.integer "badge_id", :null => false
+  end
+
+  add_index "badgings", ["badge_id"], :name => "index_badgings_on_badge_id"
+  add_index "badgings", ["user_id"], :name => "index_badgings_on_user_id"
 
   create_table "chains", :force => true do |t|
     t.string  "name"
@@ -335,34 +363,6 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
     t.integer  "creator_id"
     t.string   "match",        :limit => 50
   end
-
-  create_table "tag_badges", :force => true do |t|
-    t.string "regex", :limit => 200, :null => false
-    t.string "name",  :limit => 50,  :null => false
-  end
-
-  add_index "tag_badges", ["name"], :name => "index_tag_badges_on_name"
-
-  create_table "tag_badging_votes", :force => true do |t|
-    t.integer  "user_id",      :null => false
-    t.integer  "tag_badge_id", :null => false
-    t.integer  "voter_id",     :null => false
-    t.integer  "vote",         :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "tag_badging_votes", ["user_id", "tag_badge_id"], :name => "index_tag_badging_votes_on_user_id_and_tag_badge_id"
-  add_index "tag_badging_votes", ["user_id", "voter_id"], :name => "index_tag_badging_votes_on_user_id_and_voter_id"
-  add_index "tag_badging_votes", ["user_id"], :name => "index_tag_badging_votes_on_user_id"
-
-  create_table "tag_badgings", :force => true do |t|
-    t.integer "user_id",      :null => false
-    t.integer "tag_badge_id", :null => false
-  end
-
-  add_index "tag_badgings", ["tag_badge_id"], :name => "index_tag_badgings_on_tag_badge_id"
-  add_index "tag_badgings", ["user_id"], :name => "index_tag_badgings_on_user_id"
 
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"

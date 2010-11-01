@@ -60,7 +60,7 @@ Social::Application.routes.draw do
   
   # voting routes
   match 'vote/users/:user_id/badge/:badge_id/:vote', :to => 'voting#create', :via => [:put],
-    :as => :vote_user_tag_badge
+    :as => :vote_user_badge
   match 'jobs', :to => 'jobs#index', :as => :jobs
   match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
   match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job

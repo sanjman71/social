@@ -15,8 +15,6 @@ class FacebookFriend
       friends   = facebook.friends['data']
       log(:ok, "[#{user.handle}] importing facebook friends with checkins")
       friends.each do |friend|
-        # testing - just import 1 friend
-        next if user.reload.friends.count == 1 # xxx
         begin
           friend_name     = friend['name']
           friend_fbid     = friend['id']

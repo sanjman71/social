@@ -51,9 +51,9 @@ class User < ActiveRecord::Base
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
   has_many                  :alerts
-  has_many                  :tag_badgings
-  has_many                  :tag_badges, :through => :tag_badgings
-  has_many                  :tag_badging_votes
+  has_many                  :badgings
+  has_many                  :badges, :through => :badgings
+  has_many                  :badging_votes
 
   # friends
   has_many                  :friendships
@@ -264,8 +264,8 @@ class User < ActiveRecord::Base
     primary_photo.try(:url) || Photo.send("default_#{gender_name}") rescue nil || ''
   end
 
-  def tag_badges_list
-    tag_badges.collect(&:name)
+  def badges_list
+    badges.collect(&:name)
   end
 
   # def profile_complete?
@@ -321,14 +321,14 @@ class User < ActiveRecord::Base
     self.checkins_count >= Checkin.min_checkins_for_suggestion
   end
 
-  # add user tag badges based on location tags
+  # add user badges based on location tags
   # note: usually called asynchronously
-  def async_add_tag_badges
+  def async_add_badges
     tag_names = locations.collect(&:tags).flatten.collect(&:name)
-    TagBadge.all.each do |tb|
-      matches = tag_names.grep(Regexp.new(tb.regex))
+    Badge.all.each do |badge|
+      matches = tag_names.grep(Regexp.new(badge.regex))
       if !matches.blank?
-        tag_badgings.create(:tag_badge => tb)
+        badgings.create(:badge => badge)
       end
     end
   end

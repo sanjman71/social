@@ -421,22 +421,31 @@ class LocationTest < ActiveSupport::TestCase
   end
 
   context "hotness" do
-    should "be 10 for location with 2 checkins" do
+    setup do
+      @user1  = Factory(:user)
+      @user2  = Factory(:user)
+      @user3  = Factory(:user)
+    end
+
+    should "be 10 for location with 2 user checkins" do
       @location = Location.create(:country => @us, :state => @illinois)
-      @location.stubs(:checkins).returns([1, 2])
+      @user1.locationships.create(:location => @location, :my_checkins => 1)
+      @user2.locationships.create(:location => @location, :my_checkins => 1)
       assert_equal 10, @location.hotness
     end
 
-    should "be 4 for location with 2 plans" do
+    should "be 4 for location with 2 planned checkins" do
       @location = Location.create(:country => @us, :state => @illinois)
-      @location.stubs(:plans).returns([1, 2])
+      @user1.locationships.create(:location => @location, :planned_checkins => 1)
+      @user2.locationships.create(:location => @location, :planned_checkins => 1)
       assert_equal 4, @location.hotness
     end
 
-    should "be 19 for location with 3 locations + 2 plans" do
+    should "be 19 for location with 3 user checkins + 2 planned checkins" do
       @location = Location.create(:country => @us, :state => @illinois)
-      @location.stubs(:checkins).returns([1, 2, 3])
-      @location.stubs(:plans).returns([1, 2])
+      @user1.locationships.create(:location => @location, :my_checkins => 1, :planned_checkins => 1)
+      @user2.locationships.create(:location => @location, :my_checkins => 1, :planned_checkins => 1)
+      @user3.locationships.create(:location => @location, :my_checkins => 1)
       assert_equal 19, @location.hotness
     end
   end

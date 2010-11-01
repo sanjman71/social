@@ -24,8 +24,7 @@ class Location < ActiveRecord::Base
 
   has_many                :checkins
   has_many                :users, :through => :checkins
-
-  has_many                :plans
+  has_many                :locationships
 
   acts_as_taggable
 
@@ -165,14 +164,14 @@ class Location < ActiveRecord::Base
   end
 
   def hotness
-    @hotness ||= 5*checkins.count
+    @hotness ||= 5*locationships.my_checkins.count + 2*locationships.planned_checkins.count
   end
 
   # called after location is tagged
   def after_tagging
     users.each do |user|
-      # add tag badges for each user linked to this location
-      user.delay.async_add_tag_badges
+      # add badges for each user linked to this location
+      user.delay.async_add_badges
     end
   end
 

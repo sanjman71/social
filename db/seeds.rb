@@ -30,16 +30,16 @@ File.open(file).lines.each do |row|
 end
 puts "#{Time.now}: initialized #{State.count} states"
 
-# tag badges
-TagBadge.create(:regex => "airport|travel", :name => 'JetSetter')
-TagBadge.create(:regex => "american", :name => 'Meat and Potatoes')
-TagBadge.create(:regex => "bar", :name => 'Booze Hound')
-TagBadge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
-TagBadge.create(:regex => "corporate|office", :name => 'Office Space')
-TagBadge.create(:regex => "event space|nightlife", :name => 'Socialite')
-TagBadge.create(:regex => "indian|mexican", :name => 'Adventurous Pallette')
-TagBadge.create(:regex => "shops", :name => 'Shopaholic')
-puts "#{Time.now}: imported #{TagBadge.count} tag badges"
+# badges
+Badge.create(:regex => "airport|travel", :name => 'JetSetter')
+Badge.create(:regex => "american", :name => 'Meat and Potatoes')
+Badge.create(:regex => "bar", :name => 'Booze Hound')
+Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+Badge.create(:regex => "corporate|office", :name => 'Office Space')
+Badge.create(:regex => "event space|nightlife", :name => 'Socialite')
+Badge.create(:regex => "indian|mexican", :name => 'Adventurous Pallette')
+Badge.create(:regex => "shops", :name => 'Shopaholic')
+puts "#{Time.now}: imported #{Badge.count} badges"
 
 # pics
 @girl_pics = ['http://i972.photobucket.com/albums/ae209/yoshidoll_69/photography/hgfgf.jpg',

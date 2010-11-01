@@ -6,6 +6,6 @@
     #user_meta= user_profile_blurb(user)
     #user_matchie= I18n.t("user.matchie.#{user.matchie.to_s}")
   .span-4{:style => 'font-size: 0.9em;'}
-    #user_tag_badges= user.tag_badges_list.sort.join(', ')
+    #user_badges= user.badges_list.sort.join(', ')
   .span-3.last.hide#user_toggle
     = link_to I18n.t("home.stream.meet_user", :name => user.singular_object), '#', :class => 'admin', :id => 'meet_user'
