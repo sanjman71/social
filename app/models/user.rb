@@ -35,11 +35,13 @@ class User < ActiveRecord::Base
     has_one                 "#{s}_oauth".to_sym, :class_name => 'Oauth', :conditions => {:name => s}
   end
 
+  # checkins
   has_many                  :checkins, :after_add => :after_add_checkin
+  has_many                  :checkin_locations, :through => :checkins
   has_many                  :checkin_logs
-  has_many                  :photos
 
   # photos
+  has_many                  :photos
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
   Oauth.sources.each do |s|
@@ -53,11 +55,13 @@ class User < ActiveRecord::Base
   has_many                  :tag_badges, :through => :tag_badgings
   has_many                  :tag_badging_votes
 
+  # friends
   has_many                  :friendships
   has_many                  :friends, :through => :friendships
   has_many                  :inverse_friendships, :class_name => "Friendship", :foreign_key => "friend_id"
   has_many                  :inverse_friends, :through => :inverse_friendships, :source => :user
 
+  # locationships
   has_many                  :locationships
   has_many                  :locations, :through => :locationships
 
@@ -69,6 +73,8 @@ class User < ActiveRecord::Base
   # after_create              :manage_user_roles
   after_create              :send_signup_email
   after_save                :after_add_facebook_id
+
+  attr_accessor             :matchby
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
