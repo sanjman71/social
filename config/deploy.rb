@@ -1,6 +1,13 @@
+$:.unshift(File.expand_path('./lib', ENV['rvm_path'])) # Add RVM's lib directory to the load path.
+require "rvm/capistrano"
+set :rvm_ruby_string, '1.9.2'
+set :rvm_type,        :user  # don't use system-wide RVM
+
 # Be explicit about our different environments
-set :stages, %w(production staging)
+set :stages, %w(production)
 require 'capistrano/ext/multistage'
+
+require "bundler/capistrano"
 
 # Set application name
 set :application,   "social"
@@ -25,9 +32,7 @@ default_run_options[:pty] = true
 
 # Load external recipe files
 load_paths << "config/recipes"
-load "bundle"
 load "delayed_job"
-load "unicorn"
 load "sphinx"
 
 # automatically called after a deploy
@@ -48,9 +53,10 @@ deploy.task :config, :roles => [:app, :db] do
   run "ln -s #{deploy_to}/shared/sockets #{current_release}/tmp/sockets"
 end
 
+# after deploy update_code
+after "deploy:update_code", "deploy:config"
+
 # after deploy
-after "deploy", "deploy:config"
-after "deploy", "bundle:install"
 after "deploy", "dj:restart"
 after "deploy", "deploy:cleanup"
 
@@ -69,4 +75,4 @@ deploy.task :init, :roles => :app do
 end
 
 after "deploy:setup", "deploy:init"
-after "deploy:setup", "bundle:install"
+# after "deploy:setup", "bundle:install"
