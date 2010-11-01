@@ -34,12 +34,12 @@ class Friendship < ActiveRecord::Base
   # update locationships friend_checkins
   def async_update_locationships
     # find user's checkins before this friendship was created - future checkins are handled by checkin event
-    user.checkins.where("checkins.created_at < ?", self.created).each do |checkin|
+    user.checkins.where("checkins.created_at < ?", self.created_at).each do |checkin|
       # update friend's friend_checkins
       Locationship.async_increment(friend, checkin.location, :friend_checkins)
     end
     # find friend's checkins before this friendship was created - future checkins are handled by checkin event
-    friend.checkins.where("checkins.created_at < ?", self.created).each do |checkin|
+    friend.checkins.where("checkins.created_at < ?", self.created_at).each do |checkin|
       # update users's friend_checkins
       Locationship.async_increment(user, checkin.location, :friend_checkins)
     end
