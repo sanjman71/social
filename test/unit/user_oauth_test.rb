@@ -33,7 +33,6 @@ class UserOauthTest < ActiveSupport::TestCase
       FacebookClient.any_instance.stubs(:user).returns(Hash['gender' => 'male', 'id' => 'fbid',
                                                             'link' => "http://www.facebook.com/handle"])
       FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [{}]])
-      
       work_off_delayed_jobs(/async_import_friends/)
       # should add 3 friends
       assert_equal 3, @user1.reload.friends.size

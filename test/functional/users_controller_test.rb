@@ -88,11 +88,11 @@ class UsersControllerTest < ActionController::TestCase
   
   context "show" do
     setup do
-      # create user with tag badge
-      @user1      = Factory.create(:user, :handle => 'User1', :city => @chicago)
-      @voter      = Factory.create(:user, :handle => "Voter", :city => @chicago)
-      @tag_badge  = TagBadge.create!(:name => "Shopaholic", :regex => "shopping")
-      @badging    = @user1.tag_badges.push(@tag_badge)
+      # create user with a badge
+      @user1    = Factory.create(:user, :handle => 'User1', :city => @chicago)
+      @voter    = Factory.create(:user, :handle => "Voter", :city => @chicago)
+      @badge    = Badge.create!(:name => "Shopaholic", :regex => "shopping")
+      @badging  = @user1.badges.push(@badge)
     end
 
     context "badge voting" do
@@ -111,8 +111,8 @@ class UsersControllerTest < ActionController::TestCase
       end
 
       should "not show agree/disagree if user has already voted" do
-        # add tag badge vote
-        @user1.tag_badging_votes.create!(:tag_badge => @tag_badge, :voter => @voter, :vote => 1)
+        # add badging vote
+        @user1.badging_votes.create!(:badge => @badge, :voter => @voter, :vote => 1)
         ThinkingSphinx::Test.run do
           ThinkingSphinx::Test.index
           sleep(0.25)
