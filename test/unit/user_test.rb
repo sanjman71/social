@@ -8,13 +8,13 @@ class UserTest < ActiveSupport::TestCase
         @user1 = User.create!(:name => "User 1", :handle => 'user1')
       end
 
-      should "create user in active state, no points, no picture, default radius" do
+      should "create user in active state, no gender, no points, default picture, default radius" do
         assert_equal "active", @user1.state
         assert_false @user1.gender?
         assert_equal 0, @user1.gender
         assert_equal '', @user1.gender_name
         assert_equal 0, @user1.points
-        assert_equal '', @user1.primary_photo_url
+        assert_equal "images/blank-person.jpg", @user1.primary_photo_url
         assert_equal 50, @user1.radius
         assert_equal 0, @user1.user_density
         assert_equal 0, @user1.suggestion_density
