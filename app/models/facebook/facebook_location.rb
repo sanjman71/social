@@ -5,7 +5,7 @@ class FacebookLocation
   def self.async_import_tags(options={})
 
     # initialize location sources
-    location_sources = options[:location_sources] ? options[:location_sources] : LocationSource.facebook.all(:include => :location)
+    location_sources = options[:location_sources] ? LocationSource.find(options[:location_sources]) : LocationSource.facebook.all(:include => :location)
 
     location_sources.each do |ls|
       # check if we have already imported tags from this source
