@@ -17,4 +17,8 @@ class Photo < ActiveRecord::Base
     'http://foursquare.com/img/blank_boy.png'
   end
 
+  def self.default_asexual
+    'http://foursquare.com/img/blank_boy.png'
+  end
+
 end

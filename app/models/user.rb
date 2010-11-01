@@ -262,12 +262,17 @@ class User < ActiveRecord::Base
     (self.lat and self.lng) ? true : false
   end
 
+  # try in priority order
   def primary_photo_url
-    primary_photo.try(:url) || facebook_photo_url || Photo.send("default_#{gender_name}") rescue nil
+    primary_photo.try(:url) || facebook_photo_url || Photo.send("default_#{gender_name}") rescue nil || default_photo_url
   end
 
   def facebook_photo_url
     facebook_id ? "https://graph.facebook.com/#{facebook_id}/picture?type=square" : nil
+  end
+
+  def default_photo_url
+    Photo.default_asexual
   end
 
   def badges_list
