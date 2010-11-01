@@ -10,7 +10,6 @@ class LocationTest < ActiveSupport::TestCase
   should have_many :neighborhoods
   should have_many :email_addresses
   should have_many :phone_numbers
-  should have_many :neighbors
   should have_many :location_sources
 
   def setup
