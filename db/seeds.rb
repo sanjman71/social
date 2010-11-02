@@ -198,8 +198,4 @@ end
 
 puts "#{Time.now}: imported #{Checkin.count} checkins"
 
-# clear delayed jobs
-Delayed::Job.delete_all
-puts "#{Time.now}: cleared delayed jobs"
-
 
