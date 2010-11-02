@@ -1,6 +1,6 @@
 module Users::Search
   
-  # search users with matching checkins
+  # search users, filter by matching checkins
   def search_checkins(options={})
     # find user location ids
     loc_ids = self.locations.collect(&:id)
@@ -10,33 +10,58 @@ module Users::Search
     search(options)
   end
 
-  # search users with matching location tags
+  # search users, filter by matching location tags
   def search_tags(options={})
     # find user location tag ids
     tag_ids = self.locations.collect(&:tag_ids).flatten
     options.update(:with_tag_ids => tag_ids) unless options[:with_tag_ids]
-    if (options[:meters] or options[:miles]) and self.mappable?
-      # restrict search to nearby tags
-      meters = options[:meters] ? options[:meters].to_f : options[:miles].miles.meters.value
-      options.update(:geo_origin => [lat.radians, lng.radians], :geo_distance => 0.0..meters)
-    end
+    options.update(:with_gender => default_gender) unless options[:with_gender]
+    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    search(options)
+  end
+  
+  # search users, filter by distance and matching location tags
+  def search_geo_tags(options={})
+    add_geo_params(options)
+    search_tags(options)
+  end
+
+  # search users, filter by distance and friends
+  def search_geo_friends(options={})
+    add_geo_params(options)
+    options.update(:klass => User)
+    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    options.update(:with_user_ids => friends.collect(&:id)) unless options[:with_user_ids]
+    search(options)
+  end
+
+  # search users, filter by distance and friend checkins
+  def search_geo_friend_checkins(options={})
+    add_geo_params(options)
+    loc_ids = self.locationships.friend_checkins.collect(&:location_id)
+    options.update(:with_location_ids => [loc_ids])
+    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    options.update(:klass => User)
+    search(options)
+  end
+
+  # search users, filter by distance
+  def search_geo(options)
+    add_geo_params(options)
+    raise Exception, "missing geo origin and/or geo distance" if options[:geo_origin].blank? or options[:geo_distance].blank?
     options.update(:with_gender => default_gender) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
   end
 
-  # search users by proximity
-  def search_geo(options={})
-    # check that user is mappable
-    return [] unless self.mappable?
-    if (options[:meters] or options[:miles]) and options[:geo_origin].blank? and options[:geo_distance].blank?
+  def add_geo_params(options={})
+    # check if geo parameters are already set
+    return if !options[:geo_origin].blank? and !options[:geo_distance].blank?
+    # allow meters or miles
+    if (options[:meters] or options[:miles]) and self.mappable?
       meters = options[:meters] ? options[:meters].to_f : options[:miles].miles.meters.value
       options.update(:geo_origin => [lat.radians, lng.radians], :geo_distance => 0.0..meters)
     end
-    raise Exception, "missing geo origin and/or geo distance" if options[:geo_origin].blank? or options[:geo_origin].blank?
-    options.update(:with_gender => default_gender) unless options[:with_gender]
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
-    search(options)
   end
 
   def search_gender(options={})
@@ -77,6 +102,9 @@ module Users::Search
       end
       if options[:with_tag_ids] # e.g. [1,3,5]
         with.update(:tag_ids => options[:with_tag_ids])
+      end
+      if options[:with_user_ids] # e.g. [1,2,5]
+        with.update(:user_id => options[:with_user_ids])
       end
       if options[:without_user_ids] # e.g. [1,2,3]
         without.update(:user_id => options[:without_user_ids])

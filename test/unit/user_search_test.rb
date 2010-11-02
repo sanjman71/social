@@ -29,6 +29,8 @@ class UserSearchTest < ActiveSupport::TestCase
     # create users
     @chicago_male1    = User.create!(:name => "Chicago Male 1", :handle => 'chicago_male_1', :gender => 2,
                                      :city => @chicago)
+    @chicago_male2    = User.create!(:name => "Chicago Male 2", :handle => 'chicago_male_2', :gender => 2,
+                                    :city => @chicago)
     @chicago_female1  = User.create!(:name => "Chicago Female 1", :handle => 'chicago_female_1', :gender => 1,
                                      :city => @chicago)
     @chicago_female2  = User.create!(:name => "Chicago Female 2", :handle => 'chicago_female_2', :gender => 1,
@@ -56,20 +58,21 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_female2.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
       @chicago_female3.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
       @boston_female1.locationships.create!(:location => @boston_coffee, :my_checkins => 1)
-      # chicago searcher has 1 checkin location and 1 planned location in common
+      # chicago searcher has 1 checkin location, 1 planned location in common
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
       @chicago_male1.locationships.create!(:location => @chicago_coffee, :planned_checkins => 1)
+      @chicago_male1.locationships.create!(:location => @chicago_pizza, :friend_checkins => 1)
     end
 
-    should "find 2 matches when filtering by checkins, order by my checkins, then planned checkins" do
+    should "find 2 matches filtered by checkins, order by [my checkins, planned checkins, friend checkins]" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index 'user_core'
         sleep(0.25)
         @users = @chicago_male1.search_checkins(:order => :checkins)
-        assert_equal 2, @users.size
-        assert_equal [@chicago_female1, @chicago_female2], @users.collect{ |o| o }
-        assert_equal [:checkin, :checkin], @users.collect(&:matchby)
-        assert_equal [5.0, 3.0], @users.collect(&:matchiness)
+        assert_equal 3, @users.size
+        assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
+        assert_equal [:checkin, :checkin, :default], @users.collect(&:matchby)
+        assert_equal [5.0, 3.0, 0.0], @users.collect(&:matchiness)
       end
     end
   end
@@ -85,7 +88,7 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     end
 
-    should "find 3 matches, order by checkin, then tags, then geo" do
+    should "find 3 matches filtered by distance, order by [checkin, tags, geo distance]" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index 'user_core'
         sleep(0.25)
@@ -97,7 +100,7 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
 
-    should "find 3 geo coffee matches with relevance ordering" do
+    should "find 3 matches filtered by distance, order by relevance" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index 'user_core'
         sleep(0.25)
@@ -111,4 +114,42 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
+  context "geo friend search filter" do
+    setup do
+      @chicago_male1.friendships.create!(:friend => @chicago_female1)
+      @chicago_male1.friendships.create!(:friend => @chicago_male2)
+    end
+    
+    should "find 2 matches filtered by friends" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index 'user_core'
+        sleep(0.25)
+        @users = @chicago_male1.search_geo_friends(:miles => 10)
+        assert_equal 2, @users.size
+        assert_equal [@chicago_female1, @chicago_male2], @users.collect{ |o| o }
+      end
+    end
+  end
+
+  context "geo friend checkins search filter" do
+    setup do
+      # 2 female chicago users + 1 chicago male user checkin to different locations
+      @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+      @chicago_female2.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
+      @chicago_male2.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
+      # chicago searcher has 1 friend checkin location
+      @chicago_male1.locationships.create!(:location => @chicago_sbux, :friend_checkins => 1)
+      @chicago_male1.locationships.create!(:location => @chicago_pizza, :friend_checkins => 1)
+    end
+
+    should "find 1 match filtered by friend checkins" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index 'user_core'
+        sleep(0.25)
+        @users = @chicago_male1.search_geo_friend_checkins(:miles => 10)
+        assert_equal 2, @users.size
+        assert_equal [@chicago_female1, @chicago_male2], @users.collect{ |o| o }
+      end
+    end
+  end
 end
