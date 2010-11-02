@@ -103,7 +103,7 @@ class CheckinTest < ActiveSupport::TestCase
     should "create checkin log, add checkin, create checkin alert, add delay sphinx rebuild" do
       ThinkingSphinx::Test.run do
         # create user oauth token
-        @oauth    = @user.oauths.create(:name => 'foursquare', :access_token => '12345')
+        @oauth    = @user.oauths.create(:provider => 'foursquare', :access_token => '12345')
         @hash     = Hash["id"=>141731194, "created"=>"Sun, 22 Aug 10 23:16:33 +0000", "timezone"=>"America/Chicago",
                          "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago",
                                    "state"=>"Illinois", "geolat"=>41.8964066, "geolong"=>-87.6312161}
@@ -132,7 +132,7 @@ class CheckinTest < ActiveSupport::TestCase
 
     should "skip check if last check was within x minutes" do
       # create user oauth token
-      @oauth        = @user.oauths.create(:name => 'foursquare', :access_token => '12345')
+      @oauth        = @user.oauths.create(:provider => 'foursquare', :access_token => '12345')
       # create checkin 30 minutes ago
       @checkin_log1 = @user.checkin_logs.create(:source => 'foursquare', :state => 'success', :checkins => 1,
                                                 :last_check_at => Time.zone.now-30.minutes)
@@ -196,7 +196,7 @@ class CheckinTest < ActiveSupport::TestCase
   context "import all facebook checkins" do
     setup do
       # create user oauth token
-      @oauth  = @user.oauths.create!(:name => 'facebook', :access_token => '12345')
+      @oauth  = @user.oauths.create!(:provider => 'facebook', :access_token => '12345')
       # setup checkin hash
       @hash   = Hash["id"=>"461630895812", "from"=>{"name"=>"Sanjay Kapoor", "id"=>"633015812"},
                      "place"=>{"id"=>"117669674925118", "name"=>"Bull & Bear",

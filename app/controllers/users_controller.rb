@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :find_user, :only => [:edit, :show, :update]
 
-  # privilege_required 'admin', :only => [:index]
+  privilege_required 'admin', :only => [:sudo]
 
   # GET /users
   # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_user_ids=1,5,3
@@ -67,6 +67,14 @@ class UsersController < ApplicationController
       flash[:error]  = "There was an error updating your profile"
     end
     redirect_back_to(user_path(@user))
+  end
+
+  # GET /users/1/sudo
+  def sudo
+    @user = User.find(params[:id])
+    sign_in(:user, @user)
+    flash[:notice] = "You are now logged in as #{@user.handle}"
+    redirect_back_to(root_path)
   end
 
   protected

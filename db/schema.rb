@@ -289,7 +289,7 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
 
   create_table "oauths", :force => true do |t|
     t.integer  "user_id"
-    t.string   "name",                :limit => 50
+    t.string   "provider",            :limit => 50
     t.string   "access_token",        :limit => 200
     t.string   "access_token_secret", :limit => 200
     t.datetime "expires_at"
@@ -298,7 +298,7 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
     t.datetime "updated_at"
   end
 
-  add_index "oauths", ["user_id", "name"], :name => "index_oauths_on_user_id_and_name"
+  add_index "oauths", ["user_id", "provider"], :name => "index_oauths_on_user_id_and_provider"
   add_index "oauths", ["user_id"], :name => "index_oauths_on_user_id"
 
   create_table "phone_numbers", :force => true do |t|

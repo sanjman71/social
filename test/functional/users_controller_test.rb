@@ -7,12 +7,14 @@ class UsersControllerTest < ActionController::TestCase
   self.use_transactional_fixtures = false
 
   context "routes" do
-    should route(:get, "/users/geo:1.23..-77.89/radius:50").to(
-      :controller => 'users', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
-    should route(:get, "/users/city:chicago/radius:75").to(
-      :controller => 'users', :action => 'index', :city => 'city:chicago', :radius => 'radius:75')
-    should route(:get, "/users/city:chicago").to(
-      :controller => 'users', :action => 'index', :city => 'city:chicago')
+    should route(:get, "/users/geo:1.23..-77.89/radius:50").
+      to(:controller => 'users', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
+    should route(:get, "/users/city:chicago/radius:75").
+      to(:controller => 'users', :action => 'index', :city => 'city:chicago', :radius => 'radius:75')
+    should route(:get, "/users/city:chicago").
+      to(:controller => 'users', :action => 'index', :city => 'city:chicago')
+    should route(:get, "/users/1/sudo").
+      to(:controller => 'users', :action => 'sudo', :id => '1')
   end
 
   def setup

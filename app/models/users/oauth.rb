@@ -62,7 +62,7 @@ module Users::Oauth
     # generic method to create or update user's oauth token for the specified service
     def base.find_for_service_oauth(service, access_token, user=nil)
       return unless user
-      oauth = user.oauths.find_by_name(service)
+      oauth = user.oauths.find_by_provider(service)
       # note: oauth1 uses an access_token_secret, but oauth2 does not
       if oauth
         # update token
@@ -72,7 +72,8 @@ module Users::Oauth
         user.class.log(:ok, "[#{user.handle}] updated oauth token")
       else
         # create oauth object with token
-        oauth = user.oauths.create(:name => service, :access_token => access_token.token, :access_token_secret => (access_token.secret rescue nil))
+        oauth = user.oauths.create(:provider => service, :access_token => access_token.token,
+                                   :access_token_secret => (access_token.secret rescue nil))
         user.class.log(:ok, "[#{user.handle}] created oauth #{service} token")
       end
       user

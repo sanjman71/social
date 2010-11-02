@@ -30,7 +30,9 @@ Social::Application.routes.draw do
   match 'users/:city(/:radius)', :to => 'users#index',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_users
 
-  resources :users
+  resources :users do
+    get :sudo, :on => :member
+  end
 
   # location routes
   match 'locations/:geo(/:radius)', :to => 'locations#index',

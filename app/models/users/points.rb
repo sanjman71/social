@@ -2,7 +2,7 @@ module Users::Points
   
   # add points for linking to an account with oauth
   def add_points_for_oauth(oauth)
-    case oauth.name
+    case oauth.provider
     when 'facebook'
       self.points += 5
       self.save

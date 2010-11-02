@@ -42,7 +42,7 @@ class CreateUsers < ActiveRecord::Migration
 
     create_table :oauths do |t|
       t.references  :user
-      t.string      :name,                :limit => 50
+      t.string      :provider,            :limit => 50
       t.string      :access_token,        :limit => 200, :null => :false
       t.string      :access_token_secret, :limit => 200, :null => :false
       t.datetime    :expires_at
@@ -51,7 +51,7 @@ class CreateUsers < ActiveRecord::Migration
     end
 
     add_index :oauths, :user_id
-    add_index :oauths, [:user_id, :name]
+    add_index :oauths, [:user_id, :provider]
 
     create_table :checkins do |t|
       t.references  :user

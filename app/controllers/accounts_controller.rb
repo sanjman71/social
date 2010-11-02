@@ -4,7 +4,7 @@ class AccountsController < ApplicationController
   # GET /accounts
   def index
     @oauth_hash = current_user.oauths.inject(Hash[]) do |hash, oauth|
-      hash[oauth.name] = oauth
+      hash[oauth.provider] = oauth
       hash
     end
   end
@@ -12,7 +12,7 @@ class AccountsController < ApplicationController
   # DELETE /accounts/foursquare/unlink
   def unlink
     @service  = params[:service]
-    @oauth    = current_user.oauths.where(:name => @service).first
+    @oauth    = current_user.oauths.where(:provider => @service).first
     @oauth.try(:destroy)
     flash[:notice] = "#{@service.titleize} unlinked from account"
     redirect_to(accounts_path) and return

@@ -31,8 +31,8 @@ class User < ActiveRecord::Base
 
   # oauths
   has_many                  :oauths
-  Oauth.sources.each do |s|
-    has_one                 "#{s}_oauth".to_sym, :class_name => 'Oauth', :conditions => {:name => s}
+  Oauth.providers.each do |s|
+    has_one                 "#{s}_oauth".to_sym, :class_name => 'Oauth', :conditions => {:provider => s}
   end
 
   # checkins
@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
   has_many                  :photos
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
-  Oauth.sources.each do |s|
+  Oauth.providers.each do |s|
     has_one                 "#{s}_photo", :class_name => 'Photo', :conditions => {:source => s}
   end
 
