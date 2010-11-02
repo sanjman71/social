@@ -47,6 +47,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string      :access_token_secret, :limit => 200, :null => :false
       t.datetime    :expires_at
       t.string      :refresh_token,       :limit => 200
+      t.timestamps
     end
 
     add_index :oauths, :user_id

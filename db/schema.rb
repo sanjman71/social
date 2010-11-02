@@ -294,6 +294,8 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
     t.string   "access_token_secret", :limit => 200
     t.datetime "expires_at"
     t.string   "refresh_token",       :limit => 200
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "oauths", ["user_id", "name"], :name => "index_oauths_on_user_id_and_name"
