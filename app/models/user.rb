@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
   after_create              :send_signup_email
   after_save                :after_add_facebook_id
 
-  attr_accessor             :matchby
+  attr_accessor             :matchby, :matchvalue
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
@@ -110,7 +110,7 @@ class User < ActiveRecord::Base
 
 
   define_index do
-    has :id, :as => :user_id
+    has :id, :as => :user_ids
     indexes handle, :as => :handle
     has :gender, :as => :gender
     # checkin locations
@@ -122,8 +122,6 @@ class User < ActiveRecord::Base
     # convert degrees to radians for sphinx
     has 'RADIANS(users.lat)', :as => :lat,  :type => :float
     has 'RADIANS(users.lng)', :as => :lng,  :type => :float
-    set_property :latitude_attr => "lat"
-    set_property :longitude_attr => "lng"
     # real time indexing with delayed_job
     # set_property :delta => :delayed
     # only index active users

@@ -21,8 +21,8 @@ class Location < ActiveRecord::Base
   has_one                 :location_source, :class_name => 'LocationSource', :order => 'id desc'
 
   has_many                :checkins
-  has_many                :users, :through => :checkins
   has_many                :locationships
+  has_many                :users, :through => :locationships
 
   acts_as_taggable
 
@@ -30,6 +30,8 @@ class Location < ActiveRecord::Base
   # after_save              :after_save_callback
 
   serialized_hash         :preferences
+
+  attr_accessor           :matchby, :matchvalue
 
   # make sure only accessible attributes are written to from forms etc.
   attr_accessible         :name, :country, :country_id, :state, :state_id, :city, :city_id, :zip, :zip_id, :street_address,
@@ -63,13 +65,15 @@ class Location < ActiveRecord::Base
   scope :recommended,           { :conditions => ["recommendations_count > 0"] }
 
   define_index do
-    has :id, :as => :location_id
+    has :id, :as => :location_ids
     indexes name, :as => :name
     indexes street_address, :as => :address
     # this doesn't work; don't think mva string attributes are supported
     # indexes tags(:name), :as => :tags, :type => :multi, :facet => true
     indexes tags(:name), :as => :tags
     has tags(:id), :as => :tag_ids, :facet => true
+    # users
+    has users(:id), :as => :user_ids, :facet => true
     # locality attributes, all faceted
     has country_id, :type => :integer, :as => :country_id, :facet => true
     has state_id, :type => :integer, :as => :state_id, :facet => true
@@ -89,8 +93,6 @@ class Location < ActiveRecord::Base
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
-    set_property :latitude_attr => "lat"
-    set_property :longitude_attr => "lng"
     # used delayed job for almost real time indexing using
     # set_property :delta => :delayed
     # only index valid locations

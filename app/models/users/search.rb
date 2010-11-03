@@ -1,13 +1,24 @@
 module Users::Search
   
-  # search users, filter by matching checkins
+  def search_geo_checkins(options={})
+    add_geo_params(options)
+    search_checkins(options)
+  end
+
+  # search users or checkins, filter by matching checkins
   def search_checkins(options={})
-    # find user location ids
-    loc_ids = locations.collect(&:id)
-    options.update(:with_location_ids => [loc_ids])
-    options.update(:with_gender => default_gender) unless options[:with_gender]
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
-    options.update(:klass => User)
+    case options[:klass].to_s
+    when 'Checkin'
+    when 'User'
+      # find user location ids
+      loc_ids = locations.collect(&:id)
+      options.update(:with_location_ids => [loc_ids]) unless options[:with_location_ids]
+      options.update(:with_gender => default_gender) unless options[:with_gender]
+    end
+    # with_my_checkins includes all user checkin data in the search
+    unless (options[:without_user_ids] or options[:with_my_checkins])
+      options.update(:without_user_ids => [self.id])
+    end
     search(options)
   end
 
@@ -24,7 +35,7 @@ module Users::Search
     when 'Location'
       # exclude user checkin locations
       loc_ids = locationships.my_checkins.collect(&:location_id)
-      options.update(:without_location_id => [loc_ids])
+      options.update(:without_location_ids => [loc_ids])
     when 'User'
       options.update(:with_gender => default_gender) unless options[:with_gender]
       # exclude user
@@ -60,7 +71,7 @@ module Users::Search
     add_geo_params(options)
     options.update(:klass => User)
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
-    options.update(:with_user_ids => friends.collect(&:id)) unless options[:with_user_ids]
+    options.update(:with_user_ids => (friends+inverse_friends).collect(&:id)) unless options[:with_user_ids]
     search(options)
   end
 
@@ -69,11 +80,10 @@ module Users::Search
     add_geo_params(options)
     # find friend checkin location ids
     loc_ids = locationships.friend_checkins.collect(&:location_id)
+    options.update(:with_location_ids => [loc_ids])
     case options[:klass].to_s
     when 'Location'
-      options.update(:with_location_id => [loc_ids])
     when 'User'
-      options.update(:with_location_ids => [loc_ids])
       options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     else
       raise Exception, "missing or invalid klass"
@@ -81,11 +91,14 @@ module Users::Search
     search(options)
   end
 
-  # search users, filter by distance
+  # search users or locations, filter by distance
   def search_geo(options)
     add_geo_params(options)
-    # raise Exception, "missing geo origin and/or geo distance" if options[:geo_origin].blank? or options[:geo_distance].blank?
-    options.update(:with_gender => default_gender) unless options[:with_gender]
+    case options[:klass].to_s
+    when 'Location'
+    when 'User'
+      options.update(:with_gender => default_gender) unless options[:with_gender]
+    end
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
   end
@@ -112,52 +125,51 @@ module Users::Search
     geo         = Hash[]
 
     # parse klass agnostic options
+    if options[:with_location_ids] # e.g. [1,3,5]
+      with.update(:location_ids => options[:with_location_ids])
+    end
+    if options[:without_location_ids] # e.g. [1,3,5]
+      without.update(:location_ids => options[:without_location_ids])
+    end
     if options[:with_tag_ids] # e.g. [1,3,5]
       with.update(:tag_ids => options[:with_tag_ids])
     end
     if options[:without_tag_ids] # e.g. [1,3,5]
       without.update(:tag_ids => options[:without_tag_ids])
     end
+    if options[:with_user_ids] # e.g. [1,2,5]
+      with.update(:user_ids => options[:with_user_ids])
+    end
+    if options[:without_user_ids] # e.g. [1,2,3]
+      without.update(:user_ids => options[:without_user_ids])
+    end
 
     case klass.to_s
+    when 'Checkin'
+      # parse checkin specific options
+      if options[:with_checkin_ids] # e.g. [1,3,5]
+        with.update(:checkin_ids => options[:with_checkin_ids])
+      end
+      if options[:without_user_ids] # e.g. [1,2,3]
+        without.update(:user_ids => options[:without_user_ids])
+      end
     when 'Location'
-      # parse location specific options
-      if options[:with_location_id] # e.g. [1,3,5]
-        with.update(:location_id => options[:with_location_id])
-      end
-      if options[:without_location_id] # e.g. [1,3,5]
-        without.update(:location_id => options[:without_location_id])
-      end
     when 'User'
       # parse user specific options
       if options[:with_gender] # e.g. 1, [1]
         with.update(:gender => Array(options[:with_gender]))
       end
-      if options[:with_location_ids] # e.g. [1,3,5]
-        with.update(:location_ids => options[:with_location_ids])
-      end
-      if options[:without_location_ids] # e.g. [1,3,5]
-        without.update(:location_ids => options[:without_location_ids])
-      end
-      if options[:with_user_ids] # e.g. [1,2,5]
-        with.update(:user_id => options[:with_user_ids])
-      end
-      if options[:without_user_ids] # e.g. [1,2,3]
-        without.update(:user_id => options[:without_user_ids])
-      end
     end
 
     if options[:geo_origin] and options[:geo_distance]
-      geo[:geo]         = options[:geo_origin] # e.g. [lat, lng] (in radians)
-      with['@geodist']  = options[:geo_distance]  # e.g. 0..5000 (in meters)
+      geo[:geo]         = options[:geo_origin]    # e.g. [lat, lng] (in radians)
+      with['@geodist']  = options[:geo_distance]  # e.g. 0.0..5000.0 (in meters, must be floats)
     end
 
     if options[:order]
       case options[:order]
-      when :checkins
-        sort_order = order_checkins
-      when :checkins_tags
-        sort_order = order_checkins_tags
+      when :location_relevance
+        sort_order = send("order_#{options[:order].to_s}")
       end
       sort_mode   = :expr
     else
@@ -173,76 +185,69 @@ module Users::Search
     begin
       objects.results # query sphinx and populate results
       objects.each do |o|
-        next unless o.respond_to?(:matchby)
-        o.matchby = o.set_matchby(options[:order])
+        self.class.set_match_data(o, options[:order])
       end
       objects
-    rescue
+    rescue Exception => e
       []
     end
   end
 
-  def matchiness
-    sphinx_attributes.try(:[], '@expr') || 0.0
-  end
-
-  # return the object's matchby value based on search parameters and result values
-  def set_matchby(order, default = :default)
-    begin
-      case sphinx_attributes['@expr']
-      when 5.0..100.0
-        :checkin
-      when 3.0..5.0
-        case order
-        when :checkins
-          :checkin
-        when :checkins_tags
-          :tag
-        else
-          default
-        end
-      else
-        if sphinx_attributes['@geodist']
-          :geo
-        else
-          default
-        end
+  # class methods
+  def self.included(base)
+    def base.set_match_data(object, order)
+      if object.respond_to?(:matchby)
+        object.matchby = matchby(object, order)
       end
-    rescue Exception => e
-      default
+      if object.respond_to?(:matchvalue)
+        object.matchvalue = object.sphinx_attributes.try(:[], '@expr') || 0.0
+      end
+    end
+
+    # return the object's matchby value based on search parameters and result values
+    def base.matchby(object, order, default = :filter)
+      begin
+        case object.sphinx_attributes['@expr']
+        when 5.0..100.0
+          :location
+        when 3.0..5.0
+          case order
+          when :location_relevance
+            :tag
+          else
+            default
+          end
+        else
+          if object.sphinx_attributes['@geodist']
+            :geo_filter
+          else
+            default
+          end
+        end
+      rescue Exception => e
+        default
+      end
     end
   end
 
-  def order_checkins(options={})
-    sort_expr               = []
-    my_checkin_loc_ids      = locationships.my_checkins.collect(&:location_id)
-    planned_checkin_loc_ids = locationships.planned_checkins.collect(&:location_id)
-    # weight my checkins over planned checkins, build expression iff not empty
-    if my_checkin_loc_ids.any?
+  def order_location_relevance(options={})
+    sort_expr = []
+    if (my_checkin_loc_ids = locationships.my_checkins.collect(&:location_id)).any?
       sort_expr.push("5 * IN(location_ids, %s)" % my_checkin_loc_ids.join(','))
     end
-    if planned_checkin_loc_ids.any?
-      sort_expr.push("3 * IN(location_ids, %s)" % planned_checkin_loc_ids.join(','))
+    if (planned_loc_ids = locationships.planned_checkins.collect(&:location_id)).any?
+      sort_expr.push("3 * IN(location_ids, %s)" % planned_loc_ids.join(','))
+    end
+    if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
+      sort_expr.push("3 * IN(tag_ids, %s)" % tag_ids.join(','))
     end
     sort_expr.join(" + ")
   end
 
-  def order_checkins_tags(options={})
-    sort_expr = order_checkins
-    tag_ids   = locations.collect(&:tag_ids).flatten.uniq.sort
-    if tag_ids.any?
-      sort_expr += " + " + "3 * IN(tag_ids, %s)" % tag_ids.join(',')
-    end
-    sort_expr
-  end
-
   def default_gender
-    case self.gender
-    when 1 # female
-      2 # male
-    when 2 # male
-      1 # femal
-    end
+    return 1 if self.gender == 2
+    return 2 if self.gender == 1
+    return 0
   end
 
 end

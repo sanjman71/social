@@ -89,6 +89,18 @@ Factory.define :location do |o|
   o.zip       { |o| Factory(:zip) }
 end
 
+Factory.define :facebook_checkin, :class => :Checkin do |o|
+  o.source_type   'facebook'
+  o.source_id     { Factory.next(:source_id).to_s }
+  o.checkin_at    2.days.ago
+end
+
+Factory.define :foursquare_checkin, :class => :Checkin do |o|
+  o.source_type   'foursquare'
+  o.source_id     { Factory.next(:source_id).to_s }
+  o.checkin_at    2.days.ago
+end
+
 Factory.define :company do |o|
   o.name        { |s| Factory.next :company_name }
   o.time_zone   "UTC"

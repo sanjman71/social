@@ -11,10 +11,27 @@ class Checkin < ActiveRecord::Base
 
   after_create  :event_checkin_added
 
+  attr_accessor :matchby, :matchvalue
+
   scope         :foursquare, where(:source_type => 'foursquare')
   scope         :facebook, where(:source_type => 'facebook')
   scope         :recent, :order => 'checkins.checkin_at desc'
 
+  define_index do
+    has :id, :as => :checkin_ids
+    # checkin user
+    has user(:id), :as => :user_ids, :facet => true
+    indexes user(:handle), :as => :handle
+    has user(:gender), :as => :gender
+    # checkin location
+    has location(:id), :as => :location_ids, :facet => true
+    indexes location.tags(:name), :as => :tags
+    has location.tags(:id), :as => :tag_ids, :facet => true
+    # convert degrees to radians for sphinx
+    has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
+    has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
+  end
+  
   # user checkin was added
   def event_checkin_added
     # log data
