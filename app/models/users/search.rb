@@ -3,24 +3,53 @@ module Users::Search
   # search users, filter by matching checkins
   def search_checkins(options={})
     # find user location ids
-    loc_ids = self.locations.collect(&:id)
+    loc_ids = locations.collect(&:id)
     options.update(:with_location_ids => [loc_ids])
     options.update(:with_gender => default_gender) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    options.update(:klass => User)
     search(options)
   end
 
-  # search users, filter by matching location tags
+  # search users or locations, filter by matching location tags
   def search_tags(options={})
     # find user location tag ids
-    tag_ids = self.locations.collect(&:tag_ids).flatten
+    tag_ids = locations.collect(&:tag_ids).flatten
     options.update(:with_tag_ids => tag_ids) unless options[:with_tag_ids]
-    options.update(:with_gender => default_gender) unless options[:with_gender]
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    if options[:with_tag_ids].blank?
+      # no tags to search
+      return []
+    end
+    case options[:klass].to_s
+    when 'Location'
+      # exclude user checkin locations
+      loc_ids = locationships.my_checkins.collect(&:location_id)
+      options.update(:without_location_id => [loc_ids])
+    when 'User'
+      options.update(:with_gender => default_gender) unless options[:with_gender]
+      # exclude user
+      options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    else
+      raise Exception, "missing or invalid klass"
+    end
     search(options)
   end
-  
-  # search users, filter by distance and matching location tags
+
+  # search users, filter by distance and gender
+  def search_geo_gender(options={})
+    add_geo_params(options)
+    search_gender(options)
+  end
+
+  # search users, filter by gender
+  def search_gender(options={})
+    options.update(:with_gender => default_gender) unless options[:with_gender]
+    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    options.update(:klass => User)
+    search(options)
+  end
+
+  # search users or locations, filter by distance and matching location tags
   def search_geo_tags(options={})
     add_geo_params(options)
     search_tags(options)
@@ -35,20 +64,27 @@ module Users::Search
     search(options)
   end
 
-  # search users, filter by distance and friend checkins
+  # search users or locations, filter by distance and friend checkins
   def search_geo_friend_checkins(options={})
     add_geo_params(options)
-    loc_ids = self.locationships.friend_checkins.collect(&:location_id)
-    options.update(:with_location_ids => [loc_ids])
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
-    options.update(:klass => User)
+    # find friend checkin location ids
+    loc_ids = locationships.friend_checkins.collect(&:location_id)
+    case options[:klass].to_s
+    when 'Location'
+      options.update(:with_location_id => [loc_ids])
+    when 'User'
+      options.update(:with_location_ids => [loc_ids])
+      options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    else
+      raise Exception, "missing or invalid klass"
+    end
     search(options)
   end
 
   # search users, filter by distance
   def search_geo(options)
     add_geo_params(options)
-    raise Exception, "missing geo origin and/or geo distance" if options[:geo_origin].blank? or options[:geo_distance].blank?
+    # raise Exception, "missing geo origin and/or geo distance" if options[:geo_origin].blank? or options[:geo_distance].blank?
     options.update(:with_gender => default_gender) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
@@ -64,11 +100,6 @@ module Users::Search
     end
   end
 
-  def search_gender(options={})
-    options.update(:with_gender => default_gender) unless options[:with_gender]
-    search(options)
-  end
-
   def search(options={})
     klass       = options[:klass] ? options[:klass] : User
     page        = options[:page] ? options[:page].to_i : 1
@@ -79,6 +110,14 @@ module Users::Search
     without     = Hash[]
     conditions  = Hash[]
     geo         = Hash[]
+
+    # parse klass agnostic options
+    if options[:with_tag_ids] # e.g. [1,3,5]
+      with.update(:tag_ids => options[:with_tag_ids])
+    end
+    if options[:without_tag_ids] # e.g. [1,3,5]
+      without.update(:tag_ids => options[:without_tag_ids])
+    end
 
     case klass.to_s
     when 'Location'
@@ -99,9 +138,6 @@ module Users::Search
       end
       if options[:without_location_ids] # e.g. [1,3,5]
         without.update(:location_ids => options[:without_location_ids])
-      end
-      if options[:with_tag_ids] # e.g. [1,3,5]
-        with.update(:tag_ids => options[:with_tag_ids])
       end
       if options[:with_user_ids] # e.g. [1,2,5]
         with.update(:user_id => options[:with_user_ids])
