@@ -14,7 +14,7 @@ class CheckinTest < ActiveSupport::TestCase
   end
 
   def teardown
-    [Checkin, CheckinLog, Location, Country, State, City, User, Delayed::Job].each { |o| o.delete_all }
+    [Checkin, CheckinLog, Location, Locationship, Country, State, City, User, Delayed::Job].each { |o| o.delete_all }
   end
 
   context "import single foursquare checkin" do

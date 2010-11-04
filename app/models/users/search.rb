@@ -22,6 +22,12 @@ module Users::Search
     search(options)
   end
 
+  # search users or locations, filter by distance and matching location tags
+  def search_geo_tags(options={})
+    add_geo_params(options)
+    search_tags(options)
+  end
+
   # search users or locations, filter by matching location tags
   def search_tags(options={})
     # find user location tag ids
@@ -58,12 +64,6 @@ module Users::Search
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     options.update(:klass => User)
     search(options)
-  end
-
-  # search users or locations, filter by distance and matching location tags
-  def search_geo_tags(options={})
-    add_geo_params(options)
-    search_tags(options)
   end
 
   # search users, filter by distance and friends

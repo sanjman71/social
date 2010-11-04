@@ -16,23 +16,25 @@ class SuggestionFactory
       case algorithm
       when :checkins
         # find matches based on common checkin locations
-        users = user.search_checkins(:limit => @remaining, :without_user_ids => @without_user_ids)
+        users = user.search_checkins(:limit => @remaining, :without_user_ids => @without_user_ids, :klass => User)
         users.each { |u| @users_hash[u.id] = 'checkin'}
       when :geo_tags
         # find matches based on location tags within a specified radius from user
-        users = user.search_tags(:limit => @remaining, :without_user_ids => @without_user_ids, :miles => default_radius)
+        users = user.search_geo_tags(:limit => @remaining, :without_user_ids => @without_user_ids,
+                                     :miles => default_radius, :klass => User)
         users.each { |u| @users_hash[u.id] = 'radius_tag'}
       when :tags
         # find matches based on location tags
-        users = user.search_tags(:limit => @remaining, :without_user_ids => @without_user_ids)
+        users = user.search_tags(:limit => @remaining, :without_user_ids => @without_user_ids, :klass => User)
         users.each { |u| @users_hash[u.id] = 'tag'}
       when :geo
         # find matches based on radius from user
-        users = user.search_geo(:limit => @remaining, :without_user_ids => @without_user_ids, :miles => default_radius)
+        users = user.search_geo(:limit => @remaining, :without_user_ids => @without_user_ids,
+                                :miles => default_radius, :klass => User)
         users.each { |u| @users_hash[u.id] = 'radius'}
       when :gender
         # find matches based on user gender preferences
-        users = user.search_gender(:limit => @remaining, :without_user_ids => @without_user_ids)
+        users = user.search_gender(:limit => @remaining, :without_user_ids => @without_user_ids, :klass => User)
         users.each { |u| @users_hash[u.id] = 'gender'}
       else
         users = []
@@ -52,9 +54,14 @@ class SuggestionFactory
       @match = @users_hash[u.id]
       case @match
       when 'checkin'
-        # pick a (random) common location
-        @common   = u.locations.collect(&:id)
-        @location = user.locations.where('locations.id IN (%s)' % @common.join(',')).limit(1).order('rand()').first
+        @loc_ids  = u.locations.collect(&:id)
+        if @loc_ids.any?
+          # pick a (random) common location
+          @location = user.locations.where('locations.id IN (%s)' % @loc_ids.join(',')).limit(1).order('rand()').first
+        else
+          # pick a random location
+          @location = user.locations.limit(1).order('rand()').first
+        end
       else
         # pick a random location
         @location = user.locations.limit(1).order('rand()').first
