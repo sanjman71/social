@@ -9,8 +9,10 @@
     #checkin_name= I18n.t("home.stream.checkin_name", :user => user.handle, :location => location.name)
     #checkin_city= location.city
   .span-3.last.hide#checkin_action_wrapper
-    = link_to I18n.t("home.stream.plan_location"), '#', :class => 'admin', :id => 'plan_location', "data-path" => add_planned_location_path(location.id)
-    %span.hide#checkin_action_pending Updating
-    %span.hide#checkin_action_added Added
-    %br
-    = link_to I18n.t("home.stream.meet_user", :name => user.singular_object), '#', :class => 'admin', :id => 'meet_user'
+    - unless user == current_user
+      -# show actions for other user's checkins
+      = link_to I18n.t("home.stream.plan_location"), '#', :class => 'admin', :id => 'plan_location', "data-path" => add_planned_location_path(location.id)
+      %span.hide#checkin_action_pending Updating
+      %span.hide#checkin_action_added Added
+      %br
+      = link_to I18n.t("home.stream.meet_user", :name => user.singular_object), '#', :class => 'admin', :id => 'meet_user'
