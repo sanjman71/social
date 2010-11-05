@@ -81,16 +81,19 @@ class CheckinTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
         assert @checkin.valid?
+        # update checkin timestamp to make sure its created before any friends
+        @checkin.update_attribute(:created_at, @checkin.created_at - 1.month)
         # should add delayed job to update locationships
         assert_equal 1, match_delayed_jobs(/async_update_locationships/)
+        work_off_delayed_jobs(/async_update_locationships/)
         @location = @checkin.location
         # user adds friend
         @friend   = Factory.create(:user)
-        @user.friendships.create!(:friend => @friend)
-        # should add another delayed job to update locationships
-        assert_equal 2, match_delayed_jobs(/async_update_locationships/)
+        @fship    = @user.friendships.create!(:friend => @friend)
+        # should add (another) delayed job to update locationships
+        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
         work_off_delayed_jobs(/async_update_locationships/)
-        # should add friend locationship
+        # should add friend locationship with friend_checkins counter value
         assert_equal 1, @friend.locationships.count
         assert_equal [@location.id], @friend.locationships.collect(&:location_id)
         assert_equal [1], @friend.locationships.collect(&:friend_checkins)
