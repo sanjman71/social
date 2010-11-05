@@ -14,10 +14,14 @@ Social::Application.routes.draw do
   match 'oauth/:service/initiate', :to => "oauth#initiate", :as => :oauth_initiate
   match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
 
-  match 'users/:user_id/checkins', :to => "checkins#index", :as => :user_checkins
-  match 'checkins', :to => "checkins#index"
-  match 'checkins/:source/:source_id/count', :to => 'checkins#count', :as => :count_checkins
+  # checkin routes
+  match 'users/:user_id/checkins/:geo(/:radius)', :to => 'checkins#index',
+    :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_checkins
+  match 'users/:user_id/checkins/:city(/:radius)', :to => 'checkins#index',
+    :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_checkins
+  match 'users/:user_id/checkins', :to => "checkins#index"
   match 'checkins/poll', :to => "checkins#poll", :as => :poll_checkins
+
   match 'sightings', :to => "sightings#index"
   match 'accounts', :to => "accounts#index"
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]

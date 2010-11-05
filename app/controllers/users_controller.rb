@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :find_user, :only => [:edit, :show, :update]
+  respond_to    :html, :js, :json
 
   privilege_required 'admin', :only => [:sudo]
 

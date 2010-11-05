@@ -1,0 +1,5 @@
+@checkins.each do |checkin|
+  # add to objects collection; start with object hidden, then show by sliding down
+  page[".stream"].prepend(render(:partial => 'home/checkin', :locals => {:checkin => checkin, :visible => 'hide'}))
+  page["#checkin_#{checkin.id}"].slideDown(2000)
+end

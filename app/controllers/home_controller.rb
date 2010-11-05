@@ -3,16 +3,21 @@ class HomeController < ApplicationController
 
   # GET /
   def index
-    # find all user's oauths
-    @oauth = current_user.try(:oauths)
-
     if user_signed_in?
-      # find matching user profiles
-      @matches      = current_user.search_geo(:limit => 10, :miles => current_user.radius, :order => :checkins_tags,
-                                              :klass => User)
-      # find nearby locations
-      @locations    = current_user.search_geo(:limit => 2, :miles => current_user.radius, :klass => Location)
-      @max_objects  = @locations.size + 5
+      # find matching checkins
+      @checkins     = current_user.search_geo_checkins(:limit => checkins_start_count, :miles => current_user.radius,
+                                                       :order => :location_relevance, :klass => Checkin)
+      @locations    = @checkins.collect(&:location)
+      @users        = @checkins.collect(&:user)
+
+      # mark checkins from me and friends
+      
+      # # find matching user profiles
+      # @matches      = current_user.search_geo(:limit => 10, :miles => current_user.radius, :order => :checkins_tags,
+      #                                         :klass => User)
+      # # find nearby locations
+      # @locations    = current_user.search_geo(:limit => 2, :miles => current_user.radius, :klass => Location)
+      @max_objects  = checkins_end_count
     end
 
     # check for growl messages
@@ -40,6 +45,16 @@ class HomeController < ApplicationController
     # touch the database
     @user = User.first
     head(:ok)
+  end
+
+  protected
+  
+  def checkins_start_count
+    3
+  end
+
+  def checkins_end_count
+    8
   end
 
 end

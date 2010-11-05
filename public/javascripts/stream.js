@@ -1,4 +1,4 @@
-var stream_location_ids = new Array();
+var stream_checkin_ids  = [];
 var stream_timer_id     = 0;
 var stream_updating     = false;
 
@@ -16,13 +16,13 @@ $.fn.init_stream_map = function() {
 }
 
 $.fn.init_stream_objects = function() {
-  $(".stream .location, .stream .match").live('mouseover mouseout', function(event) {
+  $(".stream .location, .stream .match, .stream .checkin").live('mouseover mouseout', function(event) {
     if (event.type == 'mouseover') {
       $(this).addClass('hover');
-      $(this).find("#plan_location_wrapper,#user_toggle").show();
+      $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").show();
     } else {
       $(this).removeClass('hover');
-      $(this).find("#plan_location_wrapper,#user_toggle").hide();
+      $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").hide();
     }
   })
 
@@ -62,33 +62,33 @@ $.fn.init_stream_objects = function() {
 
 $.fn.init_stream_timer = function() {
 
-  if ($("div.stream div.location").length > 0) {
-    // initialize stream locations
-    $("div.stream div.location").each(function() {
+  if ($("div.stream div.checkin").length > 0) {
+    // initialize stream checkins
+    $("div.stream div.checkin").each(function() {
       id = $(this).attr('data-id');
-      stream_location_ids.push(id);
+      stream_checkin_ids.push(id);
     })
-    // console.log("initial stream: " + stream_location_ids.join(','));
+    // console.log("initial stream: " + stream_checkin_ids.join(','));
     // start interval timer
-    stream_timer_id = setInterval(addLocations, 3000);
+    stream_timer_id = setInterval(addCheckins, 5000);
     // console.log("stream timer id: " + stream_timer_id);
   }
 
-  // add unique locations
-  function addLocations() {
+  // add unique checkins
+  function addCheckins() {
     if (stream_updating) {
       // skip if stream is being updated
       // console.log("stream is updating");
       return;
     }
     stream_updating = true;
-    $.getScript(geo_locations_path+"?limit=1&without_location_ids="+stream_location_ids.join(','), function() {
-      // find the most recent location
-      location_id = $("div.stream div.location").first().attr('data-id');
-      stream_location_ids.push(location_id);
-      // console.log("current stream: " + stream_location_ids.join(','));
+    $.getScript(geo_checkins_path+"?limit=1&without_checkin_ids="+stream_checkin_ids.join(','), function() {
+      // find the most recent checkin
+      checkin_id = $("div.stream div.checkin").first().attr('data-id');
+      stream_checkin_ids.push(checkin_id);
+      // console.log("current stream: " + stream_checkin_ids.join(','));
       stream_updating = false;
-      if (stream_location_ids.length >= max_locations) {
+      if (stream_checkin_ids.length >= max_locations) {
         // cancel timer
         // console.log("cancelling interval timer");
         clearInterval(stream_timer_id);

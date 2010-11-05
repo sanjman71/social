@@ -150,8 +150,8 @@ module Users::Search
       if options[:with_checkin_ids] # e.g. [1,3,5]
         with.update(:checkin_ids => options[:with_checkin_ids])
       end
-      if options[:without_user_ids] # e.g. [1,2,3]
-        without.update(:user_ids => options[:without_user_ids])
+      if options[:without_checkin_ids] # e.g. [1,3,5]
+        without.update(:checkin_ids => options[:without_checkin_ids])
       end
     when 'Location'
     when 'User'
