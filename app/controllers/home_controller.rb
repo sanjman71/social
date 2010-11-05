@@ -7,9 +7,6 @@ class HomeController < ApplicationController
       # find matching checkins
       @checkins     = current_user.search_geo_checkins(:limit => checkins_start_count, :miles => current_user.radius,
                                                        :order => :location_relevance, :klass => Checkin)
-      @locations    = @checkins.collect(&:location)
-      @users        = @checkins.collect(&:user)
-
       # mark checkins from me and friends
       
       # # find matching user profiles

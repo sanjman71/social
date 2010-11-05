@@ -1,6 +1,6 @@
 class CheckinsController < ApplicationController
   before_filter       :authenticate_user!, :only => [:index]
-  before_filter       :init_user, :only => [:index]
+  before_filter       :find_user, :only => [:index]
   skip_before_filter  :check_beta, :only => :poll
   respond_to          :html, :json, :js
 
@@ -76,7 +76,7 @@ class CheckinsController < ApplicationController
 
   protected
 
-  def init_user
+  def find_user
     @user = params[:user_id] ? User.find(params[:user_id]) : current_user
   end
 
