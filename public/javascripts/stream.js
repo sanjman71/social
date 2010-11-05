@@ -64,14 +64,19 @@ $.fn.init_stream_timer = function() {
 
   if ($("div.stream div.checkin").length > 0) {
     // initialize stream checkins
-    $("div.stream div.checkin").each(function() {
-      id = $(this).attr('data-id');
-      stream_checkin_ids.push(id);
-    })
+    countCheckins();
     // console.log("initial stream: " + stream_checkin_ids.join(','));
     // start interval timer
     stream_timer_id = setInterval(addCheckins, 5000);
     // console.log("stream timer id: " + stream_timer_id);
+  }
+
+  function countCheckins() {
+    $("div.stream div.checkin.not-counted").each(function() {
+      id = $(this).attr('data-id');
+      stream_checkin_ids.push(id);
+      $(this).removeClass('not-counted').addClass('counted');
+    })
   }
 
   // add unique checkins
@@ -83,9 +88,8 @@ $.fn.init_stream_timer = function() {
     }
     stream_updating = true;
     $.getScript(geo_checkins_path+"?limit=1&without_checkin_ids="+stream_checkin_ids.join(','), function() {
-      // find the most recent checkin
-      checkin_id = $("div.stream div.checkin").first().attr('data-id');
-      stream_checkin_ids.push(checkin_id);
+      // find the most recent checkin(s)
+      countCheckins();
       // console.log("current stream: " + stream_checkin_ids.join(','));
       stream_updating = false;
       if (stream_checkin_ids.length >= max_locations) {
