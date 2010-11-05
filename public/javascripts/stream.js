@@ -39,22 +39,22 @@ $.fn.init_stream_objects = function() {
   })
 
   // 
-  $("a#plan_location").live('click', function() {
-    parent = $(this).parents(".location");
+  $("a#checkin_plan").live('click', function() {
+    parent = $(this).parents(".checkin");
     path   = $(this).attr('data-path');
     // console.log("path: " + path);
     $.put(path, {}, function(data) {
       // update interface
-      $(parent).find("#plan_location_pending").remove();
-      $(parent).find("#plan_location_added").removeClass('hide');
+      $(parent).find("#checkin_plan_pending").addClass('hide')
+      $(parent).find("#checkin_plan_added").removeClass('hide');
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);
       }
     }, 'json');
     // update interface
-    $(parent).find("#plan_location_pending").removeClass('hide');
-    $(parent).find("#plan_location_wrapper").remove();
+    $(parent).find("#checkin_plan_pending").removeClass('hide');
+    $(this).hide();
     //$("#plan_location_dialog").dialog('open');
     return false;
   })

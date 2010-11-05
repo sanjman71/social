@@ -5,12 +5,13 @@
 .stream .location                   { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
 .stream .location.hover             { background-color: #efefef; }
 .stream .location #location_name    { color: #0000BB; }
-.stream .location #plan_location_pending
-                                    { font-size: 0.9em; color: #bbb; }
-.stream .location #plan_location_added
-                                    { font-size: 0.9em; color: #333; }
-                                    
+
 .stream .checkin                    { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
 .stream .checkin.hover              { background-color: #efefef; }
 .stream .checkin #checkin_name      { color: #0000BB; }
 .stream .checkin #checkin_city      { color: #333; }
+.stream .checkin #checkin_plan_pending
+                                    { font-size: 0.9em; color: #bbb; }
+.stream .checkin #checkin_plan_added
+                                    { font-size: 0.9em; color: #333; }
+                                    

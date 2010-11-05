@@ -13,7 +13,7 @@ module Users::Search
       # find user location ids
       loc_ids = locations.collect(&:id)
       options.update(:with_location_ids => [loc_ids]) unless options[:with_location_ids]
-      options.update(:with_gender => default_gender) unless options[:with_gender]
+      options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     end
     # with_my_checkins includes all user checkin data in the search
     unless (options[:without_user_ids] or options[:with_my_checkins])
@@ -43,7 +43,7 @@ module Users::Search
       loc_ids = locationships.my_checkins.collect(&:location_id)
       options.update(:without_location_ids => [loc_ids])
     when 'User'
-      options.update(:with_gender => default_gender) unless options[:with_gender]
+      options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
       # exclude user
       options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     else
@@ -60,7 +60,7 @@ module Users::Search
 
   # search users, filter by gender
   def search_gender(options={})
-    options.update(:with_gender => default_gender) unless options[:with_gender]
+    options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     options.update(:klass => User)
     search(options)
@@ -97,7 +97,7 @@ module Users::Search
     case options[:klass].to_s
     when 'Location'
     when 'User'
-      options.update(:with_gender => default_gender) unless options[:with_gender]
+      options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     end
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
@@ -265,7 +265,7 @@ module Users::Search
     sort_expr
   end
 
-  def default_gender
+  def my_gender_orientation
     return 1 if self.gender == 2
     return 2 if self.gender == 1
     return 0

@@ -7,8 +7,8 @@ class Locationship < ActiveRecord::Base
   after_create  :event_locationship_created
 
   scope         :my_checkins, where(:my_checkins.gt => 0)
-  scope         :friend_checkins, where(:friend_checkins.gt => 0)
   scope         :planned_checkins, where(:planned_checkins.gt => 0)
+  scope         :friend_checkins, where(:friend_checkins.gt => 0)
 
   # after create filter
   def event_locationship_created
