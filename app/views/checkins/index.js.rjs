@@ -2,4 +2,10 @@
   # add to objects collection; start with object hidden, then show by sliding down
   page[".stream"].prepend(render(:partial => 'home/checkin', :locals => {:checkin => checkin, :visible => 'hide'}))
   page["#checkin_#{checkin.id}"].slideDown(2000)
+  # add new map location
+  page["#map-side-bar"].append(render(:partial => 'locations/locations_map',
+                                      :locals => {:locations => [checkin.location], :category => 'async'}))
 end
+
+# update map
+page['#map'].jMapping('update');
