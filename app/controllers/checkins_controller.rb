@@ -6,19 +6,22 @@ class CheckinsController < ApplicationController
 
   # GET /users/1/checkins
   # GET /users/1/checkins/geo:1.23..-23.89/radius:10?limit=5&without_checkin_ids=1,5,3
-  # GET /users/1/checkins/city:chicago?limit=5&without_checkin_ids=1,5,3&with_my_checkins=1
+  # GET /users/1/checkins/city:chicago?limit=5&without_checkin_ids=1,5,3
+  # GET /users/1/checkins?with_my_checkins=1
+  # GET /users/1/checkins?order=all
   def index
     # parse general parameters
     @without_checkin_ids  = params[:without_checkin_ids] ? params[:without_checkin_ids].split(',').map(&:to_i).uniq.sort : nil
     @without_user_ids     = params[:without_user_ids] ? params[:without_user_ids].split(',').map(&:to_i).uniq.sort : nil
     @without_loc_ids      = params[:without_location_ids] ? params[:without_location_ids].split(',').map(&:to_i).uniq.sort : nil
     @with_my_checkins     = params[:with_my_checkins] ? params[:with_my_checkins].to_i : nil
+    @order                = params[:order].to_s == 'all' ? [:sort_similar_checkins, :sort_other_checkins] : nil
     @limit                = params[:limit] ? params[:limit].to_i : 2**30
     @options              = Hash[:without_checkin_ids => @without_checkin_ids,
                                  :without_user_ids => @without_user_ids,
                                  :without_location_ids => @without_loc_ids,
                                  :with_my_checkins => @with_my_checkins,
-                                 :limit => @limit, :klass => Checkin]
+                                 :order => @order, :limit => @limit, :klass => Checkin]
 
     case
     when params[:geo]

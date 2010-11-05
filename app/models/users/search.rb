@@ -166,11 +166,20 @@ module Users::Search
       with['@geodist']  = options[:geo_distance]  # e.g. 0.0..5000.0 (in meters, must be floats)
     end
 
-    if options[:order]
-      case options[:order]
-      when :location_relevance
-        sort_order = send("order_#{options[:order].to_s}")
-      end
+    sort_orders = Array(options[:order])
+    if sort_orders.any?
+      # build sort expressions
+      sort_exprs = sort_orders.collect do |order|
+        case order
+        when :sort_similar_locations
+          send(order.to_s)
+        when :sort_other_checkins
+          send(order.to_s)
+        else
+          nil
+        end
+      end.compact
+      sort_order  = sort_exprs.join(' + ')
       sort_mode   = :expr
     else
       # default sort
@@ -178,10 +187,10 @@ module Users::Search
       sort_order  = geo.blank? ? "@relevance DESC" : "@geodist ASC, @relevance DESC"
     end
 
-    args        = Hash[:without => without, :with => with, :conditions => conditions, :match_mode => :extended,
-                       :sort_mode => sort_mode, :order => sort_order,
-                       :page => page, :per_page => per_page].update(geo)
-    objects     = klass.send(method, query, args)
+    args    = Hash[:without => without, :with => with, :conditions => conditions, :match_mode => :extended,
+                   :sort_mode => sort_mode, :order => sort_order,
+                   :page => page, :per_page => per_page].update(geo)
+    objects = klass.send(method, query, args)
     begin
       objects.results # query sphinx and populate results
       objects.each do |o|
@@ -212,7 +221,7 @@ module Users::Search
           :location
         when 3.0..5.0
           case order
-          when :location_relevance
+          when :sort_similar_locations
             :tag
           else
             default
@@ -230,7 +239,11 @@ module Users::Search
     end
   end
 
-  def order_location_relevance(options={})
+  # weight locations:
+  # 1. user has checked in at
+  # 2. user plans to go to
+  # 3. location tags that user has been to
+  def sort_similar_locations(options={})
     sort_expr = []
     if (my_checkin_loc_ids = locationships.my_checkins.collect(&:location_id)).any?
       sort_expr.push("5 * IN(location_ids, %s)" % my_checkin_loc_ids.join(','))
@@ -241,7 +254,15 @@ module Users::Search
     if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
       sort_expr.push("3 * IN(tag_ids, %s)" % tag_ids.join(','))
     end
-    sort_expr.join(" + ")
+    sort_expr
+  end
+
+  # negatively weight user checkins
+  def sort_other_checkins(options={})
+    sort_expr = []
+    my_checkin_ids = checkins.collect(&:id)
+    sort_expr.push("-10 * IN(checkin_ids, %s)" % my_checkin_ids.join(','))
+    sort_expr
   end
 
   def default_gender

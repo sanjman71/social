@@ -76,28 +76,43 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_male1.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
     end
 
-    should "find 2 checkins filtered by distance, ordered by location relevance" do
+    should "find 2 checkins filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
         @checkins = @chicago_male1.search_geo_checkins(:miles => 50, :klass => Checkin,
-                                                       :order => :location_relevance)
+                                                       :order => :sort_similar_locations)
         assert_equal 2, @checkins.size
         assert_equal [@checkin3, @checkin2], @checkins.collect{ |o| o }
         assert_equal [:location, :tag], @checkins.collect{ |o| o.try(:matchby) }
       end
     end
 
-    should "find 4 checkins filtered by distance, with my checkins included" do
+    should "find 4 checkins (with my checkins) filtered by distance" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_geo_checkins(:miles => 50, :klass => Checkin, :with_my_checkins => 1,
-                                                       :order => :location_relevance)
+        @checkins = @chicago_male1.search_geo_checkins(:miles => 50, :klass => Checkin,
+                                                       :with_my_checkins => 1,
+                                                       :order => :sort_similar_locations)
         assert_equal 4, @checkins.size
         assert_equal [@checkin1, @checkin3, @checkin5, @checkin2], @checkins.collect{ |o| o }
         assert_equal [:location, :location, :location, :tag], @checkins.collect{ |o| o.try(:matchby) }
         assert_equal [8.0, 8.0, 5.0, 3.0], @checkins.collect(&:matchvalue)
+      end
+    end
+    
+    should "find 4 checkins (with my checkins) filtered by distance, ordered by similar locations + other checkins" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_male1.search_geo_checkins(:miles => 50, :klass => Checkin,
+                                                       :with_my_checkins => 1,
+                                                       :order => [:sort_similar_locations, :sort_other_checkins])
+        assert_equal 4, @checkins.size
+        assert_equal [@checkin3, @checkin2, @checkin1, @checkin5], @checkins.collect{ |o| o }
+        # assert_equal [:location, :location, :location, :tag], @checkins.collect{ |o| o.try(:matchby) }
+        # assert_equal [8.0, 3.0, 5.0, 3.0], @checkins.collect(&:matchvalue)
       end
     end
   end
@@ -115,11 +130,11 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_male1.locationships.create!(:location => @chicago_pizza, :friend_checkins => 1)
     end
 
-    should "find 3 users filtered by checkins, ordered by location relevance" do
+    should "find 3 users filtered by checkins, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @users = @chicago_male1.search_checkins(:order => :location_relevance, :klass => User)
+        @users = @chicago_male1.search_checkins(:order => :sort_similar_locations, :klass => User)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
         assert_equal [:location, :location, :filter], @users.collect(&:matchby)
@@ -232,11 +247,11 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     end
 
-    should "find 3 users filtered by distance, ordered by location relevance" do
+    should "find 3 users filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @users = @chicago_male1.search_geo(:miles => 10, :order => :location_relevance, :klass => User)
+        @users = @chicago_male1.search_geo(:miles => 10, :order => :sort_similar_locations, :klass => User)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
         assert_equal [:location, :tag, :geo_filter], @users.collect(&:matchby)
