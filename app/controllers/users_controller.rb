@@ -13,7 +13,7 @@ class UsersController < ApplicationController
     # check general parameters
     @without_user_ids = params[:without_user_ids] ? params[:without_user_ids].split(',').map(&:to_i).uniq.sort : nil
     @limit            = params[:limit] ? params[:limit].to_i : 5
-    @options          = Hash[:without_user_ids => @without_user_ids, :limit => @limit, :klass => User]
+    @options          = Hash[:without_user_ids => @without_user_ids, :limit => @limit]
 
     case
     when params[:geo]
@@ -21,13 +21,13 @@ class UsersController < ApplicationController
       @radius       = find_radius
       @options.update(:geo_origin => [@lat.radians, @lng.radians],
                       :geo_distance => 0.0..@radius.miles.meters.value)
-      @users        = current_user.search_geo(@options)
+      @users        = current_user.search_users(@options)
     when params[:city]
       @city         = find_city
       @radius       = find_radius
       @options.update(:geo_origin => [@city.lat.radians, @city.lng.radians],
                       :geo_distance => 0.0..@radius.miles.meters.value)
-      @users        = current_user.search_geo(@options)
+      @users        = current_user.search_users(@options)
     else
       @users        = User.all
     end
@@ -46,7 +46,7 @@ class UsersController < ApplicationController
     @checkins = @user.checkins.order("checkin_at desc")
 
     # find matching user profiles
-    @matches  = @user.search_geo(:limit => 20, :miles => @user.radius, :order => :checkins_tags, :klass => User)
+    @matches  = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
 
     # find user badges
     @badges   = @user.badges.order("badges.name asc")

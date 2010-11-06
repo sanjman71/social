@@ -16,25 +16,25 @@ class SuggestionFactory
       case algorithm
       when :checkins
         # find matches based on common checkin locations
-        users = user.search_checkins(:limit => @remaining, :without_user_ids => @without_user_ids, :klass => User)
+        users = user.search_daters_by_checkins(:limit => @remaining, :without_user_ids => @without_user_ids)
         users.each { |u| @users_hash[u.id] = 'checkin'}
       when :geo_tags
         # find matches based on location tags within a specified radius from user
-        users = user.search_geo_tags(:limit => @remaining, :without_user_ids => @without_user_ids,
-                                     :miles => default_radius, :klass => User)
+        users = user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids,
+                                           :miles => default_radius)
         users.each { |u| @users_hash[u.id] = 'radius_tag'}
       when :tags
         # find matches based on location tags
-        users = user.search_tags(:limit => @remaining, :without_user_ids => @without_user_ids, :klass => User)
+        users = user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids)
         users.each { |u| @users_hash[u.id] = 'tag'}
       when :geo
         # find matches based on radius from user
-        users = user.search_geo(:limit => @remaining, :without_user_ids => @without_user_ids,
-                                :miles => default_radius, :klass => User)
+        users = user.search_users(:limit => @remaining, :without_user_ids => @without_user_ids,
+                                  :miles => default_radius)
         users.each { |u| @users_hash[u.id] = 'radius'}
       when :gender
         # find matches based on user gender preferences
-        users = user.search_gender(:limit => @remaining, :without_user_ids => @without_user_ids, :klass => User)
+        users = user.search_gender(:limit => @remaining, :without_user_ids => @without_user_ids)
         users.each { |u| @users_hash[u.id] = 'gender'}
       else
         users = []
