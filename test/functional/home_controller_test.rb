@@ -30,7 +30,7 @@ class HomeControllerTest < ActionController::TestCase
     should "use sesssion[:current_stream]" do
       set_beta
       sign_in @user
-      session[:current_stream] = 'friends-stream'
+      session[:current_stream] = 'friends'
       get :index
       assert assigns(:method)
       assert assigns(:checkins)

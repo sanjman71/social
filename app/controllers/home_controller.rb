@@ -60,8 +60,7 @@ class HomeController < ApplicationController
   end
 
   def current_stream
-    session[:current_stream] ||= 'my-stream'
-    session[:current_stream].match(/([a-z]+)-.+/).try(:[], 1)
+    session[:current_stream] ||= 'my'
   end
 
 end

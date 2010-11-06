@@ -14,7 +14,7 @@
       - if current_user.locationships.where({:my_checkins.gt => 0} | {:planned_checkins.gt => 0}, :location_id => location.id).count == 0
         -# user has not checked in here or plans to go here
         = link_to I18n.t("home.stream.plan_location"), '#', :class => 'admin', :id => 'checkin_plan', "data-path" => add_planned_location_path(location.id)
-        %span.hide#checkin_plan_pending Updating
+        %span.hide#checkin_plan_pending Updating ...
         %span.hide#checkin_plan_added Added
         %br
       -# show meet him/her link
