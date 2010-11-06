@@ -6,5 +6,5 @@ when 'development'
   FRIEND_LIMIT      = 10
 else
   IMPORT_FRIENDS    = 1
-  FRIEND_LIMIT      = 10
+  FRIEND_LIMIT      = 50
 end
