@@ -15,7 +15,7 @@ class HomeControllerTest < ActionController::TestCase
     should "allow guests" do
       set_beta
       get :index
-      assert_template "home/index.html.haml"
+      assert_template "home/index"
     end
 
     should "use default stream" do
