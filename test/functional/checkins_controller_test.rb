@@ -35,54 +35,45 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search all checkins" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :search => 'all'
-      assert_equal 'all', assigns(:search)
-      assert_equal 'search_geo_all_checkins', assigns(:method)
-      assert_equal @chicago1, assigns(:user)
-    end
-
-    should "search geo all checkins" do
-      sign_in @chicago1
-      set_beta
       get :index, :user_id => @chicago1.id, :city => "city:chicago", :radius => "radius:50", :search => 'all'
       assert_equal 'all', assigns(:search)
-      assert_equal 'search_geo_all_checkins', assigns(:method)
+      assert_equal 'search_all_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
     end
 
-    should "search geo dater checkins" do
+    should "search dater checkins" do
       sign_in @chicago1
       set_beta
       get :index, :user_id => @chicago1.id, :city => "city:chicago", :radius => "radius:50", :search => 'daters'
       assert_equal 'daters', assigns(:search)
-      assert_equal 'search_geo_daters_checkins', assigns(:method)
+      assert_equal 'search_daters_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
     end
     
-    should "search geo my checkins" do
+    should "search my checkins" do
       sign_in @chicago1
       set_beta
       get :index, :user_id => @chicago1.id, :city => "city:chicago", :radius => "radius:50", :search => 'my'
       assert_equal 'my', assigns(:search)
-      assert_equal 'search_geo_my_checkins', assigns(:method)
+      assert_equal 'search_my_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
     end
     
-    should "search geo other checkins" do
+    should "search other checkins" do
       sign_in @chicago1
       set_beta
       get :index, :user_id => @chicago1.id, :city => "city:chicago", :radius => "radius:50", :search => 'others'
       assert_equal 'others', assigns(:search)
-      assert_equal 'search_geo_others_checkins', assigns(:method)
+      assert_equal 'search_others_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
     end
     
-    should "search geo friend checkins" do
+    should "search friend checkins" do
       sign_in @chicago1
       set_beta
       get :index, :user_id => @chicago1.id, :city => "city:chicago", :radius => "radius:50", :search => 'friends'
       assert_equal 'friends', assigns(:search)
-      assert_equal 'search_geo_friends_checkins', assigns(:method)
+      assert_equal 'search_friends_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
     end
   end

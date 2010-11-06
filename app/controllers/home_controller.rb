@@ -6,17 +6,12 @@ class HomeController < ApplicationController
     if user_signed_in?
       # find matching checkins
       @stream       = current_stream
-      @method       = "search_geo_#{@stream}_checkins"
+      @method       = "search_#{@stream}_checkins"
       @checkins     = current_user.send(@method, :limit => checkins_start_count,
                                                  :miles => current_user.radius,
                                                  :order => [:sort_similar_locations])
       # mark checkins from me and friends
       
-      # # find matching user profiles
-      # @matches      = current_user.search_geo(:limit => 10, :miles => current_user.radius, :order => :checkins_tags,
-      #                                         :klass => User)
-      # # find nearby locations
-      # @locations    = current_user.search_geo(:limit => 2, :miles => current_user.radius, :klass => Location)
       @max_objects  = checkins_end_count
     end
 

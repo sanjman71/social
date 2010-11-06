@@ -1,28 +1,28 @@
 module Users::Search
 
-  def search_geo_all_checkins(options={})
+  def search_all_checkins(options={})
     add_geo_params(options)
     # include my checkins and friend checkins
     search_checkins(options)
   end
 
-  def search_geo_my_checkins(options={})
+  def search_my_checkins(options={})
     add_geo_params(options)
     # exclude my checkins
     options.update(:with_user_ids => [self.id]) unless options[:with_user_ids]
     search_checkins(options)
   end
   
-  def search_geo_other_checkins(options={})
+  def search_other_checkins(options={})
     add_geo_params(options)
     # exclude my checkins
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search_checkins(options)
   end
 
-  alias :search_geo_others_checkins :search_geo_other_checkins
+  alias :search_others_checkins :search_other_checkins
 
-  def search_geo_friend_checkins(options={})
+  def search_friend_checkins(options={})
     add_geo_params(options)
     # include only friend checkins
     unless options[:with_user_ids]
@@ -33,9 +33,9 @@ module Users::Search
     search_checkins(options)
   end
 
-  alias :search_geo_friends_checkins :search_geo_friend_checkins
+  alias :search_friends_checkins :search_friend_checkins
 
-  def search_geo_dater_checkins(options={})
+  def search_dater_checkins(options={})
     add_geo_params(options)
     # exclude my checkins
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
@@ -44,7 +44,7 @@ module Users::Search
     search_checkins(options)
   end
 
-  alias :search_geo_daters_checkins :search_geo_dater_checkins
+  alias :search_daters_checkins :search_dater_checkins
 
   # search checkins
   def search_checkins(options={})

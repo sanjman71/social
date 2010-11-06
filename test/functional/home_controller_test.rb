@@ -12,6 +12,12 @@ class HomeControllerTest < ActionController::TestCase
   end
 
   context "index" do
+    should "allow guests" do
+      set_beta
+      get :index
+      assert_template "home/index.html.haml"
+    end
+
     should "use default stream" do
       set_beta
       sign_in @user
