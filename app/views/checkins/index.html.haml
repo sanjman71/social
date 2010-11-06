@@ -7,7 +7,8 @@
 %hr.space
 
 .span-24.last#sightings
-  - @checkins.each_pair do |source, checkins|
+  - @checkin_groups = @checkins.group_by(&:source_type)
+  - @checkin_groups.each_pair do |source, checkins|
     .span-23.prepend-1.last{:style => 'padding-bottom: 15px;'}
       %h2.bottom
         = source

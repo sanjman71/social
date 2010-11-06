@@ -5,8 +5,11 @@ class HomeController < ApplicationController
   def index
     if user_signed_in?
       # find matching checkins
-      @checkins     = current_user.search_geo_checkins(:limit => checkins_start_count, :miles => current_user.radius,
-                                                       :order => [:sort_similar_locations], :klass => Checkin)
+      @stream       = current_stream
+      @method       = "search_geo_#{@stream}_checkins"
+      @checkins     = current_user.send(@method, :limit => checkins_start_count,
+                                                 :miles => current_user.radius,
+                                                 :order => [:sort_similar_locations])
       # mark checkins from me and friends
       
       # # find matching user profiles
@@ -44,6 +47,13 @@ class HomeController < ApplicationController
     head(:ok)
   end
 
+  # PUT /stream?name='daters'
+  def stream
+    # change the user's stream
+    session[:current_stream] = params[:name]
+    redirect_to root_path and return
+  end
+
   protected
   
   def checkins_start_count
@@ -52,6 +62,11 @@ class HomeController < ApplicationController
 
   def checkins_end_count
     8
+  end
+
+  def current_stream
+    session[:current_stream] ||= 'my-stream'
+    session[:current_stream].match(/([a-z]+)-.+/).try(:[], 1)
   end
 
 end

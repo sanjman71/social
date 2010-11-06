@@ -15,11 +15,11 @@ Social::Application.routes.draw do
   match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
 
   # checkin routes
-  match 'users/:user_id/checkins/:geo(/:radius)', :to => 'checkins#index',
+  match 'users/:user_id/checkins/:geo/:radius(/:search)', :to => 'checkins#index',
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_checkins
-  match 'users/:user_id/checkins/:city(/:radius)', :to => 'checkins#index',
+  match 'users/:user_id/checkins/:city/:radius(/:search)', :to => 'checkins#index',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_checkins
-  match 'users/:user_id/checkins', :to => "checkins#index"
+  match 'users/:user_id/checkins(/:search)', :to => "checkins#index"
   match 'checkins/poll', :to => "checkins#poll", :as => :poll_checkins
 
   match 'sightings', :to => "sightings#index"
@@ -73,6 +73,7 @@ Social::Application.routes.draw do
 
   match 'ping', :to => "home#ping", :via => [:get]
   match 'beta', :to => "home#beta", :via => [:get, :post]
+  match 'stream', :to => "home#stream", :via => [:put], :as => :home_stream
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

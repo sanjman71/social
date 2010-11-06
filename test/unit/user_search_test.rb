@@ -55,60 +55,50 @@ class UserSearchTest < ActiveSupport::TestCase
     [Checkin, CheckinLog, Location, Country, State, City, User].each { |o| o.delete_all }
   end
 
-  context "search_geo_checkins filter" do
+  def setup_checkins
+    # create checkins
+    @checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                       :location => @chicago_sbux))
+    @checkin2 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                         :location => @chicago_coffee))
+    @checkin3 = @chicago_male2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                       :location => @chicago_sbux))
+    @checkin4 = @newyork_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                         :location => @newyork_sbux))
+    @checkin5 = @chicago_male1.checkins.create!(Factory.attributes_for(:facebook_checkin,
+                                                                       :location => @chicago_pizza))
+    # create locationships based on checkins
+    @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+    @chicago_female1.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
+    @chicago_male2.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+    @newyork_female1.locationships.create!(:location => @newyork_sbux, :my_checkins => 1)
+    @chicago_male1.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
+  end
+
+  context "search_geo_all_checkins filter" do
     setup do
-      # create checkins
-      @checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                         :location => @chicago_sbux))
-      @checkin2 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                           :location => @chicago_coffee))
-      @checkin3 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                           :location => @chicago_sbux))
-      @checkin4 = @newyork_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                           :location => @newyork_sbux))
-      @checkin5 = @chicago_male1.checkins.create!(Factory.attributes_for(:facebook_checkin,
-                                                                         :location => @chicago_pizza))
-      # create locationships
-      @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      @chicago_female1.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
-      @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      @newyork_female1.locationships.create!(:location => @newyork_sbux, :my_checkins => 1)
-      @chicago_male1.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
+      setup_checkins
     end
 
-    should "find 2 checkins filtered by distance, ordered by similar locations" do
+    should "find 4 checkins filtered by distance" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_geo_checkins(:miles => 50, :klass => Checkin,
-                                                       :order => :sort_similar_locations)
-        assert_equal 2, @checkins.size
-        assert_equal [@checkin3, @checkin2], @checkins.collect{ |o| o }
-        assert_equal [:location, :tag], @checkins.collect{ |o| o.try(:matchby) }
-      end
-    end
-
-    should "find 4 checkins (with my checkins) filtered by distance" do
-      ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
-        @checkins = @chicago_male1.search_geo_checkins(:miles => 50, :klass => Checkin,
-                                                       :with_my_checkins => 1,
-                                                       :order => :sort_similar_locations)
+        @checkins = @chicago_male1.search_geo_all_checkins(:miles => 50,
+                                                           :order => :sort_similar_locations)
         assert_equal 4, @checkins.size
         assert_equal [@checkin1, @checkin3, @checkin5, @checkin2], @checkins.collect{ |o| o }
-        assert_equal [:location, :location, :location, :tag], @checkins.collect{ |o| o.try(:matchby) }
-        assert_equal [8.0, 8.0, 5.0, 3.0], @checkins.collect(&:matchvalue)
+        # assert_equal [:location, :location, :location, :tag], @checkins.collect{ |o| o.try(:matchby) }
+        # assert_equal [8.0, 8.0, 5.0, 3.0], @checkins.collect(&:matchvalue)
       end
     end
-    
-    should "find 4 checkins (with my checkins) filtered by distance, ordered by similar locations + other checkins" do
+
+    should "find 4 checkins filtered by distance, ordered by similar locations + other checkins" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_geo_checkins(:miles => 50, :klass => Checkin,
-                                                       :with_my_checkins => 1,
-                                                       :order => [:sort_similar_locations, :sort_other_checkins])
+        @checkins = @chicago_male1.search_geo_all_checkins(:miles => 50,
+                                                           :order => [:sort_similar_locations, :sort_other_checkins])
         assert_equal 4, @checkins.size
         assert_equal [@checkin3, @checkin2, @checkin1, @checkin5], @checkins.collect{ |o| o }
         # assert_equal [:location, :location, :location, :tag], @checkins.collect{ |o| o.try(:matchby) }
@@ -116,10 +106,68 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
   end
-  
-  context "search_checkins filter" do
+
+  context "search_geo_other_checkins filter" do
     setup do
-      # 3 female chicago users + 1 boston female user checkin to different locations
+      setup_checkins
+    end
+
+    should "find 2 checkins filtered by distance, ordered by similar locations" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_male1.search_geo_other_checkins(:miles => 50,
+                                                             :order => :sort_similar_locations)
+        assert_equal 2, @checkins.size
+        assert_equal [@checkin3, @checkin2], @checkins.collect{ |o| o }
+        assert_equal [:location, :tag], @checkins.collect{ |o| o.try(:matchby) }
+      end
+    end
+  end
+  
+  context "search_geo_friend_checkins filter" do
+    setup do
+      setup_checkins
+      # add friends
+      @chicago_male1.friendships.create!(:friend => @chicago_female1)
+      @chicago_male1.friendships.create!(:friend => @chicago_male2)
+    end
+
+    should "find 2 checkins filtered by distance, ordered by similar locations" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_male1.search_geo_friend_checkins(:miles => 50,
+                                                              :order => :sort_similar_locations)
+        assert_equal 2, @checkins.size
+        assert_equal [@checkin3, @checkin2], @checkins.collect{ |o| o }
+      end
+    end
+  end
+
+  context "search_geo_dater_checkins filter" do
+    setup do
+      setup_checkins
+      # add friends
+      @chicago_male1.friendships.create!(:friend => @chicago_female1)
+      @chicago_male1.friendships.create!(:friend => @chicago_male2)
+    end
+
+    should "find 1 checkin filtered by distance, ordered by similar locations" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_male1.search_geo_dater_checkins(:miles => 50,
+                                                             :order => :sort_similar_locations)
+        assert_equal 1, @checkins.size
+        assert_equal [@checkin2], @checkins.collect{ |o| o }
+      end
+    end
+  end
+
+  context "search_dater_users_by_checkins filter" do
+    setup do
+      # 3 female chicago users + 1 boston female user checkins at different locations
       @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
       @chicago_female2.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
       @chicago_female3.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
@@ -130,11 +178,11 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_male1.locationships.create!(:location => @chicago_pizza, :friend_checkins => 1)
     end
 
-    should "find 3 users filtered by checkins, ordered by similar locations" do
+    should "find 3 users filtered by checkin locations, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @users = @chicago_male1.search_checkins(:order => :sort_similar_locations, :klass => User)
+        @users = @chicago_male1.search_dater_users_by_checkins(:order => :sort_similar_locations)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
         assert_equal [:location, :location, :filter], @users.collect(&:matchby)
@@ -143,12 +191,12 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
-  context "search_geo_tags filter" do
+  context "search_locations_by_tags filter" do
     should "find 0 locations with same tags when user has no checkin location tags" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @locations = @chicago_male1.search_geo_tags(:klass => Location)
+        @locations = @chicago_male1.search_locations_by_tags
         assert_equal 0, @locations.size
       end
     end
@@ -158,29 +206,7 @@ class UserSearchTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @locations = @chicago_male1.search_geo_tags(:klass => Location)
-        assert_equal 3, @locations.size
-        assert_equal [@chicago_coffee, @boston_sbux, @boston_coffee], @locations.collect{ |o| o }
-      end
-    end
-  end
-
-  context "search_tags filter" do
-    should "find 0 locations with same tags when user has no checkin location tags" do
-      ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
-        @locations = @chicago_male1.search_tags(:klass => Location)
-        assert_equal 0, @locations.size
-      end
-    end
-
-    should "find 3 locations with same tags when user has checkin location tags" do
-      @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
-        @locations = @chicago_male1.search_tags(:klass => Location)
+        @locations = @chicago_male1.search_locations_by_tags
         assert_equal 3, @locations.size
         assert_equal [@chicago_coffee, @boston_sbux, @boston_coffee], @locations.collect{ |o| o }
       end
@@ -197,43 +223,43 @@ class UserSearchTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @users = @chicago_male1.search_geo_friends(:miles => 10, :klass => User)
+        @users = @chicago_male1.search_geo_friends(:miles => 10)
         assert_equal 2, @users.size
         assert_equal [@chicago_female1, @chicago_male2], @users.collect{ |o| o }
       end
     end
   end
 
-  context "search_geo_friend_checkins filter" do
+  context "search_friend_users_by_checkins filter" do
     setup do
       # 2 female chicago users + 1 chicago male user checkin to different locations
       @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
       @chicago_female2.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
       @chicago_male2.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
-      # chicago searcher has 1 friend checkin location
+      # chicago searcher has 2 friend checkin location
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :friend_checkins => 1)
       @chicago_male1.locationships.create!(:location => @chicago_pizza, :friend_checkins => 1)
     end
-
+  
     should "find 2 users filtered by friend checkins" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @users = @chicago_male1.search_geo_friend_checkins(:miles => 10, :klass => User)
+        @users = @chicago_male1.search_friend_users_by_checkins
         assert_equal 2, @users.size
-        assert_equal [@chicago_female1, @chicago_male2], @users.collect{ |o| o }
+        assert_equal [@chicago_male2, @chicago_female1], @users.collect{ |o| o }
       end
     end
-
-    should "find 2 locations filtered by friend checkins" do
-      ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
-        @locations = @chicago_male1.search_geo_friend_checkins(:miles => 10, :klass => Location)
-        assert_equal 2, @locations.size
-        assert_equal [@chicago_sbux, @chicago_pizza], @locations.collect{ |o| o }
-      end
-    end
+  
+    # should "find 2 locations filtered by friend checkins" do
+    #   ThinkingSphinx::Test.run do
+    #     ThinkingSphinx::Test.index
+    #     sleep(0.25)
+    #     @locations = @chicago_male1.search_geo_friend_checkins(:miles => 10, :klass => Location)
+    #     assert_equal 2, @locations.size
+    #     assert_equal [@chicago_sbux, @chicago_pizza], @locations.collect{ |o| o }
+    #   end
+    # end
   end
 
   context "search_geo filter" do

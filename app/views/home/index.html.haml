@@ -38,7 +38,16 @@
   -# column titles
   .span-23.prepend-1.last
     .span-13
-      %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.stream.title')
+      %h4
+        %span.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.stream.title')
+        -# allow selection between different streams
+        %span#other_streams{:style => 'padding-left: 5px; font-size: 0.9em;'}
+          - ['My Stream', 'Friends Stream', 'Daters Stream'].each do |stream_name|
+            -# check if this is the current stream
+            - if stream_name.split.first.downcase == @stream
+              %span.stream_name{:style => 'padding-right: 3px;'}= stream_name
+            - else
+              %span.stream_name{:style => 'padding-right: 3px;'}= link_to stream_name, home_stream_path(:name => stream_name.parameterize), :class => 'admin', :id => stream_name.downcase.parameterize, :method => :put
     .span-10.last
       %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.map.title')
 
@@ -65,4 +74,4 @@
   var growls             = #{@growls};
   var mapping            = #{user_signed_in?};
   var max_locations      = #{@max_objects || 0};
-  var geo_checkins_path  = "/users/#{current_user.try(:id)}/checkins/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}"
+  var geo_checkins_path  = "/users/#{current_user.try(:id)}/checkins/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}/#{@stream}"
