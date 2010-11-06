@@ -8,7 +8,7 @@ module Users::Search
 
   def search_my_checkins(options={})
     add_geo_params(options)
-    # exclude my checkins
+    # include my checkins
     options.update(:with_user_ids => [self.id]) unless options[:with_user_ids]
     search_checkins(options)
   end
@@ -236,6 +236,8 @@ module Users::Search
       # build sort expressions
       sort_exprs = sort_orders.collect do |order|
         case order
+        when :sort_closer_locations
+          send(order.to_s)
         when :sort_similar_locations
           send(order.to_s)
         when :sort_other_checkins
@@ -303,11 +305,18 @@ module Users::Search
       end
     end
   end
+  
+  # weight locations by distance
+  def sort_closer_locations(options={})
+    distance1 = 100.miles.meters
+    sort_expr = "IF(@geodist < #{distance1}, 10.0, 0.0)"
+    [sort_expr]
+  end
 
-  # weight locations:
-  # 1. user has checked in at
-  # 2. user plans to go to
-  # 3. location tags that user has been to
+  # weight locations by:
+  # 1. user checkins at
+  # 2. user plans at
+  # 3. location tags for checkins
   def sort_similar_locations(options={})
     sort_expr = []
     if (my_checkin_loc_ids = locationships.my_checkins.collect(&:location_id)).any?
