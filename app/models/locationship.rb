@@ -13,7 +13,7 @@ class Locationship < ActiveRecord::Base
 
   # after create filter
   def event_locationship_created
-    self.class.log(:ok, "[#{user.handle}] created locationship:#{self.id} for location #{location.name}:#{location.id}")
+    # self.class.log(:ok, "[#{user.handle}] created locationship:#{self.id} for location #{location.name}:#{location.id}")
   end
 
   # find or create locationship and increment the specified counter
@@ -22,7 +22,7 @@ class Locationship < ActiveRecord::Base
   def self.async_increment(user, location, counter)
     locationship = user.locationships.find_or_create_by_location_id(location.id)
     locationship.increment!(counter)
-    log(:ok, "[#{user.handle}] incremented locationship:#{locationship.id}:#{counter}")
+    log(:ok, "[user:#{user.id}] #{user.handle} incremented locationship:#{locationship.id}:#{counter} for #{location.name}:#{location.id}")
     locationship
   end
 

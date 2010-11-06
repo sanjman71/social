@@ -25,7 +25,6 @@ class LocationImport
     if @location
       # add location source
       @location.location_sources.create(:source_id => id.to_s, :source_type => type)
-      log(:ok, "[location] added #{@location.name}:#{@location.id}")
     end
 
     @location

@@ -24,6 +24,8 @@ class Location < ActiveRecord::Base
   has_many                :locationships
   has_many                :users, :through => :locationships
 
+  after_create            :event_location_created
+
   acts_as_taggable
 
   # Note: the after_save_callback is deprecated, but its left here commented out for documentation purposes
@@ -171,6 +173,14 @@ class Location < ActiveRecord::Base
       # add badges for each user linked to this location
       user.delay.async_add_badges
     end
+  end
+
+  def event_location_created
+    self.class.log(:ok, "[location:#{self.id}] #{self.name} created")
+  end
+
+  def self.log(level, s, options={})
+    LOCATIONS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
   end
 
   protected

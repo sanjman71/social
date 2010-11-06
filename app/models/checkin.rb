@@ -35,7 +35,7 @@ class Checkin < ActiveRecord::Base
   # user checkin was added
   def event_checkin_added
     # log data
-    self.class.log(:ok, "[#{user.handle}] added checkin:#{self.id} to #{location.name}")
+    self.class.log(:ok, "[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
   end

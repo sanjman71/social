@@ -5,7 +5,7 @@ class LocationSource < ActiveRecord::Base
   validates_presence_of   :source_id
   validates_presence_of   :source_type
   validates_uniqueness_of :location_id, :scope => [:source_id, :source_type]
-  after_create            :add_tags
+  after_create            :event_location_source_created
 
   # BEGIN acts_as_state_machine
   include AASM
@@ -39,6 +39,13 @@ class LocationSource < ActiveRecord::Base
     self.source_type == 'foursquare'
   end
 
+  def event_location_source_created
+    # log
+    self.class.log(:ok, "[location_source:#{self.id}] #{self.source_type}:#{self.source_id} mapped to location:#{self.location_id}")
+    # add tags
+    add_tags
+  end
+
   # add tags to this location
   def add_tags
     # check if already tagged
@@ -60,6 +67,10 @@ class LocationSource < ActiveRecord::Base
     self.save
     # propagate event to location
     location.try(:after_tagging)
+  end
+
+  def self.log(level, s, options={})
+    LOCATIONS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
   end
 
 end
