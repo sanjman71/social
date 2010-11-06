@@ -3,7 +3,7 @@
   %br
   %span{:style => 'font-size: 0.9em; color: #999;'}= source
 .span-7#address
-  %span{:style => 'font-size: 0.9em;'}== #{location.street_address}, #{location.city}
+  %span{:style => 'font-size: 0.9em;'}= [location.street_address, location.city].delete_if(&:blank?).join(', ')
 .span-7.last#tags
   - if location.tag_list.blank? and import
     -# check if location was checked for tags

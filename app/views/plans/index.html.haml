@@ -1,0 +1,12 @@
+- title('Plans')
+
+- content_for :mat do
+  %h2 Planned Checkins
+
+%hr.space
+
+.span-24.last#locations
+  - @locationships.each do |locationship|
+    .span-24.last#location.padding-bottom-10
+      = render(:partial => 'plans/location',
+               :locals => {:location => locationship.location, :planned_at => locationship.planned_at})

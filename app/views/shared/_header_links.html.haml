@@ -21,6 +21,8 @@
       = link_to('Profile', user_path(current_user), :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Friends', friends_path, :class => 'header link')
+      %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
+      = link_to('Plans', plans_path, :class => 'header link')
       - if current_user.has_role?('admin')
         %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
         = link_to('Sightings', sightings_path, :class => 'header link')

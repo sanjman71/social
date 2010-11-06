@@ -66,6 +66,8 @@ class User < ActiveRecord::Base
   has_many                  :locations, :through => :locationships
   has_many                  :checkin_locations, :through => :locationships, :source => :location,
                             :conditions => ["my_checkins > 0"]
+  has_many                  :planned_locations, :through => :locationships, :source => :location,
+                            :conditions => ["planned_checkins > 0"]
 
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0',

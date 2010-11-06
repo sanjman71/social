@@ -2,6 +2,12 @@ class PlansController < ApplicationController
   before_filter :authenticate_user!
   respond_to    :html, :json
 
+  # GET /plans
+  def index
+    @user           = current_user
+    @locationships  = @user.locationships.planned_checkins
+  end
+
   # PUT /plans/add/1
   def add
     @location = Location.find(params[:location_id])
@@ -22,8 +28,8 @@ class PlansController < ApplicationController
       @message        = e.message
     end
 
-    # test growl messages
-    @growls = [{:message => '-3 points', :timeout => 2000}]
+    # no points added/subtracted for this action
+    # @growls = [{:message => '-3 points', :timeout => 2000}]
 
     respond_with(@location) do |format|
       format.html { redirect_back_to(root_path) and return }

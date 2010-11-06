@@ -1,0 +1,8 @@
+.span-5.prepend-1#name
+  = location.name
+.span-6#address
+  %span{:style => 'font-size: 0.9em;'}= [location.street_address, location.city].delete_if(&:blank?).join(', ')
+.span-8.last#planned_at{:style => 'font-size: 0.9em;'}
+  Planned: #{planned_at.try(:to_s, :datetime_short)}
+  %br
+  You have x days to check in here

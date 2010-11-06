@@ -3,8 +3,9 @@ class Locationship < ActiveRecord::Base
   belongs_to    :location
   validates     :location_id, :presence => true, :uniqueness => {:scope => :user_id}
   validates     :user_id, :presence => true
-  
+
   after_create  :event_locationship_created
+  after_save    :touch_planned_at
 
   scope         :my_checkins, where(:my_checkins.gt => 0)
   scope         :planned_checkins, where(:planned_checkins.gt => 0)
@@ -31,4 +32,13 @@ class Locationship < ActiveRecord::Base
       EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
     end
   end
+
+  protected
+
+  def touch_planned_at
+    if changes[:planned_checkins] == [0,1]
+      touch(:planned_at)
+    end
+  end
+
 end

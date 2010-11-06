@@ -27,4 +27,10 @@ class LocationshipTest < ActiveSupport::TestCase
     end
   end
 
+  should "touch planned_at when planned_checkins is incremented" do
+    @user1      = Factory.create(:user)
+    @location1  = Location.create(:name => "Location 1", :country => @us)
+    @locship    = @user1.locationships.create!(:location => @location1, :planned_checkins => 1)
+    assert @locship.reload.planned_at
+  end
 end

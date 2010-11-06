@@ -27,6 +27,7 @@ class PlansControllerTest < ActionController::TestCase
       assert_equal 1, @user1.reload.locationships.count
       assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
       assert_equal [1], @user1.reload.locationships.collect(&:planned_checkins)
+      assert @user1.reload.locationships.first.planned_at
       assert_redirected_to '/'
     end
 
