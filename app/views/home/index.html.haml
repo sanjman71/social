@@ -41,12 +41,12 @@
       %h4
         %span.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.stream.title')
         -# allow selection between different streams
-        %span#other_streams{:style => 'padding-left: 5px; font-size: 0.9em;'}
-          Streams:
+        %span#stream_list{:style => 'padding-left: 5px; font-size: 0.9em;'}
+          %span.stream_title Streams:
           - ['My', 'Friends', 'Daters', 'Others'].each do |stream_name|
             -# check if this is the current stream
             - if stream_name.split.first.downcase == @stream
-              %span.stream_name{:style => 'padding-right: 3px;'}= stream_name
+              %span.stream_name.current{:style => 'padding-right: 3px;'}= stream_name
             - else
               %span.stream_name{:style => 'padding-right: 3px;'}= link_to stream_name, home_stream_path(:name => stream_name.parameterize), :class => 'admin', :id => stream_name.downcase.parameterize, :method => :put
     .span-10.last
