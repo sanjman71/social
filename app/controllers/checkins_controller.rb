@@ -11,9 +11,6 @@ class CheckinsController < ApplicationController
   def index
     # parse general parameters
     @without_checkin_ids  = params[:without_checkin_ids] ? params[:without_checkin_ids].split(',').map(&:to_i).uniq.sort : nil
-    # @without_user_ids     = params[:without_user_ids] ? params[:without_user_ids].split(',').map(&:to_i).uniq.sort : nil
-    # @without_loc_ids      = params[:without_location_ids] ? params[:without_location_ids].split(',').map(&:to_i).uniq.sort : nil
-    # @with_my_checkins     = params[:with_my_checkins] ? params[:with_my_checkins].to_i : nil
     @search               = params[:search] ? params[:search].to_s : 'all'
     @method               = "search_#{@search}_checkins"
     @order                = params[:order].to_s == 'all' ? [:sort_similar_checkins, :sort_other_checkins] : nil
@@ -38,15 +35,6 @@ class CheckinsController < ApplicationController
       @checkins     = @user.send(@method, @options)
     end
 
-    # group checkins by source
-    # @checkins     = @user.checkins.group_by(&:source_type)
-    # @checkin_logs = @user.checkin_logs.inject(Hash[]) do |hash, log|
-    #   mm, ss = (Time.zone.now-log.last_check_at).divmod(60)
-    #   # track minutes ago
-    #   hash[log.source] = mm
-    #   hash
-    # end
-    
     respond_to do |format|
       format.html
       format.js

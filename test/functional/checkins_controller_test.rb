@@ -32,22 +32,34 @@ class CheckinsControllerTest < ActionController::TestCase
   end
 
   context "index" do
-    should "search all checkins" do
+    should "search all checkins anywher" do
+      sign_in @chicago1
+      set_beta
+      get :index, :user_id => @chicago1.id, :search => 'all'
+      assert_equal 'all', assigns(:search)
+      assert_equal 'search_all_checkins', assigns(:method)
+      assert_equal @chicago1, assigns(:user)
+      assert_select "#checkin_title", :text => 'All Checkins, Anywhere', :count => 1
+    end
+
+    should "search all checkins within city" do
       sign_in @chicago1
       set_beta
       get :index, :user_id => @chicago1.id, :city => "city:chicago", :radius => "radius:50", :search => 'all'
       assert_equal 'all', assigns(:search)
       assert_equal 'search_all_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
+      assert_select "#checkin_title", :text => 'All Checkins, 50 miles around Chicago', :count => 1
     end
 
-    should "search dater checkins" do
+    should "search dater checkins within city" do
       sign_in @chicago1
       set_beta
       get :index, :user_id => @chicago1.id, :city => "city:chicago", :radius => "radius:50", :search => 'daters'
       assert_equal 'daters', assigns(:search)
       assert_equal 'search_daters_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
+      assert_select "#checkin_title", :text => 'Daters Checkins, 50 miles around Chicago', :count => 1
     end
     
     should "search my checkins" do
@@ -57,6 +69,7 @@ class CheckinsControllerTest < ActionController::TestCase
       assert_equal 'my', assigns(:search)
       assert_equal 'search_my_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
+      assert_select "#checkin_title", :text => 'My Checkins, 50 miles around Chicago', :count => 1
     end
     
     should "search other checkins" do
