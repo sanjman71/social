@@ -87,7 +87,7 @@ $.fn.init_stream_timer = function() {
       return;
     }
     stream_updating = true;
-    $.getScript(geo_checkins_path+"?limit=1&order=all&without_checkin_ids="+stream_checkin_ids.join(','), function() {
+    $.getScript(geo_checkins_path+"?limit=1&order=default&without_checkin_ids="+stream_checkin_ids.join(','), function() {
       // find the most recent checkin(s)
       countCheckins();
       // console.log("current stream: " + stream_checkin_ids.join(','));

@@ -8,12 +8,13 @@ class CheckinsController < ApplicationController
   # GET /users/1/checkins/geo:1.23..-23.89/radius:10?limit=5&without_checkin_ids=1,5,3
   # GET /users/1/checkins/city:chicago?limit=5&without_checkin_ids=1,5,3
   # GET /users/1/checkins/all|friends|my|other
+  # GET /users/1/checkins?order=default
   def index
     # parse general parameters
     @without_checkin_ids  = params[:without_checkin_ids] ? params[:without_checkin_ids].split(',').map(&:to_i).uniq.sort : nil
     @search               = params[:search] ? params[:search].to_s : 'all'
     @method               = "search_#{@search}_checkins"
-    @order                = params[:order].to_s == 'all' ? [:sort_similar_checkins, :sort_other_checkins] : nil
+    @order                = params[:order] ? "sort_#{params[:order]}" : nil
     @limit                = params[:limit] ? params[:limit].to_i : 2**30
     @options              = Hash[:without_checkin_ids => @without_checkin_ids,
                                  :order => @order, :limit => @limit, :klass => Checkin]

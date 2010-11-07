@@ -171,29 +171,46 @@ puts "#{Time.now}: imported #{Location.count} locations"
  {"handle" => "boston_coffee_gal", 'gender' => 'female', "password" => 'coffee', 'password_confirmation' => 'coffee',
   'city' => @boston, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @girl_pics[4]}]},
  {"handle" => "boston_coffee_guy", 'gender' => 'male', "password" => 'coffee', 'password_confirmation' => 'coffee',
+  'city' => @boston, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @guy_pics[0]}]},
+ {"handle" => "boston_pizza_gal", 'gender' => 'female', "password" => 'pizza', 'password_confirmation' => 'pizza',
+  'city' => @boston, :photos_attributes => [{:source => 'photobucket', :priority => 1, :url => @girl_pics[4]}]},
+ {"handle" => "boston_pizza_guy", 'gender' => 'male', "password" => 'pizza', 'password_confirmation' => 'pizza',
   'city' => @boston},
 ].each do |hash|
   User.create(hash)
 end
 puts "#{Time.now}: imported #{User.count} users"
 
-# chicago checkins
-@offset = 0
-['coffee', 'pizza', 'bar', 'foodie'].each do |s|
-  @gal = User.find_by_handle("chicago_#{s}_gal")
-  @guy = User.find_by_handle("chicago_#{s}_guy")
-  [@gal, @guy].each do |user|
-    Location.limit(3).offset(@offset).each do |location|
-      user.checkins.create(:location_id => location.id, :checkin_at => Time.zone.now - 3.days,
-                           :source_id => location.location_source.id, :source_type => Source.foursquare)
-    end
+def import_user(hash)
+  @user = User.find_by_handle(hash[:user])
+  hash[:locations].each do |loc_source_id|
+    @location = Location.joins(:location_source).where("location_sources.source_id" => loc_source_id).first
+    @user.checkins.create(:location_id => @location.id, :checkin_at => Time.zone.now - 3.days,
+                          :source_id => @location.location_source.id, :source_type => Source.foursquare)
   end
-  @offset += 3
+end
+
+# chicago checkins
+puts "#{Time.now}: adding chicago checkins"
+[{:user => 'chicago_coffee_gal', :locations => ['108207', '564552', '135721']},
+ {:user => 'chicago_coffee_guy', :locations => ['108207', '564552', '135721']},
+ {:user => 'chicago_pizza_gal', :locations => ['153168', '45048', '135735']},
+ {:user => 'chicago_pizza_guy', :locations => ['153168', '45048', '135735']},
+ {:user => 'chicago_bar_gal', :locations => ['684215', '12531', '88928']},
+ {:user => 'chicago_bar_guy', :locations => ['684215', '12531', '88928']},
+ {:user => 'chicago_foodie_gal', :locations => ['76668', '1207640', '131820']},
+ {:user => 'chicago_foodie_guy', :locations => ['76668', '1207640', '131820']},].each do |hash|
+   import_user(hash)
 end
 
 # boston checkins
-['coffee', 'pizza'].each do |s|
-  
+puts "#{Time.now}: adding boston checkins"
+[{:user => 'boston_coffee_gal', :locations => ['109090', '1897522', '83701']},
+ {:user => 'boston_coffee_guy', :locations => ['109090', '1897522', '83701']},
+ {:user => 'boston_pizza_gal', :locations => ['212915', '66142', '69904']},
+ {:user => 'boston_pizza_guy', :locations => ['212915', '66142', '69904']},
+].each do |hash|
+  import_user(hash)
 end
 
 puts "#{Time.now}: imported #{Checkin.count} checkins"

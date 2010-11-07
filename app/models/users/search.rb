@@ -49,6 +49,9 @@ module Users::Search
   # search checkins
   def search_checkins(options={})
     options.update(:klass => Checkin)
+    if options[:order].to_s == 'sort_default'
+      options[:order] = [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations]
+    end
     search(options)
   end
 
@@ -246,7 +249,7 @@ module Users::Search
           nil
         end
       end.compact
-      sort_order  = sort_exprs.join(' + ')
+      sort_order  = sort_exprs.join(' * ')
       sort_mode   = :expr
     else
       # default sort
@@ -308,25 +311,27 @@ module Users::Search
   
   # weight locations by distance
   def sort_closer_locations(options={})
-    distance1 = 100.miles.meters
-    sort_expr = "IF(@geodist < #{distance1}, 10.0, 0.0)"
+    distance1 = 25.miles.meters
+    distance2 = 50.miles.meters
+    distance3 = 100.miles.meters
+    sort_expr = "IF(@geodist < #{distance1}, 10.0, IF(@geodist<#{distance2}, 5.0, IF(@geodist<#{distance3}, 1.0, 0.1)))"
     [sort_expr]
   end
 
   # weight locations by:
   # 1. user checkins at
   # 2. user plans at
-  # 3. location tags for checkins
+  # 3. location tags for user checkins
   def sort_similar_locations(options={})
     sort_expr = []
     if (my_checkin_loc_ids = locationships.my_checkins.collect(&:location_id)).any?
-      sort_expr.push("5 * IN(location_ids, %s)" % my_checkin_loc_ids.join(','))
+      sort_expr.push("IF(IN(location_ids, %s), 5.0, 1.0)" % my_checkin_loc_ids.join(','))
     end
     if (planned_loc_ids = locationships.planned_checkins.collect(&:location_id)).any?
-      sort_expr.push("3 * IN(location_ids, %s)" % planned_loc_ids.join(','))
+      sort_expr.push("3.0 * IF(IN(location_ids, %s), 3.0, 1.0)" % planned_loc_ids.join(','))
     end
     if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
-      sort_expr.push("3 * IN(tag_ids, %s)" % tag_ids.join(','))
+      sort_expr.push("3.0 * IF(IN(tag_ids, %s), 3.0, 1.0)" % tag_ids.join(','))
     end
     sort_expr
   end
@@ -335,7 +340,7 @@ module Users::Search
   def sort_other_checkins(options={})
     sort_expr = []
     my_checkin_ids = checkins.collect(&:id)
-    sort_expr.push("-10 * IN(checkin_ids, %s)" % my_checkin_ids.join(','))
+    sort_expr.push("IF(IN(checkin_ids, %s), 0.1, 1.0)" % my_checkin_ids.join(','))
     sort_expr
   end
 

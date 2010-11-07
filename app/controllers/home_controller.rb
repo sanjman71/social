@@ -7,9 +7,10 @@ class HomeController < ApplicationController
       # find matching checkins
       @stream       = current_stream
       @method       = "search_#{@stream}_checkins"
+      @radius       = 2000
       @checkins     = current_user.send(@method, :limit => checkins_start_count,
-                                                 :miles => current_user.radius,
-                                                 :order => [:sort_similar_locations])
+                                                 :miles => @radius,
+                                                 :order => :sort_default)
       # mark checkins from me and friends
       
       @max_objects  = checkins_end_count

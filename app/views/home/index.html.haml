@@ -75,4 +75,4 @@
   var growls             = #{@growls};
   var mapping            = #{user_signed_in?};
   var max_locations      = #{@max_objects || 0};
-  var geo_checkins_path  = "/users/#{current_user.try(:id)}/checkins/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{current_user.try(:radius)}/#{@stream}"
+  var geo_checkins_path  = "/users/#{current_user.try(:id)}/checkins/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"
