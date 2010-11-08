@@ -1,7 +1,12 @@
 class AppLogger
   
   def self.logger
-    @@logger ||= Logger.new("log/outlately.#{Rails.env}.log")
+    case Rails.env
+    when 'production', 'staging'
+      @@logger ||= SyslogLogger.new('outlately')
+    else
+      @@logger ||= Logger.new("log/outlately.#{Rails.env}.log")
+    end
   end
   
   # topic - e.g. :checkin, :location, :user
