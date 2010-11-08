@@ -16,9 +16,8 @@ class FacebookLocation
         facebook  = FacebookClient.new(nil)
         place     = facebook.place(ls.source_id)
         location  = ls.location
-        LOCATIONS_LOGGER.info("#{Time.now}: [location:#{location.id}] #{location.name} ... no tags for facebook locations")
       rescue Exception => e
-        EXCEPTIONS_LOGGER.info("#{Time.now}: [error] [import tags:#{ls.id}] #{e.message}:#{e.backtrace}")
+        # whoops
       end
 
       nil
