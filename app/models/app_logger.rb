@@ -2,7 +2,7 @@ class AppLogger
   
   def self.logger
     case Rails.env
-    when 'production', 'staging'
+    when 'nothing' #'production', 'staging'
       @@logger ||= SyslogLogger.new('outlately')
     else
       @@logger ||= Logger.new("log/outlately.#{Rails.env}.log")
