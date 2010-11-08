@@ -8,25 +8,22 @@ class Friendship < ActiveRecord::Base
 
   # after create filter
   def event_friendship_created
-    self.class.log(:ok, "[#{user.handle}] added friend #{friend.handle}")
-    self.class.log(:ok, "[#{friend.handle}] added inverse friend #{user.handle}")
+    self.class.log("[user:#{user.id}] #{user.handle} added friend #{friend.handle}")
+    self.class.log("[user:#{friend.id}] #{friend.handle} added inverse friend #{user.handle}")
     # call async event handlers
     self.delay.async_update_locationships
   end
 
   # user friends were imported
   def self.event_friends_imported(user, source)
-    log(:ok, "[#{user.handle}] imported #{(user.friends + user.inverse_friends).size} #{source} friends")
+    log("[user:#{user.id}] #{user.handle} imported #{(user.friends + user.inverse_friends).size} #{source} friends")
 
     # trigger friend checkins
     Checkin.trigger_event_friend_checkins(user, source)
   end
 
-  def self.log(level, s, options={})
-    USERS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
-    if level == :error
-      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
-    end
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
   protected

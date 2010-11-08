@@ -41,7 +41,7 @@ class LocationSource < ActiveRecord::Base
 
   def event_location_source_created
     # log
-    self.class.log(:ok, "[location_source:#{self.id}] #{self.source_type}:#{self.source_id} mapped to location:#{self.location_id}")
+    self.class.log("[location_source:#{self.id}] #{self.source_type}:#{self.source_id} mapped to location:#{self.location_id}")
     # add tags
     add_tags
   end
@@ -69,8 +69,8 @@ class LocationSource < ActiveRecord::Base
     location.try(:after_tagging)
   end
 
-  def self.log(level, s, options={})
-    LOCATIONS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
 end

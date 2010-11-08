@@ -31,12 +31,16 @@ class FoursquareLocation
         location.save
         # mark location source as tagged
         ls.tagged!
-        LOCATIONS_LOGGER.info("#{Time.now}: [location:#{location.id}] #{location.name} tags:#{tag_list.join(',')}")
+        log("[location:#{location.id}] #{location.name} tags:#{tag_list.join(',')}")
       rescue Exception => e
-        EXCEPTIONS_LOGGER.info("#{Time.now}: [error] [import tags:#{ls.id}] #{e.message}:#{e.backtrace}")
+        log("[location:#{location.id}] #{location.name} #{__method__.to_s} #{e.message}", :error)
       end
     end
 
     true
+  end
+
+  def self.log(s, level = :info)
+    Checkin.log(s, level)
   end
 end

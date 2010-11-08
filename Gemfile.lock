@@ -23,6 +23,8 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
+    SyslogLogger (1.4.0)
+      hoe (>= 1.2.0)
     aasm (2.2.0)
     abstract (1.0.0)
     actionmailer (3.0.0)
@@ -179,6 +181,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  SyslogLogger (>= 1.4.0)
   aasm (>= 2.2.0)
   acts-as-taggable-on (>= 2.0.6)
   alchemist (>= 0.1.2)

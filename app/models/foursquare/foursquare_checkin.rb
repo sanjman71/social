@@ -22,14 +22,14 @@ class FoursquareCheckin
       mm = 0
     when (last_check_at + last_check_mins) > Time.zone.now
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
-      log(:ok, "[#{user.handle}] importing #{source} skipped because last check was about #{mm} minutes ago")
+      log("[user:#{user.id}] #{user.handle} importing #{source} skipped because last check was about #{mm} minutes ago")
       return checkin_log
     else
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
     end
 
     begin
-      log(:ok, "[#{user.handle}] importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
+      log("[user:#{user.id}] #{user.handle} importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
 
       # initiialize oauth object
       foursquare_oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
@@ -50,7 +50,7 @@ class FoursquareCheckin
         when :last
           # find last foursquare checkin
           options[:sinceid] = user.checkins.foursquare.recent.limit(1).first.try(:source_id)
-          log(:ok, "[#{user.handle}] importing sinceid #{options[:sinceid]}")
+          log("[user:#{user.id}] #{user.handle} importing sinceid #{options[:sinceid]}")
         end
       end
 
@@ -65,12 +65,12 @@ class FoursquareCheckin
         begin
           array.push(import_checkin(user, checkin_hash))
         rescue Exception => e
-          log(:error, "[#{user.handle}] #{e.message}")
+          log("[user:#{user.id}] #{user.handle} #{__method__.to_s} #{e.message}", :error)
         end
         array
       end.compact
     rescue Exception => e
-      log(:error, "[#{user.handle}] #{e.message}")
+      log("[user:#{user.id}] #{user.handle} #{__method__.to_s} #{e.message}", :error)
       checkin_log.update_attributes(:state => 'error', :checkins => 0, :last_check_at => Time.zone.now)
     else
       checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
@@ -131,19 +131,16 @@ class FoursquareCheckin
         next if user_hash['id'].to_i == user.foursquare_id.to_i
         user_name  = "#{user_hash['firstname']} #{user_hash['lastname']}"
         venue_name = venue_hash.try(:[], 'name')
-        puts "#{Time.now}: user #{user_name}, venue: #{venue_name}, at: #{checkin_hash['created']}"
+        # puts "#{Time.now}: user #{user_name}, venue: #{venue_name}, at: #{checkin_hash['created']}"
       end
     rescue Exception => e
-      log(:error, "[#{user.handle}] #{e.message}")
+      log("[user:#{user.id}] #{user.handle} #{__method__.to_s} #{e.message}", :error)
     else
     end
   end
 
-  def self.log(level, s, options={})
-    CHECKINS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
-    if level == :error
-      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
-    end
+  def self.log(s, level = :info)
+    Checkin.log(s, level)
   end
-  
+
 end

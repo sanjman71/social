@@ -14,7 +14,7 @@ module Users::Oauth
       rescue Exception => e
         # whoops
         data = nil
-        self.class.log(:error, "facebook oauth error #{e.message}") rescue nil
+        self.class.log("facebook oauth error #{e.message}", :error) rescue nil
         return signed_in_resource
       end
 
@@ -31,7 +31,7 @@ module Users::Oauth
       rescue Exception => e
         # whoops
         data = nil
-        self.class.log(:error, "foursquare oauth error #{e.message}") rescue nil
+        self.class.log("foursquare oauth error #{e.message}", :error) rescue nil
         return signed_in_resource
       end
 
@@ -49,7 +49,7 @@ module Users::Oauth
       rescue Exception => e
         # whoops
         data = nil
-        self.class.log(:error, "foursquare oauth error #{e.message}") rescue nil
+        self.class.log("twitter oauth error #{e.message}", :error) rescue nil
         return signed_in_resource
       end
 
@@ -69,12 +69,12 @@ module Users::Oauth
         oauth.access_token        = access_token.token
         oauth.access_token_secret = (access_token.secret rescue nil)
         oauth.save
-        user.class.log(:ok, "[#{user.handle}] updated oauth token")
+        user.class.log("[#{user.handle}] updated oauth token")
       else
         # create oauth object with token
         oauth = user.oauths.create(:provider => service, :access_token => access_token.token,
                                    :access_token_secret => (access_token.secret rescue nil))
-        user.class.log(:ok, "[#{user.handle}] created oauth #{service} token")
+        user.class.log("[user:#{user.id}] #{user.handle} created oauth #{service} token")
       end
       user
     end
@@ -92,7 +92,7 @@ module Users::Oauth
         gender    = data['gender']
         options   = Hash[:handle => handle, :gender => gender, :facebook_id => fbid]
         user      = User.create!(options)
-        user.class.log(:ok, "[#{user.handle}] created")
+        user.class.log("[user:#{user.id}] #{user.handle} created")
       end
       user
     end
@@ -107,7 +107,7 @@ module Users::Oauth
         gender  = data['gender']
         options = Hash[:handle => fname, :gender => gender, :foursquare_id => fsid]
         user    = User.create!(options)
-        user.class.log(:ok, "[#{user.handle}] created")
+        user.class.log("[user:#{user.id}] #{user.handle} created")
       end
       user
     end
@@ -132,22 +132,22 @@ module Users::Oauth
       if data['id'] and self.facebook_id.blank?
         # add user facebook id
         self.facebook_id = data['id']
-        self.class.log(:ok, "[#{self.handle}] added facebook id #{self.facebook_id}")
+        self.class.log("[user:#{self.id}] #{self.handle} added facebook id #{self.facebook_id}")
       end
       if data['id'] and self.photos.facebook.count == 0
         # add user facebook photo
         self.photos.create(:source => 'facebook', :priority => 1,
                            :url => "https://graph.facebook.com/#{self.facebook_id}/picture?type=square")
-        self.class.log(:ok, "[#{self.handle}] added facebook photo")
+        self.class.log("[user:#{self.id}] #{self.handle} added facebook photo")
       end
       if data['location'] and !self.mappable?
         begin
           # add user location city
           city = Locality.resolve(data['location']['name'], :create => true)
           self.city = city
-          self.class.log(:ok, "[#{self.handle}] added city #{city.name}")
+          self.class.log("[user:#{self.id}] #{self.handle} added city #{city.name}")
         rescue Exception => e
-          self.class.log(:error, "#[#{self.handle}] facebook city error #{e.message}")
+          self.class.log("[user:#{self.id}] #{self.handle} #{__method__.to_s} facebook city error #{e.message}", :error)
         end
       end
       self.save
@@ -160,26 +160,26 @@ module Users::Oauth
       return if data.blank?
       if data['id'] and self.foursquare_id.blank?
         self.foursquare_id = data['id']
-        self.class.log(:ok, "[#{self.handle}] added foursquare id #{self.foursquare_id}")
+        self.class.log("[user:#{self.id}] #{self.handle} added foursquare id #{self.foursquare_id}")
       end
       if data['email'] and !self.email_addresses.collect(&:address).include?(data['email'])
         self.email_addresses.build(:address => data['email'])
-        self.class.log(:ok, "[#{self.handle}] added email #{data['email']}")
+        self.class.log("[user:#{self.id}] #{self.handle} added email #{data['email']}")
       end
       if data['phone'] and !self.phone_numbers.collect(&:address).include?(data['phone'])
         self.phone_numbers.build(:address => data['phone'], :name => 'Mobile')
-        self.class.log(:ok, "[#{self.handle}] added phone #{data['phone']}")
+        self.class.log("[user:#{self.id}] #{self.handle} added phone #{data['phone']}")
       end
       if data['photo']
         photo = self.foursquare_photo
         if photo.blank?
           # add user foursquare photo, set priority lower than facebook
           self.photos.create(:source => 'foursquare', :priority => 3, :url => data['photo'])
-          self.class.log(:ok, "[#{self.handle}] added foursquare photo")
+          self.class.log("[user:#{self.id}] #{self.handle} added foursquare photo")
         elsif photo.url != data['photo']
           # update user foursquare photo
           photo.url = data['photo']
-          self.class.log(:ok, "[#{self.handle}] updated foursquare photo")
+          self.class.log("[user:#{self.id}] #{self.handle} updated foursquare photo")
         end
       end
       self.save
@@ -205,22 +205,22 @@ module Users::Oauth
       return if data.blank?
       if data['id'] and self.twitter_id.blank?
         self.twitter_id = data['id']
-        self.class.log(:ok, "[#{self.handle}] added twitter id #{self.twitter_id}")
+        self.class.log("[user:#{self.id}] #{self.handle} added twitter id #{self.twitter_id}")
       end
       if data['screen_name'] and self.twitter_screen_name.blank?
         self.twitter_screen_name = data['screen_name']
-        self.class.log(:ok, "[#{self.handle}] added twitter screen name #{self.twitter_screen_name}")
+        self.class.log("[user:#{self.id}] #{self.handle} added twitter screen name #{self.twitter_screen_name}")
       end
       if data['profile_image_url']
         photo = self.twitter_photo
         if photo.blank?
           # add user twitter photo, set priority lower than the others
           self.photos.create(:source => 'twitter', :priority => 5, :url => data['profile_image_url'])
-          self.class.log(:ok, "[#{self.handle}] added twitter photo")
+          self.class.log("[user:#{self.id}] #{self.handle} added twitter photo")
         elsif photo.url != data['profile_image_url']
           # update user twitter photo
           photo.url = data['profile_image_url']
-          self.class.log(:ok, "[#{self.handle}] updated twitter photo")
+          self.class.log("[user:#{self.id}] #{self.handle} updated twitter photo")
         end
       end
       self.save

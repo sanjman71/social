@@ -64,7 +64,7 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('dump')
     @other_party.alert!
     bail!
-    log(:ok, "#{party.handle} declined, #{@other_party.handle} dumped, suggestion bailed")
+    log("[suggestion:#{self.id}] #{party.handle} declined, #{@other_party.handle} dumped, suggestion bailed")
   end
 
   def party_schedules(party, options={})
@@ -77,7 +77,7 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     talk!
-    log(:ok, "#{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion talking")
+    log("[suggestion:#{self.id}] #{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion talking")
   end
 
   def party_reschedules(party, options={})
@@ -89,20 +89,20 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     save!
-    log(:ok, "#{party.handle} rescheduled, suggestion #{self.state}")
+    log("[suggestion:#{self.id}] #{party.handle} rescheduled, suggestion #{self.state}")
   end
 
   def party_confirms(party, options={})
     party.confirm!
     party.event!(options[:event] || 'confirm')
     @other_party = other_party(party)
-    log(:ok, "#{party.handle} confirmed, suggestion #{self.state}")
+    log("[suggestion:#{self.id}] #{party.handle} confirmed, suggestion #{self.state}")
     @other_party.event!('')
     @other_party.alert!
     if party.confirmed? and @other_party.confirmed?
       # both parties have confirmed
       go_out!
-      log(:ok, "suggestion going out")
+      log("[suggestion:#{self.id}] suggestion going out")
     end
   end
 
@@ -127,11 +127,15 @@ class Suggestion < ActiveRecord::Base
   protected
 
   def after_create_callback
-    log(:ok, "creator:#{creator.try(:id).to_i}, users:#{party1.try(:user).try(:handle)}:#{party2.try(:user).try(:handle)}, when:#{self.when}")
+    log("[suggestion:#{self.id}] creator:#{creator.try(:id).to_i}, users:#{party1.try(:user).try(:handle)}:#{party2.try(:user).try(:handle)}, when:#{self.when}")
   end
 
-  def log(level, s, options={})
-    SUGGESTIONS_LOGGER.info("#{Time.now}: [#{level}] [suggestion:#{self.id}] #{s}")
+  def log(s, level = :info)
+    self.class.log(s, level)
+  end
+
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
 end

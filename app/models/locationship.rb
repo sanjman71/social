@@ -24,7 +24,7 @@ class Locationship < ActiveRecord::Base
   def self.async_increment(user, location, counter)
     locationship = user.locationships.find_or_create_by_location_id(location.id)
     locationship.increment!(counter)
-    log(:ok, "[user:#{user.id}] #{user.handle} incremented locationship:#{locationship.id}:#{counter} for #{location.name}:#{location.id}")
+    log("[user:#{user.id}] #{user.handle} incremented locationship:#{locationship.id}:#{counter} for #{location.name}:#{location.id}")
     locationship
   end
 
@@ -38,11 +38,8 @@ class Locationship < ActiveRecord::Base
     user.checkins.where(:location_id => location_id)
   end
 
-  def self.log(level, s, options={})
-    CHECKINS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
-    if level == :error
-      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
-    end
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
   protected

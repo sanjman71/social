@@ -27,14 +27,14 @@ class FacebookCheckin
       mm = 0
     when (last_check_at + last_check_mins) > Time.zone.now
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
-      log(:ok, "[#{user.handle}] importing #{source} skipped because last check was about #{mm} minutes ago")
+      log("[user:#{user.id}] #{user.handle} importing #{source} skipped because last check was about #{mm} minutes ago")
       return checkin_log
     else
       mm, ss = (Time.zone.now-last_check_at).divmod(60)
     end
 
     begin
-      log(:ok, "[#{user.handle}] importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
+      log("[user:#{user.id}] #{user.handle} importing #{source} checkin history #{options.inspect}, last checked about #{mm} minutes ago")
 
       # initialize facebook client
       facebook = FacebookClient.new(oauth.access_token)
@@ -48,7 +48,7 @@ class FacebookCheckin
         when :last
           # find last facebok checkin's timestamp
           options[:since] = user.checkins.facebook.recent.limit(1).first.try(:checkin_at).to_s(:datetime_schedule) rescue default_checkin_since_timestamp
-          log(:ok, "[#{user.handle}] importing since #{options[:since]}")
+          log("[user:#{user.id}] #{user.handle} importing since #{options[:since]}")
         end
       end
 
@@ -64,12 +64,12 @@ class FacebookCheckin
         begin
           array.push(import_checkin(user, checkin_hash))
         rescue Exception => e
-          log(:error, "[#{user.handle}] #{e.message}")
+          log("[user:#{user.id}] #{user.handle} #{__method__.to_s} #{e.message}", :error)
         end
         array
       end.compact
     rescue Exception => e
-      log(:error, "[#{user.handle}] #{__method__.to_s}: #{e.message}")
+      log("[user:#{user.id}] #{user.handle} #{__method__.to_s} #{e.message}", :error)
       checkin_log.update_attributes(:state => 'error', :last_check_at => Time.zone.now)
     else
       checkin_log.update_attributes(:state => 'success', :checkins => collection.size, :last_check_at => Time.zone.now)
@@ -125,15 +125,12 @@ class FacebookCheckin
         puts checkin.inspect
       end
     rescue Exception => e
-      log(:error, "[#{user.handle}] #{__method__.to_s}: #{e.message}")
+      log("[user:#{user.id}] #{user.handle} #{__method__.to_s}: #{e.message}", :error)
     end
   end
 
-  def self.log(level, s, options={})
-    CHECKINS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
-    if level == :error
-      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
-    end
+  def self.log(s, level = :info)
+    Checkin.log(s, level)
   end
 
 end

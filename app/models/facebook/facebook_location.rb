@@ -10,19 +10,23 @@ class FacebookLocation
     location_sources.each do |ls|
       # check if we have already imported tags from this source
       next if ls.tagged_at?
-      
+
       begin
         # initialize facebook client, no token required
         facebook  = FacebookClient.new(nil)
         place     = facebook.place(ls.source_id)
         location  = ls.location
-        LOCATIONS_LOGGER.info("#{Time.now}: [location:#{location.id}] #{location.name} ... no tags for facebook locations")
+        log("[location:#{location.id}] #{location.name} ... no tags for facebook locations")
       rescue Exception => e
-        EXCEPTIONS_LOGGER.info("#{Time.now}: [error] [import tags:#{ls.id}] #{e.message}:#{e.backtrace}")
+        log("[location:#{location.id}] #{location.name} #{__method__.to_s} #{e.message}", :error)
       end
 
       nil
     end
+  end
+
+  def self.log(s, level = :info)
+    Checkin.log(s, level)
   end
 
 end

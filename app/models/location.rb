@@ -176,11 +176,11 @@ class Location < ActiveRecord::Base
   end
 
   def event_location_created
-    self.class.log(:ok, "[location:#{self.id}] #{self.name} created")
+    self.class.log("[location:#{self.id}] #{self.name} created")
   end
 
-  def self.log(level, s, options={})
-    LOCATIONS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
   protected

@@ -35,14 +35,14 @@ class Checkin < ActiveRecord::Base
   # user checkin was added
   def event_checkin_added
     # log data
-    self.class.log(:ok, "[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
+    self.class.log("[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
   end
 
   # user checkins were imported
   def self.event_checkins_imported(user, new_checkins, source)
-    log(:ok, "[#{user.handle}] imported #{new_checkins.size} #{source} #{new_checkins.size == 1 ? 'checkin' : 'checkins'}")
+    log("[user:#{user.id}] #{user.handle} imported #{new_checkins.size} #{source} #{new_checkins.size == 1 ? 'checkin' : 'checkins'}")
 
     if new_checkins.any?
       # use dj to rebuild sphinx index
@@ -66,7 +66,7 @@ class Checkin < ActiveRecord::Base
     if source == 'facebook'
       # import checkins for friends without facebook oauths
       user.friends.select{ |o| o.facebook_oauth.nil? }.each do |friend|
-        log(:ok, "[#{user.handle}] triggering import of facebook checkins for friend #{friend.handle}")
+        log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
         FacebookCheckin.delay.async_import_checkins(friend, Hash[:since => :last, :limit => 250, :oauth_id => user.facebook_oauth.try(:id)])
       end
     end
@@ -80,11 +80,8 @@ class Checkin < ActiveRecord::Base
     5
   end
 
-  def self.log(level, s, options={})
-    CHECKINS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
-    if level == :error
-      EXCEPTIONS_LOGGER.info("#{Time.now}: [error] #{s}")
-    end
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
   protected

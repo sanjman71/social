@@ -370,8 +370,8 @@ class User < ActiveRecord::Base
     self.class.to_s.tableize
   end
 
-  def self.log(level, s, options={})
-    USERS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
   protected
