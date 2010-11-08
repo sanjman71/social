@@ -4,7 +4,7 @@
 
 1. http://articles.slicehost.com/2008/4/25/ubuntu-hardy-setup-page-1
 2. http://articles.slicehost.com/2008/4/25/ubuntu-hardy-setup-page-2
-3. sudo aptitude install curl bison build-essential zlib1g-dev openssl libssl-dev libreadline5-dev libxml2-dev git-core
+3. sudo aptitude install curl bison build-essential zlib1g-dev openssl libssl-dev libreadline5-dev libxml2-dev git-core syslog-ng
 4. http://articles.slicehost.com/2008/7/8/ubuntu-hardy-installing-mysql-with-rails-and-php-options
 5. http://rvm.beginrescueend.com/rvm/install/
 6. http://rvm.beginrescueend.com/rubies/installing/
