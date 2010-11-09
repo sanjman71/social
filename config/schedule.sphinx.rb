@@ -11,8 +11,8 @@
 # Learn more: http://github.com/javan/whenever
 
 # Crontab update/write example
-# whenever --update-crontab db --load-file config/schedule.sphinx.rb
-# whenever --write-crontab db --load-file config/schedule.sphinx.rb
+# whenever --update-crontab sphinx --load-file config/schedule.sphinx.rb
+# whenever --write-crontab sphinx --load-file config/schedule.sphinx.rb
 
 set :environment, :production
 set :path, '/usr/apps/social/current'
