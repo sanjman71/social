@@ -23,6 +23,9 @@ every 5.minutes do
   command "curl http://outlate.ly/ping > /dev/null"
   # poll recent checkins
   command "curl http://outlate.ly/checkins/poll > /dev/null"
+end
+
+every 15.minutes do
   # rebuild sphinx
   command "curl http://outlate.ly/jobs/sphinx > /dev/null"
 end
