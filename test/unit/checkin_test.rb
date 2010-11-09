@@ -127,9 +127,6 @@ class CheckinTest < ActiveSupport::TestCase
         assert_equal 1, @user.reload.alerts.count
         # should add user points for checkin
         assert_equal 5, @user.reload.points
-        # should add sphinx delayed_job
-        assert_equal 1, match_delayed_jobs(/SphinxJob/)
-        # assert delayed_jobs[1].match(/SuggestionAlgorithm/)
       end
     end
 
@@ -223,8 +220,6 @@ class CheckinTest < ActiveSupport::TestCase
         # should add suggestions alert
         assert_false @user.suggestionable?
         assert_equal 1, @user.reload.alerts.count
-        # should add sphinx delayed_job
-        assert_equal 1, match_delayed_jobs(/SphinxJob/)
       end
     end
     
@@ -242,8 +237,6 @@ class CheckinTest < ActiveSupport::TestCase
         assert @checkin_log.valid?
         # should add delayed job to import friend checkins
         assert_equal 1, match_delayed_jobs(/async_import_checkins/)
-        # should add sphinx delayed_job
-        assert_equal 1, match_delayed_jobs(/SphinxJob/)
       end
     end
   end

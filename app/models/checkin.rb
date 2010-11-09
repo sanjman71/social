@@ -44,11 +44,6 @@ class Checkin < ActiveRecord::Base
   def self.event_checkins_imported(user, new_checkins, source)
     log("[user:#{user.id}] #{user.handle} imported #{new_checkins.size} #{source} #{new_checkins.size == 1 ? 'checkin' : 'checkins'}")
 
-    if new_checkins.any?
-      # use dj to rebuild sphinx index
-      Delayed::Job.enqueue(SphinxJob.new(:index => 'user'), 0)
-    end
-
     # trigger friend checkins
     trigger_event_friend_checkins(user, source)
 
