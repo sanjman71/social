@@ -1,4 +1,5 @@
 class JobsController < ApplicationController
+  skip_before_filter :check_beta
 
   # GET /jobs
   def index
