@@ -114,8 +114,6 @@ class FacebookCheckin
     return nil if oauth.blank?
 
     begin
-      # log(:ok, "[#{user.handle}] importing #{source} friends checkin history #{options.inspect}, last checked about #{mm} minutes ago")
-
       # initialize facebook client
       facebook = FacebookClient.new(oauth.access_token)
 

@@ -62,7 +62,7 @@ class UsersController < ApplicationController
   # POST /users/1
   def update
     if @user.update_attributes(params[:user])
-      @user.class.log(:ok, "[#{@user.handle}] updated #{params[:user].inspect}")
+      @user.class.log("[user:#{@user.id}] #{@user.handle} updated #{params[:user].inspect}")
       flash[:notice] = "Profile updated"
     else
       flash[:error]  = "There was an error updating your profile"
