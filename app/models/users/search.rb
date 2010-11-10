@@ -239,19 +239,30 @@ module Users::Search
     if sort_orders.any?
       # build sort expressions
       sort_exprs = sort_orders.collect do |order|
-        case order
-        when :sort_closer_locations
-          send(order.to_s)
-        when :sort_similar_locations
-          send(order.to_s)
-        when :sort_other_checkins
-          send(order.to_s)
+        # order can be symbol or array
+        if order.is_a?(Array)
+          case order[0]
+          when :sort_weight_users, :sort_unweight_users
+            # e.g. [:sort_weight_users, [1,3,7]]
+            # e.g. [:sort_unweight_users, [1,3,7]]
+            send(order[0].to_s, order[1])
+          end
         else
-          nil
+          # order is a symbol
+          case order
+          when :sort_closer_locations
+            send(order.to_s)
+          when :sort_similar_locations
+            send(order.to_s)
+          when :sort_other_checkins
+            send(order.to_s)
+          else
+            nil
+          end
         end
       end.compact
-      sort_order  = sort_exprs.join(' * ')
       sort_mode   = :expr
+      sort_order  = sort_exprs.join(' * ')
     else
       # default sort
       sort_mode   = :extended
@@ -352,7 +363,25 @@ module Users::Search
   def sort_other_checkins(options={})
     sort_expr = []
     my_checkin_ids = checkins.collect(&:id)
-    sort_expr.push("IF(IN(checkin_ids, %s), 0.1, 1.0)" % my_checkin_ids.join(','))
+    if my_checkin_ids.any?
+      sort_expr.push("IF(IN(checkin_ids, %s), 0.1, 1.0)" % my_checkin_ids.join(','))
+    end
+    sort_expr
+  end
+
+  def sort_weight_users(user_ids)
+    sort_expr = []
+    if user_ids.any?
+      sort_expr.push("IF(IN(user_ids, %s), 1.5, 1.0)" % user_ids.join(','))
+    end
+    sort_expr
+  end
+
+  def sort_unweight_users(user_ids)
+    sort_expr = []
+    if user_ids.any?
+      sort_expr.push("IF(IN(user_ids, %s), 0.5, 1.0)" % user_ids.join(','))
+    end
     sort_expr
   end
 

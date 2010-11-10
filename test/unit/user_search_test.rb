@@ -83,12 +83,11 @@ class UserSearchTest < ActiveSupport::TestCase
       setup_checkins
     end
 
-    should "find 4 checkins filtered by distance" do
+    should "find 4 checkins filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_all_checkins(:miles => 50,
-                                                       :order => :sort_similar_locations)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 50, :order => :sort_similar_locations)
         assert_equal 4, @checkins.size
         assert_equal [@chi_checkin1, @chi_checkin3, @chi_checkin4, @chi_checkin2], @checkins.collect{ |o| o }
         # assert_equal [:location, :location, :location, :tag], @checkins.collect{ |o| o.try(:matchby) }
@@ -104,6 +103,28 @@ class UserSearchTest < ActiveSupport::TestCase
                                                        :order => [:sort_similar_locations, :sort_other_checkins])
         assert_equal 4, @checkins.size
         assert_equal [@chi_checkin3, @chi_checkin2, @chi_checkin1, @chi_checkin4], @checkins.collect{ |o| o }
+      end
+    end
+
+    should "find 4 checkins filtered by distance, weighted by users that are not @chicago_male1" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 50,
+                                                       :order => {:sort_unweight_users => [@chicago_male1.id]})
+        assert_equal 4, @checkins.size
+        assert_equal [@chi_checkin2, @chi_checkin3, @chi_checkin1, @chi_checkin4], @checkins.collect{ |o| o }
+      end
+    end
+
+    should "find 4 checkins filtered by distance, weighted by users that are @chicago_male1" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 50,
+                                                       :order => {:sort_weight_users => [@chicago_male1.id]})
+        assert_equal 4, @checkins.size
+        assert_equal [@chi_checkin1, @chi_checkin4, @chi_checkin2, @chi_checkin3], @checkins.collect{ |o| o }
       end
     end
 
