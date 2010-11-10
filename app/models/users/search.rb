@@ -234,6 +234,7 @@ module Users::Search
       with['@geodist']  = options[:geo_distance]  # e.g. 0.0..5000.0 (in meters, must be floats)
     end
 
+    # check sort order(s)
     sort_orders = Array(options[:order])
     if sort_orders.any?
       # build sort expressions
@@ -257,9 +258,20 @@ module Users::Search
       sort_order  = geo.blank? ? "@relevance DESC" : "@geodist ASC, @relevance DESC"
     end
 
+    # check grouping(s)
+    group = Hash[]
+    if options[:group]
+      case options[:group].to_s
+      when 'user'
+        group[:group_by]        = 'user_ids'
+        group[:group_function]  = :attr
+        group[:group_clause]    = sort_mode == :expr ? '@expr desc' : '@relevance DESC'
+      end
+    end
+
     args    = Hash[:without => without, :with => with, :conditions => conditions, :match_mode => :extended,
                    :sort_mode => sort_mode, :order => sort_order,
-                   :page => page, :per_page => per_page].update(geo)
+                   :page => page, :per_page => per_page].update(geo).update(group)
     objects = klass.send(method, query, args)
     begin
       objects.results # query sphinx and populate results

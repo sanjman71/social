@@ -107,27 +107,36 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
 
-    should "find 5 checkins, ordered by distance" do
+    should "find all 5 checkins, ordered by distance" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_all_checkins(:miles => 1000,
-                                                       :order => :sort_closer_locations)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 1000, :order => :sort_closer_locations)
         assert_equal 5, @checkins.size
         # chicago checkins first
         assert_equal [@chi_checkin1, @chi_checkin2, @chi_checkin3, @chi_checkin4, @nyc_checkin1], @checkins.collect{ |o| o }
       end
     end
 
-    should "find 5 checkins, using default sort order (similar locations, other checkins, distance)" do
+    should "find all 5 checkins, using default sort order (similar locations, other checkins, distance)" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_all_checkins(:miles => 1000,
-                                                       :order => :sort_default)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 1000, :order => :sort_default)
         assert_equal 5, @checkins.size
         # chicago checkins first
         assert_equal [@chi_checkin3, @chi_checkin2, @chi_checkin1, @chi_checkin4, @nyc_checkin1], @checkins.collect{ |o| o }
+      end
+    end
+    
+    should "find 4 checkins filtered/grouped by user" do
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 1000, :order => :sort_default, :group => :user)
+        assert_equal 4, @checkins.size
+        # chicago checkins first
+        assert_equal [@chi_checkin3, @chi_checkin2, @chi_checkin1, @nyc_checkin1], @checkins.collect{ |o| o }
       end
     end
   end
