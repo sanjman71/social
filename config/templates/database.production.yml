@@ -3,6 +3,6 @@ production:
   adapter: mysql
   host: 127.0.0.1
   port: 3306
-  database: social_production
+  database: outlately_production
   username: rails
   password: 1ndus7ry!

@@ -1,0 +1,84 @@
+# Slice installation process
+
+# The basic steps:
+
+1. http://articles.slicehost.com/2010/10/18/ubuntu-maverick-setup-part-1
+2. http://articles.slicehost.com/2010/10/18/ubuntu-maverick-setup-part-2
+3. sudo aptitude install curl bison build-essential zlib1g-dev openssl libssl-dev libreadline5-dev libxml2-dev git-core libcurl4-openssl-dev
+4. http://articles.slicehost.com/2007/9/11/ubuntu-feisty-mysql-and-ror
+5. Mysql config
+     - create user 'rails'@'localhost' identified by 'rails';
+     - grant all on *.* to 'rails'@'localhost';
+6. http://rvm.beginrescueend.com/rvm/install/
+7. http://rvm.beginrescueend.com/rubies/installing/
+8. http://rvm.beginrescueend.com/integration/passenger/
+
+9. gem installs
+  - gem install rails -v=x.y.z
+  - gem install mysql
+  - gem install bundler
+
+# Sphinx
+
+1. sudo wget http://www.sphinxsearch.com/downloads/sphinx-1.10-beta.tar.gz
+2. sudo ./configure; sudo make; sudo make install
+
+# Rmagick
+
+1. sudo aptitude install imagemagick libmagick9-dev
+2. gem install rmagick -v=2.12.2 (or add to Gemfile)
+
+# Memcached
+
+0. http://thewebfellas.com/blog/2008/6/9/rails-2-1-now-with-better-integrated-caching
+1. sudo aptitude install memcached
+
+# Set timezone
+
+1. sudo tzselect
+
+# SSL certificates
+
+1. http://articles.slicehost.com/2007/12/19/ubuntu-gutsy-self-signed-ssl-certificates-and-nginx
+2. (re-)compile nginx with ssl support
+  - rvmsudo passenger-install-nginx-module
+  - choose the manual install
+  - use /tmp/nginx-0.7.64 (as an example) as the source directory
+  - add --with-http_ssl_module as extra arguments
+   
+# Haproxy
+
+1. sudo aptitude install haproxy
+2. /etc/haproxy.cfg
+3a. sudo /etc/init.d/haproxy start|stop
+3b. sudo haproxy -f /etc/haproxy.cfg -p /var/run/haproxy.pid
+
+# Capistrano deployment
+
+* bundle install /usr/apps/social/shared/vendor/bundle
+
+# Iptables
+
+- sudo vi /etc/iptables.up.rules
+- sudo iptables-restore < /etc/iptables.up.rules
+- sudo iptables -L # list existing rules
+- sudo vi /etc/network/if-pre-up.d/iptables
+- sudo chmod +x /etc/network/if-pre-up.d/iptables
+
+# Database server(s)
+
+# App server(s)
+
+- sudo aptitude remove mysql-server
+- sudo update-rc.d nginx defaults 98 02
+
+# HA server(s)
+
+- sudo update-rc.d haproxy defaults 98 02
+
+# First time deploy for new app servers
+
+cap <env> deploy:setup HOSTS="184.106.192.13:22"
+cap <env> deploy HOSTS="184.106.192.13:22"
+cap <env> deploy:first HOSTS="184.106.192.13:22"
+cap <env> nginx:config HOSTS="184.106.192.13:22"

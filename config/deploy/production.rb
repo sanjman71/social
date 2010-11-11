@@ -1,7 +1,7 @@
 # Create hosts hash, especially useful when there is more than 1 host
 hosts             = Hash.new
-hosts[:app1]      = '67.23.46.244:30001'   # internal ip:
-hosts[:db1]       = '67.23.46.244:30001'
+hosts[:app1]      = '184.106.153.243'   # internal ip:
+hosts[:db1]       = '184.106.153.243'
 
 # Set roles
 role :app,          hosts[:app1]

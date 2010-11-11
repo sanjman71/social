@@ -10,7 +10,7 @@ require 'capistrano/ext/multistage'
 require "bundler/capistrano"
 
 # Set application name
-set :application,   "social"
+set :application,   "outlately"
 
 # If you aren't deploying to /u/apps/#{application} on the target
 # servers (which is the default), you can specify the actual location
@@ -67,11 +67,12 @@ after "deploy:start", "dj:start"
 deploy.task :init, :roles => :app do
   sudo "chown -R #{user}:#{group} #{deploy_to}"
   run "mkdir -p #{deploy_to}/shared"
-  run "mkdir -p #{deploy_to}/shared/config"
   run "mkdir -p #{deploy_to}/shared/backups"
-  run "mkdir -p #{deploy_to}/shared/sockets"
+  run "mkdir -p #{deploy_to}/shared/bundle"
+  run "mkdir -p #{deploy_to}/shared/config"
   run "mkdir -p #{deploy_to}/shared/pids"
-  run "mkdir -p #{deploy_to}/shared/vendor/bundle"
+  run "mkdir -p #{deploy_to}/shared/sockets"
+  run "mkdir -p #{deploy_to}/shared/sphinx"
 end
 
 after "deploy:setup", "deploy:init"
