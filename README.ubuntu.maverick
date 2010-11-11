@@ -17,6 +17,7 @@
   - gem install rails -v=x.y.z
   - gem install mysql
   - gem install bundler
+  - gem install whenever
 
 # Sphinx
 
