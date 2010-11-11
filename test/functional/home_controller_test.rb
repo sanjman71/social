@@ -17,49 +17,53 @@ class HomeControllerTest < ActionController::TestCase
     @user     = Factory(:user, :city => @chicago)
   end
 
-  context "index" do
+  context "get index" do
     should "allow guests" do
       set_beta
       get :index
       assert_template "home/index"
     end
 
-    should "set default stream and geo" do
-      set_beta
-      sign_in @user
-      get :index
-      assert assigns(:method)
-      assert assigns(:checkins)
-      assert_equal 'my', assigns(:stream)
-      assert_equal @chicago, assigns(:geo)
-      assert_equal 'my', session[:current_stream]
-      assert_equal 'chicago', session[:current_geo]
+    context "current_stream" do
+      should "set default stream to 'my'" do
+        set_beta
+        sign_in @user
+        get :index
+        assert_equal 'my', assigns(:stream)
+        assert_equal 'my', session[:current_stream]
+      end
+      
+      should "set stream based on session value" do
+        set_beta
+        sign_in @user
+        session[:current_stream] = 'friends'
+        get :index
+        assert_equal 'friends', assigns(:stream)
+        assert_equal 'friends', session[:current_stream]
+      end
     end
 
-    should "use session[:current_stream]" do
-      set_beta
-      sign_in @user
-      session[:current_stream] = 'friends'
-      get :index
-      assert assigns(:method)
-      assert assigns(:checkins)
-      assert_equal 'friends', assigns(:stream)
-      assert_equal 'friends', session[:current_stream]
-    end
-
-    should "use session[:current_geo]" do
-      set_beta
-      sign_in @user
-      session[:current_geo] = 'boston'
-      get :index
-      assert assigns(:method)
-      assert assigns(:checkins)
-      assert_equal @boston, assigns(:geo)
-      assert_equal 'boston', session[:current_geo]
+    context "current_geo" do
+      should "set default geo to user city" do
+        set_beta
+        sign_in @user
+        get :index
+        assert_equal @chicago, assigns(:geo)
+        assert_equal 'chicago', session[:current_geo]
+      end
+      
+      should "set geo based on session value" do
+        set_beta
+        sign_in @user
+        session[:current_geo] = 'boston'
+        get :index
+        assert_equal @boston, assigns(:geo)
+        assert_equal 'boston', session[:current_geo]
+      end
     end
   end
 
-  context "stream" do
+  context "put stream" do
     should "set session[:current_stream]" do
       set_beta
       sign_in @user
@@ -69,7 +73,7 @@ class HomeControllerTest < ActionController::TestCase
     end
   end
 
-  context "geo" do
+  context "put geo" do
     should "set session[:current_geo]" do
       set_beta
       sign_in @user
