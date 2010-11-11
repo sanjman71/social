@@ -25,15 +25,15 @@ class HomeControllerTest < ActionController::TestCase
     end
 
     context "current_stream" do
-      should "set default stream to 'my'" do
+      should "set default stream to 'outlately'" do
         set_beta
         sign_in @user
         get :index
-        assert_equal 'my', assigns(:stream)
-        assert_equal 'my', session[:current_stream]
+        assert_equal 'outlately', assigns(:stream)
+        assert_equal 'outlately', session[:current_stream]
       end
       
-      should "set stream based on session value" do
+      should "use stream from session value" do
         set_beta
         sign_in @user
         session[:current_stream] = 'friends'
@@ -52,7 +52,7 @@ class HomeControllerTest < ActionController::TestCase
         assert_equal 'chicago', session[:current_geo]
       end
       
-      should "set geo based on session value" do
+      should "use geo from session value" do
         set_beta
         sign_in @user
         session[:current_geo] = 'boston'

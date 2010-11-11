@@ -162,7 +162,7 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
-  context "search_other_checkins filter" do
+  context "search_others_checkins filter" do
     setup do
       setup_checkins
     end
@@ -171,8 +171,8 @@ class UserSearchTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_other_checkins(:miles => 50,
-                                                         :order => :sort_similar_locations)
+        @checkins = @chicago_male1.search_others_checkins(:miles => 50,
+                                                          :order => :sort_similar_locations)
         assert_equal 2, @checkins.size
         assert_equal [@chi_checkin3, @chi_checkin2], @checkins.collect{ |o| o }
         # assert_equal [:location, :tag], @checkins.collect{ |o| o.try(:matchby) }
@@ -180,7 +180,7 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
-  context "search_friend_checkins filter" do
+  context "search_friends_checkins filter" do
     setup do
       setup_checkins
       # add friends
@@ -192,15 +192,15 @@ class UserSearchTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_friend_checkins(:miles => 50,
-                                                          :order => :sort_similar_locations)
+        @checkins = @chicago_male1.search_friends_checkins(:miles => 50,
+                                                           :order => :sort_similar_locations)
         assert_equal 2, @checkins.size
         assert_equal [@chi_checkin3, @chi_checkin2], @checkins.collect{ |o| o }
       end
     end
   end
 
-  context "search_dater_checkins filter" do
+  context "search_daters_checkins filter" do
     setup do
       setup_checkins
       # add friends
@@ -212,8 +212,8 @@ class UserSearchTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_dater_checkins(:miles => 50,
-                                                         :order => :sort_similar_locations)
+        @checkins = @chicago_male1.search_daters_checkins(:miles => 50,
+                                                          :order => :sort_similar_locations)
         assert_equal 1, @checkins.size
         assert_equal [@chi_checkin2], @checkins.collect{ |o| o }
       end

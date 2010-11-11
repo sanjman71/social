@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  skip_before_filter :check_beta, :only => [:beta, :ping]
+  skip_before_filter  :check_beta, :only => [:beta, :ping]
 
   # GET /
   def index
@@ -15,7 +15,7 @@ class HomeController < ApplicationController
                                                  :geo_distance => 0.0..@radius.miles.meters.value,
                                                  :order => :sort_default,
                                                  :group => :user)
-      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others']
+      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others', 'Outlately']
       @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']
       @max_objects  = checkins_end_count
     end
@@ -72,12 +72,20 @@ class HomeController < ApplicationController
   end
 
   def current_stream
-    session[:current_stream] ||= 'my'
+    session[:current_stream] ||= default_stream
+  end
+
+  def default_stream
+    'outlately'
   end
 
   def current_geo
-    session[:current_geo] ||= current_user.try(:city).try(:name).downcase
+    session[:current_geo] ||= default_geo
     current_geo_object
+  end
+
+  def default_geo
+    current_user.try(:city).try(:name).downcase
   end
 
   def current_geo_object

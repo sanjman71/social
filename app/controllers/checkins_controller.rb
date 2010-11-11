@@ -7,7 +7,7 @@ class CheckinsController < ApplicationController
   # GET /users/1/checkins
   # GET /users/1/checkins/geo:1.23..-23.89/radius:10?limit=5&without_checkin_ids=1,5,3
   # GET /users/1/checkins/city:chicago?limit=5&without_checkin_ids=1,5,3
-  # GET /users/1/checkins/all|friends|my|other
+  # GET /users/1/checkins/all|friends|guys|gals|my|others|outlately
   # GET /users/1/checkins?order=default
   def index
     # parse general parameters
