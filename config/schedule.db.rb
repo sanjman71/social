@@ -15,9 +15,9 @@
 # whenever --write-crontab db --load-file config/schedule.db.rb
 
 set :environment, :production
-set :path, '/usr/apps/social/current'
-set :output, '/usr/apps/social/current/log/backups.log'
+set :path, '/usr/apps/outlately/current'
+set :output, '/usr/apps/outlately/current/log/backups.log'
 
 every 2.hours do
-  rake "db:backup DB=social_production BACKUP_DIR=/usr/apps/social/shared/backups"
+  rake "db:backup DB=outlately_production BACKUP_DIR=/usr/apps/outlately/shared/backups"
 end

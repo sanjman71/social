@@ -11,12 +11,12 @@
 # Learn more: http://github.com/javan/whenever
 
 # Crontab update/write example
-# whenever --update-crontab social --load-file config/schedule.social.rb
-# whenever --write-crontab social --load-file config/schedule.social.rb
+# whenever --update-crontab outlately --load-file config/schedule.outlately.rb
+# whenever --write-crontab outlately --load-file config/schedule.outlately.rb
 
 set :environment, :production
-set :path, '/usr/apps/social/current'
-set :output, '/usr/apps/social/current/log/cron.log'
+set :path, '/usr/apps/outlately/current'
+set :output, '/usr/apps/outlately/current/log/cron.log'
 
 every 5.minutes do
   # ping
