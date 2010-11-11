@@ -14,6 +14,8 @@ en:
       title: Where You Should Go
     suggestions:
       title: Who You Should Meet
+  todo:
+    added: "If you go there within %{days} days +$%{plus_points}, otherwise -$%{minus_points}"
   alert:
     linked_account: "You're just a few checkins from being matched."
     need_checkins: "You are just a few checkins from being matched."

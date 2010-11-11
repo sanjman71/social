@@ -20,17 +20,19 @@ class PlansController < ApplicationController
         # user hasn't checked in here or already planned to go here
         @locationship.increment!(:todo_checkins)
       end
-      flash[:notice]  = "We added #{@location.name} to your want to go list"
+      flash[:notice]  = "We added #{@location.name} to your todo list"
       @status         = 'ok'
+      @message        = I18n.t("todo.added", :days => Locationship.todo_window_days,
+                                             :plus_points => Locationship.todo_completed_points,
+                                             :minus_points => Locationship.todo_expired_points)
+      # add growl message
+      @growls = [{:message => @message, :timeout => 2000}]
     rescue Exception => e
       # @location already planned
       @status         = 'error'
       @message        = e.message
     end
-
-    # no points added/subtracted for this action
-    # @growls = [{:message => '-3 points', :timeout => 2000}]
-
+    
     respond_with(@location) do |format|
       format.html { redirect_back_to(root_path) and return }
       format.js { render(:update) { |page| page.redirect_to(root_path) } }

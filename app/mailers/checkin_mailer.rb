@@ -7,8 +7,9 @@ class CheckinMailer < ActionMailer::Base
     @location = location
     @points   = points
 
-    return if @email.blank?
-    mail(:to => 'sanjay@jarna.com', :subject => "You checked in!")
+    if !@email.blank?
+      mail(:to => @email, :subject => "You checked in!")
+    end
   end
 
   def todo_expired(user, location, points)
@@ -17,7 +18,8 @@ class CheckinMailer < ActionMailer::Base
     @location = location
     @points   = points
 
-    return if @email.blank?
-    mail(:to => 'sanjay@jarna.com', :subject => "You checked in, but a bit too late.")
+    if !@email.blank?
+      mail(:to => @email, :subject => "You checked in, but a bit too late.")
+    end
   end
 end

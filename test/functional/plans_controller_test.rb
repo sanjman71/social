@@ -28,6 +28,8 @@ class PlansControllerTest < ActionController::TestCase
       assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
       assert_equal [1], @user1.reload.locationships.collect(&:todo_checkins)
       assert @user1.reload.locationships.first.todo_at
+      # should add growl message
+      assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'
     end
 

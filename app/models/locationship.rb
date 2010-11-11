@@ -44,15 +44,15 @@ class Locationship < ActiveRecord::Base
     user.checkins.where(:location_id => location_id).order("checkin_at asc").limit(1).first
   end
 
-  def todo_window_days
-    7.days
+  def self.todo_window_days
+    7
   end
   
-  def todo_completed_points
+  def self.todo_completed_points
     50
   end
 
-  def todo_expired_points
+  def self.todo_expired_points
     -10
   end
 
@@ -76,20 +76,20 @@ class Locationship < ActiveRecord::Base
       if (user_first_checkin.try(:checkin_at) || Time.zone.now) < todo_at
         # user checked in before adding to todo list
         @todo_resolution = :invalid
-      elsif Time.zone.now - todo_at < todo_window_days
+      elsif Time.zone.now - todo_at < self.class.todo_window_days.days
         # todo was completed within the allowed window
         @todo_resolution = :completed
         # add points
-        user.add_points_for_todo_completed_checkin(todo_completed_points)
+        user.add_points_for_todo_completed_checkin(self.class.todo_completed_points)
         # send email
-        CheckinMailer.delay.todo_completed(user, location, todo_completed_points)
+        CheckinMailer.delay.todo_completed(user, location, self.class.todo_completed_points)
       else
         # too late
         @todo_resolution = :expired
         # subtract points
-        user.add_points_for_todo_expired_checkin(todo_expired_points)
+        user.add_points_for_todo_expired_checkin(self.class.todo_expired_points)
         # send email
-        CheckinMailer.delay.todo_expired(user, location, todo_expired_points)
+        CheckinMailer.delay.todo_expired(user, location, self.class.todo_expired_points)
       end
       # reset todo_checkins
       decrement!(:todo_checkins)
