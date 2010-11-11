@@ -5,7 +5,7 @@ class PlansController < ApplicationController
   # GET /plans
   def index
     @user           = current_user
-    @locationships  = @user.locationships.planned_checkins
+    @locationships  = @user.locationships.todo_checkins
   end
 
   # PUT /plans/add/1
@@ -16,9 +16,9 @@ class PlansController < ApplicationController
     begin
       # update locationship
       @locationship = @user.locationships.find_or_create_by_location_id(@location.id)
-      if @locationship.planned_checkins == 0 and @locationship.my_checkins == 0
+      if @locationship.todo_checkins == 0 and @locationship.my_checkins == 0
         # user hasn't checked in here or already planned to go here
-        @locationship.increment!(:planned_checkins)
+        @locationship.increment!(:todo_checkins)
       end
       flash[:notice]  = "We added #{@location.name} to your want to go list"
       @status         = 'ok'
@@ -45,9 +45,9 @@ class PlansController < ApplicationController
 
     begin
       @locationship = @user.locationships.find_location_id(@location.id)
-      @locationship.try(:decrement!, :planned_checkins)
+      @locationship.try(:decrement!, :todo_checkins)
     rescue Exception => e
-      # @location not planned
+      # @location not on todo list
     end
   
     respond_with(@location) do |format|

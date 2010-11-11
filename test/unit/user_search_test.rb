@@ -227,9 +227,9 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_female2.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
       @chicago_female3.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
       @boston_female1.locationships.create!(:location => @boston_coffee, :my_checkins => 1)
-      # chicago searcher has 1 checkin location, 1 planned location in common
+      # chicago searcher has 1 checkin location, 1 todo location in common
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      @chicago_male1.locationships.create!(:location => @chicago_coffee, :planned_checkins => 1)
+      @chicago_male1.locationships.create!(:location => @chicago_coffee, :todo_checkins => 1)
       @chicago_male1.locationships.create!(:location => @chicago_pizza, :friend_checkins => 1)
     end
 

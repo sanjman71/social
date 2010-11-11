@@ -9,4 +9,4 @@
   - @locationships.each do |locationship|
     .span-24.last#location.padding-bottom-10
       = render(:partial => 'plans/location',
-               :locals => {:location => locationship.location, :planned_at => locationship.planned_at})
+               :locals => {:location => locationship.location, :todo_at => locationship.todo_at})

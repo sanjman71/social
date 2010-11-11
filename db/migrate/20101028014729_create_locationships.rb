@@ -5,8 +5,8 @@ class CreateLocationships < ActiveRecord::Migration
       t.references  :user, :null => false
       t.integer     :my_checkins, :default => 0
       t.integer     :friend_checkins, :default => 0
-      t.integer     :planned_checkins, :default => 0
-      t.datetime    :planned_at
+      t.integer     :todo_checkins, :default => 0
+      t.datetime    :todo_at
       t.timestamps
     end
 
@@ -14,8 +14,8 @@ class CreateLocationships < ActiveRecord::Migration
     add_index :locationships, :user_id
     add_index :locationships, [:user_id, :my_checkins]
     add_index :locationships, [:user_id, :friend_checkins]
-    add_index :locationships, [:user_id, :planned_checkins]
-    add_index :locationships, :planned_at
+    add_index :locationships, [:user_id, :todo_checkins]
+    add_index :locationships, :todo_at
   end
 
   def self.down

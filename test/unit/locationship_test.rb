@@ -12,7 +12,7 @@ class LocationshipTest < ActiveSupport::TestCase
     @locship    = @user1.locationships.create!(:location => @location1)
     assert_equal 0, @locship.my_checkins
     assert_equal 0, @locship.friend_checkins
-    assert_equal 0, @locship.planned_checkins
+    assert_equal 0, @locship.todo_checkins
   end
 
   should "not allow duplicates" do
@@ -27,34 +27,61 @@ class LocationshipTest < ActiveSupport::TestCase
     end
   end
 
-  should "touch planned_at when planned_checkins is incremented" do
+  should "touch todo_at when todo_checkins is incremented" do
     @user1      = Factory.create(:user)
     @location1  = Location.create(:name => "Location 1", :country => @us)
-    @locship    = @user1.locationships.create!(:location => @location1, :planned_checkins => 1)
-    assert @locship.reload.planned_at
+    @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+    assert @locship.reload.todo_at
   end
   
-  should "resolve as completed when a user checks in to a planned location within the time limit" do
-    @user1      = Factory.create(:user)
-    @location1  = Location.create(:name => "Location 1", :country => @us)
-    # user plans a checkin
-    @locship    = @user1.locationships.create!(:location => @location1, :planned_checkins => 1)
-    @locship.update_attribute(:planned_at, 3.days.ago)
-    # user checks in to the location
-    @locship.increment!(:my_checkins)
-    assert_equal :completed, @locship.planned_checkin_resolution
-    assert_equal 0, @locship.reload.planned_checkins
-  end
+  context "todo resolution" do
+    should "resolve as invalid when user has already checked in to a todo location" do
+      @user1      = Factory.create(:user)
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      # user adds checkin to todo list
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      @locship.update_attribute(:todo_at, 3.days.ago)
+      # user checked in to the location before the todo was added
+      @locship.stubs(:user_first_checkin).returns(Checkin.new(:checkin_at => 7.days.ago))
+      @locship.increment!(:my_checkins)
+      assert_equal :invalid, @locship.todo_resolution
+      assert_equal 0, @locship.reload.todo_checkins
+    end
 
-  should "resolve as too-late when a user checks in to a planned location after the time limit" do
-    @user1      = Factory.create(:user)
-    @location1  = Location.create(:name => "Location 1", :country => @us)
-    # user plans a checkin
-    @locship    = @user1.locationships.create!(:location => @location1, :planned_checkins => 1)
-    @locship.update_attribute(:planned_at, 10.days.ago)
-    # user checks in to the location
-    @locship.increment!(:my_checkins)
-    assert_equal :toolate, @locship.planned_checkin_resolution
-    assert_equal 0, @locship.reload.planned_checkins
+    should "resolve as completed when a user checks in to a todo location within the time limit" do
+      @user1      = Factory.create(:user)
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      # user adds checkin to todo list
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      @locship.update_attribute(:todo_at, 3.days.ago)
+      @points     = @user1.points
+      # user checks in to the location
+      @locship.increment!(:my_checkins)
+      assert_equal :completed, @locship.todo_resolution
+      assert_equal 0, @locship.reload.todo_checkins
+      # should add 50 points
+      assert_equal @points+50, @user1.reload.points
+      # should send email to user
+      assert_equal 1, match_delayed_jobs(/CheckinMailer/)
+      assert_equal 1, match_delayed_jobs(/todo_completed/)
+    end
+    
+    should "resolve as expired when a user checks in to a todo location after the time limit" do
+      @user1      = Factory.create(:user)
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      # user adds checkin to todo list
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      @locship.update_attribute(:todo_at, 10.days.ago)
+      @points     = @user1.points
+      # user checks in to the location
+      @locship.increment!(:my_checkins)
+      assert_equal :expired, @locship.todo_resolution
+      assert_equal 0, @locship.reload.todo_checkins
+      # should subtract 10 points
+      assert_equal @points-10, @user1.reload.points
+      # should send email to user
+      assert_equal 1, match_delayed_jobs(/CheckinMailer/)
+      assert_equal 1, match_delayed_jobs(/todo_expired/)
+    end
   end
 end

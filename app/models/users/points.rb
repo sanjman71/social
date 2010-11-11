@@ -5,14 +5,12 @@ module Users::Points
     case oauth.provider
     when 'facebook'
       self.points += 5
-      self.save
     when 'foursquare'
       self.points += 5
-      self.save
     when 'twitter'
       self.points += 5
-      self.save
     end
+    self.save
   end
 
   # add points for a checkin
@@ -31,4 +29,15 @@ module Users::Points
     self.save
   end
 
+  # add points for todo completed checkin
+  def add_points_for_todo_completed_checkin(points)
+    self.points += points
+    self.save
+  end
+
+  # add points for todo expired checkin
+  def add_points_for_todo_expired_checkin(points)
+    self.points += points
+    self.save
+  end
 end

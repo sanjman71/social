@@ -373,8 +373,8 @@ module Users::Search
     if (my_checkin_loc_ids = locationships.my_checkins.collect(&:location_id)).any?
       sort_expr.push("IF(IN(location_ids, %s), 5.0, 1.0)" % my_checkin_loc_ids.join(','))
     end
-    if (planned_loc_ids = locationships.planned_checkins.collect(&:location_id)).any?
-      sort_expr.push("3.0 * IF(IN(location_ids, %s), 3.0, 1.0)" % planned_loc_ids.join(','))
+    if (todo_loc_ids = locationships.todo_checkins.collect(&:location_id)).any?
+      sort_expr.push("3.0 * IF(IN(location_ids, %s), 3.0, 1.0)" % todo_loc_ids.join(','))
     end
     if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
       sort_expr.push("3.0 * IF(IN(tag_ids, %s), 3.0, 1.0)" % tag_ids.join(','))
