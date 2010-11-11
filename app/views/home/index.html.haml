@@ -12,16 +12,13 @@
     - javascript 'stream'
 
 - content_for :mat do
-  %h2 Outlately
-  - if @playgrounds
-    %h4#playgrounds
-      %span#playground_title Playground:
-      - @playgrounds.each do |playground|
-        - if @geo.try(:name) == playground
-          %span.playground_name.current= playground
-        - else
-          %span.playground_name= link_to playground, home_geo_path(:name => playground.parameterize), :id => playground.downcase.parameterize, :method => :put
-  %h4= render(:partial => 'shared/oauth_links')
+  .span-3
+    %h2 Outlately
+  .span-20.last{:style => 'padding-top: 15px;'}
+    - if @cities
+      = render(:partial => 'home/playgrounds', :locals => {:cities => @cities, :geo => @geo})
+  .span-23.last
+    %h4= render(:partial => 'shared/oauth_links')
 
 %hr.space
 

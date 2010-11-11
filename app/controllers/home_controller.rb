@@ -13,9 +13,10 @@ class HomeController < ApplicationController
       @checkins     = current_user.send(@method, :limit => checkins_start_count,
                                                  :geo_origin => [@geo.lat.radians, @geo.lng.radians],
                                                  :geo_distance => 0.0..@radius.miles.meters.value,
-                                                 :order => :sort_default)
+                                                 :order => :sort_default,
+                                                 :group => :user)
       @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others']
-      @playgrounds  = ['Boston', 'Chicago', 'New York', 'San Francisco']
+      @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']
       @max_objects  = checkins_end_count
     end
 

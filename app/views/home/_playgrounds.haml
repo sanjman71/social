@@ -1,0 +1,7 @@
+%h4#playgrounds
+  -#%span#playground_title Playground:
+  - cities.each do |city_name|
+    - if geo.try(:name) == city_name
+      %span.playground_name.current= city_name
+    - else
+      %span.playground_name= link_to city_name, home_geo_path(:name => city_name.parameterize), :id => city_name.downcase.parameterize, :method => :put
