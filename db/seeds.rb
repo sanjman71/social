@@ -9,12 +9,9 @@
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 
 # remove log files
-system "rm #{Rails.root}/log/checkins.*.log"
-system "rm #{Rails.root}/log/delayed_job.log"
-system "rm #{Rails.root}/log/exceptions.*.log"
-system "rm #{Rails.root}/log/locations.*.log"
-system "rm #{Rails.root}/log/suggestions.*.log"
-system "rm #{Rails.root}/log/users.*.log"
+system "rm -f #{Rails.root}/log/.*.log"
+system "rm -f #{Rails.root}/log/delayed_job.log"
+system "rm -f #{Rails.root}/log/outlately.*.log"
 puts "#{Time.now}: removed log files"
 
 # countries
@@ -30,6 +27,13 @@ File.open(file).lines.each do |row|
   @us.states.create(:name => name, :code => code, :lat => lat.to_f, :lng => lng.to_f)
 end
 puts "#{Time.now}: initialized #{State.count} states"
+
+# cities
+cities = ['Boston', 'Chicago', 'New York', 'San Francisco']
+cities.each do |s|
+  Locality.resolve(s, :create => true)
+end
+puts "#{Time.now}: initialized #{City.count} cities"
 
 # badges
 Badge.create(:regex => "airport|travel", :name => 'JetSetter')

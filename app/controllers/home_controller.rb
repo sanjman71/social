@@ -5,14 +5,17 @@ class HomeController < ApplicationController
   def index
     if user_signed_in?
       # find matching checkins
+      @user         = current_user
       @stream       = current_stream
+      @geo          = current_geo || current_user
       @method       = "search_#{@stream}_checkins"
       @radius       = 2000
       @checkins     = current_user.send(@method, :limit => checkins_start_count,
-                                                 :miles => @radius,
+                                                 :geo_origin => [@geo.lat.radians, @geo.lng.radians],
+                                                 :geo_distance => 0.0..@radius.miles.meters.value,
                                                  :order => :sort_default)
-      # mark checkins from me and friends
-      
+      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others']
+      @playgrounds  = ['Boston', 'Chicago', 'New York', 'San Francisco']
       @max_objects  = checkins_end_count
     end
 
@@ -43,10 +46,17 @@ class HomeController < ApplicationController
     head(:ok)
   end
 
-  # PUT /stream?name='daters'
+  # PUT /stream/daters
   def stream
-    # change the user's stream
+    # change the user's current stream
     session[:current_stream] = params[:name]
+    redirect_to root_path and return
+  end
+
+  # PUT /geo/chicago
+  def geo
+    # change the user's current stream
+    session[:current_geo] = params[:name]
     redirect_to root_path and return
   end
 
@@ -62,6 +72,27 @@ class HomeController < ApplicationController
 
   def current_stream
     session[:current_stream] ||= 'my'
+  end
+
+  def current_geo
+    session[:current_geo] ||= current_user.try(:city).try(:name).downcase
+    current_geo_object
+  end
+
+  def current_geo_object
+    # map geo string to city object
+    City.find_by_name(session[:current_geo].try(:titleize))
+  end
+
+  def stream_name_daters(user)
+    case user.gender
+    when 1
+      'Guys'
+    when 2
+      'Gals'
+    else
+      'Daters'
+    end
   end
 
 end

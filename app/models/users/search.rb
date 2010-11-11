@@ -35,6 +35,24 @@ module Users::Search
 
   alias :search_friends_checkins :search_friend_checkins
 
+  def search_gals_checkins(options={})
+    add_geo_params(options)
+    # exclude my checkins
+    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    # filter checkins by females
+    options.update(:with_gender => [1]) unless options[:with_gender]
+    search_checkins(options)
+  end
+
+  def search_guys_checkins(options={})
+    add_geo_params(options)
+    # exclude my checkins
+    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    # filter checkins by males
+    options.update(:with_gender => [2]) unless options[:with_gender]
+    search_checkins(options)
+  end
+
   def search_dater_checkins(options={})
     add_geo_params(options)
     # exclude my checkins
@@ -168,12 +186,17 @@ module Users::Search
   end
 
   def add_geo_params(options={})
-    # check if geo parameters are already set
+    # do nothing if geo parameters are already set
     return if !options[:geo_origin].blank? and !options[:geo_distance].blank?
     # allow meters or miles
-    if (options[:meters] or options[:miles]) and self.mappable?
+    if (options[:meters] or options[:miles]) and mappable?
+      # set geo distance
       meters = options[:meters] ? options[:meters].to_f : options[:miles].miles.meters.value
-      options.update(:geo_origin => [lat.radians, lng.radians], :geo_distance => 0.0..meters)
+      options.update(:geo_distance => 0.0..meters)
+      unless options[:geo_origin]
+        # set geo origin to user's lat, lng
+        options.update(:geo_origin => [lat.radians, lng.radians])
+      end
     end
   end
 

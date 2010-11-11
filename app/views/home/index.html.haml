@@ -12,7 +12,15 @@
     - javascript 'stream'
 
 - content_for :mat do
-  %h2== Outlately
+  %h2 Outlately
+  - if @playgrounds
+    %h4#playgrounds
+      %span#playground_title Playground:
+      - @playgrounds.each do |playground|
+        - if @geo.try(:name) == playground
+          %span.playground_name.current= playground
+        - else
+          %span.playground_name= link_to playground, home_geo_path(:name => playground.parameterize), :id => playground.downcase.parameterize, :method => :put
   %h4= render(:partial => 'shared/oauth_links')
 
 %hr.space
@@ -30,7 +38,7 @@
 
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions
-    - if current_user.suggestions.active.count > 0
+    - if @user.suggestions.active.count > 0
       %h3= link_to I18n.t('home.suggestions.title'), suggestions_path, :style => 'color: #0000BB;'
     - else
       %h3== No suggestions at the moment, but we're working on it.
@@ -43,12 +51,12 @@
         -# allow selection between different streams
         %span#stream_list{:style => 'padding-left: 5px; font-size: 0.9em;'}
           %span.stream_title Streams:
-          - ['My', 'Friends', 'Daters', 'Others'].each do |stream_name|
+          - @streams.each do |stream_name|
             -# check if this is the current stream
             - if stream_name.split.first.downcase == @stream
-              %span.stream_name.current{:style => 'padding-right: 3px;'}= stream_name
+              %span.stream_name.current= stream_name
             - else
-              %span.stream_name{:style => 'padding-right: 3px;'}= link_to stream_name, home_stream_path(:name => stream_name.parameterize), :class => 'admin', :id => stream_name.downcase.parameterize, :method => :put
+              %span.stream_name= link_to stream_name, home_stream_path(:name => stream_name.parameterize), :class => 'admin', :id => stream_name.downcase.parameterize, :method => :put
     .span-10.last
       %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.map.title')
 
@@ -75,4 +83,4 @@
   var growls             = #{@growls};
   var mapping            = #{user_signed_in?};
   var max_locations      = #{@max_objects || 0};
-  var geo_checkins_path  = "/users/#{current_user.try(:id)}/checkins/geo:#{current_user.try(:lat).to_f}..#{current_user.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"
+  var geo_checkins_path  = "/users/#{@user.try(:id)}/checkins/geo:#{@geo.try(:lat).to_f}..#{@geo.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"

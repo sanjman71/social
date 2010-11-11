@@ -74,7 +74,8 @@ Social::Application.routes.draw do
 
   match 'ping', :to => "home#ping", :via => [:get]
   match 'beta', :to => "home#beta", :via => [:get, :post]
-  match 'stream', :to => "home#stream", :via => [:put], :as => :home_stream
+  match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
+  match 'geo/:name', :to => "home#geo", :via => [:put], :as => :home_geo
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
