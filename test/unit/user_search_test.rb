@@ -83,7 +83,19 @@ class UserSearchTest < ActiveSupport::TestCase
       setup_checkins
     end
 
-    should "find 4 checkins filtered by distance, ordered by similar locations" do
+    should "find 4 chicago checkins when user searching has no checkins" do
+      @chicago_user1 = User.create!(:name => "Chicago User 1", :handle => 'chicago_user_1', :gender => 2,
+                                    :city => @chicago)
+      ThinkingSphinx::Test.run do
+        ThinkingSphinx::Test.index
+        sleep(0.25)
+        @checkins = @chicago_user1.search_all_checkins(:miles => 50, :order => :sort_similar_locations)
+        assert_equal 4, @checkins.size
+        assert_equal [], [@chi_checkin1, @chi_checkin2, @chi_checkin3, @chi_checkin4] - @checkins.collect{ |o| o }
+      end
+    end
+
+    should "find 4 chicago checkins filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
@@ -95,7 +107,7 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
 
-    should "find 4 checkins filtered by distance, ordered by similar locations + other checkins" do
+    should "find 4 chicago checkins filtered by distance, ordered by similar locations + other checkins" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
@@ -106,7 +118,7 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
 
-    should "find 4 checkins filtered by distance, weighted by users that are not @chicago_male1" do
+    should "find 4 chicago checkins filtered by distance, weighted by users that are not @chicago_male1" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
@@ -117,7 +129,7 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
 
-    should "find 4 checkins filtered by distance, weighted by users that are @chicago_male1" do
+    should "find 4 chicago checkins filtered by distance, weighted by users that are @chicago_male1" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)

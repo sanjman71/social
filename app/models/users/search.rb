@@ -289,8 +289,14 @@ module Users::Search
           end
         end
       end.compact
-      sort_mode   = :expr
-      sort_order  = sort_exprs.join(' * ')
+      if sort_exprs.any?
+        sort_mode   = :expr
+        sort_order  = sort_exprs.join(' * ')
+      else
+        # default sort
+        sort_mode   = :extended
+        sort_order  = geo.blank? ? "@relevance DESC" : "@geodist ASC, @relevance DESC"
+      end
     else
       # default sort
       sort_mode   = :extended
@@ -384,17 +390,16 @@ module Users::Search
     if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
       sort_expr.push("3.0 * IF(IN(tag_ids, %s), 3.0, 1.0)" % tag_ids.join(','))
     end
-    sort_expr
+    sort_expr.any? ? sort_expr : nil
   end
 
   # negatively weight user checkins
   def sort_other_checkins(options={})
     sort_expr = []
-    my_checkin_ids = checkins.collect(&:id)
-    if my_checkin_ids.any?
+    if (my_checkin_ids = checkins.collect(&:id)).any?
       sort_expr.push("IF(IN(checkin_ids, %s), 0.1, 1.0)" % my_checkin_ids.join(','))
     end
-    sort_expr
+    sort_expr.any? ? sort_expr : nil
   end
 
   def sort_weight_users(user_ids)
@@ -402,7 +407,7 @@ module Users::Search
     if user_ids.any?
       sort_expr.push("IF(IN(user_ids, %s), 1.5, 1.0)" % user_ids.join(','))
     end
-    sort_expr
+    sort_expr.any? ? sort_expr : nil
   end
 
   def sort_unweight_users(user_ids)
@@ -410,7 +415,7 @@ module Users::Search
     if user_ids.any?
       sort_expr.push("IF(IN(user_ids, %s), 0.5, 1.0)" % user_ids.join(','))
     end
-    sort_expr
+    sort_expr.any? ? sort_expr : nil
   end
 
   def my_gender_orientation

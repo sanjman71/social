@@ -8,10 +8,10 @@ Given /^"([^"]*)" checked in to "([^"]*)" in "([^"]*)"$/ do |handle, location_na
   locship.increment!(:my_checkins)
 end
 
-
-Then /^I should see "([^"]*)" in stream "([^"]*)"$/ do |handle, stream|
-  debugger # xxx
-  assert page.has_selector?("div.stream")
-  assert page.has_selector?("div.checkin")
+Then /^I should see user "([^"]*)" in stream "([^"]*)"$/ do |handle, stream|
+  # should have current stream 'stream'
+  page.has_selector?("span.stream_name.current", :text => stream.titleize)
+  # should have user checkin in stream
+  assert page.has_selector?("div#checkin_name", :text => handle)
 end
 

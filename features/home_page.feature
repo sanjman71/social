@@ -11,5 +11,5 @@ Feature: Home Page
     And I am logged in as "chicago_guy"
     When sphinx is indexed
     When I go to the home page
-    Then I should see "chicago_coffee_gal" in stream "outlately"
+    Then I should see user "chicago_coffee_gal" in stream "outlately"
     
