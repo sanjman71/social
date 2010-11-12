@@ -36,10 +36,16 @@ gem 'whenever',               '>= 0.5.0'
 # and rake tasks are available in development mode:
 group :development, :test do
   gem 'capistrano'
+  gem 'cucumber'
+  gem 'cucumber-rails'
+  gem 'capybara'
+  gem 'database_cleaner'
   gem 'shoulda'
+  gem 'launchy'
   gem 'mocha'
   gem 'factory_girl_rails'
   gem 'linecache19'
   gem 'ruby-debug19'
   gem 'single_test'
+  gem 'webrat'
 end
