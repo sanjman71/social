@@ -11,7 +11,8 @@ class CreateUsers < ActiveRecord::Migration
       # t.lockable :lock_strategy => :failed_attempts, :unlock_strategy => :both
       t.string    :state,                 :limit => 50, :null => :false
       t.integer   :points,                :default => 0
-      t.integer   :gender,                :default => 0
+      t.integer   :gender,                :default => 0 # e.g. 'female', 'male'
+      t.integer   :orientation,           :default => 3 # e.g. 'bisexual', 'gay', 'straight'
       t.string    :facebook_id,           :limit => 50
       t.string    :foursquare_id,         :limit => 50
       t.string    :twitter_id,            :limit => 50

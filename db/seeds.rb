@@ -15,7 +15,7 @@ system "rm -f #{Rails.root}/log/outlately.*.log"
 puts "#{Time.now}: removed log files"
 
 # countries
-@us = Country.create(:name => "United States", :code => "US")
+@us = Country.create!(:name => "United States", :code => "US")
 puts "#{Time.now}: initialized countries"
 
 # states

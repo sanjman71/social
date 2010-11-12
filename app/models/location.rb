@@ -26,6 +26,11 @@ class Location < ActiveRecord::Base
 
   after_create            :event_location_created
 
+  before_validation(:on => :create) do
+    # set default country
+    self.country = Country.us if self.country_id.blank?
+  end
+
   acts_as_taggable
 
   # Note: the after_save_callback is deprecated, but its left here commented out for documentation purposes
@@ -36,8 +41,8 @@ class Location < ActiveRecord::Base
   attr_accessor           :matchby, :matchvalue
 
   # make sure only accessible attributes are written to from forms etc.
-  attr_accessible         :name, :country, :country_id, :state, :state_id, :city, :city_id, :zip, :zip_id, :street_address,
-                          :lat, :lng, :timezone, :timezone_id, :source_id, :source_type,
+  attr_accessible         :name, :country, :country_id, :state, :state_id, :city, :city_id, :zip, :zip_id,
+                          :street_address, :lat, :lng, :timezone, :timezone_id, :source_id, :source_type,
                           :email_addresses_attributes, :phone_numbers_attributes
 
   # used to generated an seo friendly url parameter

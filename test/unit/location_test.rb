@@ -54,10 +54,14 @@ class LocationTest < ActiveSupport::TestCase
   #   end
   # end
 
+  should "create with default country" do
+    @location = Location.create!
+    assert_equal @us, @location.country
+  end
+
   fast_context "location with country" do
     setup do
-      @location = Location.create(:country => @us)
-      assert @location.valid?
+      @location = Location.create!(:country => @us)
       @us.reload
     end
     

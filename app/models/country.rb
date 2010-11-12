@@ -13,7 +13,7 @@ class Country < ActiveRecord::Base
   end
 
   def self.us
-    Country.find_by_code("US")
+    Country.find_or_create_by_code(:code => "US", :name => 'United States')
   end
 
   def to_param

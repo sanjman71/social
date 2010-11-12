@@ -82,7 +82,8 @@ class User < ActiveRecord::Base
 
   # prevents a user from submitting a crafted form that bypasses activation
   # anything else you want your user to change should be added here.
-  attr_accessible           :handle, :password, :password_confirmation, :gender, :rpx, :facebook_id, :city, :city_id,
+  attr_accessible           :handle, :password, :password_confirmation, :gender, :orientation, :rpx,
+                            :facebook_id, :city, :city_id,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
                             :preferences_phone, :preferences_email
 
@@ -211,7 +212,7 @@ class User < ActiveRecord::Base
     self.id == 0
   end
 
-  # set gender when its specified as a string
+  # handle gender as string, e.g. 'female', 'male'
   def gender=(s)
     if s.is_a?(String)
       case
@@ -251,6 +252,23 @@ class User < ActiveRecord::Base
 
   def singular_object
     male? ? 'him' : 'her'
+  end
+
+  # handle orientation as string, e.g. 'bisexual, 'gay', 'straight'
+  def orientation=(s)
+    if s.is_a?(String)
+      case
+      when s.downcase.match(/^bisexual$/)
+        s = 1
+      when s.downcase.match(/^gay$/)
+        s = 2
+      when s.downcase.match(/^straight$/)
+        s = 3
+      else
+        s = 3 # default
+      end
+    end
+    write_attribute(:orientation, s)
   end
 
   def rpx?

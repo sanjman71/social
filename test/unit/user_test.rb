@@ -8,12 +8,12 @@ class UserTest < ActiveSupport::TestCase
         @user1 = User.create!(:name => "User 1", :handle => 'user1')
       end
 
-      should "create user in active state, no gender, no points, default picture, default radius" do
+      should "create user in active state, no gender, default orientation, no points, default picture + radius" do
         assert_equal "active", @user1.state
         assert_false @user1.gender?
         assert_equal 0, @user1.gender
         assert_equal '', @user1.gender_name
-        assert_equal 0, @user1.points
+        assert_equal 3, @user1.orientation
         assert_equal "images/blank-person.jpg", @user1.primary_photo_url
         assert_equal 50, @user1.radius
         assert_equal 0, @user1.user_density
@@ -260,26 +260,26 @@ class UserTest < ActiveSupport::TestCase
     end
 
     context "gender" do
+      should "set gender when 'female', and set default picture"
       should "set female, default picture" do
-        @user1 = User.create(:name => "User 1", :handle => 'user1')
-        assert @user1.valid?
-        assert_equal 0, @user1.gender
-        @user1.gender = 'female'
-        @user1.save
+        @user1 = User.create!(:name => "User 1", :handle => 'user1', :gender => 'female')
         assert_equal 1, @user1.reload.gender
         assert @user1.reload.female?
         assert_equal "http://foursquare.com/img/blank_girl.png", @user1.primary_photo_url
       end
       
-      should "set male, default picture" do
-        @user1 = User.create(:name => "User 1", :handle => 'user1')
-        assert @user1.valid?
-        assert_equal 0, @user1.gender
-        @user1.gender = 'male'
-        @user1.save
-        assert_equal 2, @user1.reload.gender
+      should "set gender when 'male',  and set default picture" do
+        @user1 = User.create!(:user => "User 1", :handle => 'user1', :gender => 'male')
+        assert_equal 2, @user1.gender
         assert @user1.reload.male?
         assert_equal "http://foursquare.com/img/blank_boy.png", @user1.primary_photo_url
+      end
+    end
+
+    context "orientation" do
+      should "set orientation when specified as a string" do
+        @user1 = User.create!(:handle => "Crazy bi", :orientation => 'bisexual')
+        assert_equal 1, @user1.orientation
       end
     end
 

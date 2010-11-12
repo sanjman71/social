@@ -417,6 +417,7 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
     t.string   "state",                 :limit => 50
     t.integer  "points",                                                               :default => 0
     t.integer  "gender",                                                               :default => 0
+    t.integer  "orientation",                                                          :default => 3
     t.string   "facebook_id",           :limit => 50
     t.string   "foursquare_id",         :limit => 50
     t.string   "twitter_id",            :limit => 50
