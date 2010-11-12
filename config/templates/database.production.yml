@@ -5,4 +5,4 @@ production:
   port: 3306
   database: outlately_production
   username: rails
-  password: 1ndus7ry!
+  password: rails
