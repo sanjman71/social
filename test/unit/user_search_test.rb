@@ -122,7 +122,7 @@ class UserSearchTest < ActiveSupport::TestCase
         ThinkingSphinx::Test.index
         sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 50,
-                                                       :order => {:sort_weight_users => [@chicago_male1.id]})
+                                                       :order => [:sort_weight_users => [@chicago_male1.id]])
         assert_equal 4, @checkins.size
         assert_equal [@chi_checkin1, @chi_checkin4, @chi_checkin2, @chi_checkin3], @checkins.collect{ |o| o }
       end
@@ -139,11 +139,12 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
 
-    should "find all 5 checkins, using default sort order (similar locations, other checkins, distance)" do
+    should "find all 5 checkins, using similar locations, other checkins, distance sort oder" do
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_all_checkins(:miles => 1000, :order => :sort_default)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 1000,
+                                                       :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations])
         assert_equal 5, @checkins.size
         # chicago checkins first
         assert_equal [@chi_checkin3, @chi_checkin2, @chi_checkin1, @chi_checkin4, @nyc_checkin1], @checkins.collect{ |o| o }
@@ -154,7 +155,9 @@ class UserSearchTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         ThinkingSphinx::Test.index
         sleep(0.25)
-        @checkins = @chicago_male1.search_all_checkins(:miles => 1000, :order => :sort_default, :group => :user)
+        @checkins = @chicago_male1.search_all_checkins(:miles => 1000,
+                                                       :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
+                                                       :group => :user)
         assert_equal 4, @checkins.size
         # chicago checkins first
         assert_equal [@chi_checkin3, @chi_checkin2, @chi_checkin1, @nyc_checkin1], @checkins.collect{ |o| o }

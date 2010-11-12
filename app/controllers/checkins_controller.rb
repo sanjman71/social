@@ -12,13 +12,14 @@ class CheckinsController < ApplicationController
   def index
     # parse general parameters
     @without_checkin_ids  = params[:without_checkin_ids] ? params[:without_checkin_ids].split(',').map(&:to_i).uniq.sort : nil
+    @unweight_user_ids    = Checkin.find(@without_checkin_ids, :select => :user_id).collect(&:user_id).sort rescue []
     @search               = params[:search] ? params[:search].to_s : 'all'
     @method               = "search_#{@search}_checkins"
-    @order                = params[:order] ? "sort_#{params[:order]}" : nil
+    @order                = [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations,
+                             :sort_unweight_users => @unweight_user_ids]
     @limit                = params[:limit] ? params[:limit].to_i : 2**30
     @options              = Hash[:without_checkin_ids => @without_checkin_ids,
                                  :order => @order, :limit => @limit, :klass => Checkin]
-
     case
     when params[:geo]
       @lat, @lng    = find_lat_lng

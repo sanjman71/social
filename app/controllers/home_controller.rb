@@ -13,7 +13,7 @@ class HomeController < ApplicationController
       @checkins     = current_user.send(@method, :limit => checkins_start_count,
                                                  :geo_origin => [@geo.lat.radians, @geo.lng.radians],
                                                  :geo_distance => 0.0..@radius.miles.meters.value,
-                                                 :order => :sort_default,
+                                                 :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
                                                  :group => :user)
       @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others', 'Outlately']
       @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']

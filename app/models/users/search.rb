@@ -63,9 +63,6 @@ module Users::Search
   # search checkins
   def search_checkins(options={})
     options.update(:klass => Checkin)
-    if options[:order].to_s == 'sort_default'
-      options[:order] = [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations]
-    end
     search(options)
   end
 
@@ -258,7 +255,7 @@ module Users::Search
     if sort_orders.any?
       # build sort expressions
       sort_exprs = sort_orders.collect do |order|
-        # order can be symbol or array
+        # order can be symbol, array or hash
         if order.is_a?(Array)
           case order[0]
           when :sort_weight_users, :sort_unweight_users
@@ -266,6 +263,18 @@ module Users::Search
             # e.g. [:sort_unweight_users, [1,3,7]]
             send(order[0].to_s, order[1])
           end
+        elsif order.is_a?(Hash)
+          # collect result of last key, value as sort expr
+          expr = nil
+          order.each_pair do |key, value|
+            case key
+            when :sort_weight_users, :sort_unweight_users
+              # e.g. {:sort_weight_users, [1,3,7]}
+              # e.g. {:sort_unweight_users, [1,3,7]}
+              expr = send(key, value)
+            end
+          end
+          expr
         else
           # order is a symbol
           case order
