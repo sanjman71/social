@@ -8,7 +8,10 @@
 
 .stream .checkin                    { height: 51px; margin-bottom: 10px; font-size: 1.0em; }
 .stream .checkin.hover              { background-color: #efefef; }
-.stream .checkin #checkin_name      { color: #0000BB; }
+.stream .checkin #checkin_user_location
+                                    { color: #111; }
+.stream .checkin #checkin_user_location a
+                                    { color: #0000FF; }
 .stream .checkin #checkin_city      { color: #333; }
 .stream .checkin #checkin_plan_pending
                                     { font-size: 0.9em; color: #bbb; }

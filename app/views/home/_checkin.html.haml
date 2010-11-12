@@ -4,9 +4,11 @@
 
 .span-13.checkin[checkin]{'data-id' => checkin.id, :class => [visible, 'not-counted']}
   .span-2#picture
-    = image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}")
+    -# link picture to user profile
+    = link_to image_tag(user.primary_photo_url, :size => '50x50', :alt => "#{user.handle}"), user_path(user)
   .span-8{:style => 'font-size: 0.9em;'}
-    #checkin_name= I18n.t("home.stream.checkin_name", :user => user.handle, :location => location.name)
+    -# link handle to user profile
+    #checkin_user_location #{link_to user.handle, user_path(user)} : #{location.name}
     #checkin_city= location.city
   .span-3.last.hide#checkin_action_wrapper
     - unless user == current_user
