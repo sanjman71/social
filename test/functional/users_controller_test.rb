@@ -97,6 +97,26 @@ class UsersControllerTest < ActionController::TestCase
       @badging  = @user1.badges.push(@badge)
     end
 
+    context "points for viewing profile" do
+      should "cost 10 points to see another user's profile" do
+        @voter.update_attribute(:points, 100)
+        sign_in @voter
+        set_beta
+        get :show, :id => @user1.id
+        # should change voter's points
+        assert_equal 90, @voter.reload.points
+      end
+      
+      should "not cost anything to see my own profile" do
+        @voter.update_attribute(:points, 100)
+        sign_in @voter
+        set_beta
+        get :show, :id => @voter.id
+        # should not change voter's points
+        assert_equal 100, @voter.reload.points
+      end
+    end
+
     context "badge voting" do
       should "show agree/disagree if user has not voted yet" do
         ThinkingSphinx::Test.run do
@@ -127,7 +147,6 @@ class UsersControllerTest < ActionController::TestCase
           assert_select "span#agree_disagree", 0
         end
       end
-      
     end
   end
 end

@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
   before_filter :find_user, :only => [:edit, :show, :update]
+  before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
   privilege_required 'admin', :only => [:sudo]
@@ -40,23 +41,28 @@ class UsersController < ApplicationController
 
   # GET /users/1
   def show
-    # @user initialized in before filter
+    # @user, @viewer initialized in before filter
 
     # find user checkins, most recent first
     @checkins = @user.checkins.order("checkin_at desc")
 
-    # find matching user profiles
-    @matches  = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
-
     # find user badges
     @badges   = @user.badges.order("badges.name asc")
+
+    if @viewer == @user
+      # show matching user profiles
+      @matches  = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
+    else
+      # subtract points
+      @points = @viewer.subtract_points_for_viewing_profile(@user)
+      @growls = [{:message => "Growl message", :timeout => 1000}]
+    end
   end
 
   # GET /users/1/edit
   def edit
     # @user initialized in before filter
     @show_handle_message = params[:handle].to_i == 1
-
   end
 
   # POST /users/1
@@ -84,4 +90,7 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def find_viewer
+    @viewer = current_user
+  end
 end

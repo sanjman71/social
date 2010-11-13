@@ -23,6 +23,7 @@ en:
       checkin: 'Sighting'
       tag: 'Tag'
       geo: 'Local'
+      geo_filter: 'Local'
       default: 'Freakie'
   suggestion:
     error:

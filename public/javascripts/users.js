@@ -13,6 +13,6 @@ $(document).ready(function() {
     var data    = gender + " / " + city;
     $("#match #handle").html(handle);
     $("#match #data").html(data);
-    $("#match #matchby").html(matchie);
+    $("#match #matchby").html(matchby);
   }
 })

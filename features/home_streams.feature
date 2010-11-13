@@ -1,8 +1,8 @@
-Feature: Home Page
+Feature: Home Streams
   As a user I want to see streams of user activity
 
   @no-txn
-  Scenario: Streams
+  Scenario: Default Stream
     Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
     And a user "chicago_coffee_gal" in "Chicago, IL" who is a "straight" "female"
     And a user "chicago_coffee_guy" in "Chicago, IL" who is a "straight" "male"

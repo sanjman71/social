@@ -56,4 +56,6 @@
   .span-19.prepend-1.last#tags
     - tags = @user.checkin_locations.collect(&:tag_list).flatten.uniq.compact.sort
     = tags.join(', ')
-          
+
+:javascript
+  var growls = #{@growls ? @growls.size : 0};
