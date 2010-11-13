@@ -3,11 +3,11 @@ class GrowlsController < ApplicationController
 
   # GET /growls
   def index
-    # send test message
-    @growls = [{:message => 'growl message', :timeout => 1000}]
+    # check flash for growl messages
+    @growls = flash[:growls] ? flash[:growls] : []
 
     respond_to do |format|
-      format.json { render :json => @growls.to_json }
+      format.json { render :json => Hash[:growls => @growls].to_json }
     end
   end
 

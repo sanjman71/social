@@ -51,11 +51,11 @@ class UsersController < ApplicationController
 
     if @viewer == @user
       # show matching user profiles
-      @matches  = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
+      @matches = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
     else
-      # subtract points
+      # subtract points and add growl message
       @points = @viewer.subtract_points_for_viewing_profile(@user)
-      @growls = [{:message => "Growl message", :timeout => 1000}]
+      flash[:growls] = [{:message => I18n.t("game.view_profile.growl", :points => @points), :timeout => 1000}]
     end
   end
 

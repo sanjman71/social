@@ -15,4 +15,6 @@ $(document).ready(function() {
     $("#match #data").html(data);
     $("#match #matchby").html(matchby);
   }
+  
+  check_growls();
 })

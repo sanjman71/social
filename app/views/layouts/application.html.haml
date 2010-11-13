@@ -4,7 +4,7 @@
     %meta{:"http-equiv" => 'Content-Type', :content => 'text/html; charset=utf-8'}
     %title= yield(:title).to_s + " | Outlate.ly"
     = csrf_meta_tag
-    = stylesheet_link_tag 'blueprint/screen', 'application', 'location', 'user', 'suggestion', 'orange', :cache => false
+    = stylesheet_link_tag 'blueprint/screen', 'application', 'location', 'user', 'suggestion', 'orange', 'growl', :cache => false
     = stylesheet_link_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/black-tie/jquery-ui.css'
     <!--[if lt IE 8]>
     <link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection">

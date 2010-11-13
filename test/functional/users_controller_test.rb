@@ -105,6 +105,8 @@ class UsersControllerTest < ActionController::TestCase
         get :show, :id => @user1.id
         # should change voter's points
         assert_equal 90, @voter.reload.points
+        # should add flash message
+        assert_equal 1, flash[:growls].size
       end
       
       should "not cost anything to see my own profile" do
@@ -114,6 +116,8 @@ class UsersControllerTest < ActionController::TestCase
         get :show, :id => @voter.id
         # should not change voter's points
         assert_equal 100, @voter.reload.points
+        # should not add flash message
+        assert_nil flash[:growls]
       end
     end
 

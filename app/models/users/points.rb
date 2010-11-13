@@ -43,8 +43,10 @@ module Users::Points
   
   # subtract points for viewing user's profile
   def subtract_points_for_viewing_profile(user)
-    self.points -= 10
+    pts = 10
+    self.points -= pts
     self.save
+    pts
   end
 
 end

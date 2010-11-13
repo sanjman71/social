@@ -15,6 +15,9 @@ en:
       title: Who You Should Meet
   todo:
     added: "If you go there within %{days} days +$%{plus_points}, otherwise -$%{minus_points}"
+  game:
+    view_profile:
+      growl: "Thats %{points} bucks"
   alert:
     linked_account: "You're just a few checkins from being matched."
     need_checkins: "You are just a few checkins from being matched."
