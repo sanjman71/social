@@ -15,17 +15,19 @@
   = display_flash(:all)
   = display_alerts
 
--# show user basic profile info, and matches
-.span-24.last#basics
-  .span-2.prepend-1#picture
+-# show user profile basics
+.span-24.last#user_profile_basics
+  .span-2.prepend-1#user_profile_picture
     = image_tag @user.primary_photo_url, :size => '50x50'
-  .span-4#user{:style => 'padding-top: 10px;'}
-    #handle= @user.handle
-    #data= user_profile_blurb(@user)
-  .span-2.border
-    %h4{:style => 'padding-top: 15px;'}== Matches
-  .span-10.prepend-1.last{:style => 'height: 70px;'}
-    = render(:partial => 'users/matches', :locals => {:users => @matches || []})
+  .span-4{:style => 'padding-top: 10px;'}
+    #user_profile_handle= @user.handle
+    #user_profile_data= user_profile_blurb(@user)
+  - if @viewer == @user
+    -# show matches when its your own profile
+    .span-2.border#user_profile_matches_title
+      %h4{:style => 'padding-top: 15px;'}== Matches
+    .span-10.prepend-1.last#user_profile_matches{:style => 'height: 70px;'}
+      = render(:partial => 'users/matches', :locals => {:users => @matches || []})
 
 %hr.space
 

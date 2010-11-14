@@ -121,6 +121,24 @@ class UsersControllerTest < ActionController::TestCase
       end
     end
 
+    context "profile matches" do
+      should "not show matches when viewing somebody else's profile" do
+        sign_in @voter
+        set_beta
+        get :show, :id => @user1.id
+        assert_select "div#user_profile_matches_title", 0
+        assert_select "div#user_profile_matches", 0
+      end
+
+      should "show matches when viewing your own profile" do
+        sign_in @user1
+        set_beta
+        get :show, :id => @user1.id
+        assert_select "div#user_profile_matches_title", 1
+        assert_select "div#user_profile_matches", 1
+      end
+    end
+
     context "badge voting" do
       should "show agree/disagree if user has not voted yet" do
         ThinkingSphinx::Test.run do
