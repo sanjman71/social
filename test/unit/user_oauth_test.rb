@@ -46,7 +46,7 @@ class UserOauthTest < ActiveSupport::TestCase
       # stub access token
       access_token.stubs(:get).returns(json_data)
       User.find_for_facebook_oauth(access_token, @user1)
-      # add user (who will be a friend) to the system
+      # add user, who will be friended, to the system
       @adam = User.create!(:handle => "marchick", :facebook_id => "620186040", :gender => 2)
       # stub friends data
       friend_data = YAML::load_file("#{Rails.root}/test/data/facebook_friends.txt")
@@ -61,6 +61,30 @@ class UserOauthTest < ActiveSupport::TestCase
       assert_equal 3, @user1.reload.friends.size
       assert_equal ["marchick", "Praveen Shanbhag", "Nevin Kapoor"], @user1.reload.friends.collect(&:handle)
       assert_equal [2, 2, 2], @user1.reload.friends.collect(&:gender)
+    end
+
+    should "not re-add friends during import friends process" do
+      json_data    = File.open("#{Rails.root}/test/data/facebook_user.json")
+      access_token = OAuth2::AccessToken.new('1', '2')
+      # stub access token
+      access_token.stubs(:get).returns(json_data)
+      User.find_for_facebook_oauth(access_token, @user1)
+      # add user as friend
+      @adam = User.create!(:handle => "marchick", :facebook_id => "620186040", :gender => 2)
+      @user1.friendships.create!(:friend => @adam)
+      assert_equal ["marchick"], @user1.reload.friends.collect(&:handle)
+      # stub friends data
+      friend_data = YAML::load_file("#{Rails.root}/test/data/facebook_friends.txt")
+      FacebookClient.any_instance.stubs(:friends).returns(friend_data)
+      FacebookClient.any_instance.stubs(:user).returns(Hash['gender' => 'male', 'id' => 'fbid',
+                                                            'link' => "http://www.facebook.com/handle"])
+      FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [{}]])
+      # should queue delayed job to import facebook friends
+      assert_equal 1, match_delayed_jobs(/async_import_friends/)
+      work_off_delayed_jobs(/async_import_friends/)
+      # should create 2 users and add 2 friends
+      assert_equal 3, @user1.reload.friends.size
+      assert_equal ["marchick", "Praveen Shanbhag", "Nevin Kapoor"], @user1.reload.friends.collect(&:handle)
     end
   end
 

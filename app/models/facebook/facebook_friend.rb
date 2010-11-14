@@ -23,13 +23,16 @@ class FacebookFriend
           # check if user already exists
           friend          = User.find_by_facebook_id(friend_fbid)
           if friend
-            # user already exists, add friend relationship
-            user.friends.push(friend)
+            # user already exists, check friend relationship
+            if !(user.friends + user.inverse_friends).include?(friend)
+              # add friendship
+              user.friendships.create(:friend => friend)
+            end
           else
             # check user's checkin data
             friend_checkins = facebook.checkins(friend_fbid, options)['data']
             # skip if friend has no checkins
-            next if friend_checkins.size == 0
+            next if friend_checkins.try(:size).to_i == 0
             # get basic user data from facebook
             friend_data     = facebook.user(friend_fbid)
             friend_gender   = friend_data.try(:[], 'gender')
