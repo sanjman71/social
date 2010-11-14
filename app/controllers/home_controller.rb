@@ -10,14 +10,16 @@ class HomeController < ApplicationController
       @geo          = current_geo || current_user
       @method       = "search_#{@stream}_checkins"
       @radius       = 2000
-      @checkins     = current_user.send(@method, :limit => checkins_start_count,
-                                                 :geo_origin => [@geo.lat.radians, @geo.lng.radians],
-                                                 :geo_distance => 0.0..@radius.miles.meters.value,
-                                                 :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
-                                                 :group => :user)
+      @checkins     = @user.send(@method, :limit => checkins_start_count,
+                                          :geo_origin => [@geo.lat.radians, @geo.lng.radians],
+                                          :geo_distance => 0.0..@radius.miles.meters.value,
+                                          :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
+                                          :group => :user)
       @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others', 'Outlately']
       @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']
       @max_objects  = checkins_end_count
+
+      logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@geo.try(:name) || @geo.try(:handle)}:#{@geo.try(:lat)}:#{@geo.try(:lng)}, stream:#{@stream}")
     end
 
     # check for growl messages
