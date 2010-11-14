@@ -85,7 +85,8 @@ class HomeController < ApplicationController
   end
 
   def default_geo
-    current_user.try(:city).try(:name).downcase
+    # default to curren't user city, if there is one
+    current_user.try(:city).try(:name).try(:downcase)
   end
 
   def current_geo_object
