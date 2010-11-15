@@ -24,7 +24,7 @@ class PlansController < ApplicationController
       @status         = 'ok'
       @message        = I18n.t("todo.added", :days => Locationship.todo_window_days,
                                              :plus_points => Locationship.todo_completed_points,
-                                             :minus_points => Locationship.todo_expired_points)
+                                             :minus_points => Locationship.todo_expired_points.abs)
       # add growl message
       @growls = [{:message => @message, :timeout => 2000}]
     rescue Exception => e

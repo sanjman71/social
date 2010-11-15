@@ -8,8 +8,8 @@ class Friendship < ActiveRecord::Base
 
   # after create filter
   def event_friendship_created
-    self.class.log("[user:#{user.id}] #{user.handle} added friend #{friend.handle}")
-    self.class.log("[user:#{friend.id}] #{friend.handle} added inverse friend #{user.handle}")
+    self.class.log("[user:#{user.id}] #{user.handle} added friend #{friend.handle}:#{friend.id}")
+    self.class.log("[user:#{friend.id}] #{friend.handle} added inverse friend #{user.handle}:#{user.id}")
     # call async event handlers
     self.delay.async_update_locationships
   end
