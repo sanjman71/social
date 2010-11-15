@@ -36,10 +36,11 @@ class FacebookFriend
             # get basic user data from facebook
             friend_data     = facebook.user(friend_fbid)
             friend_gender   = friend_data.try(:[], 'gender')
-            # create friend
-            friend          = user.friends.create!(:handle => friend_name, :facebook_id => friend_fbid,
-                                                   :gender => friend_gender)
-            log("[user:#{user.id}] #{user.handle} imported facebook friend #{friend.handle}:#{friend_fbid}")
+            # create friend, friendship
+            friend          = User.create!(:handle => friend_name, :facebook_id => friend_fbid,
+                                           :gender => friend_gender)
+            user.friendships.create(:friend => friend)
+            log("[user:#{user.id}] #{user.handle} imported facebook friend #{friend.handle}:#{friend.id}:facebook:#{friend_fbid}")
           end
         rescue Exception => e
           log("[user:#{user.id}] #{user.handle} #{__method__.to_s} exception: #{e.message}", :error)

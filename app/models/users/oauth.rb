@@ -142,12 +142,14 @@ module Users::Oauth
       end
       if data['location'] and !self.mappable?
         begin
-          # add user location city
-          city = Locality.resolve(data['location']['name'], :create => true)
+          # add user location city, if it exists
+          city_name = data['location']['name']
+          city      = Locality.resolve(city_name, :precision => :city, :create => true)
+          raise Exception, "could not resolve #{city_name} to a city" if city.blank?
           self.city = city
           self.class.log("[user:#{self.id}] #{self.handle} added city #{city.name}")
         rescue Exception => e
-          self.class.log("[user:#{self.id}] #{self.handle} #{__method__.to_s} facebook city error #{e.message}", :error)
+          self.class.log("[user:#{self.id}] #{self.handle} #{__method__.to_s} error adding facebook location #{city_name}; #{e.message}", :error)
         end
       end
       self.save
