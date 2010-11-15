@@ -21,7 +21,8 @@
 
 # Sphinx
 
-1. sudo wget http://www.sphinxsearch.com/downloads/sphinx-1.10-beta.tar.gz
+1.a sudo wget http://www.sphinxsearch.com/downloads/sphinx-1.10-beta.tar.gz
+1.b sudo wget http://www.sphinxsearch.com/downloads/sphinx-0.9.9.tar.gz
 2. sudo ./configure; sudo make; sudo make install
 
 # Rmagick
