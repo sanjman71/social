@@ -1,7 +1,7 @@
 class Friendship < ActiveRecord::Base
   belongs_to    :user
   belongs_to    :friend, :class_name => 'User'
-  validates     :user_id, :presence => true, :unique_friend => true
+  validates     :user_id, :presence => true, :uniqueness => {:scope => :friend_id}, :unique_friend => true
   validates     :friend_id, :presence => true, :uniqueness => {:scope => :user_id}
 
   after_create  :event_friendship_created
