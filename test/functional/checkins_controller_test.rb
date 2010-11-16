@@ -4,7 +4,6 @@ class CheckinsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   context "routes" do
-    should route(:get, '/checkins/poll').to(:controller => 'checkins', :action => 'poll')
     should route(:get, '/users/1/checkins').to(:controller => 'checkins', :action => 'index', :user_id => '1')
     should route(:get, '/users/1/checkins/friends').
       to(:controller => 'checkins', :action => 'index', :search => 'friends', :user_id => '1')

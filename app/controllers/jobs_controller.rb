@@ -27,6 +27,25 @@ class JobsController < ApplicationController
     redirect_to jobs_path
   end
 
+  # GET /jobs/poll_checkins
+  def poll_checkins
+    # find checkin_logs that need to be polled
+    @checkin_logs  = CheckinLog.where("last_check_at < ?", Time.zone.now - Checkin.poll_interval).group_by(&:user)
+
+    @checkin_logs.each_pair do |user, logs|
+      logs.each do |log|
+        case log.source
+        when 'facebook'
+          FacebookCheckin.delay.async_import_checkins(user, Hash[:since => :last, :limit => 250])
+        when 'foursquare'
+          FoursquareCheckin.delay.async_import_checkins(user, Hash[:sinceid => :last, :limit => 250])
+        end
+      end
+    end
+
+    flash[:notice] = "Polling checkins for #{@checkin_logs.keys.size} users"
+  end
+
   # GET /jobs/todo_reminders
   def todo_reminders
     @reminders = User.all.inject(0) do |count, user|

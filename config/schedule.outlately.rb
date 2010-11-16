@@ -21,11 +21,11 @@ set :output, '/usr/apps/outlately/current/log/cron.log'
 every 5.minutes do
   # ping
   command "curl http://outlate.ly/ping > /dev/null"
-  # poll recent checkins
-  command "curl http://outlate.ly/checkins/poll > /dev/null"
 end
 
 every 15.minutes do
+  # poll checkins
+  command "curl http://outlate.ly/jobs/poll_checkins?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
   # rebuild sphinx
   command "curl http://outlate.ly/jobs/sphinx?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
 end

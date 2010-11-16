@@ -20,7 +20,6 @@ Social::Application.routes.draw do
   match 'users/:user_id/checkins/:city/:radius(/:search)', :to => 'checkins#index',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_checkins
   match 'users/:user_id/checkins(/:search)', :to => "checkins#index"
-  match 'checkins/poll', :to => "checkins#poll", :as => :poll_checkins
 
   match 'sightings', :to => "sightings#index"
   match 'accounts', :to => "accounts#index"
@@ -73,6 +72,7 @@ Social::Application.routes.draw do
   match 'jobs', :to => 'jobs#index', :as => :jobs
   match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
   match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
+  match 'jobs/poll_checkins', :to => 'jobs#poll_checkins', :as => :poll_checkins_job
   match 'jobs/todo_reminders', :to => 'jobs#todo_reminders', :as => :todo_reminders_job
 
   match 'ping', :to => "home#ping", :via => [:get]
