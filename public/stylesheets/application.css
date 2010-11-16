@@ -81,6 +81,14 @@ div.mat a.small                                   { font-size: 0.9em; }
 
 h1.title                                          { font-size: 1.5em; }
 
+/* simple form styles */
+.simple_form label                                { float: left; width: 100px; text-align: right;
+                                                    margin: 15px 10px; }
+.simple_form div.input                            { margin-bottom: 10px; }
+.simple_form input[type='text']                   { font-size: 1.5em; }
+.simple_form span.hint                            { padding-left: 5px; font-size: 0.9em; color: #777; }
+.simple_form input[type='submit']                 { margin-top: 20px; }
+
 /* form styles */
 
 input:focus                                       { outline: 0 none; }  /* needed to remove border/outline in safari */

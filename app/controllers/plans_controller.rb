@@ -6,6 +6,10 @@ class PlansController < ApplicationController
   def index
     @user           = current_user
     @locationships  = @user.locationships.todo_checkins
+
+    if @locationships.any? and @user.primary_email_address.blank?
+      flash.now[:notice] = "Add an email address to your profile so we can notify you of checkins on your todo list"
+    end
   end
 
   # PUT /plans/add/1
@@ -23,8 +27,8 @@ class PlansController < ApplicationController
       flash[:notice]  = "We added #{@location.name} to your todo list"
       @status         = 'ok'
       @message        = I18n.t("todo.added", :days => Locationship.todo_window_days,
-                                             :plus_points => Locationship.todo_completed_points,
-                                             :minus_points => Locationship.todo_expired_points.abs)
+                                             :plus_points => Currency.for_completed_todo,
+                                             :minus_points => Currency.for_expired_todo.abs)
       # add growl message
       @growls = [{:message => @message, :timeout => 2000}]
     rescue Exception => e

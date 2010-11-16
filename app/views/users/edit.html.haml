@@ -11,19 +11,18 @@
 - if @show_handle_message
   .span-23.prepend-1.last#handle_message
     %h4{:style => 'line-height: 1.5em;'}
-      == Your handle is your name on the site.
-      %br
       == Choose a different handle name if this one doesn't work for you.
       == You can change it later as well.
 
 .span-24.last
-  = form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
-    -# handle
+  - @user.email_addresses.build if @user.email_addresses_count == 0
+  = simple_form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
     .span-20.last
-      .span-3.text-align-right
-        %h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Handle'
-      .span-17.last
-        = f.text_field :handle, :class => 'text title', :style => "width: 300px;"
+      -# handle
+      = f.input :handle, :hint => 'your name on the site'
+    - f.simple_fields_for :email_addresses do |email_form|
+      .span-20.last
+        = email_form.input :address, :label => 'Email Address', :required => false, :hint => 'used for notifications + reminders'
     -#.span-20.last
       -#.span-3.text-align-right
         -#%h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Pictures'
@@ -33,5 +32,5 @@
           -#= photo.source
     .span-19.prepend-1.last
       = f.submit 'Update', :class => 'big'
-      ==&nbsp;or&nbsp;
-      = link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em'
+      or
+      %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em;'

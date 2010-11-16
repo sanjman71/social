@@ -48,14 +48,6 @@ class Locationship < ActiveRecord::Base
     7
   end
   
-  def self.todo_completed_points
-    50
-  end
-
-  def self.todo_expired_points
-    -10
-  end
-
   def self.log(s, level = :info)
     AppLogger.log(s, nil, level)
   end
@@ -80,16 +72,16 @@ class Locationship < ActiveRecord::Base
         # todo was completed within the allowed window
         @todo_resolution = :completed
         # add points
-        user.add_points_for_todo_completed_checkin(self.class.todo_completed_points)
+        user.add_points_for_todo_completed_checkin(Currency.for_completed_todo)
         # send email
-        CheckinMailer.delay.todo_completed(user, location, self.class.todo_completed_points)
+        CheckinMailer.delay.todo_completed(user, location, Currency.for_completed_todo)
       else
         # too late
         @todo_resolution = :expired
         # subtract points
-        user.add_points_for_todo_expired_checkin(self.class.todo_expired_points)
+        user.add_points_for_todo_expired_checkin(Currency.for_expired_todo)
         # send email
-        CheckinMailer.delay.todo_expired(user, location, self.class.todo_expired_points)
+        CheckinMailer.delay.todo_expired(user, location, Currency.for_expired_todo)
       end
       # reset todo_checkins
       decrement!(:todo_checkins)

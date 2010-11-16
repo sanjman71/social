@@ -33,12 +33,25 @@ class LocationshipTest < ActiveSupport::TestCase
     @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
     assert @locship.reload.todo_at
   end
-  
+
+  context "todo reminders" do
+    should "send reminder email 2 days before todo expires" do
+      @user1      = Factory.create(:user)
+      @user1.stubs(:email_address).returns('reminders@jarna.com')
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      # user added todo list checkin 4 days ago
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      @locship.update_attribute(:todo_at, (4.days.ago-1.minute))
+      # should have 1 reminder to send
+      assert_equal 1, @user1.send_todo_checkin_reminders
+    end
+  end
+
   context "todo resolution" do
     should "resolve as invalid when user has already checked in to a todo location" do
       @user1      = Factory.create(:user)
       @location1  = Location.create(:name => "Location 1", :country => @us)
-      # user adds checkin to todo list
+      # user adds todo list checkin
       @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
       @locship.update_attribute(:todo_at, 3.days.ago)
       # user checked in to the location before the todo was added
@@ -51,7 +64,7 @@ class LocationshipTest < ActiveSupport::TestCase
     should "resolve as completed when a user checks in to a todo location within the time limit" do
       @user1      = Factory.create(:user)
       @location1  = Location.create(:name => "Location 1", :country => @us)
-      # user adds checkin to todo list
+      # user adds todo list checkin
       @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
       @locship.update_attribute(:todo_at, 3.days.ago)
       @points     = @user1.points
