@@ -44,6 +44,7 @@ class JobsController < ApplicationController
     end
 
     flash[:notice] = "Polling checkins for #{@checkin_logs.keys.size} users"
+    redirect_to jobs_path
   end
 
   # GET /jobs/todo_reminders
