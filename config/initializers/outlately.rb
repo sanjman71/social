@@ -1,4 +1,5 @@
-ADMIN_FACEBOOK_IDS = ['633015812']
+ADMIN_FACEBOOK_IDS  = ['633015812']
+AUTH_TOKEN          = "5e722026ea70e6e497815ef52f9e73c5ddb8ac26"
 
 case Rails.env
 when 'development'

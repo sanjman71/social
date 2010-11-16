@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  skip_before_filter :check_beta
+  skip_before_filter :check_beta, :unless => :auth_token?
 
   # GET /
   def index

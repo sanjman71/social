@@ -386,7 +386,7 @@ class User < ActiveRecord::Base
 
   def send_todo_checkin_reminders
     # look for todos planned between 4 and 5 days ago
-    reminders = locationships.todo_checkins.where({:todo_at.lt => 4.days.ago} & {:todo_at.gt => 5.days.ago})
+    reminders = locationships.todo_checkins.where(:todo_at.lt => 4.days.ago, :todo_at.gt => 5.days.ago)
     reminders.each do |locationship|
       CheckinMailer.todo_reminder(self, locationship.location).deliver
     end

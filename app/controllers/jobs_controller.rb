@@ -1,5 +1,5 @@
 class JobsController < ApplicationController
-  skip_before_filter :check_beta
+  skip_before_filter :check_beta, :unless => :auth_token?
 
   # GET /jobs
   def index
@@ -23,6 +23,16 @@ class JobsController < ApplicationController
     cmd = "rake ts:index"
     Delayed::Job.enqueue(RakeJob.new(:cmd => cmd), 0)
     flash[:notice] = "Queued sphinx job"
+    redirect_to jobs_path
+  end
+
+  # GET /jobs/todo_reminders
+  def todo_reminders
+    @reminders = User.all.inject(0) do |count, user|
+      count += user.send_todo_checkin_reminders
+      count
+    end
+    flash[:notice] = "Sent #{@reminders} todo reminders"
     redirect_to jobs_path
   end
 

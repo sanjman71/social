@@ -29,6 +29,10 @@ class ApplicationController < ActionController::Base
     redirect_to(params[:return_to] || path)
   end
 
+  def auth_token?
+    params[:token].to_s == AUTH_TOKEN
+  end
+
   protected
 
   # find city using params[:city]
