@@ -1,5 +1,6 @@
 class JobsController < ApplicationController
-  skip_before_filter :check_beta, :unless => :auth_token?
+  skip_before_filter :check_beta, :if => :auth_token?
+  privilege_required 'admin', :unless => :auth_token?
 
   # GET /jobs
   def index
