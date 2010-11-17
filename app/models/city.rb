@@ -1,7 +1,8 @@
 class City < ActiveRecord::Base
-  validates_presence_of       :name, :state_id
-  validates_uniqueness_of     :name, :scope => :state_id
+  validates                   :name, :presence => true, :uniqueness => {:scope => :state_id}
+  validates                   :country_id, :presence => true
   belongs_to                  :state, :counter_cache => true
+  belongs_to                  :country
   belongs_to                  :timezone
   has_many                    :neighborhoods
   has_many                    :locations
@@ -10,13 +11,17 @@ class City < ActiveRecord::Base
   has_many                    :geo_tag_counts, :as => :geo
   has_many                    :tags, :through => :geo_tag_counts
 
+  before_validation(:on => :create) do
+    self.country = state.try(:country) if self.country_id.blank?
+  end
+
   # acts_as_mappable
   include Geokit::Mappable
 
   # include GeoTagCountModule
   include NameParam
 
-  attr_accessible               :name, :state, :state_id, :lat, :lng
+  attr_accessible               :name, :state, :state_id, :country, :country_id, :lat, :lng
 
   scope :exclude,               lambda { |city| {:conditions => ["id <> ?", city.is_a?(Integer) ? city : city.id] } }
   scope :within_state,          lambda { |state| {:conditions => ["state_id = ?", state.is_a?(Integer) ? state : state.id] } }
@@ -67,7 +72,7 @@ class City < ActiveRecord::Base
   end
   
   def city_state
-    [name, state.try(:code)].compact.join(", ")
+    [name, state ? state.code : country.code].compact.join(", ")
   end
 
   def geocode_latlng(options={})

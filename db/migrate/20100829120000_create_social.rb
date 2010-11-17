@@ -38,6 +38,7 @@ class CreateSocial < ActiveRecord::Migration
     create_table :cities do |t|
       t.string      :name,                  :limit => 30, :default => nil
       t.references  :state
+      t.references  :country
       t.decimal     :lat,                   :precision => 15, :scale => 10
       t.decimal     :lng,                   :precision => 15, :scale => 10
       t.references  :timezone

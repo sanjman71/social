@@ -63,7 +63,7 @@ class LocalityTest < ActiveSupport::TestCase
     end
   end
 
-  context "geocode city" do
+  context "geocode us city" do
     context "chicago, precision default" do
       setup do
         @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
@@ -102,14 +102,27 @@ class LocalityTest < ActiveSupport::TestCase
 
     context "street address, precision city, create city" do
       setup do
-        @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @object   = Locality.resolve("200 w grand, chicago", :precision => :city, :create => true)
+        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
+        @object = Locality.resolve("200 w grand, chicago", :precision => :city, :create => true)
       end
       
       should "create chicago city object" do
         assert @object.is_a?(City)
         assert_equal 'Chicago', @object.name
       end
+    end
+  end
+
+  context "geocode international city" do
+    setup do
+      @fr = Country.create!(:name => 'France', :code => 'FR')
+    end
+    
+    should "create paris city object" do
+      @object = Locality.resolve("paris", :precision => :city, :create => true)
+      assert @object.is_a?(City)
+      assert_equal 'Paris', @object.name
+      assert_equal 'France', @object.country.name
     end
   end
 

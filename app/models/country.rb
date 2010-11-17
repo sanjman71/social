@@ -2,6 +2,7 @@ class Country < ActiveRecord::Base
   validates     :name, :presence => true, :uniqueness => true
   validates     :code, :presence => true
   has_many      :states
+  has_many      :cities
   has_many      :locations
   
   include NameParam

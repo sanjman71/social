@@ -13,11 +13,10 @@ class CityTest < ActiveSupport::TestCase
     @ny   = Factory(:state, :name => "New York", :code => "NY", :country => @us)
   end
   
-  context "city" do
+  context "city with state" do
     context "chicago" do
       setup do
-        @chicago = City.create(:name => "Chicago", :state => @il)
-        assert @chicago.valid?
+        @chicago = City.create!(:name => "Chicago", :state => @il)
       end
       
       should "have to_param method return chicago" do
@@ -27,18 +26,31 @@ class CityTest < ActiveSupport::TestCase
       should "have to_s method return Chicago" do
         assert_equal "Chicago", @chicago.to_s
       end
+
+      should "have city_state == Chicago, IL" do
+        assert_equal "Chicago, IL", @chicago.city_state
+      end
     end
-    
+
     context "new york" do
       setup do
-        @new_york = City.create(:name => "New York", :state => @ny)
-        assert @new_york.valid?
+        @new_york = City.create!(:name => "New York", :state => @ny)
       end
-      
+
       should "have to_param method return new-york" do
         assert_equal "new-york", @new_york.to_param
       end
     end
   end
-  
+
+  context "city with country" do
+    setup do
+      @fr    = Country.create!(:name => 'France', :code => 'FR')
+      @paris = City.create!(:name => 'Paris', :country => @fr)
+    end
+
+    should "have city_state == Paris, FR" do
+      assert_equal "Paris, FR", @paris.city_state
+    end
+  end
 end

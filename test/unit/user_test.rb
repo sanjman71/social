@@ -260,15 +260,14 @@ class UserTest < ActiveSupport::TestCase
     end
 
     context "gender" do
-      should "set gender when 'female', and set default picture"
-      should "set female, default picture" do
+      should "set gender when 'female', and set default picture" do
         @user1 = User.create!(:name => "User 1", :handle => 'user1', :gender => 'female')
         assert_equal 1, @user1.reload.gender
         assert @user1.reload.female?
         assert_equal "http://foursquare.com/img/blank_girl.png", @user1.primary_photo_url
       end
       
-      should "set gender when 'male',  and set default picture" do
+      should "set gender when 'male', and set default picture" do
         @user1 = User.create!(:user => "User 1", :handle => 'user1', :gender => 'male')
         assert_equal 2, @user1.gender
         assert @user1.reload.male?

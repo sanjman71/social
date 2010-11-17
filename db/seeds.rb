@@ -16,15 +16,29 @@ puts "#{Time.now}: removed log files"
 
 # countries
 @us = Country.create!(:name => "United States", :code => "US")
-puts "#{Time.now}: initialized countries"
+@ca = Country.create!(:name => "Canada", :code => "CA")
 
-# states
-columns = [:id, :name, :code, :country_id, :lat, :lng]
-file    = "#{Rails.root}/data/states.txt"
-puts "#{Time.now}: importing states ... parsing file #{file}"
+@de = Country.create!(:name => "Germany", :code => "DE")
+@es = Country.create!(:name => "Spain", :code => "ES")
+@fr = Country.create!(:name => "France", :code => "FR")
+@gb = Country.create!(:name => "United Kingdom", :code => "GB")
+@ie = Country.create!(:name => "Ireland", :code => "IE")
+
+puts "#{Time.now}: initialized #{Country.count} countries"
+
+# us states
+file = "#{Rails.root}/data/us_states.txt"
+puts "#{Time.now}: importing us states ... parsing file #{file}"
 File.open(file).lines.each do |row|
   id, name, code, lat, lng = row.strip.split(',')
   @us.states.create(:name => name, :code => code, :lat => lat.to_f, :lng => lng.to_f)
+end
+# canada provinces
+file = "#{Rails.root}/data/canada_states.txt"
+puts "#{Time.now}: importing canada provinces ... parsing file #{file}"
+File.open(file).lines.each do |row|
+  name, code, lat, lng = row.strip.split(',')
+  @ca.states.create(:name => name, :code => code, :lat => lat.to_f, :lng => lng.to_f)
 end
 puts "#{Time.now}: initialized #{State.count} states"
 

@@ -21,18 +21,31 @@ class Locality
         when 'state'
           # map state codes
           map_state_codes(geoloc)
-          # find database object, geoloc state is the state code, e.g. "IL"
+          # find database object, geoloc.state is the state code, e.g. "IL"
           object = State.find_by_code(geoloc.state)
         when 'city'
           # map state codes
           map_state_codes(geoloc)
-          # find state database object
-          state   = State.find_by_code(geoloc.state)
-          # find city from state
-          object  = state.cities.find_by_name(geoloc.city)
-          if object.blank? and create
-            # create city
-            object = state.cities.create(:name => geoloc.city, :lat => geoloc.lat, :lng => geoloc.lng)
+          if geoloc.country.to_s.match(/USA|Canada/)
+            # us, canada city
+            # find state database object
+            state   = State.find_by_code(geoloc.state)
+            # find city from state
+            object  = state.cities.find_by_name(geoloc.city)
+            if object.blank? and create
+              # create state city
+              object = state.cities.create(:name => geoloc.city, :lat => geoloc.lat, :lng => geoloc.lng)
+            end
+          else
+            # international city
+            # find country database object
+            country = Country.find_by_name(geoloc.country)
+            # find city from country
+            object  = country.cities.find_by_name(geoloc.city)
+            if object.blank? and create
+              # create country city
+              object = country.cities.create(:name => geoloc.city, :lat => geoloc.lat, :lng => geoloc.lng)
+            end
           end
         when 'zip'
           # map state codes

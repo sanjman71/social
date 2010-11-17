@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
   create_table "cities", :force => true do |t|
     t.string  "name",                :limit => 30
     t.integer "state_id"
+    t.integer "country_id"
     t.decimal "lat",                               :precision => 15, :scale => 10
     t.decimal "lng",                               :precision => 15, :scale => 10
     t.integer "timezone_id"
