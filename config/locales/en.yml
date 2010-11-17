@@ -27,6 +27,7 @@ en:
       tag: 'Tag'
       geo: 'Local'
       geo_filter: 'Local'
+      location: 'Common Thread'
       default: 'Freakie'
   suggestion:
     error:
