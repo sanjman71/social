@@ -130,13 +130,13 @@ class UsersControllerTest < ActionController::TestCase
         assert_select "div#user_profile_matches", 0
       end
 
-      should "show matches when viewing your own profile" do
-        sign_in @user1
-        set_beta
-        get :show, :id => @user1.id
-        assert_select "div#user_profile_matches_title", 1
-        assert_select "div#user_profile_matches", 1
-      end
+      # should "show matches when viewing your own profile" do
+      #   sign_in @user1
+      #   set_beta
+      #   get :show, :id => @user1.id
+      #   assert_select "div#user_profile_matches_title", 1
+      #   assert_select "div#user_profile_matches", 1
+      # end
     end
 
     context "badge voting" do

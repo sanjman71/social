@@ -22,7 +22,8 @@
   .span-4{:style => 'padding-top: 10px;'}
     #user_profile_handle= @user.handle
     #user_profile_data= user_profile_blurb(@user)
-  - if @viewer == @user
+  -# disable matches for now
+  - if false #if @viewer == @user
     -# show matches when its your own profile
     .span-2.border#user_profile_matches_title
       %h4{:style => 'padding-top: 15px;'}== Matches
