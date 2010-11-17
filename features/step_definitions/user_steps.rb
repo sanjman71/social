@@ -6,6 +6,12 @@ Given /^a user "([^"]*)" in "([^"]*)" who is a "([^"]*)" "([^"]*)"$/ do |handle,
                                           :gender => gender, :password => 'secret', :password_confirmation => 'secret')
 end
 
+# user without a location
+Given /^a user "([^"]*)" who is a "([^"]*)" "([^"]*)"$/ do |handle, orientation, gender|
+  user = User.find_or_create_by_handle(:handle => handle, :orientation => orientation,
+                                       :gender => gender, :password => 'secret', :password_confirmation => 'secret')
+end
+
 Given /^a user "([^"]*)" with "([^"]*)" dollars$/ do |handle, amount|
   user = User.find_by_handle!(handle)
   user.update_attribute(:points, amount)

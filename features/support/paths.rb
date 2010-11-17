@@ -20,6 +20,9 @@ module NavigationHelpers
     when /^(.*)'s profile page$/i
       user_path(User.find_by_handle($1))
 
+    when /^(.*)'s user edit page$/i
+      edit_user_path(User.find_by_handle($1))
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

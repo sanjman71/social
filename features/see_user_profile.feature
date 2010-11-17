@@ -10,3 +10,4 @@ Feature: User Profile
     When I go to chicago_coffee_gal's profile page
     When sphinx is indexed
     Then I should see "90" within "span#user_points"
+    And I should see "Please choose a location"

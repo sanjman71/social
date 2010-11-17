@@ -28,7 +28,7 @@
         = email_form.input :address, :label => 'Email Address', :required => false, :hint => 'used for notifications + reminders'
     = f.simple_fields_for :city do |city_form|
       -# city
-      = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => '/geocode/google', :value => f.object.city.city_state, :id => 'user_location'}
+      = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => '/geocode/google', :value => f.object.city.try(:city_state), :id => 'user_location'}
 
     -#.span-20.last
       -#.span-3.text-align-right

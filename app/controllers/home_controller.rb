@@ -1,5 +1,6 @@
 class HomeController < ApplicationController
   skip_before_filter  :check_beta, :only => [:beta, :ping]
+  before_filter       :check_user_has_city
 
   # GET /
   def index
@@ -11,7 +12,7 @@ class HomeController < ApplicationController
       @method       = "search_#{@stream}_checkins"
       @radius       = 2000
       @checkins     = @user.send(@method, :limit => checkins_start_count,
-                                          :geo_origin => [@geo.lat.radians, @geo.lng.radians],
+                                          :geo_origin => [@geo.lat.try(:radians), @geo.lng.try(:radians)],
                                           :geo_distance => 0.0..@radius.miles.meters.value,
                                           :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
                                           :group => :user)
@@ -112,4 +113,12 @@ class HomeController < ApplicationController
     end
   end
 
+  # redirect if user does not have a city
+  def check_user_has_city
+    if user_signed_in? and current_user.city.blank?
+      flash[:notice] = "Please choose a location"
+      redirect_to(edit_user_path(current_user)) and return
+    end
+  end
+  
 end
