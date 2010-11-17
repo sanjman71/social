@@ -21,9 +21,11 @@ class UsersControllerTest < ActionController::TestCase
     ThinkingSphinx::Test.init
     cleanup
     @us         = Factory(:us)
+    @ca         = Factory(:canada)
     @il         = Factory(:il, :country => @us)
     @ny         = Factory(:ny, :country => @us)
     @ma         = Factory(:ma, :country => @us)
+    @on         = Factory(:ontario, :country => @ca)
     @chicago    = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.8781136, :lng => -87.6297982)
     @newyork    = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
     @boston     = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
@@ -71,8 +73,6 @@ class UsersControllerTest < ActionController::TestCase
         @z60613   = Factory(:city, :name => "60613", :state => @il, :lat => 41.9529209, :lng => -87.6605791)
         @chicago4 = Factory.create(:user, :handle => "chicago4", :city => @z60613)
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index
-          sleep(0.25)
           sign_in @chicago1
           set_beta
           get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:2"
@@ -142,8 +142,6 @@ class UsersControllerTest < ActionController::TestCase
     context "badge voting" do
       should "show agree/disagree if user has not voted yet" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index
-          sleep(0.25)
           sign_in @voter
           set_beta
           get :show, :id => @user1.id
@@ -158,8 +156,6 @@ class UsersControllerTest < ActionController::TestCase
         # add badging vote
         @user1.badging_votes.create!(:badge => @badge, :voter => @voter, :vote => 1)
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index
-          sleep(0.25)
           sign_in @voter
           set_beta
           get :show, :id => @user1.id
@@ -169,6 +165,26 @@ class UsersControllerTest < ActionController::TestCase
           assert_select "span#agree_disagree", 0
         end
       end
+    end
+  end
+  
+  context "update" do
+    should "change user city to boston" do
+      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
+      sign_in @chicago_user
+      set_beta
+      put :update, :id => @chicago_user.id, :user => {:city => {:name => 'Boston, MA'}}
+      # should change user city
+      assert_equal @boston, @chicago_user.reload.city
+    end
+
+    should "change user city to toronto" do
+      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
+      sign_in @chicago_user
+      set_beta
+      put :update, :id => @chicago_user.id, :user => {:city => {:name => 'Toronto canada'}}
+      # should change user city
+      assert_equal 'Toronto', @chicago_user.reload.city.name
     end
   end
 end

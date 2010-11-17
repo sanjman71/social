@@ -67,7 +67,10 @@ Social::Application.routes.draw do
   # voting routes
   match 'vote/users/:user_id/badge/:badge_id/:vote', :to => 'voting#create', :via => [:put],
     :as => :vote_user_badge
-  
+
+  # geocode routes
+  match 'geocode/:provider', :to => 'geocode#search', :as => :geocode
+
   # jobs routes
   match 'jobs', :to => 'jobs#index', :as => :jobs
   match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job

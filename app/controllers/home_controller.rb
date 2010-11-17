@@ -17,6 +17,11 @@ class HomeController < ApplicationController
                                           :group => :user)
       @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others', 'Outlately']
       @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']
+      # add user city to list of cities
+      if current_user.city
+        @cities.push(current_user.city.name).uniq!
+      end
+
       @max_objects  = checkins_end_count
 
       logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@geo.try(:name) || @geo.try(:handle)}:#{@geo.try(:lat)}:#{@geo.try(:lng)}, stream:#{@stream}")

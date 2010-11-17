@@ -15,7 +15,7 @@
     %h2 Outlately
   .span-20.last{:style => 'padding-top: 15px;'}
     - if @cities
-      = render(:partial => 'home/playgrounds', :locals => {:cities => @cities, :geo => @geo})
+      = render(:partial => 'home/playgrounds', :locals => {:cities => @cities.sort, :geo => @geo})
   .span-23.last
     %h4= render(:partial => 'shared/oauth_links')
 

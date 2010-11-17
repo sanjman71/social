@@ -66,6 +66,10 @@ class City < ActiveRecord::Base
     self.name.to_url_param
   end
   
+  def city_state
+    [name, state.try(:code)].compact.join(", ")
+  end
+
   def geocode_latlng(options={})
     force = options.has_key?(:force) ? options[:force] : false
     return true if self.lat and self.lng and !force

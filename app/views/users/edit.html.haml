@@ -1,3 +1,5 @@
+- javascript('geocode')
+
 - content_for :mat do
   %h2== My Profile
   %h4= render(:partial => 'shared/oauth_links')
@@ -17,12 +19,17 @@
 .span-24.last
   - @user.email_addresses.build if @user.email_addresses_count == 0
   = simple_form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
-    .span-20.last
+    .span-24.last
       -# handle
       = f.input :handle, :hint => 'your name on the site'
-    - f.simple_fields_for :email_addresses do |email_form|
-      .span-20.last
+    -# email address
+    = f.simple_fields_for :email_addresses do |email_form|
+      .span-24.last
         = email_form.input :address, :label => 'Email Address', :required => false, :hint => 'used for notifications + reminders'
+    = f.simple_fields_for :city do |city_form|
+      -# city
+      = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => '/geocode/google', :value => f.object.city.city_state, :id => 'user_location'}
+
     -#.span-20.last
       -#.span-3.text-align-right
         -#%h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Pictures'
@@ -31,6 +38,6 @@
           -#= image_tag(photo.url, :size => '50x50')
           -#= photo.source
     .span-19.prepend-1.last
-      = f.submit 'Update', :class => 'big'
+      = f.submit 'Update', :class => 'big', :id => 'edit_user_submit'
       or
       %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em;'
