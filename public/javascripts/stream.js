@@ -26,17 +26,20 @@ $.fn.init_stream_objects = function() {
     }
   })
 
+  // deprecated: dialogs are deprecated on home page
   // initialize dialog
-  $("#meet_user_dialog").dialog({modal: true, autoOpen: false, width: 350, height: 150, show: 'fadeIn(slow)'});
-  $("#plan_location_dialog").dialog({modal: true, autoOpen: false, width: 350, height: 150, show: 'fadeIn(slow)'});
+  //$("#meet_user_dialog").dialog({modal: true, autoOpen: false, width: 350, height: 150, show: 'fadeIn(slow)'});
+  //$("#plan_location_dialog").dialog({modal: true, autoOpen: false, width: 350, height: 150, show: 'fadeIn(slow)'});
 
   // basic dialog for now
+  /*
   $("a#meet_user").live('click', function() {
     handle = $(this).parents('.match').attr('data-handle');
     $("#meet_user_dialog #handle").text("We'll connect you with " + handle);
     $("#meet_user_dialog").dialog('open');
     return false;
   })
+  */
 
   // 
   $("a#checkin_plan").live('click', function() {
