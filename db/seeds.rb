@@ -203,7 +203,7 @@ def import_user(hash)
   @user = User.find_by_handle(hash[:user])
   hash[:locations].each do |loc_source_id|
     @location = Location.joins(:location_source).where("location_sources.source_id" => loc_source_id).first
-    @user.checkins.create(:location_id => @location.id, :checkin_at => Time.zone.now - 3.days,
+    @user.checkins.create(:location => @location, :checkin_at => Time.zone.now - 3.days,
                           :source_id => @location.location_source.id, :source_type => Source.foursquare)
   end
 end
