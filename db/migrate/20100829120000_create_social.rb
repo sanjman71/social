@@ -55,6 +55,7 @@ class CreateSocial < ActiveRecord::Migration
     create_table :zips do |t|
       t.string      :name,                  :limit => 10, :default => nil
       t.references  :state
+      t.references  :country
       t.decimal     :lat,                   :precision => 15, :scale => 10
       t.decimal     :lng,                   :precision => 15, :scale => 10
       t.references  :timezone

@@ -1,8 +1,9 @@
 class Zip < ActiveRecord::Base
-  validates_presence_of       :name, :state_id
-  validates_format_of         :name, :with => /\d{5,5}/
-  validates_uniqueness_of     :name, :scope => :state_id
+  validates                   :name, :presence => true, :uniqueness => {:scope => :state_id},
+                              :format => {:with => /\d{5,5}/}
+  validates                   :state_id, :presence => true
   belongs_to                  :state, :counter_cache => true
+  belongs_to                  :country
   belongs_to                  :timezone
   has_many                    :locations
   has_many                    :city_zips
