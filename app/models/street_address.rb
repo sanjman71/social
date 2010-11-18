@@ -48,11 +48,16 @@ class StreetAddress
     s.split.collect { |token| ["and"].include?(token) ? token : token.capitalize  }.join(" ")
   end
   
+  def self.street_name_number(s)
+    hash = components(s)
+    "#{hash[:housenumber]} #{hash[:streetname]}"
+  end
+
   # break a street address into its components, and return the components hash
   def self.components(s)
     index = 0
     hash  = {}
-    
+
     return hash if s.blank?
 
     # normalize street address and split

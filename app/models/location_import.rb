@@ -1,7 +1,7 @@
 class LocationImport
 
   # import facebook or foursquare location
-  # id: facebook o foursquare id
+  # id: facebook or foursquare id
   # type: 'facebook', 'foursquare'
   # hash: 'name' => 'Zed 451', 'address' => '763 N Clark St.', 'city' => 'Chicago, 'state' => 'Illinois'
   #       'lat' => 41.8964066, 'lng' => -87.6312161
@@ -11,7 +11,7 @@ class LocationImport
     return @locations.first if @locations.size == 1
 
     # search for matching locations using venue info
-    @locations = LocationFinder.match(hash)
+    @locations = LocationFinder.match(hash) # xxx
     return @locations.first if @locations.size == 1
 
     if @locations.size > 1

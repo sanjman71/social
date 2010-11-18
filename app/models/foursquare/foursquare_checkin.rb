@@ -87,6 +87,7 @@ class FoursquareCheckin
   #      }
   def self.import_checkin(user, checkin_hash)
     # normalize foursquare venue hash and import location
+    log("[user:#{user.id}] importing foursquare checkin #{checkin_hash.inspect}");
     @venue  = checkin_hash['venue']
     @hash   = Hash['name' => @venue['name'], 'address' => @venue['address'], 'city' => @venue['city'],
                    'state' => @venue['state'], 'lat' => @venue['geolat'], 'lng' => @venue['geolong']]
@@ -131,7 +132,6 @@ class FoursquareCheckin
         next if user_hash['id'].to_i == user.foursquare_id.to_i
         user_name  = "#{user_hash['firstname']} #{user_hash['lastname']}"
         venue_name = venue_hash.try(:[], 'name')
-        # puts "#{Time.now}: user #{user_name}, venue: #{venue_name}, at: #{checkin_hash['created']}"
       end
     rescue Exception => e
       log("[user:#{user.id}] #{user.handle} #{__method__.to_s} #{e.message}", :error)

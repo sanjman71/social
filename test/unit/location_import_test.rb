@@ -91,7 +91,7 @@ class LocationImportTest < ActiveSupport::TestCase
     # should call location.after_tagging after tagging location source
     Location.any_instance.expects(:after_tagging).once
     @source   = @location.location_sources.create(:source_id => '108207', :source_type => 'foursquare')
-    # should add dj to import tags
+    # should add job to import tags
     assert_equal 1, Delayed::Job.all.select { |dj| dj.handler.match(/import_tags/) }.size
     Delayed::Worker.new.work_off(1)
     # should add location tags

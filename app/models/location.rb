@@ -2,7 +2,7 @@ require 'serialized_hash'
 
 class Location < ActiveRecord::Base
   # All addresses must have a country
-  validates_presence_of   :country_id
+  validates               :country_id, :presence => true
 
   belongs_to              :country, :counter_cache => :locations_count
   belongs_to              :state, :counter_cache => :locations_count
@@ -94,9 +94,6 @@ class Location < ActiveRecord::Base
     indexes phone_numbers(:address), :as => :phone
     # other attributes
     # has popularity, :type => :integer, :as => :popularity
-    # has companies.chain_id, :type => :integer, :as => :chain_ids
-    # has recommendations_count, :type => :integer, :as => :recommendations
-    # has events_count, :type => :integer, :as => :events, :facet => true
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float

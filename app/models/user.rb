@@ -353,13 +353,18 @@ class User < ActiveRecord::Base
   # add user badges based on location tags
   # note: usually called asynchronously
   def async_add_badges
-    tag_names = locations.collect(&:tags).flatten.collect(&:name)
-    Badge.all.each do |badge|
+    tag_names   = locations.collect(&:tags).flatten.collect(&:name)
+    return [] if tag_names.blank?
+    new_badges  = Badge.all.inject([]) do |array, badge|
       matches = tag_names.grep(Regexp.new(badge.regex))
       if !matches.blank?
+        # add badge
         badgings.create(:badge => badge)
+        array.push(badge)
       end
+      array
     end
+    new_badges
   end
 
   def send_alert(options)

@@ -69,7 +69,7 @@ module Users::Oauth
         oauth.access_token        = access_token.token
         oauth.access_token_secret = (access_token.secret rescue nil)
         oauth.save
-        user.class.log("[#{user.handle}] updated oauth token")
+        user.class.log("[user:#{user.id}] #{user.handle} updated oauth token")
       else
         # create oauth object with token
         oauth = user.oauths.create(:provider => service, :access_token => access_token.token,

@@ -45,14 +45,13 @@ class BadgeTest < ActiveSupport::TestCase
   should "not create user badgings without matching badges" do
     # create chicago locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-    # should not add badges with 0 badges in the database
+    # should not add badges without badges in the database
     @chicago_male1.async_add_badges
     assert_equal [], @chicago_male1.badges.collect(&:name)
     # create badge
     @badge = Badge.create(:regex => "cheese|pizza", :name => 'Caffeine Junkie')
     # should not add badges with no matching badges in the database
-    @chicago_male1.async_add_badges
-    assert_equal [], @chicago_male1.badges.collect(&:name)
+    assert_equal 0, @chicago_male1.async_add_badges.size
     assert_equal [], @chicago_male1.badges_list
   end
 
@@ -61,8 +60,7 @@ class BadgeTest < ActiveSupport::TestCase
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     # create badge
     @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
-    @chicago_male1.async_add_badges
-    assert_equal ['Caffeine Junkie'], @chicago_male1.badges.collect(&:name)
+    assert_equal 1, @chicago_male1.async_add_badges.size
     assert_equal ['Caffeine Junkie'], @chicago_male1.badges_list
   end
 

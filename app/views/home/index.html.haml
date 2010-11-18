@@ -28,7 +28,7 @@
 - if !user_signed_in?
   .span-23.prepend-1.last
     -# always sign in with facebook
-    %span{:style => 'font-size: 1.5em;'}Try the beta by signing in with
+    %span{:style => 'font-size: 1.5em;'}Sign in with
     = link_to image_tag('facebook_64.png'), user_oauth_authorize_url(:facebook)
 
 - if user_signed_in?

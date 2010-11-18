@@ -41,9 +41,21 @@ class LocationSource < ActiveRecord::Base
 
   def event_location_source_created
     # log
-    self.class.log("[location_source:#{self.id}] #{self.source_type}:#{self.source_id} mapped to location:#{self.location_id}")
+    self.class.log("[location_source:#{self.id}] location:#{self.location_id} mapped to #{self.source_type}:#{self.source_id}")
     # add tags
     add_tags
+    # add other sources
+    # add_other_sources
+  end
+
+  # add other location sources to this location
+  def add_other_sources
+    case
+    when facebook?
+      # try mapping a foursquare location to this location
+      FoursquareLocation.delay.map(location)
+    end
+    true
   end
 
   # add tags to this location
@@ -62,6 +74,7 @@ class LocationSource < ActiveRecord::Base
   # mark attributes after a source is tagged
   def after_tagging
     # set tag count and timestamp
+    # SK: not sure setting the tag count means much because tags can be imported from multiple sources
     self.tag_count  = location.tag_list.size
     self.tagged_at  = Time.zone.now
     self.save
