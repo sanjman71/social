@@ -1,7 +1,7 @@
 namespace :db do
 
   desc "Reset the database, run db:seeds and rebuild sphinx"
-  task :resetit => ["db:reset", "db:seed", "ts:rebuild"] do
+  task :resetit => ["db:migrate:reset", "ts:rebuild", "db:seed", "ts:rebuild"] do
     puts "#{Time.now}: starting delayed job ..."
     system "./script/delayed_job start"
   end
