@@ -30,6 +30,8 @@ class Checkin < ActiveRecord::Base
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
+    # used delayed job for almost real time indexing
+    set_property :delta => :delayed
   end
   
   # user checkin was added

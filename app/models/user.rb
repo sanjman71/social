@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
     has 'RADIANS(users.lat)', :as => :lat,  :type => :float
     has 'RADIANS(users.lng)', :as => :lng,  :type => :float
     # real time indexing with delayed_job
-    # set_property :delta => :delayed
+    set_property :delta => :delayed
     # only index active users
     where "state = 'active'"
   end
