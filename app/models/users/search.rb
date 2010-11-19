@@ -42,6 +42,8 @@ module Users::Search
     search_checkins(options)
   end
 
+  alias :search_ladies_checkins :search_gals_checkins
+
   def search_guys_checkins(options={})
     add_geo_params(options)
     # exclude my checkins
@@ -50,6 +52,8 @@ module Users::Search
     options.update(:with_gender => [2]) unless options[:with_gender]
     search_checkins(options)
   end
+
+  alias :search_men_checkins :search_guys_checkins
 
   def search_daters_checkins(options={})
     add_geo_params(options)
