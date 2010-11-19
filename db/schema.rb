@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(:version => 20101028014729) do
     t.datetime "checkin_at"
     t.string   "source_id"
     t.string   "source_type", :limit => 50
+    t.boolean  "delta",                     :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

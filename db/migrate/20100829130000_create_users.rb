@@ -60,6 +60,7 @@ class CreateUsers < ActiveRecord::Migration
       t.datetime    :checkin_at
       t.string      :source_id                    # checkin id
       t.string      :source_type, :limit => 50    # checkin source (e.g. 'facebook', 'foursquare')
+      t.boolean     :delta, :default => 0
       t.timestamps
     end
 
