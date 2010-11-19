@@ -41,9 +41,12 @@ class LocationshipTest < ActiveSupport::TestCase
       @location1  = Location.create(:name => "Location 1", :country => @us)
       # user added todo list checkin 4 days ago
       @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
-      @locship.update_attribute(:todo_at, (4.days.ago-1.minute))
-      # should have 1 reminder to send
-      assert_equal 1, @user1.send_todo_checkin_reminders
+      # should have no reminders to send right now
+      assert_equal 0, @user1.send_todo_checkin_reminders
+      Timecop.travel(Time.now+4.days+1.minute) do
+        # should have 1 reminder to send in 4 days
+        assert_equal 1, @user1.send_todo_checkin_reminders
+      end
     end
   end
 

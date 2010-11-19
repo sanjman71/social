@@ -27,9 +27,9 @@ gem 'simple_form',            '>= 1.2.2'
 gem "SyslogLogger",           ">= 1.4.0"
 gem 'ts-delayed-delta',       '>= 1.1.1'
 gem 'test-unit',              '>= 2.1.1'  # used by teamcity
-gem 'thinking-sphinx',        '>=2.0.0', :require => 'thinking_sphinx'
+gem 'thinking-sphinx',        '>= 2.0.0', :require => 'thinking_sphinx'
+gem 'timecop',                '>= 0.3.5'
 gem 'whenever',               '>= 0.5.0'
-
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
