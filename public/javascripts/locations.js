@@ -1,5 +1,6 @@
 $(document).ready(function() {
-  $("input#user_location").blur(function() {
+  
+  $("input#user_location").change(function() {
     field     = $(this);
     query     = $(this).val();
     data_url  = $(this).attr('data-url');
@@ -11,7 +12,7 @@ $(document).ready(function() {
 
     // disable submit, update hint
     $(submit).attr('disabled', 'disabled');
-    $(hint).text("checking ...");
+    $(hint).text("locating ...");
 
     $.getJSON(data_url, {q: query}, function(data) {
       if (data.status == 'ok') {

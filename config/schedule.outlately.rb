@@ -26,6 +26,9 @@ end
 every 15.minutes do
   # poll checkins
   command "curl http://outlate.ly/jobs/poll_checkins?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
+end
+
+every 1.hour do
   # rebuild sphinx
   command "curl http://outlate.ly/jobs/sphinx?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
 end
