@@ -45,7 +45,7 @@ class LocationSource < ActiveRecord::Base
     # add tags
     add_tags
     # add other sources
-    # add_other_sources
+    add_other_sources
   end
 
   # add other location sources to this location

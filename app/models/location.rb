@@ -93,12 +93,12 @@ class Location < ActiveRecord::Base
     # phone numbers
     indexes phone_numbers(:address), :as => :phone
     # other attributes
-    # has popularity, :type => :integer, :as => :popularity
+    has popularity, :type => :integer, :as => :popularity
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
-    # used delayed job for almost real time indexing using
-    # set_property :delta => :delayed
+    # used delayed job for almost real time indexing
+    set_property :delta => :delayed
     # only index valid locations
     where "status = 0"
   end
