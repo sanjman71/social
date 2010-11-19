@@ -11,13 +11,14 @@
     - javascript 'stream'
 
 - content_for :mat do
-  .span-3
-    %h2 Outlately
-  .span-20.last{:style => 'padding-top: 15px;'}
-    - if @cities
-      = render(:partial => 'home/playgrounds', :locals => {:cities => @cities.sort, :geo => @geo})
-  .span-23.last
-    %h4= render(:partial => 'shared/oauth_links')
+  .span-23.last.padding-bottom-10
+    .span-3
+      %h2 Outlately
+    .span-13{:style => 'margin-top: 10px;'}
+      - if @cities
+        = render(:partial => 'home/playgrounds', :locals => {:cities => @cities.sort, :geo => @geo})
+    .span-7.last
+      = render(:partial => 'shared/oauth_links')
 
 %hr.space
 
@@ -28,7 +29,8 @@
 - if !user_signed_in?
   .span-23.prepend-1.last
     -# always sign in with facebook
-    %span{:style => 'font-size: 1.5em;'}Sign in with
+    %span{:style => 'font-size: 1.5em;'}Sign in
+    %br
     = link_to image_tag('facebook_64.png'), user_oauth_authorize_url(:facebook)
 
 - if user_signed_in?

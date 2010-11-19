@@ -129,8 +129,8 @@ a.signup:hover                                    { color: #000000; background-c
 
 /* logo styles */
 
-a.logo                                            { outline: none; }
-a.logo:hover                                      { background-color: #FF6600; }
+a.logo, a.logo:visited                            { outline: none; }
+a.logo:hover                                      { background: none; text-decoration: none; }
 
 /* tag link styles */
 

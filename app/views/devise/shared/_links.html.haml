@@ -18,7 +18,3 @@
 - if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks'
   = link_to "Didn't receive unlock instructions?", new_unlock_path(resource_name)
   %br
-
-= link_to "Sign in with your Facebook account", user_oauth_authorize_url(:facebook)
-%br
-= link_to "Sign in with your Foursquare account", oauth_initiate_path(:foursquare)

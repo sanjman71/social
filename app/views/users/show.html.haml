@@ -3,11 +3,14 @@
 - javascript 'users'
 
 - content_for :mat do
-  %h2
-    = user_display_name(@user, current_user, 'Me')
-    %span{:style => 'font-size: 0.5em; padding-left: 3px;'}= link_to 'Edit', edit_user_path(@user), :class => 'small'
-  - if current_user == @user
-    %h4= render(:partial => 'shared/oauth_links')
+  .span-23.last.padding-bottom-10
+    .span-16
+      %h2
+        = user_display_name(@user, current_user, 'Me')
+        %span{:style => 'font-size: 0.5em; padding-left: 3px;'}= link_to 'Edit', edit_user_path(@user), :class => 'small'
+    .span-7.last
+      - if current_user == @user
+        = render(:partial => 'shared/oauth_links')
 
 %hr.space
 
