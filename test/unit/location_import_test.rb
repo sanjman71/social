@@ -92,8 +92,8 @@ class LocationImportTest < ActiveSupport::TestCase
     Location.any_instance.expects(:after_tagging).once
     @source   = @location.location_sources.create(:source_id => '108207', :source_type => 'foursquare')
     # should add job to import tags
-    assert_equal 1, Delayed::Job.all.select { |dj| dj.handler.match(/import_tags/) }.size
-    Delayed::Worker.new.work_off(1)
+    assert_equal 1, Delayed::Job.all.select { |dj| dj.handler.match(/async_import_tags/) }.size
+    work_off_delayed_jobs(/async_import_tags/)
     # should add location tags
     assert_equal ['cafe', 'food'], @location.reload.tag_list
     # should mark location_source tag_count, tagged_at

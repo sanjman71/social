@@ -39,9 +39,9 @@ class LocationshipTest < ActiveSupport::TestCase
       @user1      = Factory.create(:user)
       @user1.stubs(:email_address).returns('reminders@jarna.com')
       @location1  = Location.create(:name => "Location 1", :country => @us)
-      # user added todo list checkin 4 days ago
+      # user adds to their todo list
       @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
-      # should have no reminders to send right now
+      # should have no reminders right now
       assert_equal 0, @user1.send_todo_checkin_reminders
       Timecop.travel(Time.now+4.days+1.minute) do
         # should have 1 reminder to send in 4 days
