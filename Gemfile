@@ -25,9 +25,9 @@ gem 'oauth',                  '>= 0.4.2'
 gem 'oauth2',                 '>= 0.0.13'
 gem 'simple_form',            '>= 1.2.2'
 gem "SyslogLogger",           ">= 1.4.0"
-gem 'ts-delayed-delta',       '>= 1.1.0'
+gem 'ts-delayed-delta',       '>= 1.1.1'
 gem 'test-unit',              '>= 2.1.1'  # used by teamcity
-gem 'thinking-sphinx',        '>=2.0.0.rc1', :require => 'thinking_sphinx'  
+gem 'thinking-sphinx',        '>=2.0.0', :require => 'thinking_sphinx'
 gem 'whenever',               '>= 0.5.0'
 
 
