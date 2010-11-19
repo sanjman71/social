@@ -105,11 +105,11 @@ class HomeController < ApplicationController
   def stream_name_daters(user)
     case user.gender
     when 1
-      'Guys'
+      I18n.t("home.stream.name.guys")
     when 2
-      'Gals'
+      I18n.t("home.stream.name.gals")
     else
-      'Daters'
+      I18n.t("home.stream.name.daters")
     end
   end
 
