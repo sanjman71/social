@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => :all_blank
 
   belongs_to                :city
+  accepts_nested_attributes_for :city, :allow_destroy => true, :reject_if => :all_blank
 
   # oauths
   has_many                  :oauths
@@ -85,6 +86,7 @@ class User < ActiveRecord::Base
   attr_accessible           :handle, :password, :password_confirmation, :gender, :orientation, :rpx,
                             :facebook_id, :city, :city_id,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
+                            :city_attributes,
                             :preferences_phone, :preferences_email
 
   # BEGIN acts_as_state_machine
@@ -205,6 +207,21 @@ class User < ActiveRecord::Base
       o.name = name
       o.send(:id=, 0)
     end
+  end
+
+  # override default nested attributes method
+  def city_attributes=(attrs)
+    case
+    when attrs[:id].present?
+      # find city by id or create new one
+      city = City.find_by_id(attrs[:id]) || Locality.resolve(attrs[:name], :precision => city, :create => true)
+    when attrs[:name].present?
+      # find existing city or create new one
+      city = Locality.resolve(attrs[:name], :precision => city, :create => true)
+    end
+    self.city = city
+  rescue Exception => e
+    # ignore invalid city
   end
 
   # return true if its the special user 'anyone'

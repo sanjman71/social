@@ -167,13 +167,31 @@ class UsersControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "update" do
+    should "not change user city when id is specified" do
+      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
+      sign_in @chicago_user
+      set_beta
+      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:id => @chicago.id, :name => 'Chicago'}}
+      # should not change user city
+      assert_equal @chicago, @chicago_user.reload.city
+    end
+
+    should "not change user city when name is specified" do
+      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
+      sign_in @chicago_user
+      set_beta
+      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:name => 'Chicago'}}
+      # should not change user city
+      assert_equal @chicago, @chicago_user.reload.city
+    end
+
     should "change user city to boston" do
       @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
       sign_in @chicago_user
       set_beta
-      put :update, :id => @chicago_user.id, :user => {:city => {:name => 'Boston, MA'}}
+      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:name => 'Boston, MA'}}
       # should change user city
       assert_equal @boston, @chicago_user.reload.city
     end
@@ -182,7 +200,7 @@ class UsersControllerTest < ActionController::TestCase
       @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
       sign_in @chicago_user
       set_beta
-      put :update, :id => @chicago_user.id, :user => {:city => {:name => 'Toronto canada'}}
+      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:name => 'Toronto canada'}}
       # should change user city
       assert_equal 'Toronto', @chicago_user.reload.city.name
     end

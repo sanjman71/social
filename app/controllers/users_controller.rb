@@ -67,18 +67,6 @@ class UsersController < ApplicationController
 
   # POST /users/1
   def update
-    # handle city as special case
-    if (city_hash = params[:user].try(:[], :city))
-      city = Locality.resolve(city_hash[:name], :precision => city, :create => true)
-      if city
-        # change user city
-        params[:user][:city] = city
-      else
-        # ignore new city
-        params[:user].delete(:city)
-      end
-    end
-
     if @user.update_attributes(params[:user])
       @user.class.log("[user:#{@user.id}] #{@user.handle} updated #{params[:user].inspect}")
       flash[:notice] = "Profile updated"
