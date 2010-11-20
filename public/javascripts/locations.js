@@ -26,7 +26,7 @@ $(document).ready(function() {
       }
       // re-enable submit, update hint
       $(submit).attr('disabled', '');
-      $(hint).text("you moved to " + data.city);
+      $(hint).text("hey, it's " + data.city);
     });
   })
 })

@@ -7,12 +7,14 @@ class LocationsControllerTest < ActionController::TestCase
   self.use_transactional_fixtures = false
 
   context "routes" do
-    should route(:get, "/locations/geo:1.23..-77.89/radius:50").to(
-      :controller => 'locations', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
-    should route(:get, "/locations/city:chicago/radius:50").to(
-      :controller => 'locations', :action => 'index', :city => 'city:chicago', :radius => 'radius:50')
-    should route(:get, "/locations/city:chicago").to(
-      :controller => 'locations', :action => 'index', :city => 'city:chicago')
+    should route(:get, "/locations/geo:1.23..-77.89/radius:50").
+      to(:controller => 'locations', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
+    should route(:get, "/locations/city:chicago/radius:50").
+      to(:controller => 'locations', :action => 'index', :city => 'city:chicago', :radius => 'radius:50')
+    should route(:get, "/locations/city:chicago").
+      to(:controller => 'locations', :action => 'index', :city => 'city:chicago')
+    should route(:get, '/locations/geocode/google').
+      to(:controller => 'locations', :action => 'geocode', :provider => 'google')
   end
 
   def setup
@@ -45,8 +47,8 @@ class LocationsControllerTest < ActionController::TestCase
     context "city" do
       should "find city users within default radius" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index
-          sleep(0.25)
+          # ThinkingSphinx::Test.index
+          # sleep(0.25)
           sign_in @user1
           set_beta
           get :index, :city => 'city:chicago'
@@ -63,8 +65,8 @@ class LocationsControllerTest < ActionController::TestCase
     context "geo" do
       should "find geo users within default radius" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index
-          sleep(0.25)
+          # ThinkingSphinx::Test.index
+          # sleep(0.25)
           sign_in @user1
           set_beta
           get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}"
@@ -77,6 +79,57 @@ class LocationsControllerTest < ActionController::TestCase
           assert_template "index"
         end
       end
+    end
+  end
+
+  context "geocode google" do
+    setup do
+      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
+    end
+
+    should "geocode chicago street to geocoded object" do
+      set_beta
+      sign_in @user1
+      get :geocode, :provider => 'google', :q => '900 n michigan chicgo', :format => 'json'
+      assert_equal "application/json", @response.content_type
+      @json = JSON.parse(@response.body)
+      assert_equal 'ok', @json['status']
+      assert_equal '900 N Michigan Ave', @json['street_address']
+      assert_equal 'Chicago', @json['city']
+      assert_equal 'IL', @json['state']
+    end
+
+    should "geocode chicago to geocoded object" do
+      set_beta
+      sign_in @user1
+      get :geocode, :provider => 'google', :q => 'chicago', :format => 'json'
+      assert_equal "application/json", @response.content_type
+      @json = JSON.parse(@response.body)
+      assert_equal 'ok', @json['status']
+      assert_equal 'Chicago', @json['city']
+      assert_equal 'IL', @json['state']
+    end
+
+    should "geocode toronto, canada to geocoded object" do
+      set_beta
+      sign_in @user1
+      get :geocode, :provider => 'google', :q => 'toronto, canada', :format => 'json'
+      assert_equal "application/json", @response.content_type
+      @json = JSON.parse(@response.body)
+      assert_equal 'ok', @json['status']
+      assert_equal 'Toronto', @json['city']
+      assert_equal 'ON', @json['state']
+    end
+
+    should "geocode paris, france to geocoded object" do
+      set_beta
+      sign_in @user1
+      get :geocode, :provider => 'google', :q => 'paris', :format => 'json'
+      assert_equal "application/json", @response.content_type
+      @json = JSON.parse(@response.body)
+      assert_equal 'ok', @json['status']
+      assert_equal 'Paris', @json['city']
+      assert_equal 'France', @json['country']
     end
   end
 

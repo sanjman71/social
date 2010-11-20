@@ -42,6 +42,7 @@ Social::Application.routes.draw do
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_locations
   match 'locations/:city(/:radius)', :to => 'locations#index',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_locations
+  match 'locations/geocode/:provider', :to => 'locations#geocode', :as => :geocode
 
   resources :locations, :only => [:index] do
     get :import_tags, :on => :member
@@ -67,9 +68,6 @@ Social::Application.routes.draw do
   # voting routes
   match 'vote/users/:user_id/badge/:badge_id/:vote', :to => 'voting#create', :via => [:put],
     :as => :vote_user_badge
-
-  # geocode routes
-  match 'geocode/:provider', :to => 'geocode#search', :as => :geocode
 
   # jobs routes
   match 'jobs', :to => 'jobs#index', :as => :jobs
