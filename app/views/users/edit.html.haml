@@ -20,7 +20,10 @@
       == You can change it later as well.
 
 .span-24.last
+  -# initialize nested objects
   - @user.email_addresses.build if @user.email_addresses_count == 0
+  - @user.city ||= City.new
+
   = simple_form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
     .span-24.last
       -# handle

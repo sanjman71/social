@@ -72,7 +72,7 @@ class City < ActiveRecord::Base
   end
   
   def city_state
-    [name, state ? state.code : country.code].compact.join(", ")
+    [name, state.present? ? state.try(:code) : country.try(:code)].delete_if(&:blank?).join(", ")
   end
 
   def geocode_latlng(options={})
