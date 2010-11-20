@@ -34,6 +34,10 @@ class ActiveSupport::TestCase
     assert_equal nil, x
   end
 
+  def setup_badges
+    Badges::Init.add_roles_and_privileges
+  end
+
   def match_delayed_jobs(regex)
     Delayed::Job.all.select{ |dj| dj.handler.match(regex) }.size
   end

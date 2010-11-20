@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
                                            :phone => 'optional', :email => 'optional'}
 
   before_save               :before_save_callback
-  # after_create              :manage_user_roles
+  after_create              :manage_user_roles
   after_create              :send_signup_email
   after_save                :after_add_facebook_id
 
@@ -449,12 +449,12 @@ class User < ActiveRecord::Base
     end
   end
 
-  # def manage_user_roles
-  #   unless self.has_role?('user manager', self)
-  #     # all users can manage themselves
-  #     self.grant_role('user manager', self)
-  #   end
-  # end
+  def manage_user_roles
+    unless self.has_role?('user manager', self)
+      # all users can manage themselves
+      self.grant_role('user manager', self)
+    end
+  end
 
   # send email after a user signup using delayed job
   def send_signup_email

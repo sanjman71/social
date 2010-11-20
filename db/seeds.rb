@@ -14,6 +14,9 @@ system "rm -f #{Rails.root}/log/delayed_job.log"
 system "rm -f #{Rails.root}/log/outlately.*.log"
 puts "#{Time.now}: removed log files"
 
+# badges role and privileges
+Badges::Init.add_roles_and_privileges
+
 # countries
 @us = Country.create!(:name => "United States", :code => "US")
 @ca = Country.create!(:name => "Canada", :code => "CA")

@@ -34,7 +34,7 @@ Social::Application.routes.draw do
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_users
 
   resources :users do
-    get :sudo, :on => :member
+    get :become, :on => :member
   end
 
   # location routes
@@ -68,6 +68,9 @@ Social::Application.routes.draw do
   # voting routes
   match 'vote/users/:user_id/badge/:badge_id/:vote', :to => 'voting#create', :via => [:put],
     :as => :vote_user_badge
+
+  # unauthorized
+  match 'unauthorized', :to => 'home#unauthorized'
 
   # jobs routes
   match 'jobs', :to => 'jobs#index', :as => :jobs

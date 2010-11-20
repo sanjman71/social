@@ -69,6 +69,10 @@ class HomeController < ApplicationController
     redirect_to root_path and return
   end
 
+  # GET /unauthorized
+  def unauthorized
+  end
+
   protected
   
   def checkins_start_count

@@ -4,7 +4,8 @@ class UsersController < ApplicationController
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
-  privilege_required 'admin', :only => [:sudo]
+  privilege_required 'admin', :only => [:become]
+  privilege_required 'manage users', :only => [:edit, :update], :on => :user
 
   # GET /users
   # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_user_ids=1,5,3
@@ -68,7 +69,7 @@ class UsersController < ApplicationController
   # POST /users/1
   def update
     if @user.update_attributes(params[:user])
-      @user.class.log("[user:#{@user.id}] #{@user.handle} updated #{params[:user].inspect}")
+      User.log("[user:#{@user.id}] #{@user.handle} updated #{params[:user].inspect}")
       flash[:notice] = "Profile updated"
     else
       flash[:error]  = "There was an error updating your profile"
@@ -76,8 +77,8 @@ class UsersController < ApplicationController
     redirect_back_to(edit_user_path(@user))
   end
 
-  # GET /users/1/sudo
-  def sudo
+  # GET /users/1/become
+  def become
     @user = User.find(params[:id])
     sign_in(:user, @user)
     flash[:notice] = "You are now logged in as #{@user.handle}"

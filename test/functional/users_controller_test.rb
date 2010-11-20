@@ -13,8 +13,8 @@ class UsersControllerTest < ActionController::TestCase
       to(:controller => 'users', :action => 'index', :city => 'city:chicago', :radius => 'radius:75')
     should route(:get, "/users/city:chicago").
       to(:controller => 'users', :action => 'index', :city => 'city:chicago')
-    should route(:get, "/users/1/sudo").
-      to(:controller => 'users', :action => 'sudo', :id => '1')
+    should route(:get, "/users/1/become").
+      to(:controller => 'users', :action => 'become', :id => '1')
   end
 
   def setup
@@ -169,7 +169,18 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   context "update" do
+    should "not allow another user to update your profile" do
+      setup_badges
+      @user1 = Factory.create(:user, :handle => 'user1')
+      @user2 = Factory.create(:user, :handle => 'user2')
+      sign_in @user1
+      set_beta
+      put :update, :id => @user2.id, :user => {}
+      assert_redirected_to "/unauthorized"
+    end
+  
     should "not change user city when id is specified" do
+      setup_badges
       @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
       sign_in @chicago_user
       set_beta
@@ -179,6 +190,7 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "not change user city when name is specified" do
+      setup_badges
       @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
       sign_in @chicago_user
       set_beta
@@ -188,6 +200,7 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "change user city to boston" do
+      setup_badges
       @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
       sign_in @chicago_user
       set_beta
@@ -197,12 +210,25 @@ class UsersControllerTest < ActionController::TestCase
     end
 
     should "change user city to toronto" do
+      setup_badges
       @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
       sign_in @chicago_user
       set_beta
       put :update, :id => @chicago_user.id, :user => {:city_attributes => {:name => 'Toronto canada'}}
       # should change user city
       assert_equal 'Toronto', @chicago_user.reload.city.name
+    end
+  end
+  
+  context "edit" do
+    should "not allow another user to edit your profile" do
+      setup_badges
+      @user1 = Factory.create(:user, :handle => 'user1')
+      @user2 = Factory.create(:user, :handle => 'user2')
+      sign_in @user1
+      set_beta
+      put :update, :id => @user2.id, :user => {}
+      assert_redirected_to "/unauthorized"
     end
   end
 end
