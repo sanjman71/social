@@ -15,8 +15,14 @@
   = display_flash(:all)
   = display_alerts
 
-.span-23.prepend-1.last
-  - @jobs.each do |job|
-    .span-23.last#job.padding-top-10
-      = job.inspect
+- if @top.present?
+  .span-23.prepend-1.last
+    = @top.inspect
+
+- if @jobs.present?
+  .span-23.prepend-1.last
+    - @jobs.each do |job|
+      .span-23.last#job.padding-top-10
+        = job.inspect
+
   
