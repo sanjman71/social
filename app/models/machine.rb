@@ -17,7 +17,7 @@ class Machine
       wa     = vmstat.index('wa')
       swap   = vmstat[wa+3]
       free   = vmstat[wa+4]
-      [load1, load5, load15, swap, free]
+      [load1, load5, load15, free, swap]
     rescue
       [load1, load5, load15]
     end
