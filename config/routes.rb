@@ -44,7 +44,7 @@ Social::Application.routes.draw do
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_locations
   match 'locations/geocode/:provider', :to => 'locations#geocode', :as => :geocode
 
-  resources :locations, :only => [:index] do
+  resources :locations, :only => [:index, :edit] do
     get :import_tags, :on => :member
   end
 
@@ -78,6 +78,7 @@ Social::Application.routes.draw do
   match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
   match 'jobs/poll_checkins', :to => 'jobs#poll_checkins', :as => :poll_checkins_job
   match 'jobs/todo_reminders', :to => 'jobs#todo_reminders', :as => :todo_reminders_job
+  match 'jobs/top', :to => 'jobs#top', :as => :top_job
 
   match 'ping', :to => "home#ping", :via => [:get]
   match 'beta', :to => "home#beta", :via => [:get, :post]
