@@ -9,12 +9,11 @@
 %hr.space
 
 .span-24.last#location
-  - sources = @location.location_sources.collect(&:source_type)
-  = render(:partial => 'locations/location', :locals => {:location => @location, :sources => sources, :import => true, :link => :none})
+  = render(:partial => 'locations/location', :locals => {:location => @location, :import => true, :link => :none})
   
 %hr.space
 
-.span-24.last#form
-  .prepend-1= link_to 'Search Foursquare', '#', :id => 'search_foursquare', :class => 'admin', 'data-url' => '/locations/geocode/foursquare', 'data-query' => @location.name, 'data-lat' => @location.lat, 'data-lng' => @location.lng, 'data-results' => 'search_foursquare_results'
+.span-24.last
+  .prepend-1= link_to 'Search Foursquare Venues', '#', :id => 'search_foursquare', :class => 'admin', 'data-url' => '/locations/geocode/foursquare', 'data-query' => @location.name, 'data-lat' => @location.lat, 'data-lng' => @location.lng, 'data-results' => 'search_foursquare_results'
   = simple_form_for @location, :url => "/" do |f|
-    = f.input :street_city, :label => 'Search results', :collection => [], :prompt => 'Click here', :hint => 'foursquare venues', :input_html => {:id => 'search_foursquare_results'}
+    = f.input :street_city, :label => 'Search results', :collection => [], :prompt => 'Click here', :hint => 'foursquare venues list', :input_html => {:id => 'search_foursquare_results'}

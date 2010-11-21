@@ -4,9 +4,13 @@
   - else
     = location.name
   %br
-  %span{:style => 'font-size: 0.9em; color: #999;'}= sources.join(', ')
+  - location.location_sources.each do |ls|
+    %span{:style => 'font-size: 0.9em; color: #999;'}= ls.source_type + ":" + ls.source_id
+    %br
 .span-9#address
   %span{:style => 'font-size: 0.9em;'}= location.street_city
+  %br
+  %span{:style => 'font-size: 0.9em; color: #999'}== #{location.lat}:#{location.lng}
 .span-7.last#tags
   - if location.tag_list.blank? and import
     -# check if location was checked for tags
