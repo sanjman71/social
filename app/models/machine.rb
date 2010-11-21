@@ -6,9 +6,9 @@ class Machine
   def self.top
     # uptime to find load values
     uptime = %x[uptime].split
-    load1  = uptime[-3]
-    load5  = uptime[-2]
-    load15 = uptime[-1]
+    load1  = uptime[-3].gsub(',', '')
+    load5  = uptime[-2].gsub(',', '')
+    load15 = uptime[-1].gsub(',', '')
 
     begin
       # vmstat to find swap and free memory usage
