@@ -1,9 +1,12 @@
-.span-5.prepend-1#name
-  = location.name
+.span-7.prepend-1#name
+  - if link == :edit
+    = link_to location.name, edit_location_path(location), :class => :admin
+  - else
+    = location.name
   %br
-  %span{:style => 'font-size: 0.9em; color: #999;'}= source
-.span-7#address
-  %span{:style => 'font-size: 0.9em;'}= [location.street_address, location.city].delete_if(&:blank?).join(', ')
+  %span{:style => 'font-size: 0.9em; color: #999;'}= sources.join(', ')
+.span-9#address
+  %span{:style => 'font-size: 0.9em;'}= location.street_city
 .span-7.last#tags
   - if location.tag_list.blank? and import
     -# check if location was checked for tags

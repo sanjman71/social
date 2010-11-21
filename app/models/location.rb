@@ -110,9 +110,9 @@ class Location < ActiveRecord::Base
     end
   end
 
-  # def place_name
-  #   @place_name ||= self.place.try(:name)
-  # end
+  def street_city
+    [street_address, city.try(:name)].delete_if(&:blank?).join(', ')
+  end
 
   # return collection of location's country, state, city, zip, neighborhoods
   def localities

@@ -94,9 +94,10 @@ class LocationsControllerTest < ActionController::TestCase
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
-      assert_equal '900 N Michigan Ave', @json['street_address']
-      assert_equal 'Chicago', @json['city']
-      assert_equal 'IL', @json['state']
+      assert_equal 1, @json['count']
+      assert_equal '900 N Michigan Ave', @json['locations'][0]['street_address']
+      assert_equal 'Chicago', @json['locations'][0]['city']
+      assert_equal 'IL', @json['locations'][0]['state']
     end
 
     should "geocode chicago to geocoded object" do
@@ -106,8 +107,9 @@ class LocationsControllerTest < ActionController::TestCase
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
-      assert_equal 'Chicago', @json['city']
-      assert_equal 'IL', @json['state']
+      assert_equal 1, @json['count']
+      assert_equal 'Chicago', @json['locations'][0]['city']
+      assert_equal 'IL', @json['locations'][0]['state']
     end
 
     should "geocode toronto, canada to geocoded object" do
@@ -117,8 +119,9 @@ class LocationsControllerTest < ActionController::TestCase
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
-      assert_equal 'Toronto', @json['city']
-      assert_equal 'ON', @json['state']
+      assert_equal 1, @json['count']
+      assert_equal 'Toronto', @json['locations'][0]['city']
+      assert_equal 'ON', @json['locations'][0]['state']
     end
 
     should "geocode paris, france to geocoded object" do
@@ -128,8 +131,9 @@ class LocationsControllerTest < ActionController::TestCase
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
-      assert_equal 'Paris', @json['city']
-      assert_equal 'France', @json['country']
+      assert_equal 1, @json['count']
+      assert_equal 'Paris', @json['locations'][0]['city']
+      assert_equal 'France', @json['locations'][0]['country']
     end
   end
 
