@@ -33,7 +33,7 @@ puts "#{Time.now}: initialized #{Country.count} countries"
 file = "#{Rails.root}/data/us_states.txt"
 puts "#{Time.now}: importing us states ... parsing file #{file}"
 File.open(file).lines.each do |row|
-  id, name, code, lat, lng = row.strip.split(',')
+  name, code, lat, lng = row.strip.split(',')
   @us.states.create(:name => name, :code => code, :lat => lat.to_f, :lng => lng.to_f)
 end
 # canada provinces
