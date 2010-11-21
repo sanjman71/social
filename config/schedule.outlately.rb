@@ -21,6 +21,8 @@ set :output, '/usr/apps/outlately/current/log/cron.log'
 every 5.minutes do
   # ping
   command "curl http://outlate.ly/ping > /dev/null"
+  # top
+  command "curl http://outlate.ly/jobs/top?log=1&token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
 end
 
 every 15.minutes do

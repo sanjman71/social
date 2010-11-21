@@ -57,4 +57,18 @@ class JobsController < ApplicationController
     redirect_to jobs_path
   end
 
+  # GET /jobs/top
+  def top
+    @top = Machine.top
+    @log = params[:log].to_i == 1
+
+    if @log
+      file = "#{Rails.root}/log/machine.log"
+      line = "#{Time.now.to_s(:datetime_compact)}: #{@top.join(', ')}\n"
+      File.open(file, 'a') {|f| f.write(line) }
+    end
+
+    render(:action => 'index')
+  end
+
 end
