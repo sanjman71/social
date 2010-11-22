@@ -153,7 +153,15 @@ a.tag.odd.two, a.tag.even.two, a.chain.even.two, a.chain.odd.two
 a.tag.odd.three, a.tag.even.three, a.chain.even.three, a.chain.odd.three
                                                   { font-size: 2.0em; }
 
-/* generic location styles */
+/* location styles */
+
+div.location                                      { margin-bottom: 10px; }
+div.location .name                                { }
+div.location .tags                                { font-size: 0.9em; color: #00B; }
+div.location .address                             { }
+div.location .address .street                     { font-size: 0.9em; }
+div.location .address .latlng                     { font-size: 0.9em; color: #999; }
+div.location .sources                             { font-size: 0.9em; color: #999 }
 
 div.location.search_result, div.appointment.search_result
                                                   { height: 85px; }

@@ -29,6 +29,12 @@ module Users::Points
     self.save
   end
 
+  # add points
+  def add_points(points)
+    self.points += points
+    self.save
+  end
+
   # add points for todo completed checkin
   def add_points_for_todo_completed_checkin(points)
     self.points += points

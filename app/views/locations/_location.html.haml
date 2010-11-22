@@ -1,20 +1,25 @@
-.span-7.prepend-1#name
+.span-10.prepend-1.name
   - if link == :edit
     = link_to location.name, edit_location_path(location), :class => :admin
   - else
     = location.name
+  - tag_list = location.tag_list
+  - if tag_list.any?
+    %br
+    %span.tags= location.tag_list.join(', ')
   %br
   - location.location_sources.each do |ls|
-    %span{:style => 'font-size: 0.9em; color: #999;'}= ls.source_type + ":" + ls.source_id
+    %span.sources= ls.source_type + ":" + ls.source_id
     %br
-.span-9#address
-  %span{:style => 'font-size: 0.9em;'}= location.street_city
+.span-9.last.address
+  %span.street= location.street_city
   %br
-  %span{:style => 'font-size: 0.9em; color: #999'}== #{location.lat}:#{location.lng}
-.span-7.last#tags
-  - if location.tag_list.blank? and import
-    -# check if location was checked for tags
-    - if location.location_sources.any? { |ls| ls.tagged_at.blank? }
-      = link_to 'Import Tags', import_tags_location_path(location), :class => 'admin'
-  - else
-  %span{:style => 'font-size: 0.9em;'}= location.tag_list.join(', ')
+  %span.latlng== #{location.lat}, #{location.lng}
+- if false
+  .span-7.last.tags
+    - if location.tag_list.blank? and import
+      -# check if location was checked for tags
+      - if location.location_sources.any? { |ls| ls.tagged_at.blank? }
+        = link_to 'Import Tags', import_tags_location_path(location), :class => 'admin'
+    - else
+    %span{:style => 'font-size: 0.9em;'}= location.tag_list.join(', ')

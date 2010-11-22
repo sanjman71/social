@@ -8,12 +8,18 @@
 
 %hr.space
 
-.span-24.last#location
+.span-24.last
+  = display_flash(:all)
+
+.span-24.last.location
   = render(:partial => 'locations/location', :locals => {:location => @location, :import => true, :link => :none})
   
 %hr.space
 
 .span-24.last
-  .prepend-1= link_to 'Search Foursquare Venues', '#', :id => 'search_foursquare', :class => 'admin', 'data-url' => '/locations/geocode/foursquare', 'data-query' => @location.name, 'data-lat' => @location.lat, 'data-lng' => @location.lng, 'data-results' => 'search_foursquare_results'
-  = simple_form_for @location, :url => "/" do |f|
-    = f.input :street_city, :label => 'Search results', :collection => [], :prompt => 'Click here', :hint => 'foursquare venues list', :input_html => {:id => 'search_foursquare_results'}
+  = render(:partial => 'locations/location_add_tags', :locals => {:location => @location})
+
+%hr.space
+
+.span-24.last
+  = render(:partial => 'locations/location_search_foursquare', :locals => {:location => @location})

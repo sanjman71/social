@@ -12,4 +12,8 @@ class Currency
     -10
   end
 
+  def self.for_tagging_location
+    5
+  end
+
 end

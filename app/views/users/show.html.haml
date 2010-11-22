@@ -51,7 +51,7 @@
     %h4== Checkins
   .span-20.last
     - @checkins.each do |checkin|
-      .span-20.last
+      .span-20.last.location
         = render(:partial => 'locations/location', :locals => {:location => checkin.location, :import => false, :link => false})
 
 %hr.space

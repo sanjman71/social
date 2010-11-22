@@ -46,6 +46,8 @@ Social::Application.routes.draw do
 
   resources :locations, :only => [:index, :edit] do
     get :import_tags, :on => :member
+    get :tag, :on => :member
+    put :tag, :on => :member
   end
 
   resources :suggestions, :only => [:index, :show] do

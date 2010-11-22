@@ -25,6 +25,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # use specified path if no params[:return_to]
+  def redirect_back_path(path)
+    params[:return_to] ? params[:return_to] : path
+  end
+
   def redirect_back_to(path)
     redirect_to(params[:return_to] || path)
   end

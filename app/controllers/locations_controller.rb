@@ -1,7 +1,9 @@
 class LocationsController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_location, :only => [:edit, :import_tags]
+  before_filter :find_location, :only => [:edit, :import_tags, :tag]
   respond_to    :json, :html, :js
+
+  privilege_required 'admin', :only => [:edit]
 
   # GET /locations
   # GET /locations/geo:1.23..-23.89?limit=5&without_location_ids=1,5,3
@@ -41,6 +43,39 @@ class LocationsController < ApplicationController
   # GET /locations/1/edit
   def edit
     # @location initialized in before_filter
+  end
+
+  # GET /locations/1/tag
+  # PUT /locations/1/tag
+  def tag
+    # @location initialized in before_filter
+    case request.method.downcase
+    when 'put'
+      if (@tags = params[:tags].to_s.split(',')).any?
+        @pre_tag_list  = @location.tag_list.to_a
+        @location.tag_list.add(@tags)
+        @location.save
+        @post_tag_list = @location.tag_list.to_a
+        @diff_tag_list = (@post_tag_list - @pre_tag_list).sort
+        if @diff_tag_list.any?
+          # add points
+          current_user.add_points(Currency.for_tagging_location)
+          # set flash
+          flash[:notice] = "Added tags #{@diff_tag_list.join(', ')}"
+          # log tagging event
+          Location.log("[location:#{@location.id}] #{current_user.handle} added tags #{@diff_tag_list.join(',')}")
+        else
+          flash[:notice] = "No changes made"
+        end
+      end
+
+      respond_to do |format|
+        # check params[:return_to] when redirecting
+        path = redirect_back_path(tag_location_path(@location))
+        format.js { render(:update) { |page| page.redirect_to(path) } }
+        format.html { redirect_to(path) and return }
+      end
+    end
   end
 
   # GET /locations/1/import_tags

@@ -15,6 +15,8 @@ class LocationsControllerTest < ActionController::TestCase
       to(:controller => 'locations', :action => 'index', :city => 'city:chicago')
     should route(:get, '/locations/geocode/google').
       to(:controller => 'locations', :action => 'geocode', :provider => 'google')
+    should route(:put, '/locations/1/tag').
+      to(:controller => 'locations', :action => 'tag', :id => '1')
   end
 
   def setup
@@ -27,6 +29,9 @@ class LocationsControllerTest < ActionController::TestCase
     @chicago    = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.850033, :lng => -87.6500523)
     @newyork    = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
     @boston     = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
+    @user1      = Factory.create(:user, :handle => 'User1', :city => @chicago)
+    @user2      = Factory.create(:user, :handle => "User2", :city => @chicago)
+    @user3      = Factory.create(:user, :handle => "User3", :city => @boston)
   end
 
   def teardown
@@ -38,17 +43,9 @@ class LocationsControllerTest < ActionController::TestCase
   end
 
   context "index" do
-    setup do
-      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
-      @user2 = Factory.create(:user, :handle => "User2", :city => @chicago)
-      @user3 = Factory.create(:user, :handle => "User3", :city => @boston)
-    end
-
     context "city" do
       should "find city users within default radius" do
         ThinkingSphinx::Test.run do
-          # ThinkingSphinx::Test.index
-          # sleep(0.25)
           sign_in @user1
           set_beta
           get :index, :city => 'city:chicago'
@@ -65,8 +62,6 @@ class LocationsControllerTest < ActionController::TestCase
     context "geo" do
       should "find geo users within default radius" do
         ThinkingSphinx::Test.run do
-          # ThinkingSphinx::Test.index
-          # sleep(0.25)
           sign_in @user1
           set_beta
           get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}"
@@ -83,10 +78,6 @@ class LocationsControllerTest < ActionController::TestCase
   end
 
   context "geocode google" do
-    setup do
-      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
-    end
-
     should "geocode chicago street to geocoded object" do
       set_beta
       sign_in @user1
@@ -137,4 +128,59 @@ class LocationsControllerTest < ActionController::TestCase
     end
   end
 
+  context "edit" do
+    should "only allow admin users" do
+      set_beta
+      sign_in @user1
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      get :edit, :id => @location1.id
+      assert_redirected_to '/unauthorized'
+    end
+  end
+  
+  context "tag" do
+    should "add new tags to location and add user points" do
+      set_beta
+      sign_in @user1
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      put :tag, :id => @location1.id, :tags => "food, beer"
+      # should add tags
+      assert_equal ['beer', 'food'], assigns(:diff_tag_list)
+      assert_equal ['beer', 'food'], @location1.reload.tag_list.sort
+      # should add points
+      assert_equal 5, @user1.reload.points
+      assert_redirected_to "/locations/#{@location1.id}/tag"
+    end
+
+    should "add tags with js request" do
+      set_beta
+      sign_in @user1
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      put :tag, :id => @location1.id, :tags => "food, beer", :format => 'js'
+      assert_equal 'text/javascript', @response.content_type
+    end
+
+    should "not add duplicate tags to location or add user points" do
+      set_beta
+      sign_in @user1
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      @location1.tag_list.add(['beer', 'food'])
+      @location1.save
+      put :tag, :id => @location1.id, :tags => "food, beer"
+      # should not add any tags
+      assert_equal [], assigns(:diff_tag_list)
+      assert_equal ['beer', 'food'], @location1.reload.tag_list.sort
+      # should not add points
+      assert_equal 0, @user1.reload.points
+      assert_redirected_to "/locations/#{@location1.id}/tag"
+    end
+
+    should "use params[:return_to] to redirect" do
+      set_beta
+      sign_in @user1
+      @location1  = Location.create(:name => "Location 1", :country => @us)
+      put :tag, :id => @location1.id, :tags => "food, beer", :return_to => "/"
+      assert_redirected_to "/"
+    end
+  end
 end

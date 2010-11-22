@@ -7,5 +7,5 @@
 
 .span-24.last#locations
   - @locations.each do |location|
-    .span-24.last#location.padding-bottom-10
+    .span-24.last.location
       = render(:partial => 'locations/location', :locals => {:location => location, :import => true, :link => :edit})
