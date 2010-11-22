@@ -45,6 +45,7 @@ group :development, :test do
   gem 'mocha'
   gem 'factory_girl_rails'
   gem 'linecache19'
+  gem 'random_data'
   gem 'ruby-debug19'
   gem 'single_test'
   gem 'webrat'
