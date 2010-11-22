@@ -97,6 +97,22 @@ class UsersControllerTest < ActionController::TestCase
       @badging  = @user1.badges.push(@badge)
     end
 
+    context "edit user link" do
+      should "show edit link when viewing my profile" do
+        sign_in @user1
+        set_beta
+        get :show, :id => @user1.id
+        assert_select "#edit_user_link", 1
+      end
+      
+      should "not show edit link when viewing another user's profile" do
+        sign_in @voter
+        set_beta
+        get :show, :id => @user1.id
+        assert_select "#edit_user_link", 0
+      end
+    end
+
     context "points for viewing profile" do
       should "cost 10 points to see another user's profile" do
         @voter.update_attribute(:points, 100)
