@@ -8,4 +8,4 @@
 .span-24.last#locations
   - @locations.each do |location|
     .span-24.last.location
-      = render(:partial => 'locations/location', :locals => {:location => location, :import => true, :link => :edit})
+      = render(:partial => 'locations/location', :locals => {:location => location, :tag_link => true, :link => :edit})

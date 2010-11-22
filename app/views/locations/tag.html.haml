@@ -1,0 +1,20 @@
+- title('Tag Location')
+- javascript('locations')
+
+- content_for :mat do
+  .span-23.last.padding-bottom-10
+    %h2.bottom Tag #{@location.name}
+    = link_to 'Back', locations_path, :class => 'admin'
+
+%hr.space
+
+.span-24.last
+  = display_flash(:all)
+
+.span-24.last.location
+  = render(:partial => 'locations/location', :locals => {:location => @location, :import => true, :link => :none})
+  
+%hr.space
+
+.span-24.last
+  = render(:partial => 'locations/location_add_tags', :locals => {:location => @location})

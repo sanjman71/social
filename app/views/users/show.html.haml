@@ -52,7 +52,7 @@
   .span-20.last
     - @checkins.each do |checkin|
       .span-20.last.location
-        = render(:partial => 'locations/location', :locals => {:location => checkin.location, :import => false, :link => false})
+        = render(:partial => 'locations/location', :locals => {:location => checkin.location, :tag_link => true, :link => false})
 
 %hr.space
 

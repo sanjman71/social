@@ -1,12 +1,16 @@
+- tag_link ||= false
+
 .span-10.prepend-1.name
   - if link == :edit
     = link_to location.name, edit_location_path(location), :class => :admin
   - else
     = location.name
+  %br
   - tag_list = location.tag_list
   - if tag_list.any?
-    %br
     %span.tags= location.tag_list.join(', ')
+  - if tag_link
+    %span.add_tags= link_to 'Add Tags', tag_location_path(location)
   %br
   - location.location_sources.each do |ls|
     %span.sources= ls.source_type + ":" + ls.source_id
