@@ -1,7 +1,8 @@
-- tag_link ||= false
+- tag_link  ||= false
+- edit_link ||= false
 
 .span-10.prepend-1.name
-  - if link == :edit
+  - if edit_link
     = link_to location.name, edit_location_path(location), :class => :admin
   - else
     = location.name
@@ -19,6 +20,7 @@
   %span.street= location.street_city
   %br
   %span.latlng== #{location.lat}, #{location.lng}
+
 - if false
   .span-7.last.tags
     - if location.tag_list.blank? and import

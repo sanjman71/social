@@ -60,8 +60,10 @@ class LocationsController < ApplicationController
         if @diff_tag_list.any?
           # add points
           current_user.add_points(Currency.for_tagging_location)
+          # set growl
+          flash[:growls] = [{:message => "That's #{Currency.for_tagging_location} bucks", :timeout => 2000}]
           # set flash
-          flash[:notice] = "Added tags #{@diff_tag_list.join(', ')}"
+          flash[:notice] = "Added tags '#{@diff_tag_list.join(', ')}'"
           # log tagging event
           Location.log("[location:#{@location.id}] #{current_user.handle} added tags #{@diff_tag_list.join(',')}")
         else
@@ -75,6 +77,7 @@ class LocationsController < ApplicationController
         format.js { render(:update) { |page| page.redirect_to(path) } }
         format.html { redirect_to(path) and return }
       end
+    when 'get'
     end
   end
 

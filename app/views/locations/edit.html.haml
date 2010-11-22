@@ -12,7 +12,7 @@
   = display_flash(:all)
 
 .span-24.last.location
-  = render(:partial => 'locations/location', :locals => {:location => @location, :import => true, :link => :none})
+  = render(:partial => 'locations/location', :locals => {:location => @location, :import => true, :edit_link => false})
   
 %hr.space
 

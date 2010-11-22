@@ -1,5 +1,5 @@
 .span-23.prepend-1
-  %span.hint{:style => 'font-size: 0.9em; color: #777;'} Add tags one at a time below and click 'All Done' when you're finished
+  %span.hint{:style => 'font-size: 0.9em; color: #777;'} Add tags below, one at a time, and click 'All Done' when you're finished
   #add_tags_form.add_tag_form
     %span= text_field_tag 'tag_name', '', :placeholder => 'tag name', :style => 'font-size: 2.0em;'
     %span{:style => 'padding-left: 5px;'}= link_to 'Add', '#', :id => 'add_tag', :class => 'admin'
