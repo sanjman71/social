@@ -78,6 +78,7 @@ class LocationsController < ApplicationController
         format.html { redirect_to(path) and return }
       end
     when 'get'
+      # nothing here to do
     end
   end
 

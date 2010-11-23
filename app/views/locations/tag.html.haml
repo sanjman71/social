@@ -20,4 +20,4 @@
   = render(:partial => 'locations/location_add_tags', :locals => {:location => @location})
 
 :javascript
-  var growls = #{flash[:growls].try(:size).to_i};
+  var growls = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};

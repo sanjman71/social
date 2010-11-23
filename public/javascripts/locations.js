@@ -147,4 +147,9 @@ $(document).ready(function() {
   $(document).init_change_user_city();
   $(document).init_search_foursquare();
   $(document).init_add_location_tags();
+  
+  try {
+    // check growls
+    if (growls.length > 0) { show_growls(growls); }
+  } catch(e) { }
 })
