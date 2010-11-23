@@ -23,26 +23,24 @@
   -# initialize nested objects
   - @user.email_addresses.build if @user.email_addresses_count == 0
   - @user.city ||= City.new
+  - @user.build_availability if @user.availability.blank?
 
   = simple_form_for(@user, :url => user_path(@user, :return_to => @show_handle_message ? root_path : nil)) do |f|
     .span-24.last
       -# handle
       = f.input :handle, :hint => 'your name on the site'
     -# email address
-    = f.simple_fields_for :email_addresses do |email_form|
-      .span-24.last
+    .span-24.last
+      = f.simple_fields_for :email_addresses do |email_form|
         = email_form.input :address, :label => 'Email Address', :required => false, :hint => 'used for notifications + reminders'
-    = f.simple_fields_for :city do |city_form|
-      -# city
-      = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => geocode_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
+    .span-24.last
+      = f.simple_fields_for :city do |city_form|
+        -# city
+        = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => geocode_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
+    .span-24.last
+      = f.simple_fields_for :availability do |avail_form|
+        = avail_form.input :now, :label => 'Available Now', :hint => "you're available to meet in the next few hours"
 
-    -#.span-20.last
-      -#.span-3.text-align-right
-        -#%h3{:style => 'font-size: 1.8em; padding-top: 15px;'}= f.label 'Pictures'
-      -#.span-17.last{:style => 'padding-top: 20px;'}
-        -#- @user.photos.each do |photo|
-          -#= image_tag(photo.url, :size => '50x50')
-          -#= photo.source
     .span-19.prepend-1.last
       = f.submit 'Update', :class => 'big', :id => 'edit_user_submit'
       or

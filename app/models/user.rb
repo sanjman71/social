@@ -70,6 +70,10 @@ class User < ActiveRecord::Base
   has_many                  :todo_locations, :through => :locationships, :source => :location,
                             :conditions => ["todo_checkins > 0"]
 
+  # availability
+  has_one                   :availability
+  accepts_nested_attributes_for :availability, :allow_destroy => true, :reject_if => :all_blank
+
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0',
                                            :phone => 'optional', :email => 'optional'}
@@ -81,12 +85,10 @@ class User < ActiveRecord::Base
 
   attr_accessor             :matchby, :matchvalue
 
-  # prevents a user from submitting a crafted form that bypasses activation
-  # anything else you want your user to change should be added here.
   attr_accessible           :handle, :password, :password_confirmation, :gender, :orientation, :rpx,
                             :facebook_id, :city, :city_id,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
-                            :city_attributes,
+                            :city_attributes, :availability_attributes,
                             :preferences_phone, :preferences_email
 
   # BEGIN acts_as_state_machine
