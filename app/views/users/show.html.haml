@@ -65,4 +65,4 @@
     = tags.join(', ')
 
 :javascript
-  var growls = #{@growls ? @growls.size : 0};
+  var growls = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};

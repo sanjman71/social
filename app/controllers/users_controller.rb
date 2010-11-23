@@ -56,7 +56,7 @@ class UsersController < ApplicationController
     else
       # subtract points and add growl message
       @points = @viewer.subtract_points_for_viewing_profile(@user)
-      flash[:growls] = [{:message => I18n.t("game.view_profile.growl", :points => @points), :timeout => 2000}]
+      flash.now[:growls] = [{:message => I18n.t("game.view_profile.growl", :points => @points), :timeout => 2000}]
     end
   end
 

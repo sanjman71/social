@@ -16,5 +16,8 @@ $(document).ready(function() {
     $("#match #matchby").html(matchby);
   }
   
-  check_growls();
+  try {
+    // check growls
+    if (growls.length > 0) { show_growls(growls); }
+  } catch(e) { }
 })
