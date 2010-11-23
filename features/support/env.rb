@@ -60,7 +60,7 @@ require 'cucumber/thinking_sphinx/external_world'
 Cucumber::ThinkingSphinx::ExternalWorld.new
 
 module LocalityWorld
-  def init_localities
+  def init_states_and_cities
     # add default states, cities
     ca = State.find_or_create_by_name(:name => 'California', :code => 'CA', :country => Country.us)
     il = State.find_or_create_by_name(:name => 'Illinois', :code => 'IL', :country => Country.us)
@@ -75,6 +75,7 @@ World(LocalityWorld)
 
 Before do
   ThinkingSphinx::Test.index
-  init_localities
+  Badges::Init.add_roles_and_privileges
+  init_states_and_cities
 end
 
