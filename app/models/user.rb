@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
 
   # availability
   has_one                   :availability
-  accepts_nested_attributes_for :availability, :allow_destroy => true, :reject_if => :all_blank
+  accepts_nested_attributes_for :availability, :allow_destroy => true
 
   # Preferences
   serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0',
@@ -120,6 +120,7 @@ class User < ActiveRecord::Base
     has :id, :as => :user_ids
     indexes handle, :as => :handle
     has :gender, :as => :gender
+    has availability.now, :as => :now
     # checkin locations
     has locations(:id), :as => :location_ids, :facet => true
     indexes locations.tags(:name), :as => :tags

@@ -87,8 +87,6 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_user1 = User.create!(:name => "Chicago User 1", :handle => 'chicago_user_1', :gender => 2,
                                     :city => @chicago)
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_user1.search_all_checkins(:miles => 50, :order => :sort_similar_locations)
         assert_equal 4, @checkins.size
         assert_equal [], [@chi_checkin1, @chi_checkin2, @chi_checkin3, @chi_checkin4] - @checkins.collect{ |o| o }
@@ -97,8 +95,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 4 chicago checkins filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 50, :order => :sort_similar_locations)
         assert_equal 4, @checkins.size
         assert_equal [@chi_checkin1, @chi_checkin3, @chi_checkin4, @chi_checkin2], @checkins.collect{ |o| o }
@@ -109,8 +105,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 4 chicago checkins filtered by distance, ordered by similar locations + other checkins" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 50,
                                                        :order => [:sort_similar_locations, :sort_other_checkins])
         assert_equal 4, @checkins.size
@@ -120,8 +114,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 4 chicago checkins filtered by distance, weighted by users that are not @chicago_male1" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 50,
                                                        :order => {:sort_unweight_users => [@chicago_male1.id]})
         assert_equal 4, @checkins.size
@@ -131,8 +123,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 4 chicago checkins filtered by distance, weighted by users that are @chicago_male1" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 50,
                                                        :order => [:sort_weight_users => [@chicago_male1.id]])
         assert_equal 4, @checkins.size
@@ -142,8 +132,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find all 5 checkins, ordered by distance" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 1000, :order => :sort_closer_locations)
         assert_equal 5, @checkins.size
         # chicago checkins first
@@ -153,8 +141,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find all 5 checkins, using similar locations, other checkins, distance sort oder" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 1000,
                                                        :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations])
         assert_equal 5, @checkins.size
@@ -165,8 +151,6 @@ class UserSearchTest < ActiveSupport::TestCase
     
     should "find 4 checkins filtered/grouped by user" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_all_checkins(:miles => 1000,
                                                        :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
                                                        :group => :user)
@@ -184,8 +168,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 2 checkins filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_others_checkins(:miles => 50,
                                                           :order => :sort_similar_locations)
         assert_equal 2, @checkins.size
@@ -205,8 +187,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 2 checkins filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_friends_checkins(:miles => 50,
                                                            :order => :sort_similar_locations)
         assert_equal 2, @checkins.size
@@ -225,10 +205,25 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 1 checkin filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @checkins = @chicago_male1.search_daters_checkins(:miles => 50,
                                                           :order => :sort_similar_locations)
+        assert_equal 1, @checkins.size
+        assert_equal [@chi_checkin2], @checkins.collect{ |o| o }
+      end
+    end
+  end
+
+  context "search_now_checkins filter" do
+    setup do
+      setup_checkins
+    end
+    
+    should "find 1 user marked as available now" do
+      # mark 1 user as available now, all their checkins will be marked as well
+      @chicago_female1.availability_attributes = {:now => 1}
+      @chicago_female1.save
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_now_checkins
         assert_equal 1, @checkins.size
         assert_equal [@chi_checkin2], @checkins.collect{ |o| o }
       end
@@ -250,8 +245,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 3 daters filtered by checkin locations, ordered by similar locations" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_daters_by_checkins(:order => :sort_similar_locations)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
@@ -264,8 +257,6 @@ class UserSearchTest < ActiveSupport::TestCase
   context "search_locations_by_tags filter" do
     should "find 0 locations with same tags when user has no checkin location tags" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @locations = @chicago_male1.search_locations_by_tags
         assert_equal 0, @locations.size
       end
@@ -274,8 +265,6 @@ class UserSearchTest < ActiveSupport::TestCase
     should "find 3 locations with same tags when user has checkin location tags" do
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @locations = @chicago_male1.search_locations_by_tags
         assert_equal 3, @locations.size
         assert_equal [@chicago_coffee, @boston_sbux, @boston_coffee], @locations.collect{ |o| o }
@@ -291,8 +280,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 2 users filtered by friends" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_friends(:miles => 10)
         assert_equal 2, @users.size
         assert_equal [@chicago_female1, @chicago_male2], @users.collect{ |o| o }
@@ -313,8 +300,6 @@ class UserSearchTest < ActiveSupport::TestCase
   
     should "find 2 users filtered by friend checkins" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_friends_by_checkins
         assert_equal 2, @users.size
         assert_equal [@chicago_male2, @chicago_female1], @users.collect{ |o| o }
@@ -343,8 +328,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 2 users filtered by common checkins" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_users_by_checkins
         assert_equal 2, @users.size
         assert_equal [@chicago_male2, @chicago_female1], @users.collect{ |o| o }
@@ -365,8 +348,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 3 users filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_users(:miles => 10, :order => :sort_similar_locations)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
@@ -377,8 +358,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 3 users filtered by distance, ordered by relevance" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_users(:miles => 10, :klass => User)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }.sort_by(&:id)
@@ -402,8 +381,6 @@ class UserSearchTest < ActiveSupport::TestCase
     
     should "find 3 locations filtered by distance, ordered by relevance" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @locations = @chicago_male1.search_locations(:miles => 10, :klass => Location)
         assert_equal 3, @locations.size
         assert_equal [@chicago_coffee, @chicago_lous, @chicago_pizza], @locations.collect{ |o| o }.sort_by(&:id)
@@ -417,8 +394,6 @@ class UserSearchTest < ActiveSupport::TestCase
   context "search_gender filter" do
     should "find 3 female users filtered by distance and default gender" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_gender(:miles => 10)
         assert_equal 3, @users.size
       end
@@ -426,8 +401,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 1 male user filtered by distance and males" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_gender(:miles => 10, :with_gender => 2)
         assert_equal 1, @users.size
       end
@@ -437,8 +410,6 @@ class UserSearchTest < ActiveSupport::TestCase
   context "search_gender filter" do
     should "find 5 female users filtered by default gender" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_gender
         assert_equal 5, @users.size
       end
@@ -446,8 +417,6 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 3 male users filtered by males" do
       ThinkingSphinx::Test.run do
-        ThinkingSphinx::Test.index
-        sleep(0.25)
         @users = @chicago_male1.search_gender(:with_gender => 2)
         assert_equal 3, @users.size
       end

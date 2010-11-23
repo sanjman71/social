@@ -40,7 +40,7 @@
     - else
       %h3== No suggestions at the moment, but we're working on it.
 
-  -# column titles
+  -# home streams list
   .span-23.prepend-1.last
     .span-13
       %h4
@@ -58,7 +58,7 @@
       %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.map.title')
 
   .span-23.prepend-1.last
-    .span-13.stream
+    .span-13.stream{:id => @stream.downcase}
       - @checkins.sort_by{ rand }.each do |object|
         - case object.class.to_s.downcase
         - when 'checkin'

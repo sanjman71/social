@@ -23,6 +23,7 @@ class Checkin < ActiveRecord::Base
     has user(:id), :as => :user_ids, :facet => true
     indexes user(:handle), :as => :handle
     has user(:gender), :as => :gender
+    has user.availability(:now), :as => :now
     # checkin location
     has location(:id), :as => :location_ids, :facet => true
     indexes location.tags(:name), :as => :tags

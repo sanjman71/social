@@ -64,6 +64,15 @@ module Users::Search
     search_checkins(options)
   end
 
+  def search_now_checkins(options={})
+    add_geo_params(options)
+    options.update(:with_now => 1)
+    # include checkin users marked as available now
+    search_checkins(options)
+  end
+
+  alias :search_today_checkins :search_now_checkins
+
   # search checkins
   def search_checkins(options={})
     options.update(:klass => Checkin)
@@ -215,6 +224,9 @@ module Users::Search
     end
     if options[:without_location_ids] # e.g. [1,3,5]
       without.update(:location_ids => options[:without_location_ids])
+    end
+    if options[:with_now] # e.g. 0, 1
+      with.update(:now => options[:with_now])
     end
     if options[:with_tag_ids] # e.g. [1,3,5]
       with.update(:tag_ids => options[:with_tag_ids])

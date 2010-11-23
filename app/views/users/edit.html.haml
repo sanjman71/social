@@ -39,7 +39,7 @@
         = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => geocode_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
     .span-24.last
       = f.simple_fields_for :availability do |avail_form|
-        = avail_form.input :now, :label => 'Available Now', :hint => "you're available to meet in the next few hours"
+        = avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
 
     .span-19.prepend-1.last
       = f.submit 'Update', :class => 'big', :id => 'edit_user_submit'
