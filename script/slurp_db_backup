@@ -3,14 +3,16 @@ require "rubygems"
 require "net/sftp"
 
 # credentials
-server  = "indcalendar1"
-user    = "app"
+server      = "184.106.153.243" # outapp1
+user        = "app"
+app         = "outlately"
 
 today       = Time.now.strftime("%Y%m%d")
-backup_path = "/usr/apps/social/shared/backups"
+backup_path = "/usr/apps/#{app}/shared/backups"
 backups     = []
 environment = ENV["RAILS_ENV"] || "development"
 
+# check environment
 if environment == 'production'
   puts "#{Time.now}: not allowed in production environment"
   exit
@@ -18,10 +20,10 @@ end
 
 puts "#{Time.now}: searching for backups ..."
 
-Net::SFTP.start(server, user, :port => 30001) do |sftp|
+Net::SFTP.start(server, user, :port => 22) do |sftp|
   sftp.dir.foreach(backup_path) do |entry|
     # keep backups made today
-    next unless entry.name.match(/social_production_#{today}/)
+    next unless entry.name.match(/#{app}_production_#{today}/)
     backups.push(entry.name)
   end
 
@@ -35,8 +37,8 @@ Net::SFTP.start(server, user, :port => 30001) do |sftp|
 
   puts "#{Time.now}: downloading backup: #{backup}"
   sftp.download!("#{backup_path}/#{backup}", backup)
-  puts "#{Time.now}: restoring backup to #{environment} environment"
-  system "rake db:restore DB=social_#{environment} FILE=#{backup}"
-  system "rake ts:index"
+  puts "#{Time.now}: restoring backup to #{app}_#{environment} database"
+  system "rake db:restore DB=#{app}_#{environment} FILE=#{backup}"
+  system "rake ts:rebuild"
 end
 
