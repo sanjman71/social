@@ -154,6 +154,7 @@ module Users::Search
     end
     # exclude user
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    search(options)
   end
 
   # search users, filter by friends and optional distance
