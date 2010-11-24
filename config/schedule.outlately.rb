@@ -37,5 +37,5 @@ end
 
 every 1.day, :at => '9:00 am' do
   # send todo reminders
-  command "curl http://outlate.ly/jobs/todo_reminders?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
+  command "curl http://outlate.ly/jobs/send_todo_reminders?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
 end

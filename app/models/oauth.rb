@@ -25,7 +25,7 @@ class Oauth < ActiveRecord::Base
     end
     oauth = user.oauths.where(:provider => provider).first
     if oauth.blank?
-      log(:notice, "[#{user.handle}] no #{source} oauth token")
+      log(:notice, "[#{user.handle}] no #{provider} oauth token")
       return nil
     end
     oauth
