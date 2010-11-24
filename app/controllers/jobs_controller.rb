@@ -11,8 +11,9 @@ class JobsController < ApplicationController
   # GET /jobs/backup
   # PUT /jobs/backup
   def backup
-    dir = Rails.env == 'production' ? "/usr/apps/social/shared/backups" : "#{Rails.root}/backups"
-    cmd = "rake db:backup DB=social_#{Rails.env} BACKUP_DIR=#{dir}"
+    app = 'outlately'
+    dir = Rails.env == 'production' ? "/usr/apps/#{app}/shared/backups" : "#{Rails.root}/backups"
+    cmd = "rake db:backup DB=#{app}_#{Rails.env} BACKUP_DIR=#{dir}"
     Delayed::Job.enqueue(RakeJob.new(:cmd => cmd), 0)
     flash[:notice] = "Queued backup job"
     redirect_to jobs_path

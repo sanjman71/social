@@ -35,6 +35,11 @@ every 1.hour do
   command "curl http://outlate.ly/jobs/sphinx?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
 end
 
+every 1.hour do
+  # backup database
+  command "curl http://outlate.ly/jobs/backup?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
+end
+
 every 1.day, :at => '9:00 am' do
   # send todo reminders
   command "curl http://outlate.ly/jobs/send_todo_reminders?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
