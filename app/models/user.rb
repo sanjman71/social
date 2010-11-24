@@ -119,18 +119,20 @@ class User < ActiveRecord::Base
   define_index do
     has :id, :as => :user_ids
     indexes handle, :as => :handle
-    has :gender, :as => :gender
+    has gender, :as => :gender
     has availability.now, :as => :now
-    # checkin locations
-    has locations(:id), :as => :location_ids, :facet => true
-    indexes locations.tags(:name), :as => :tags
-    has locations.tags(:id), :as => :tag_ids, :facet => true
-    has checkins(:id), :as => :checkin_ids, :facet => true
-    has :checkins_count, :as => :checkins_count
+    # checkins
+    has checkins(:id), :as => :checkin_ids
+    has checkins_count, :as => :checkins_count
+    # locationships
+    has locations(:id), :as => :location_ids
+    # checkin location tags
+    # indexes locations.tags(:name), :as => :tags
+    # has locations.tags(:id), :as => :tag_ids
     # convert degrees to radians for sphinx
     has 'RADIANS(users.lat)', :as => :lat,  :type => :float
     has 'RADIANS(users.lng)', :as => :lng,  :type => :float
-    # real time indexing with delayed_job
+    # use delayed job for delta index
     set_property :delta => :delayed
     # only index active users
     where "state = 'active'"

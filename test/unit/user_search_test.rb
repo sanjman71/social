@@ -262,14 +262,15 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
 
-    should "find 3 locations with same tags when user has checkin location tags" do
-      @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      ThinkingSphinx::Test.run do
-        @locations = @chicago_male1.search_locations_by_tags
-        assert_equal 3, @locations.size
-        assert_equal [@chicago_coffee, @boston_sbux, @boston_coffee], @locations.collect{ |o| o }
-      end
-    end
+    # deprecated: no search by locations tags for now
+    # should "find 3 locations with same tags when user has checkin location tags" do
+    #   @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+    #   ThinkingSphinx::Test.run do
+    #     @locations = @chicago_male1.search_locations_by_tags
+    #     assert_equal 3, @locations.size
+    #     assert_equal [@chicago_coffee, @boston_sbux, @boston_coffee], @locations.collect{ |o| o }
+    #   end
+    # end
   end
 
   context "search_friends filter" do

@@ -50,57 +50,46 @@ class Location < ActiveRecord::Base
 
   # scope :no_place,              { :conditions => ["id not in (select distinct location_id from location_places)"] }
   # scope :with_places,           { :joins => :location_places, :conditions => ["location_places.location_id > 0"] }
-  scope :with_chains,           { :joins => :companies, :conditions => ["companies.chain_id > 0"] }
   scope :with_state,            lambda { |state| { :conditions => ["state_id = ?", state.is_a?(Integer) ? state : state.id] }}
   scope :with_city,             lambda { |city| { :conditions => ["city_id = ?", city.is_a?(Integer) ? city : city.id] }}
   scope :with_neighborhoods,    where("locations.neighborhoods_count > 0")
   scope :no_neighborhoods,      where("locations.neighborhoods_count = 0")
   scope :with_street_address,   where("locations.street_address <> '' AND locations.street_address IS NOT NULL")
   scope :no_street_address,     { :conditions => ["street_address = '' OR street_address IS NULL"] }
-  scope :with_taggings,         { :joins => :companies, :conditions => ["companies.taggings_count > 0"] }
-  scope :no_taggings,           { :joins => :companies, :conditions => ["companies.taggings_count = 0"] }
+  # scope :with_taggings,         { :joins => :companies, :conditions => ["companies.taggings_count > 0"] }
+  # scope :no_taggings,           { :joins => :companies, :conditions => ["companies.taggings_count = 0"] }
   scope :with_latlng,           { :conditions => ["lat IS NOT NULL and lng IS NOT NULL"] }
   scope :no_latlng,             { :conditions => ["lat IS NULL and lng IS NULL"] }
-  scope :urban_mapped,          { :conditions => ["urban_mapping_at <> ''"] }
-  scope :not_urban_mapped,      { :conditions => ["urban_mapping_at is NULL"] }
-  scope :with_events,           { :conditions => ["events_count > 0"] }
   scope :with_phone_numbers,    { :conditions => ["phone_numbers_count > 0"] }
   scope :no_phone_numbers,      { :conditions => ["phone_numbers_count = 0"] }
   scope :min_phone_numbers,     lambda { |x| {:conditions => ["phone_numbers_count >= ?", x] }}
   scope :min_popularity,        lambda { |x| {:conditions => ["popularity >= ?", x] }}
-  scope :with_delta,            { :conditions => ["delta = 1"]}
-  scope :recommended,           { :conditions => ["recommendations_count > 0"] }
+  scope :with_delta,            { :conditions => {:delta => 1} }
 
   define_index do
     has :id, :as => :location_ids
     indexes name, :as => :name
     indexes street_address, :as => :address
-    # this doesn't work; don't think mva string attributes are supported
-    # indexes tags(:name), :as => :tags, :type => :multi, :facet => true
-    indexes tags(:name), :as => :tags
-    has tags(:id), :as => :tag_ids, :facet => true
+    # location tags
+    # indexes tags(:name), :as => :tags
+    # has tags(:id), :as => :tag_ids
     # users
-    has users(:id), :as => :user_ids, :facet => true
-    # locality attributes, all faceted
-    has country_id, :type => :integer, :as => :country_id, :facet => true
-    has state_id, :type => :integer, :as => :state_id, :facet => true
-    has city_id, :type => :integer, :as => :city_id, :facet => true
-    has zip_id, :type => :integer, :as => :zip_id, :facet => true
-    has neighborhoods(:id), :as => :neighborhood_ids, :facet => true
-    # locality strings, faceted
-    # indexes zip.name, :as => :zip, :type => :string, :facet => true
-    # indexes city.name, :as => :city, :type => :string, :facet => true
+    has users(:id), :as => :user_ids
+    # locality attributes
+    has country_id, :type => :integer, :as => :country_id
+    has state_id, :type => :integer, :as => :state_id
+    has city_id, :type => :integer, :as => :city_id
+    has zip_id, :type => :integer, :as => :zip_id
+    has neighborhoods(:id), :as => :neighborhood_ids
     # phone numbers
     indexes phone_numbers(:address), :as => :phone
     # other attributes
-    has popularity, :type => :integer, :as => :popularity
+    has popularity, :as => :popularity, :type => :integer
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
-    # used delayed job for almost real time indexing
+    # use delayed job for delta index
     set_property :delta => :delayed
-    # only index valid locations
-    where "status = 0"
   end
 
   def self.anywhere

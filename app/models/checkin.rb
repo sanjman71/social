@@ -20,18 +20,19 @@ class Checkin < ActiveRecord::Base
   define_index do
     has :id, :as => :checkin_ids
     # checkin user
-    has user(:id), :as => :user_ids, :facet => true
+    has user(:id), :as => :user_ids
     indexes user(:handle), :as => :handle
     has user(:gender), :as => :gender
     has user.availability(:now), :as => :now
     # checkin location
-    has location(:id), :as => :location_ids, :facet => true
-    indexes location.tags(:name), :as => :tags
-    has location.tags(:id), :as => :tag_ids, :facet => true
+    has location(:id), :as => :location_ids
+    # checkin location tags
+    # indexes location.tags(:name), :as => :tags
+    has location.tags(:id), :as => :tag_ids
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
-    # used delayed job for almost real time indexing
+    # use delayed job for delta index
     set_property :delta => :delayed
   end
   

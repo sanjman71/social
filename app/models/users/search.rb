@@ -228,12 +228,13 @@ module Users::Search
     if options[:with_now] # e.g. 0, 1
       with.update(:now => options[:with_now])
     end
-    if options[:with_tag_ids] # e.g. [1,3,5]
-      with.update(:tag_ids => options[:with_tag_ids])
-    end
-    if options[:without_tag_ids] # e.g. [1,3,5]
-      without.update(:tag_ids => options[:without_tag_ids])
-    end
+    # deprecated: no filter by tags for now
+    # if options[:with_tag_ids] # e.g. [1,3,5]
+    #   with.update(:tag_ids => options[:with_tag_ids])
+    # end
+    # if options[:without_tag_ids] # e.g. [1,3,5]
+    #   without.update(:tag_ids => options[:without_tag_ids])
+    # end
     if options[:with_user_ids] # e.g. [1,2,5]
       with.update(:user_ids => options[:with_user_ids])
     end
@@ -403,9 +404,10 @@ module Users::Search
     if (todo_loc_ids = locationships.todo_checkins.collect(&:location_id)).any?
       sort_expr.push("3.0 * IF(IN(location_ids, %s), 3.0, 1.0)" % todo_loc_ids.join(','))
     end
-    if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
-      sort_expr.push("3.0 * IF(IN(tag_ids, %s), 3.0, 1.0)" % tag_ids.join(','))
-    end
+    # deprecated: no sorting by tags for now
+    # if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
+    #   sort_expr.push("3.0 * IF(IN(tag_ids, %s), 3.0, 1.0)" % tag_ids.join(','))
+    # end
     sort_expr.any? ? sort_expr : nil
   end
 
