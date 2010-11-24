@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101122005352) do
+ActiveRecord::Schema.define(:version => 20101123202908) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(:version => 20101122005352) do
     t.datetime "updated_at"
   end
 
+  add_index "checkins", ["delta"], :name => "index_checkins_on_delta"
   add_index "checkins", ["location_id"], :name => "index_checkins_on_location_id"
   add_index "checkins", ["user_id"], :name => "index_checkins_on_user_id"
 
@@ -265,6 +266,7 @@ ActiveRecord::Schema.define(:version => 20101122005352) do
 
   add_index "locations", ["city_id", "street_address"], :name => "index_locations_on_city_id_and_street_address"
   add_index "locations", ["city_id"], :name => "index_locations_on_city"
+  add_index "locations", ["delta"], :name => "index_locations_on_delta"
   add_index "locations", ["email_addresses_count"], :name => "index_locations_on_email_addresses_count"
   add_index "locations", ["neighborhoods_count"], :name => "index_locations_on_neighborhoods_count"
   add_index "locations", ["phone_numbers_count"], :name => "index_locations_on_phone_numbers_count"
@@ -385,10 +387,10 @@ ActiveRecord::Schema.define(:version => 20101122005352) do
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
     t.integer  "taggable_id"
-    t.string   "taggable_type"
+    t.string   "taggable_type", :limit => 50
     t.integer  "tagger_id"
-    t.string   "tagger_type"
-    t.string   "context"
+    t.string   "tagger_type",   :limit => 50
+    t.string   "context",       :limit => 50
     t.datetime "created_at"
   end
 
@@ -396,7 +398,7 @@ ActiveRecord::Schema.define(:version => 20101122005352) do
   add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
 
   create_table "tags", :force => true do |t|
-    t.string "name"
+    t.string "name", :limit => 50
   end
 
   create_table "timezones", :force => true do |t|
@@ -451,6 +453,7 @@ ActiveRecord::Schema.define(:version => 20101122005352) do
     t.datetime "updated_at"
   end
 
+  add_index "users", ["delta"], :name => "index_users_on_delta"
   add_index "users", ["email_addresses_count"], :name => "index_users_on_email_addresses_count"
   add_index "users", ["facebook_id"], :name => "index_users_on_facebook_id"
   add_index "users", ["foursquare_id"], :name => "index_users_on_foursquare_id"
