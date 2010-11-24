@@ -13,9 +13,12 @@ namespace :db do
     username            = ActiveRecord::Base.configurations[Rails.env]['username']
     password            = ActiveRecord::Base.configurations[Rails.env]['password']
     host                = ActiveRecord::Base.configurations[Rails.env]['host']
-    database_name       = ENV["DB"].to_s
-    backup_dir          = ENV["BACKUP_DIR"] ? ENV["BACKUP_DIR"] : "#{Rails.root}/backups"
-    
+    app                 = "outlately"
+    database_name       = ENV["DB"] ? ENV["DB"].to_s : "#{app}_#{Rails.env}"
+    backup_default_dir  = "#{Rails.root}/backups"
+    backup_dir          = ENV["BACKUP_DIR"] ? ENV["BACKUP_DIR"] : backup_default_dir
+
+    puts "#{Time.now}: backing up database #{database_name} to #{backup_dir}"
     if database_name.blank?
       puts "no DB specified"
       exit
@@ -27,14 +30,14 @@ namespace :db do
     
     cmd = "#{mysqldump} #{mysqldump_options} -u#{username} -p#{password} -h#{host} #{database_name} | gzip -c > #{backup_dir}/#{backup_file}"
     
-    puts "#{Time.now}: creating backup in backups/#{backup_file}"
     system "mkdir -p #{backup_dir}"
     system cmd
-    puts "#{Time.now}: created backup"
+    puts "#{Time.now}: created backup #{backup_file}"
     
     dir         = Dir.new(backup_dir)
     max_backups = ENV["MAX"] ? ENV["MAX"].to_i : 25
-    all_backups = dir.entries[2..-1].sort.reverse
+    # find all backup files, exclude special file '.'
+    all_backups = dir.entries.select{ |s| !s.match(/^\./) }[2..-1].sort.reverse
 
     unwanted_backups = all_backups[max_backups..-1] || []
     for unwanted_backup in unwanted_backups
