@@ -20,12 +20,12 @@ class Oauth < ActiveRecord::Base
       user = User.find_by_handle(user)
     end
     if user.blank?
-      log(:notice, "invalid user #{user.inspect}")
+      log("[error] find_user_oauth invalid user #{user.inspect}", :error)
       return nil
     end
     oauth = user.oauths.where(:provider => provider).first
     if oauth.blank?
-      log(:notice, "[#{user.handle}] no #{provider} oauth token")
+      log("[#{user.handle}] no #{provider} oauth token")
       return nil
     end
     oauth
@@ -51,7 +51,8 @@ class Oauth < ActiveRecord::Base
     end
   end
 
-  def self.log(level, s, options={})
-    USERS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
+
 end
