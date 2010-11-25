@@ -8,11 +8,12 @@
     = location.name
   %br
   - tag_list = location.tag_list
-  - if tag_list.any?
-    %span.tags= location.tag_list.join(', ')
-  - if tag_link
-    %span.add_tags= link_to 'Add Tags', tag_location_path(location)
-  %br
+  - if tag_list.any? or tag_link
+    - if tag_list.any?
+      %span.tags= location.tag_list.join(', ')
+    - if tag_link
+      %span.add_tags= link_to 'Add Tags', tag_location_path(location)
+    %br
   - if has_role?('admin')
     - location.location_sources.each do |ls|
       %span.sources= ls.source_type + ":" + ls.source_id
