@@ -13,13 +13,15 @@
   - if tag_link
     %span.add_tags= link_to 'Add Tags', tag_location_path(location)
   %br
-  - location.location_sources.each do |ls|
-    %span.sources= ls.source_type + ":" + ls.source_id
-    %br
+  - if has_role?('admin')
+    - location.location_sources.each do |ls|
+      %span.sources= ls.source_type + ":" + ls.source_id
+      %br
 .span-9.last.address
   %span.street= location.street_city
   %br
-  %span.latlng== #{location.lat}, #{location.lng}
+  - if has_role?('admin')
+    %span.latlng== #{location.lat}, #{location.lng}
 
 - if false
   .span-7.last.tags

@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
   include Growl
 
-  helper_method :growls
+  helper_method :growls, :has_role?
 
   # default application layout
   layout 'application'
@@ -36,6 +36,11 @@ class ApplicationController < ActionController::Base
 
   def auth_token?
     params[:token].to_s == AUTH_TOKEN
+  end
+
+  # check if current user has the specified role, on the optional authorizable object
+  def has_role?(role_name, authorizable=nil)
+    current_user.try(:has_role?, role_name, authorizable)
   end
 
   protected
