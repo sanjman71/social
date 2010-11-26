@@ -1,0 +1,17 @@
+- title('Geocode Results')
+
+- content_for :mat do
+  %h2 Geocode Results
+
+%hr.space
+
+.span.24.last
+  = display_flash(:all)
+
+%hr.space
+
+.span-23.prepend-1#search_results_title
+  %h3= "Found #{pluralize(@hash['locations'].size, 'location')} for query '#{@query}'"
+
+.span-23.prepend-1.last#search_results
+  = render :partial => 'place', :locals => {:provider => @provider, :locations => @hash['locations']}

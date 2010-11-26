@@ -23,7 +23,7 @@ class LocationsController < ApplicationController
       @options.update(:geo_origin => [@lat.radians, @lng.radians],
                       :geo_distance => 0.0..@radius.miles.meters.value)
       @locations    = current_user.search_locations(@options)
-    when params[:city]
+    when params['city']
       @city         = find_city
       @radius       = find_radius
       @options.update(:geo_origin => [@city.lat.radians, @city.lng.radians],
@@ -122,32 +122,35 @@ class LocationsController < ApplicationController
             array += group['venues']
             array
           end
-          @hash = Hash[:status => 'ok', :count => @locations.size, :locations => @locations]
+          @hash = Hash['status' => 'ok', 'count' => @locations.size, 'locations' => @locations]
         else
-          @hash = Hash[:status => 'ok', :count => 0, :locations => []]
+          @hash = Hash['status' => 'ok', 'count' => 0, 'locations' => []]
         end
       when 'google'
         @geoloc = City.geocode(@query)
         if @geoloc.country.match(/USA|Canada/)
-          @loc  = Hash[:street_address => @geoloc.street_address.to_s, :city => @geoloc.city.to_s,
-                       :state => @geoloc.state.to_s]
-          @hash = Hash[:status => 'ok', :count => 1, :locations => [@loc]]
+          @loc  = Hash['name' => '', 'street_address' => @geoloc.street_address.to_s, 'city' => @geoloc.city.to_s,
+                       'state' => @geoloc.state.to_s]
+          @hash = Hash['status' => 'ok', 'count' => 1, 'locations' => [@loc]]
         else
-          @loc  = Hash[:street_address => @geoloc.street_address.to_s, :city => @geoloc.city.to_s,
-                       :state => '', :country => @geoloc.country.to_s]
-          @hash = Hash[:status => 'ok', :count => 1, :locations => [@loc]]
+          @loc  = Hash['name' => '', 'street_address' => @geoloc.street_address.to_s, 'city' => @geoloc.city.to_s,
+                       'state' => '', 'country' => @geoloc.country.to_s]
+          @hash = Hash['status' => 'ok', 'count' => 1, 'locations' => [@loc]]
         end
       end
     rescue Exception => e
-      @hash = Hash[:status => 'error', :message => e.message]
+      @hash = Hash['status' => 'error', 'message' => e.message, 'count' => 0, 'locations' => []]
     end
 
     respond_to do |format|
+      format.js do
+        render(:action => 'geocode')
+      end
       format.json do
         render :json => @hash.to_json
       end
       format.html do
-        render :text => @hash.to_json
+        # render :text => @hash.to_json
       end
     end
   end

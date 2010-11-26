@@ -1,4 +1,4 @@
-.prepend-1= link_to 'Search Foursquare Venues', '#', :id => 'search_foursquare', :class => 'admin', 'data-url' => '/locations/geocode/foursquare', 'data-query' => location.name, 'data-lat' => location.lat, 'data-lng' => location.lng, 'data-results' => 'search_foursquare_results'
+.prepend-1= link_to 'Search Foursquare Venues', '#', :id => 'search_foursquare', :class => 'admin', 'data-url' => geocode_path(:foursquare), 'data-query' => location.name, 'data-lat' => location.lat, 'data-lng' => location.lng, 'data-results' => 'search_foursquare_results'
 .hide#search_results_form
   = simple_form_for location, :url => "/" do |f|
     = f.input :street_city, :label => 'Search results', :collection => [], :prompt => 'Click here', :hint => 'foursquare venues list', :input_html => {:id => 'search_foursquare_results'}

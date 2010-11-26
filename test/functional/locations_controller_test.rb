@@ -160,7 +160,7 @@ class LocationsControllerTest < ActionController::TestCase
       assert_equal 'text/javascript', @response.content_type
     end
 
-    should "not add duplicate tags to location or add user points" do
+    should "not add duplicate tags to location and add no user points" do
       set_beta
       sign_in @user1
       @location1  = Location.create(:name => "Location 1", :country => @us)

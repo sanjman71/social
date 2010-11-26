@@ -38,6 +38,31 @@ $.fn.init_change_user_city = function() {
   }
 }
 
+$.fn.init_live_search_places = function() {
+  $("input#live_search_places").keyup(function () {
+    var search_url  = $(this).attr('data-url');
+    var search_term = this.value;
+    if (search_term.length < 3) { return false; }
+    // excecute search, throttle how often its called
+    var search_execution = function () {
+      $.get(search_url, {q : search_term}, null, "script");
+      // show search progress bar
+      $('#search_places_hint').text("Searching '" + search_term + "'");
+    }.sleep(500);
+
+    return false;
+  })
+
+  $(".place").live('mouseover mouseout', function(event) {
+    if (event.type == 'mouseover') {
+      $(this).find(".add_place").show();
+    } else {
+      $(this).find(".add_place").hide();
+    }
+  })
+
+}
+
 $.fn.init_search_foursquare = function() {
   $("a#search_foursquare").click(function() {
     field     = $(this);
@@ -145,6 +170,7 @@ $.fn.init_add_location_tags = function() {
 
 $(document).ready(function() {
   $(document).init_change_user_city();
+  $(document).init_live_search_places();
   $(document).init_search_foursquare();
   $(document).init_add_location_tags();
   

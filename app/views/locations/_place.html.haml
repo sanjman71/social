@@ -1,0 +1,8 @@
+- locations.each do |location_hash|
+  .place.last
+    %span.name= location_hash['name']
+    %span.divider== -
+    %span.geo= [location_hash['address'] || location_hash['street_address'], location_hash['city'], location_hash['state']].delete_if(&:blank?).join(", ")
+    - source      = "#{provider}:#{location_hash['id']}"
+    - city_state  = "#{location_hash['city']}:#{location_hash['state']}"
+    %span.add_place{:style => 'display: none;'}= link_to 'Add', '#', :id => 'add_place_to_todo_list', 'data-source' => source, 'data-name' => location_hash['name'], 'data-address' => location_hash['address'] || location_hash['street_address'], 'data-city-state' => city_state, 'data-lat' => location_hash['lat'] || location_hash['geolat'], 'data-lng' => location_hash['lng'] || location_hash['geolong']

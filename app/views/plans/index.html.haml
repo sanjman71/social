@@ -1,4 +1,5 @@
 - title('Plans')
+- javascript('locations')
 
 - content_for :mat do
   %h2 Planned Checkins
@@ -7,6 +8,19 @@
 
 .span.24.last
   = display_flash(:all)
+
+%hr.space
+
+.span-23.prepend-1.last.live_search_places_form
+  %h3 Use the search box below to find and add places you plan to go to.
+  -#= simple_form_for Location.new, :url => '/', :class => 'search_place' do |f|
+    -#= f.input :name, :label => 'Search', :hint => '', :placeholder => 'e.g. starbucks', :input_html => {:style => 'font-size: 2.0em;', :id => 'live_search_places', 'data-url' => geocode_path(:foursquare, :format => 'js')}
+  = text_field_tag :search, '', :id => 'live_search_places',  'data-url' => geocode_path(:foursquare, :format => 'js'), :placeholder => 'e.g. starbucks'
+  %span.hint#search_places_hint
+  %br
+  %span.query#search_places_query
+
+.span-23.prepend-1.last#search_results
 
 .span-24.last#locations
   - @locationships.each do |locationship|

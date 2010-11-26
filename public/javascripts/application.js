@@ -7,6 +7,13 @@ jQuery.extend({
   }
 });
 
+// Prevent a method from being called too often, e.g. throttle live search requests
+Function.prototype.sleep = function (millisecond_delay) {
+  if(window.sleep_delay != undefined) clearTimeout(window.sleep_delay);
+  var function_object = this;
+  window.sleep_delay  = setTimeout(function_object, millisecond_delay);
+};
+
 // check growls
 function check_growls() {
   $.get("/growls", {}, function(data) {

@@ -76,6 +76,11 @@ h1.title                                          { font-size: 1.5em; }
 .simple_form input[type='checkbox']               { margin: 15px 5px; }
 .simple_form input[type='submit']                 { margin-top: 20px; }
 
+.live_search_places_form label                    {}
+.live_search_places_form input[type='text']       { font-size: 2.0em; width: 350px; }
+.live_search_places_form span.hint                { padding-left: 5px; font-size: 0.9em; color: #777; }
+.live_search_places_form span.query               { font-size: 0.9em; color: #777; }
+
 /* form styles */
 
 input:focus                                       { outline: 0 none; }  /* needed to remove border/outline in safari */
@@ -105,11 +110,6 @@ a.admin.bold                                      { font-weight: bold; }
 a.header.link:link, a.header.link:visited         { color: #FFFFFF; }
 a.header.link:hover                               { background-color: #3A2313; text-decoration: none; }
 
-/* signup styles */
-
-a.signup:link, a.signup:visited                   { font-size: 11px; font-weight: normal; color: #000000; }
-a.signup:hover                                    { color: #000000; background-color: #FFFFFF; text-decoration: none; }
-
 /* logo styles */
 
 a.logo, a.logo:visited                            { outline: none; }
@@ -136,6 +136,15 @@ a.tag.odd.three, a.tag.even.three, a.chain.even.three, a.chain.odd.three
                                                   { font-size: 2.0em; }
 
 /* location styles */
+
+div.place                                         { padding: 5px 0; font-weight: normal; }
+div.place .name                                   { font-size: 1.1em; color: #777; }
+div.place .divider                                { font-size: 0.9em; color: #999; margin: 0 3px; }
+div.place .geo                                    { font-size: 1.0em; color: #777; }
+div.place .add_place                              { font-size: 0.9em; padding: 0 5px; }
+div.place .add_place a                            { color: #00F; }
+
+div.place:hover .name, div.place:hover .geo       { color: #444; font-weight: bold; }
 
 div.location                                      { margin-bottom: 10px; }
 div.location .name                                { }
