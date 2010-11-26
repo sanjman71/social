@@ -100,6 +100,30 @@ class Location < ActiveRecord::Base
     end
   end
 
+  def self.find_or_create_by_source(hash={})
+    case
+    when hash[:source]
+      location = find_by_source(hash[:source])
+    when (hash[:source_type] and hash[:source_id])
+      location = find_by_source_id_and_source_type(hash[:source_id], hash[:source_type])
+    end
+
+    if location.blank?
+      location = Location.create(hash)
+    end
+    
+    location
+  end
+
+  # find by location source
+  # e.g. "foursquare:1111"
+  def self.find_by_source(s)
+    stype, sid = s.split(':')
+    find_by_source_id_and_source_type(sid, stype)
+  rescue
+    
+  end
+
   def street_city
     [street_address, city.try(:name)].delete_if(&:blank?).join(', ')
   end

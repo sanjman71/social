@@ -76,6 +76,7 @@ h1.title                                          { font-size: 1.5em; }
 .simple_form input[type='checkbox']               { margin: 15px 5px; }
 .simple_form input[type='submit']                 { margin-top: 20px; }
 
+.live_search_places_form                          { margin-bottom: 20px; }
 .live_search_places_form label                    {}
 .live_search_places_form input[type='text']       { font-size: 2.0em; width: 350px; }
 .live_search_places_form span.hint                { padding-left: 5px; font-size: 0.9em; color: #777; }
@@ -147,13 +148,14 @@ div.place .add_place a                            { color: #00F; }
 div.place:hover .name, div.place:hover .geo       { color: #444; font-weight: bold; }
 
 div.location                                      { margin-bottom: 10px; }
-div.location .name                                { }
+div.location .name                                { font-size: 1.0em; color: #111; }
 div.location .tags                                { font-size: 0.9em; color: #00B; padding-right: 5px; }
 div.location .add_tags a                          { font-size: 0.9em; color: #005500; }
-div.location .address                             { }
+div.location .address                             { font-size: 0.9em; }
 div.location .address .street                     { font-size: 0.9em; }
 div.location .address .latlng                     { font-size: 0.9em; color: #999; }
 div.location .sources                             { font-size: 0.9em; color: #999 }
+div.location .planned_at                          { font-size: 0.9em; }
 
 div.location.search_result, div.appointment.search_result
                                                   { height: 85px; }

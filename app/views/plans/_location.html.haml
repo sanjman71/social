@@ -1,11 +1,11 @@
 - location = locationship.location
 
-.span-8.prepend-1#name
-  = location.name
+.span-8.prepend-1
+  %span.name= location.name
   %br
-  %span{:style => 'font-size: 0.9em; color: #777;'}= [location.street_address, location.city].delete_if(&:blank?).join(', ')
-.span-12.last#planned_at{:style => 'font-size: 0.9em;'}
+  %span.address= location.street_city
+.span-12.last.planned_at
   Added: #{locationship.todo_at.try(:to_s, :datetime_short)}
   %br
   - days = ((locationship.todo_at + locationship.class.todo_window_days.days).to_i - Time.zone.now.to_i) / 86400
-  %strong== #{pluralize(days, 'day')} to check in here
+  %strong== #{pluralize(days, 'day')} left to check in here

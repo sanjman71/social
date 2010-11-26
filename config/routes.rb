@@ -63,7 +63,7 @@ Social::Application.routes.draw do
   resources :friends, :only => [:index]
   
   # plans routes
-  match 'plans/add/:location_id', :to => 'plans#add', :via => [:put], :as => :add_todo_location
+  match 'plans/add(/:location_id)', :to => 'plans#add', :via => [:put], :as => :add_todo_location
   match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_todo_location
   match 'plans', :to => 'plans#index', :via => [:get]
 

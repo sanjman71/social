@@ -1,5 +1,6 @@
 class PlansController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :find_location, :only => [:add]
   respond_to    :html, :json
 
   # GET /plans
@@ -14,10 +15,11 @@ class PlansController < ApplicationController
 
   # PUT /plans/add/1
   def add
-    @location = Location.find(params[:location_id])
-    @user     = current_user
+    # @location initialized in before filter
 
     begin
+      # set user to current user
+      @user         = current_user
       # update locationship
       @locationship = @user.locationships.find_or_create_by_location_id(@location.id)
       if @locationship.todo_checkins == 0 and @locationship.my_checkins == 0
@@ -36,10 +38,13 @@ class PlansController < ApplicationController
       @status         = 'error'
       @message        = e.message
     end
-    
+
+    # set redirect path
+    @redirect_to = redirect_back_path(root_path)
+
     respond_with(@location) do |format|
-      format.html { redirect_back_to(root_path) and return }
-      format.js { render(:update) { |page| page.redirect_to(root_path) } }
+      format.html { redirect_back_to(@redirect_to) and return }
+      format.js { render(:update) { |page| page.redirect_to(@redirect_to) } }
       format.json { render :json => Hash[:status => @status, :message => @message, :growls => @growls].to_json }
     end
   end
@@ -58,6 +63,18 @@ class PlansController < ApplicationController
   
     respond_with(@location) do |format|
       format.html { redirect_back_to(root_path) and return }
+    end
+  end
+
+  protected
+  
+  def find_location
+    if params[:location_id]
+      @location = Location.find(params[:location_id])
+    elsif params[:location]
+      @location = Location.find_or_create_by_source(params[:location])
+    else
+      raise Exception, "missing location"
     end
   end
 

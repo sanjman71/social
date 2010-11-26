@@ -1,68 +1,3 @@
-$.fn.init_change_user_city = function() {
-  // handle user setting/changing their city
-  $("input#user_city_name").change(function() {
-    field         = $(this);
-    url           = $(this).attr('data-url');
-    query         = $(this).val();
-    submit        = $("input#edit_user_submit");
-    user_city_id  = $("input#user_city_attributes_id");
-    hint          = $(this).next('.hint');
-
-    // ignore empty query
-    if (query == '') { return; }
-
-    // disable city id to indicate city has changed
-    $(user_city_id).attr('disabled', 'disabled');
-
-    // disable submit, update hint
-    $(submit).attr('disabled', 'disabled');
-    $(hint).text("searching ...");
-
-    $.getJSON(url, {q: query}, function(data) {
-      if (data.status == 'ok') {
-        loc = data.locations[0]
-        fill_city(field, loc)
-      } else {
-        // error
-      }
-      // re-enable submit, update hint
-      $(submit).attr('disabled', '');
-      $(hint).text("we found " + loc.city);
-    });
-  })
-  
-  function fill_city(field, loc) {
-    // fill with city, state or city, country
-    value = loc.city + ", " + (loc.state != '' ? loc.state : loc.country);
-    $(field).attr('value', value);
-  }
-}
-
-$.fn.init_live_search_places = function() {
-  $("input#live_search_places").keyup(function () {
-    var search_url  = $(this).attr('data-url');
-    var search_term = this.value;
-    if (search_term.length < 3) { return false; }
-    // excecute search, throttle how often its called
-    var search_execution = function () {
-      $.get(search_url, {q : search_term}, null, "script");
-      // show search progress bar
-      $('#search_places_hint').text("Searching '" + search_term + "'");
-    }.sleep(500);
-
-    return false;
-  })
-
-  $(".place").live('mouseover mouseout', function(event) {
-    if (event.type == 'mouseover') {
-      $(this).find(".add_place").show();
-    } else {
-      $(this).find(".add_place").hide();
-    }
-  })
-
-}
-
 $.fn.init_search_foursquare = function() {
   $("a#search_foursquare").click(function() {
     field     = $(this);
@@ -169,8 +104,6 @@ $.fn.init_add_location_tags = function() {
 }
 
 $(document).ready(function() {
-  $(document).init_change_user_city();
-  $(document).init_live_search_places();
   $(document).init_search_foursquare();
   $(document).init_add_location_tags();
   
