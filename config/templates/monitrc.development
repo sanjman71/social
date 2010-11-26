@@ -22,4 +22,7 @@ check system localhost
 
 check process delayed_job
   with pidfile "/Users/sanjay/Rails/social/tmp/pids/delayed_job.pid"
+
+check host 127.0.0.1 with address local.outlate.ly every 4 cycles
+  if failed port 5001 proto http then alert
   

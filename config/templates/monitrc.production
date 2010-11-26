@@ -22,4 +22,6 @@ check system localhost
 
 check process delayed_job
   with pidfile "/usr/apps/outlately/shared/pids/delayed_job.pid"
-  
+
+check host 127.0.0.1 with address outlate.ly every 4 cycles
+  if failed port 80 proto http then alert
