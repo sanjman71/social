@@ -8,7 +8,7 @@ class LocationshipTest < ActiveSupport::TestCase
 
   should "create with default values" do
     @user1      = Factory.create(:user)
-    @location1  = Location.create(:name => "Location 1", :country => @us)
+    @location1  = Location.create!(:name => "Location 1", :country => @us)
     @locship    = @user1.locationships.create!(:location => @location1)
     assert_equal 0, @locship.my_checkins
     assert_equal 0, @locship.friend_checkins
@@ -17,8 +17,8 @@ class LocationshipTest < ActiveSupport::TestCase
 
   should "not allow duplicates" do
     @user1      = Factory.create(:user)
-    @location1  = Location.create(:name => "Location 1", :country => @us)
-    @location2  = Location.create(:name => "Location 2", :country => @us)
+    @location1  = Location.create!(:name => "Location 1", :country => @us)
+    @location2  = Location.create!(:name => "Location 2", :country => @us)
     @user1.locationships.create!(:location => @location1)
     @user1.locationships.create!(:location => @location2)
     # should not allow duplicate
@@ -29,7 +29,7 @@ class LocationshipTest < ActiveSupport::TestCase
 
   should "touch todo_at when todo_checkins is incremented" do
     @user1      = Factory.create(:user)
-    @location1  = Location.create(:name => "Location 1", :country => @us)
+    @location1  = Location.create!(:name => "Location 1", :country => @us)
     @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
     assert @locship.reload.todo_at
   end

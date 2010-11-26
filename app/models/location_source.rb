@@ -1,7 +1,7 @@
 class LocationSource < ActiveRecord::Base
   belongs_to              :location
   belongs_to              :source, :polymorphic => true
-  validates_presence_of   :location_id
+  # validates_presence_of   :location_id  # not allowed with nested attributes
   validates_presence_of   :source_id
   validates_presence_of   :source_type
   validates_uniqueness_of :location_id, :scope => [:source_id, :source_type]

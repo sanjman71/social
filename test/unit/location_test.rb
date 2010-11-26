@@ -369,6 +369,22 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
 
+  should "create with marshalled, new location source" do
+    @location = Location.create!(:name => "Inteligentsia Coffee",
+                                 :source => "foursquare:44123",
+                                 :address => "53 W. Jackson Blvd.",
+                                 :city_state => "Chicago:IL",
+                                 :lat => "41.877901218486535",
+                                 :lng => "-87.62948513031006")
+    assert_equal "53 W. Jackson Blvd.", @location.street_address
+    assert_equal @il, @location.state
+    assert_equal @chicago, @location.city
+    assert_equal 41.877901218486535, @location.lat
+    assert_equal -87.62948513031006, @location.lng
+    assert_equal ['foursquare'], @location.location_sources.collect(&:source_type)
+    assert_equal ['44123'], @location.location_sources.collect(&:source_id)
+  end
+
   fast_context "location without refer_to" do
     setup do
       @location = Location.create(:name => "Home", :country => @us)

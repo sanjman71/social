@@ -13,12 +13,13 @@ class Location < ActiveRecord::Base
   has_many                :neighborhoods, :through => :location_neighborhoods, :after_add => :after_add_neighborhood, :before_remove => :before_remove_neighborhood
   has_many                :email_addresses, :as => :emailable, :dependent => :destroy, :order => "priority asc"
   has_one                 :primary_email_address, :class_name => 'EmailAddress', :as => :emailable, :order => "priority asc"
-  accepts_nested_attributes_for :email_addresses, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
+  accepts_nested_attributes_for :email_addresses, :allow_destroy => true, :reject_if => :all_blank
   has_many                :phone_numbers, :as => :callable, :dependent => :destroy, :order => "priority asc"
   has_one                 :primary_phone_number, :class_name => 'PhoneNumber', :as => :callable, :order => "priority asc"
-  accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
+  accepts_nested_attributes_for :phone_numbers, :allow_destroy => true, :reject_if => :all_blank
   has_many                :location_sources, :dependent => :destroy
   has_one                 :location_source, :class_name => 'LocationSource', :order => 'id desc'
+  accepts_nested_attributes_for :location_sources,  :allow_destroy => true, :reject_if => :all_blank
 
   has_many                :checkins
   has_many                :locationships
@@ -42,8 +43,8 @@ class Location < ActiveRecord::Base
 
   # make sure only accessible attributes are written to from forms etc.
   attr_accessible         :name, :country, :country_id, :state, :state_id, :city, :city_id, :zip, :zip_id,
-                          :street_address, :lat, :lng, :timezone, :timezone_id, :source_id, :source_type,
-                          :email_addresses_attributes, :phone_numbers_attributes
+                          :city_state, :street_address, :address, :lat, :lng, :timezone, :timezone_id,
+                          :source, :email_addresses_attributes, :phone_numbers_attributes
 
   # used to generated an seo friendly url parameter
   # acts_as_friendly_param  :place_name
@@ -130,6 +131,31 @@ class Location < ActiveRecord::Base
     else
       nil
     end
+  end
+
+  def address=(s)
+    self.street_address = s
+  end
+
+  # set location city, state
+  # e.g. "Chicago:IL"
+  def city_state=(s)
+    @city_name, @state_code = s.split(":")
+    @state = State.find_by_code(@state_code)
+    @city  = @state.cities.find_by_name(@city_name)
+    self.state = @state
+    self.city  = @city
+  rescue Exception => e
+    # invalid city and/or state
+  end
+
+  # set location source
+  # e.g. "foursquare:1111"
+  def source=(s)
+    source_type, source_id = s.split(":")
+    self.location_sources_attributes = [{:source_type => source_type, :source_id => source_id}]
+  rescue Exception => e
+    # invalid source
   end
 
   def refer_to?
