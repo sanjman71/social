@@ -42,7 +42,7 @@ Social::Application.routes.draw do
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_locations
   match 'locations/:city(/:radius)', :to => 'locations#index',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_locations
-  match 'locations/geocode/:provider', :to => 'locations#geocode', :as => :geocode
+  match 'locations/search/:provider', :to => 'locations#search', :as => :search_locations
 
   resources :locations, :only => [:index, :edit] do
     get :import_tags, :on => :member

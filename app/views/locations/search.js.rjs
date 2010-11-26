@@ -1,5 +1,5 @@
 # update search results list
-page["div#search_results"].html(render(:partial => 'place', :locals => {:provider => @provider, :locations => @hash['locations']}))
+page["div#search_results"].html(render(:partial => 'search_places', :locals => {:provider => @provider, :locations => @hash['locations']}))
 
 # update live text
 page["span#search_places_hint"].text("")

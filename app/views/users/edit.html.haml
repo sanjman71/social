@@ -36,7 +36,7 @@
     .span-24.last
       = f.simple_fields_for :city do |city_form|
         -# city
-        = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => geocode_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
+        = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => search_locations_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
     .span-24.last
       = f.simple_fields_for :availability do |avail_form|
         = avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"

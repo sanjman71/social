@@ -14,4 +14,4 @@
   %h3= "Found #{pluralize(@hash['locations'].size, 'location')} for query '#{@query}'"
 
 .span-23.prepend-1.last#search_results
-  = render :partial => 'place', :locals => {:provider => @provider, :locations => @hash['locations']}
+  = render :partial => 'search_places', :locals => {:provider => @provider, :locations => @hash['locations']}

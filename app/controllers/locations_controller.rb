@@ -98,9 +98,9 @@ class LocationsController < ApplicationController
     redirect_to(locations_path) and return
   end
 
-  # GET /locations/geocode/foursquare?q=chicago&lat=71.23&lng=-87.55
-  # GET /locations/geocode/google?q=chicago
-  def geocode
+  # GET /locations/search/foursquare?q=chicago&lat=71.23&lng=-87.55
+  # GET /locations/search/google?q=chicago
+  def search
     @provider = params[:provider]
     @query    = params[:q]
     @lat      = params[:lat] ? params[:lat].to_f : current_user.try(:lat).to_f
@@ -144,7 +144,7 @@ class LocationsController < ApplicationController
 
     respond_to do |format|
       format.js do
-        render(:action => 'geocode')
+        render(:action => 'search')
       end
       format.json do
         render :json => @hash.to_json
