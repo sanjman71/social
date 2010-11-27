@@ -36,7 +36,10 @@
 2. change /etc/default/monit startup to 1
 3. sudo cp config/templates/monitrc.production /etc/monit/conf.d/
 4. sudo chown app:app /etc/monit/monitrc
-4. monit
+5. monit
+6.
+  6a. sudo update-rc.d monit defaults 98 02 # starts monit as root
+  6b. start monit on reboot from app's crontab
 
 # Memcached
 

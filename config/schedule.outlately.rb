@@ -18,7 +18,7 @@ set :environment, :production
 set :path, '/usr/apps/outlately/current'
 
 every :reboot do
-  command "monit"
+  command "/usr/sbin/monit"
 end
 
 every 15.minutes do
