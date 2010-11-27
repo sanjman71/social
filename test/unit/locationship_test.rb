@@ -34,6 +34,42 @@ class LocationshipTest < ActiveSupport::TestCase
     assert @locship.reload.todo_at
   end
 
+  context "todo_days_left" do
+    should "be 7 days right after todo added" do
+      @user1      = Factory.create(:user)
+      @location1  = Location.create!(:name => "Location 1", :country => @us)
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      assert_equal 7, @locship.todo_days_left
+    end
+
+    should "be 5 days 2 days+ after todo added" do
+      @user1      = Factory.create(:user)
+      @location1  = Location.create!(:name => "Location 1", :country => @us)
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      Timecop.travel(Time.now+2.days+1.hour) do
+        assert_equal 5, @locship.todo_days_left
+      end
+    end
+
+    should "be 0 days 7 days after todo added" do
+      @user1      = Factory.create(:user)
+      @location1  = Location.create!(:name => "Location 1", :country => @us)
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      Timecop.travel(Time.now+7.days+1.hour) do
+        assert_equal 0, @locship.todo_days_left
+      end
+    end
+
+    should "be -2 days 9 days after todo added" do
+      @user1      = Factory.create(:user)
+      @location1  = Location.create!(:name => "Location 1", :country => @us)
+      @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
+      Timecop.travel(Time.now+9.days) do
+        assert_equal -2, @locship.todo_days_left
+      end
+    end
+  end
+
   context "todo reminders" do
     should "send reminder email 2 days before todo expires" do
       @user1      = Factory.create(:user)

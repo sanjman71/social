@@ -44,6 +44,13 @@ class Locationship < ActiveRecord::Base
     user.checkins.where(:location_id => location_id).order("checkin_at asc").limit(1).first
   end
 
+  # days left to complete checkin at this location, but only if its on the todo list
+  def todo_days_left
+    return 0 if todo_at.blank? or todo_checkins == 0
+    days_float = ((todo_at + self.class.todo_window_days.days).to_f - Time.zone.now.to_f) / 86400
+    days_float.ceil
+  end
+
   def self.todo_window_days
     7
   end

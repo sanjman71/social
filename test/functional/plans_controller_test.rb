@@ -78,6 +78,15 @@ class PlansControllerTest < ActionController::TestCase
       assert_equal [0], @user1.reload.locationships.collect(&:todo_checkins)
       assert_redirected_to '/'
     end
+
+    should "redirect to params['return_to]" do
+      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
+      sign_in @user1
+      set_beta
+      put :add, :location_id => @sbux.id, :return_to => "/plans"
+      assert_redirected_to '/plans'
+    end
+
   end
   
 end

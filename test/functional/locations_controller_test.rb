@@ -13,8 +13,8 @@ class LocationsControllerTest < ActionController::TestCase
       to(:controller => 'locations', :action => 'index', :city => 'city:chicago', :radius => 'radius:50')
     should route(:get, "/locations/city:chicago").
       to(:controller => 'locations', :action => 'index', :city => 'city:chicago')
-    should route(:get, '/locations/geocode/google').
-      to(:controller => 'locations', :action => 'geocode', :provider => 'google')
+    should route(:get, '/locations/search/google').
+      to(:controller => 'locations', :action => 'search', :provider => 'google')
     should route(:put, '/locations/1/tag').
       to(:controller => 'locations', :action => 'tag', :id => '1')
   end
@@ -77,11 +77,11 @@ class LocationsControllerTest < ActionController::TestCase
     end
   end
 
-  context "geocode google" do
+  context "search google" do
     should "geocode chicago street to geocoded object" do
       set_beta
       sign_in @user1
-      get :geocode, :provider => 'google', :q => '900 n michigan chicgo', :format => 'json'
+      get :search, :provider => 'google', :q => '900 n michigan chicgo', :format => 'json'
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
@@ -91,10 +91,10 @@ class LocationsControllerTest < ActionController::TestCase
       assert_equal 'IL', @json['locations'][0]['state']
     end
 
-    should "geocode chicago to geocoded object" do
+    should "geocodes chicago to geocoded object" do
       set_beta
       sign_in @user1
-      get :geocode, :provider => 'google', :q => 'chicago', :format => 'json'
+      get :search, :provider => 'google', :q => 'chicago', :format => 'json'
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
@@ -106,7 +106,7 @@ class LocationsControllerTest < ActionController::TestCase
     should "geocode toronto, canada to geocoded object" do
       set_beta
       sign_in @user1
-      get :geocode, :provider => 'google', :q => 'toronto, canada', :format => 'json'
+      get :search, :provider => 'google', :q => 'toronto, canada', :format => 'json'
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
@@ -118,7 +118,7 @@ class LocationsControllerTest < ActionController::TestCase
     should "geocode paris, france to geocoded object" do
       set_beta
       sign_in @user1
-      get :geocode, :provider => 'google', :q => 'paris', :format => 'json'
+      get :search, :provider => 'google', :q => 'paris', :format => 'json'
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']

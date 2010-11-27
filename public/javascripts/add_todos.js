@@ -37,7 +37,7 @@ $.fn.init_live_search_places = function() {
              state:$(this).attr('data-state'), lat:$(this).attr('data-lat'), lng:$(this).attr('data-lng'),
              source:$(this).attr('data-source')}
     $(this).replaceWith('adding');
-    $.put(url, {location:loc}, null, "script");
+    $.put(url, {location:loc, return_to:$(this).attr('data-return-to')}, null, "script");
     return false;
   })
 }
