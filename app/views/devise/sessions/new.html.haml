@@ -1,6 +1,9 @@
 %h2 Sign in
 
-= render :partial => 'devise/sessions/signin_oauths'
-.hide
+- login = params[:login].to_i == 1
+
+#oauth{:style => 'margin-top: 20px;'}
+  = render :partial => 'devise/sessions/signin_oauths'
+#login{:style => "visibility: #{login ? 'visible' : 'hidden'}; margin-top: 20px;"}
   = render :partial => 'devise/sessions/signin_form'
 -#= render :partial => "devise/shared/links"

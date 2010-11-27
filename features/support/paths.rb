@@ -15,7 +15,7 @@ module NavigationHelpers
       '/beta'
 
     when /login page/
-      '/login'
+      '/login?login=1'
 
     when /^(.*)'s profile page$/i
       user_path(User.find_by_handle($1))

@@ -21,19 +21,7 @@ Given /^"([^"]*)" marked themselves as available now$/ do |handle|
 end
 
 # set user points
-Given /^a user "([^"]*)" with "([^"]*)" dollars$/ do |handle, amount|
+Given /^a user "([^"]*)" with "([^"]*)" dollars$/ do |handle, points|
   user = User.find_by_handle!(handle)
-  user.update_attribute(:points, amount)
-end
-
-# login step
-Given /^I am logged in as "([^"]*)"$/ do |handle|
-  And %{I go to beta page}
-  And %{I fill in "code" with "applepie"}
-  And %{I press "Continue"}
-
-  And %{I go to login page}
-  And %{I fill in "user_handle" with "#{handle}"}
-  And %{I fill in "user_password" with "secret"}
-  And %{I press "Sign in"}
+  user.update_attribute(:points, points)
 end
