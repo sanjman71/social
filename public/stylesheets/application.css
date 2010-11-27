@@ -76,6 +76,9 @@ h1.title                                          { font-size: 1.5em; }
 .simple_form input[type='checkbox']               { margin: 15px 5px; }
 .simple_form input[type='submit']                 { margin-top: 20px; }
 
+.simple_form input.bucks                          { margin: 10px 0px; color: #fff; background: #111; }
+.simple_form input.bucks.disabled                 { opacity: 0.3; }
+
 .live_search_places_form                          { margin-bottom: 20px; }
 .live_search_places_form label                    {}
 .live_search_places_form input[type='text']       { font-size: 2.0em; width: 350px; }

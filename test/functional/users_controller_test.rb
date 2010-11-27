@@ -15,6 +15,8 @@ class UsersControllerTest < ActionController::TestCase
       to(:controller => 'users', :action => 'index', :city => 'city:chicago')
     should route(:get, "/users/1/become").
       to(:controller => 'users', :action => 'become', :id => '1')
+    should route(:put, "/users/1/bucks/100").
+      to(:controller => 'users', :action => 'bucks', :id => '1', :points => 100)
   end
 
   def setup

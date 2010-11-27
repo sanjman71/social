@@ -38,6 +38,9 @@
       = link_to('Accounts', accounts_path, :class => 'header link')
       %span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       = link_to('Logout', logout_path, :class => 'header link')
+      %br
+      = simple_form_for User.new, :url => '/' do |f|
+        = f.submit 'Get more bucks', :id => 'add_bucks', 'data-url' => add_bucks_user_path(current_user, 1), 'data-method' => 'put', :class => 'bucks'
     - else
       -#%span{:class => 'vertical bar'}== &nbsp;|&nbsp;
       -#= link_to('Login', login_path, :class => 'header link', :rel => 'nofollow')

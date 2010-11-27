@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:edit, :show, :update]
+  before_filter :find_user, :only => [:become, :bucks, :edit, :show, :update]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
   privilege_required 'admin', :only => [:become]
-  privilege_required 'manage users', :only => [:edit, :update], :on => :user
+  privilege_required 'manage users', :only => [:bucks, :edit, :update], :on => :user
 
   # GET /users
   # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_user_ids=1,5,3
@@ -56,7 +56,7 @@ class UsersController < ApplicationController
     else
       # subtract points and add growl message
       @points = @viewer.subtract_points_for_viewing_profile(@user)
-      flash.now[:growls] = [{:message => I18n.t("game.view_profile.growl", :points => @points), :timeout => 2000}]
+      flash.now[:growls] = [{:message => I18n.t("currency.view_profile.growl", :points => @points), :timeout => 2000}]
     end
   end
 
@@ -78,11 +78,25 @@ class UsersController < ApplicationController
   end
 
   # GET /users/1/become
+  # note: admin privileges required
   def become
-    @user = User.find(params[:id])
+    # @user initialized in before filter
     sign_in(:user, @user)
     flash[:notice] = "You are now logged in as #{@user.handle}"
     redirect_back_to(root_path)
+  end
+
+  # PUT /users/1/bucks/:points
+  def bucks
+    # @user initialized in before filter
+    @points = params[:points].to_i
+    @user.add_points(@points)
+    @growls = [{:message => I18n.t("currency.add_bucks.growl", :points => @points), :timeout => 2000}]
+    respond_to do |format|
+      format.json do
+        render :json => Hash[:points => @user.points, :growls => @growls].to_json
+      end
+    end
   end
 
   protected
