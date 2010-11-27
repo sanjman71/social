@@ -60,11 +60,11 @@ class Locality
               object = state.cities.find_by_name(geoloc.city)
             else
               # its a zip - find zip from state
-              object = state.zips.find_by_name(geoloc.zip)
+              object = state.zipcodes.find_by_name(geoloc.zip)
             end
           else
             # google zip really means a zip - find zip from state
-            object = state.zips.find_by_name(geoloc.zip)
+            object = state.zipcodes.find_by_name(geoloc.zip)
           end
         end
         
@@ -86,7 +86,7 @@ class Locality
     when 'City'
       s       = "#{name} #{state.name}"
       geoloc  = geocode(s)
-    when 'Zip'
+    when 'Zipcode'
       s       = "#{state.name} #{name}"
       geoloc  = geocode(s)
     else
@@ -166,8 +166,8 @@ class Locality
     case klass.to_s.downcase
     when 'city'
       facet_string  = :city_id
-    when 'zip'
-      facet_string  = :zip_id
+    when 'zip', 'zipcode'
+      facet_string  = :zipcode_id
     when 'neighborhood'
       facet_string  = :neighborhood_ids
     else

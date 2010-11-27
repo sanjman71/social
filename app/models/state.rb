@@ -3,7 +3,7 @@ class State < ActiveRecord::Base
   validates_uniqueness_of     :name
   belongs_to                  :country
   has_many                    :cities
-  has_many                    :zips
+  has_many                    :zipcodes
   has_many                    :locations
 
   include NameParam

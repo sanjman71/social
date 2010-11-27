@@ -52,7 +52,7 @@ Factory.define :city do |o|
   o.name        "City Name"
 end
 
-Factory.define :zip do |o|
+Factory.define :zipcode do |o|
   o.name        "60654"
   o.state       { |o| Factory(:state) }
 end
@@ -86,7 +86,7 @@ Factory.define :location do |o|
   o.country   { |o| Factory(:country) }
   o.state     { |o| Factory(:state) }
   o.city      { |o| Factory(:city) }
-  o.zip       { |o| Factory(:zip) }
+  o.zipcode   { |o| Factory(:zipcode) }
 end
 
 Factory.define :facebook_checkin, :class => :Checkin do |o|

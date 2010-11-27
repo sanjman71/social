@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ZipTest < ActiveSupport::TestCase
+class ZipcodeTest < ActiveSupport::TestCase
 
   should belong_to :state
   should belong_to :timezone
@@ -15,7 +15,7 @@ class ZipTest < ActiveSupport::TestCase
   context "zip" do
     context "valid zip 60654" do
       setup do
-        @zip = Zip.create(:name => "60654", :state => @il)
+        @zip = Zipcode.create(:name => "60654", :state => @il)
         assert @zip.valid?
       end
 
@@ -29,7 +29,7 @@ class ZipTest < ActiveSupport::TestCase
     end
     
     should "not create with invalid zip" do
-      @zip = Zip.create(:name => "1111", :state => @il)
+      @zip = Zipcode.create(:name => "1111", :state => @il)
       assert_false @zip.valid?
     end
   end

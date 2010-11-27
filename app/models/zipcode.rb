@@ -1,4 +1,4 @@
-class Zip < ActiveRecord::Base
+class Zipcode < ActiveRecord::Base
   validates                   :name, :presence => true, :uniqueness => {:scope => :state_id},
                               :format => {:with => /\d{5,5}/}
   validates                   :state_id, :presence => true

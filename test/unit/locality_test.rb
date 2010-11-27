@@ -157,7 +157,7 @@ class LocalityTest < ActiveSupport::TestCase
     context "60654" do
       setup do
         @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @zip      = Factory(:zip, :name => "60654", :state => @il)
+        @zip      = Factory(:zipcode, :name => "60654", :state => @il)
         @object   = Locality.resolve("60654")
       end
 
@@ -169,7 +169,7 @@ class LocalityTest < ActiveSupport::TestCase
     context "28212" do
       setup do
         @nc       = Factory(:state, :name => "North Carolina", :code => "NC", :country => @us)
-        @zip      = Factory(:zip, :name => "28212", :state => @nc)
+        @zip      = Factory(:zipcode, :name => "28212", :state => @nc)
         @object   = Locality.resolve("28212")
       end
 
@@ -184,7 +184,7 @@ class LocalityTest < ActiveSupport::TestCase
       @il           = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
       @chicago      = Factory(:city, :name => "Chicago", :state => @il)
       @heights      = Factory(:city, :name => "Chicago Heights", :state => @il)
-      @z60610       = Factory(:zip, :name => "60610", :state => @il)
+      @z60610       = Factory(:zipcode, :name => "60610", :state => @il)
       @river_north  = Factory(:neighborhood, :name => "River North", :city => @chicago)
     end
     

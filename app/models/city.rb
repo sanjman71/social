@@ -110,8 +110,8 @@ class City < ActiveRecord::Base
   # set city zips using sphinx facets 
   def set_zips(limit=nil)
     limit       ||= ::Search.max_matches
-    facets      = Location.facets(:with => ::Search.attributes(self), :facets => ["zip_id"], :limit => limit)
-    search_zips = ::Search.load_from_facets(facets, Zip)
+    facets      = Location.facets(:with => ::Search.attributes(self), :facets => ["zipcode_id"], :limit => limit)
+    search_zips = ::Search.load_from_facets(facets, Zipcode)
 
     # build list of zips to add and delete
 

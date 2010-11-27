@@ -246,7 +246,7 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
     t.string   "street_address"
     t.integer  "city_id"
     t.integer  "state_id"
-    t.integer  "zip_id"
+    t.integer  "zipcode_id"
     t.integer  "country_id"
     t.integer  "timezone_id"
     t.integer  "checkins_count",                                                      :default => 0
@@ -365,7 +365,7 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
     t.decimal "lng",                           :precision => 15, :scale => 10
     t.integer "timezone_id"
     t.integer "cities_count",                                                  :default => 0
-    t.integer "zips_count",                                                    :default => 0
+    t.integer "zipcodes_count",                                                :default => 0
     t.integer "locations_count",                                               :default => 0
     t.integer "events",                                                        :default => 0
   end
@@ -464,7 +464,7 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
   add_index "users", ["rpx"], :name => "index_users_on_rpx"
   add_index "users", ["state"], :name => "index_users_on_state"
 
-  create_table "zips", :force => true do |t|
+  create_table "zipcodes", :force => true do |t|
     t.string  "name",            :limit => 10
     t.integer "state_id"
     t.integer "country_id"
@@ -474,8 +474,8 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
     t.integer "locations_count",                                               :default => 0
   end
 
-  add_index "zips", ["state_id", "locations_count"], :name => "index_zips_on_state_id_and_locations_count"
-  add_index "zips", ["state_id"], :name => "index_zips_on_state_id"
-  add_index "zips", ["timezone_id"], :name => "index_zips_on_timezone_id"
+  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zipcodes_on_state_id_and_locations_count"
+  add_index "zipcodes", ["state_id"], :name => "index_zipcodes_on_state_id"
+  add_index "zipcodes", ["timezone_id"], :name => "index_zipcodes_on_timezone_id"
 
 end

@@ -111,9 +111,9 @@ class Query
     
     Array(models).each do |model|
       case model.to_s
-      when "City", "Zip", "State", "Country"
+      when "City", "Zipcode", "State", "Country"
         # eager load associations
-        eager_load.push(:state) if ["City", "Zip"].include?(model.to_s)
+        eager_load.push(:state) if ["City", "Zipcode"].include?(model.to_s)
         # e.g. City facet key is :city_id; remove invalid keys
         objects.push(model.find(facets[class_to_attribute_symbol(model)].keys.zero_compact!, :include => eager_load))
       when "Neighborhood", "EventCategory"
@@ -145,7 +145,7 @@ class Query
   #  - e.g. City to :city_id, Neighborhood to :neigborhoods_id
   def self.class_to_attribute_symbol(model)
     case model.to_s
-    when "City", "Zip", "State", "Country"
+    when "City", "Zipcode", "State", "Country"
       model.to_s.foreign_key.to_sym
     when "Neighborhood", "Tag", "EventCategory"
       model.to_s.foreign_key.pluralize.to_sym

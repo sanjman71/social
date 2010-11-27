@@ -5,7 +5,7 @@ class LocationTest < ActiveSupport::TestCase
   should belong_to :country
   should belong_to :state
   should belong_to :city
-  should belong_to :zip
+  should belong_to :zipcode
   should belong_to :timezone
   should have_many :neighborhoods
   should have_many :email_addresses
@@ -19,7 +19,7 @@ class LocationTest < ActiveSupport::TestCase
     @on           = Factory(:ontario, :country => @canada)
     @chicago      = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
     @toronto      = Factory(:toronto, :state => @on)
-    @zip          = Factory(:zip, :name => "60654", :state => @il)
+    @zip          = Factory(:zipcode, :name => "60654", :state => @il)
     @river_north  = Factory(:neighborhood, :name => "River North", :city => @chicago)
   end
 
@@ -200,7 +200,7 @@ class LocationTest < ActiveSupport::TestCase
 
   fast_context "location with a zip" do
     setup do
-      @location = Location.create(:name => "Home", :zip => @zip, :country => @us)
+      @location = Location.create(:name => "Home", :zipcode => @zip, :country => @us)
       assert @location.valid?
       @zip.reload
       @il.reload
@@ -219,9 +219,9 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal 1, @us.locations_count
     end
     
-    fast_context "remove zip" do
+    fast_context "remove zipcode" do
       setup do
-        @location.zip = nil
+        @location.zipcode = nil
         @location.save
         @zip.reload
       end
@@ -237,8 +237,8 @@ class LocationTest < ActiveSupport::TestCase
     
     fast_context "change zip" do
       setup do
-        @zip2 = Factory(:zip, :name => "60610", :state => @il)
-        @location.zip = @zip2
+        @zip2 = Factory(:zipcode, :name => "60610", :state => @il)
+        @location.zipcode = @zip2
         @location.save
         @zip2.reload
         @zip.reload

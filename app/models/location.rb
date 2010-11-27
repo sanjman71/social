@@ -7,7 +7,7 @@ class Location < ActiveRecord::Base
   belongs_to              :country, :counter_cache => :locations_count
   belongs_to              :state, :counter_cache => :locations_count
   belongs_to              :city, :counter_cache => :locations_count
-  belongs_to              :zip, :counter_cache => :locations_count
+  belongs_to              :zipcode, :counter_cache => :locations_count
   belongs_to              :timezone
   has_many                :location_neighborhoods, :dependent => :destroy
   has_many                :neighborhoods, :through => :location_neighborhoods, :after_add => :after_add_neighborhood, :before_remove => :before_remove_neighborhood
@@ -42,7 +42,7 @@ class Location < ActiveRecord::Base
   attr_accessor           :matchby, :matchvalue
 
   # make sure only accessible attributes are written to from forms etc.
-  attr_accessible         :name, :country, :country_id, :state, :state_id, :city, :city_id, :zip, :zip_id,
+  attr_accessible         :name, :country, :country_id, :state, :state_id, :city, :city_id, :zipcode, :zipcode_id,
                           :city_state, :street_address, :address, :lat, :lng, :timezone, :timezone_id,
                           :source, :email_addresses_attributes, :phone_numbers_attributes
 
@@ -80,7 +80,7 @@ class Location < ActiveRecord::Base
     has country_id, :type => :integer, :as => :country_id
     has state_id, :type => :integer, :as => :state_id
     has city_id, :type => :integer, :as => :city_id
-    has zip_id, :type => :integer, :as => :zip_id
+    has zipcode_id, :type => :integer, :as => :zipcode_id
     has neighborhoods(:id), :as => :neighborhood_ids
     # phone numbers
     indexes phone_numbers(:address), :as => :phone
@@ -128,9 +128,9 @@ class Location < ActiveRecord::Base
     [street_address, city.try(:name)].delete_if(&:blank?).join(', ')
   end
 
-  # return collection of location's country, state, city, zip, neighborhoods
+  # return collection of location's country, state, city, zipcode, neighborhoods
   def localities
-    [country, state, city, zip].compact + neighborhoods.compact
+    [country, state, city, zipcode].compact + neighborhoods.compact
   end
 
   # returns true iff the location has a latitude and longitude 
@@ -196,7 +196,7 @@ class Location < ActiveRecord::Base
     force = options.has_key?(:force) ? options[:force] : false
     return true if self.lat and self.lng and !force
     # use street_address, city, state, zip unless any are empty
-    geocode_address = [street_address, city ? city.name : nil, state ? state.name : nil, zip ? zip.name : nil].compact.reject(&:blank?).join(" ")
+    geocode_address = [street_address, city ? city.name : nil, state ? state.name : nil, zipcode ? zipcode.name : nil].compact.reject(&:blank?).join(" ")
     # multi-geocoder geocode does not throw an exception on failure
     geo = Geokit::Geocoders::MultiGeocoder.geocode(geocode_address)
     return false unless geo.success

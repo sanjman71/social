@@ -25,7 +25,7 @@ class CreateSocial < ActiveRecord::Migration
       t.decimal     :lng,                   :precision => 15, :scale => 10
       t.references  :timezone
       t.integer     :cities_count,          :default => 0   # counter cache
-      t.integer     :zips_count,            :default => 0   # counter cache
+      t.integer     :zipcodes_count,        :default => 0   # counter cache
       t.integer     :locations_count,       :default => 0   # counter cache
       t.integer     :events,                :default => 0
     end
@@ -52,7 +52,7 @@ class CreateSocial < ActiveRecord::Migration
     add_index :cities, [:state_id, :locations_count], :name => "index_cities_on_state_and_locations"
     add_index :cities, [:state_id, :name], :name => "index_cities_on_state_and_name"
     
-    create_table :zips do |t|
+    create_table :zipcodes do |t|
       t.string      :name,                  :limit => 10, :default => nil
       t.references  :state
       t.references  :country
@@ -62,9 +62,9 @@ class CreateSocial < ActiveRecord::Migration
       t.integer     :locations_count,       :default => 0   # counter cache
     end
 
-    add_index :zips, :state_id
-    add_index :zips, :timezone_id
-    add_index :zips, [:state_id, :locations_count]
+    add_index :zipcodes, :state_id
+    add_index :zipcodes, :timezone_id
+    add_index :zipcodes, [:state_id, :locations_count]
 
     create_table :neighborhoods do |t|
       t.string      :name,                  :limit => 50, :default => nil
@@ -91,7 +91,7 @@ class CreateSocial < ActiveRecord::Migration
       t.string      :street_address,        :default => nil
       t.references  :city
       t.references  :state
-      t.references  :zip
+      t.references  :zipcode
       t.references  :country
       t.references  :timezone
       t.integer     :checkins_count,        :default => 0   # counter cache
@@ -197,7 +197,7 @@ class CreateSocial < ActiveRecord::Migration
     drop_table  :countries
     drop_table  :states
     drop_table  :cities
-    drop_table  :zips
+    drop_table  :zipcodes
     drop_table  :neighborhoods
     drop_table  :location_neighborhoods
     drop_table  :locations
