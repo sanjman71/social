@@ -16,17 +16,9 @@
 
 set :environment, :production
 set :path, '/usr/apps/outlately/current'
-set :output, '/usr/apps/outlately/current/log/cron.log'
 
 every :reboot do
   command "monit"
-end
-
-every 5.minutes do
-  # ping
-  command "curl http://outlate.ly/ping > /dev/null"
-  # top
-  # command "curl http://outlate.ly/jobs/top?log=1&token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
 end
 
 every 15.minutes do
@@ -37,11 +29,12 @@ end
 every 1.hour do
   # rebuild sphinx
   command "curl http://outlate.ly/jobs/sphinx?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
+  # rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
 end
 
 every 1.hour do
   # backup database
-  command "curl http://outlate.ly/jobs/backup?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
+  rake "db:backup DB=outlately_production BACKUP_DIR=/usr/apps/outlately/shared/backups"
 end
 
 every 1.day, :at => '9:00 am' do

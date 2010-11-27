@@ -58,18 +58,23 @@ class UserSearchTest < ActiveSupport::TestCase
     [Checkin, CheckinLog, Location, Country, State, City, User].each { |o| o.delete_all }
   end
 
-  def setup_checkins
+  def setup_checkins(checkin_at = nil)
     # create checkins
     @chi_checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                           :location => @chicago_sbux))
+                                                                           :location => @chicago_sbux,
+                                                                           :checkin_at => checkin_at || Time.zone.now))
     @chi_checkin2 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                             :location => @chicago_coffee))
+                                                                             :location => @chicago_coffee,
+                                                                             :checkin_at => checkin_at || Time.zone.now))
     @chi_checkin3 = @chicago_male2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                           :location => @chicago_sbux))
+                                                                           :location => @chicago_sbux,
+                                                                           :checkin_at => checkin_at || Time.zone.now))
     @nyc_checkin1 = @newyork_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                             :location => @newyork_sbux))
+                                                                             :location => @newyork_sbux,
+                                                                             :checkin_at => checkin_at || Time.zone.now))
     @chi_checkin4 = @chicago_male1.checkins.create!(Factory.attributes_for(:facebook_checkin,
-                                                                           :location => @chicago_pizza))
+                                                                           :location => @chicago_pizza,
+                                                                           :checkin_at => checkin_at || Time.zone.now))
     # create locationships based on checkins
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     @chicago_female1.locationships.create!(:location => @chicago_coffee, :my_checkins => 1)
@@ -213,22 +218,47 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
-  context "search_now_checkins filter" do
+  context "search_today_checkins filter" do
     setup do
-      setup_checkins
+      setup_checkins(3.days.ago)
     end
-    
-    should "find 1 user marked as available now" do
-      # mark 1 user as available now, all their checkins will be marked as well
-      @chicago_female1.availability_attributes = {:now => 1}
-      @chicago_female1.save
+
+    should "find 1 checkin in the past 24 hours" do
+      # mark checkin timestamp within the last day
+      @chi_checkin2.update_attribute(:checkin_at, 23.hours.ago)
       ThinkingSphinx::Test.run do
-        @checkins = @chicago_male1.search_now_checkins
+        @checkins = @chicago_male1.search_today_checkins
         assert_equal 1, @checkins.size
         assert_equal [@chi_checkin2], @checkins.collect{ |o| o }
       end
     end
+
+    should "find 0 checkins in the past 24 hours" do
+      # mark checkin timestamp at just more than 1 day ago
+      @chi_checkin2.update_attribute(:checkin_at, 25.hours.ago)
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_today_checkins
+        assert_equal 0, @checkins.size
+      end
+    end
   end
+
+  # context "search_now_checkins filter" do
+  #   setup do
+  #     setup_checkins
+  #   end
+  #   
+  #   should "find 1 user marked as available now" do
+  #     # mark 1 user as available now, all their checkins will be marked as well
+  #     @chicago_female1.availability_attributes = {:now => 1}
+  #     @chicago_female1.save
+  #     ThinkingSphinx::Test.run do
+  #       @checkins = @chicago_male1.search_now_checkins
+  #       assert_equal 1, @checkins.size
+  #       assert_equal [@chi_checkin2], @checkins.collect{ |o| o }
+  #     end
+  #   end
+  # end
 
   context "search_daters_by_checkins filter" do
     setup do

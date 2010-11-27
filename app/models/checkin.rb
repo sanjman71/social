@@ -19,6 +19,7 @@ class Checkin < ActiveRecord::Base
 
   define_index do
     has :id, :as => :checkin_ids
+    has :checkin_at, :as => :checkin_at
     # checkin user
     has user(:id), :as => :user_ids
     indexes user(:handle), :as => :handle
@@ -35,7 +36,7 @@ class Checkin < ActiveRecord::Base
     # use delayed job for delta index
     set_property :delta => :delayed
   end
-  
+
   # user checkin was added
   def event_checkin_added
     # log data

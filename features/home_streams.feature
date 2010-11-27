@@ -16,12 +16,12 @@ Feature: Home Streams
     And I should see "chicago_coffee_guy" within "div.stream#outlately"
 
   @no-txn
-  Scenario: User sees users marked as available now in Today stream
+  Scenario: User sees checkins in the past day in the Today stream
     Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
     And a user "chicago_coffee_gal" in "Chicago, IL" who is a "straight" "female"
     And a user "chicago_coffee_guy" in "Chicago, IL" who is a "straight" "male"
-    And "chicago_coffee_gal" checked in to "Chicago Starbucks" in "Chicago"
-    And "chicago_coffee_guy" checked in to "Chicago Lavazza" in "Chicago"
+    And "chicago_coffee_gal" checked in to "Chicago Starbucks" in "Chicago" at "10 hours ago"
+    And "chicago_coffee_guy" checked in to "Chicago Lavazza" in "Chicago" at "3 days ago"
     And "chicago_coffee_gal" marked themselves as available now
     And I am logged in as "chicago_guy"
     When sphinx is indexed

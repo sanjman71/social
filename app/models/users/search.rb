@@ -64,14 +64,13 @@ module Users::Search
     search_checkins(options)
   end
 
-  def search_now_checkins(options={})
+  def search_today_checkins(options={})
     add_geo_params(options)
-    options.update(:with_now => 1)
+    # search based on checkin timestamp, which sphinx stores in utc format
+    options.update(:with_checkin_at => (Time.zone.now-1.day).to_i..(Time.zone.now+1.minute).utc.to_i)
     # include checkin users marked as available now
     search_checkins(options)
   end
-
-  alias :search_today_checkins :search_now_checkins
 
   # search checkins
   def search_checkins(options={})
@@ -246,6 +245,9 @@ module Users::Search
     case klass.to_s
     when 'Checkin'
       # parse checkin specific options
+      if options[:with_checkin_at] # e.g. 1290826420..1290829246 (timestamp converted to ints)
+        with.update(:checkin_at => options[:with_checkin_at])
+      end
       if options[:with_checkin_ids] # e.g. [1,3,5]
         with.update(:checkin_ids => options[:with_checkin_ids])
       end
