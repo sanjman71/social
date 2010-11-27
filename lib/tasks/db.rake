@@ -37,8 +37,8 @@ namespace :db do
     dir         = Dir.new(backup_dir)
     max_backups = ENV["MAX"] ? ENV["MAX"].to_i : 25
     # find all backup files, exclude special file '.'
-    all_backups = dir.entries.select{ |s| !s.match(/^\./) }[2..-1].sort.reverse
-
+    all_backups = dir.entries.select{ |s| !s.match(/^\./) }[2..-1].try(:sort).try(:reverse) || []
+    
     unwanted_backups = all_backups[max_backups..-1] || []
     for unwanted_backup in unwanted_backups
       FileUtils.rm_rf(File.join(backup_dir, unwanted_backup))
