@@ -2,11 +2,13 @@ $.fn.init_live_search_places = function() {
   $("a#show_live_search_places_form").live('click', function() {
     $(".live_search_places_form").show();
     $(this).hide();
+    return false;
   })
 
   $("a#hide_live_search_places_form").live('click', function() {
     $(".live_search_places_form").hide();
     $("a#show_live_search_places_form").show();
+    return false;
   })
 
   $("input#live_search_places").keyup(function () {
