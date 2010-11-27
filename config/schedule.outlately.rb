@@ -18,6 +18,10 @@ set :environment, :production
 set :path, '/usr/apps/outlately/current'
 set :output, '/usr/apps/outlately/current/log/cron.log'
 
+every :reboot do
+  command "monit"
+end
+
 every 5.minutes do
   # ping
   command "curl http://outlate.ly/ping > /dev/null"
