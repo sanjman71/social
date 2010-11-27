@@ -16,7 +16,7 @@ class HomeController < ApplicationController
                                           :geo_distance => 0.0..@radius.miles.meters.value,
                                           :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
                                           :group => :user)
-      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others', 'Outlately', 'Today']
+      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others', 'Outlately']
       @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']
       # add user city to list of cities
       if current_user.city
