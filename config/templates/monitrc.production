@@ -23,5 +23,8 @@ check system localhost
 check process delayed_job
   with pidfile "/usr/apps/outlately/shared/pids/delayed_job.pid"
 
-check host 127.0.0.1 with address outlate.ly every 4 cycles
-  if failed port 80 proto http then alert
+check host outlate.ly with address outlate.ly every 4 cycles
+  if failed url http://outlate.ly/ping?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 then alert
+
+check process sphinx
+  with pidfile "/usr/apps/outlately/current/log/searchd.production.pid"
