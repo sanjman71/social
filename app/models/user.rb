@@ -82,6 +82,7 @@ class User < ActiveRecord::Base
   after_create              :manage_user_roles
   after_create              :send_signup_email
   after_save                :after_add_facebook_id
+  after_save                :after_change_points
 
   attr_accessor             :matchby, :matchvalue
 
@@ -395,6 +396,8 @@ class User < ActiveRecord::Base
       options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.linked_account'))
     when :need_checkins
       options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.need_checkins'))
+    when :need_bucks
+      options.update(:level => 'notice', :subject => 'bucks', :message => I18n.t('alert.need_bucks'))
     end
 
     User.transaction do
@@ -497,5 +500,12 @@ class User < ActiveRecord::Base
     # add points for checkin
     self.add_points_for_checkin(checkin)
   end
-  
+
+  def after_change_points
+    if changes[:points] and changes[:points][0] > 0 and changes[:points][1] <= 0
+      # points went from positive to negative
+      send_alert(:id => :need_bucks)
+    end
+  end
+
 end

@@ -10,4 +10,3 @@ Feature: Add Bucks
     When I go to the home page
     And I press "Get more bucks"
     Then I should see "100" within "span#user_points"
-    
