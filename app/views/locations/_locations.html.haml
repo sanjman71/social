@@ -1,0 +1,5 @@
+.span-24.last.location
+  - locations.each do |location|
+    .span-24.last.location
+      = render(:partial => 'locations/location', :locals => {:location => location, :tag_link => tag_link, :edit_link => edit_link})
+  

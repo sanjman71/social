@@ -1,10 +1,2 @@
-@locations.each do |location|
-  # add location to stream; start by hiding new object, then show with slidedown effect
-  page[".stream"].prepend(render(:partial => 'home/location', :locals => {:location => location, :visible => 'hide'}))
-  page["#location_#{location.id}"].slideDown(2000).removeClass('hide')
-end
-
-# add new location and update map
-page["#map-side-bar"].append(render(:partial => 'locations/locations_map',
-                                    :locals => {:locations => @locations, :category => 'async'}))
-page['#map'].jMapping('update');
+page["#locations"].append(render(:partial => 'locations/locations',
+                                 :locals => {:locations => @locations, :tag_link => true, :edit_link => true}))

@@ -204,6 +204,11 @@ class Location < ActiveRecord::Base
     self.save
   end
 
+  # map lat, lng to street, city, state, zip
+  def reverse_geocode
+    geoloc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode([lat, lng])
+  end
+
   def hotness
     @hotness ||= 5*locationships.my_checkins.count + 2*locationships.todo_checkins.count
   end

@@ -67,6 +67,7 @@ div.mat a.small                                   { font-size: 0.9em; }
 h1.title                                          { font-size: 1.5em; }
 
 /* simple form styles */
+
 .simple_form label                                { float: left; width: 100px; text-align: right;
                                                     margin: 15px 10px; }
 .simple_form select                               { margin: 15px 10px; }
@@ -78,6 +79,8 @@ h1.title                                          { font-size: 1.5em; }
 
 .simple_form input.bucks                          { margin: 10px 0px; color: #fff; background: #111; }
 .simple_form input.bucks.disabled                 { opacity: 0.3; }
+
+#select_city .simple_form label                   { float: none; }
 
 .live_search_places_form                          { margin-bottom: 20px; }
 .live_search_places_form label                    {}
@@ -154,9 +157,10 @@ div.location                                      { margin-bottom: 10px; }
 div.location .name                                { font-size: 1.0em; color: #111; }
 div.location .tags                                { font-size: 0.9em; color: #00B; padding-right: 5px; }
 div.location .add_tags a                          { font-size: 0.9em; color: #005500; }
-div.location .address                             { font-size: 0.9em; }
-div.location .address .street                     { font-size: 0.9em; }
-div.location .address .latlng                     { font-size: 0.9em; color: #999; }
+
+div.location .street                              { font-size: 0.9em; }
+div.location .latlng                              { font-size: 0.9em; color: #999; }
+
 div.location .sources                             { font-size: 0.9em; color: #999 }
 div.location .planned_at                          { font-size: 0.9em; }
 

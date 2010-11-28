@@ -5,6 +5,10 @@ class LocationsController < ApplicationController
 
   privilege_required 'admin', :only => [:edit]
 
+  def page_size
+    5
+  end
+
   # GET /locations
   # GET /locations/geo:1.23..-23.89?limit=5&without_location_ids=1,5,3
   # GET /locations/geo:1.23..-23.89/radius:10?limit=5&without_location_ids=1,5,3
@@ -13,8 +17,9 @@ class LocationsController < ApplicationController
   def index
     # check common parameters
     @without_location_ids = params[:without_location_ids] ? params[:without_location_ids].split(',').map(&:to_i).uniq.sort : nil
-    @limit                = params[:limit] ? params[:limit].to_i : 5
-    @options              = Hash[:without_location_id => @without_location_ids, :limit => @limit,
+    @page                 = params[:page] ? params[:page].to_i : 1
+    @limit                = params[:limit] ? params[:limit].to_i : page_size
+    @options              = Hash[:without_location_id => @without_location_ids, :page => @page, :limit => @limit,
                                  :klass => Location]
     case
     when params[:geo]
@@ -23,15 +28,19 @@ class LocationsController < ApplicationController
       @options.update(:geo_origin => [@lat.radians, @lng.radians],
                       :geo_distance => 0.0..@radius.miles.meters.value)
       @locations    = current_user.search_locations(@options)
-    when params['city']
+    when params[:city]
       @city         = find_city
       @radius       = find_radius
       @options.update(:geo_origin => [@city.lat.radians, @city.lng.radians],
                       :geo_distance => 0.0..@radius.miles.meters.value)
       @locations    = current_user.search_locations(@options)
     else
-      # default
-      @locations    = Location.all
+      # default to all locations, most recent first
+      @locations    = Location.order('id desc').paginate(:per_page => @limit, :page => @page)
+      # find location counts by city
+      @city_groups  = Location.group("city_id").count
+      @cities       = City.find_all_by_id(@city_groups.collect{ |city_id, count| city_id }.compact,
+                                          :select => 'id, name').sort_by(&:name)
     end
 
     respond_to do |format|

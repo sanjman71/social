@@ -1,11 +1,26 @@
 - title('Locations')
+- javascript('locations')
 
 - content_for :mat do
   %h2 Locations
+  %h4= pluralize(Location.count, 'location') + (@cities.blank? ? '' : " across " + pluralize(@cities.size, 'city'))
 
 %hr.space
+
+- if @city.present?
+  .span-23.prepend-1.last#city
+    %h4 #{pluralize(@radius, 'mile')} around #{@city.city_state} - #{link_to('Change city', locations_path, :class => 'admin')}
+
+- if @cities.present?
+  .span-23.prepend-1.last#select_city
+    = simple_form_for Location.new, :url => '/', :class => 'foo', :input_html => {:class => 'foo'} do |f|
+      = f.input :city, :collection => @cities.collect{ |o| [o.name, "/locations/city:#{o.name.parameterize}"]}, :prompt => 'Select a city', :input_html => {:id => 'select_city'}
 
 .span-24.last#locations
   - @locations.each do |location|
     .span-24.last.location
       = render(:partial => 'locations/location', :locals => {:location => location, :tag_link => true, :edit_link => true})
+
+.span-23.prepend-1#more{:style => 'margin-top: 20px;'}
+  = link_to 'More', '#', :id => 'more_locations', :class => 'admin', 'data-url' => request.path, 'data-page' => @page
+  %span#progress{:style => 'display: none;'} Searching ...

@@ -103,9 +103,38 @@ $.fn.init_add_location_tags = function() {
   }
 }
 
+$.fn.init_change_city = function() {
+  $("select#select_city").change(function() {
+    window.location = this.value;
+    return false;
+  })
+}
+
+$.fn.init_more_locations = function() {
+  $("a#more_locations").live('click', function() {
+    a     = $(this);
+    // build request params
+    url   = $(this).attr('data-url');
+    page  = parseInt($(this).attr('data-page'));
+    // show progress
+    $(a).hide();
+    $(a).next("#progress").show();
+    $.getScript(url+"?page="+(page+1), function() {
+      // show more link
+      $(a).show();
+      $(a).next("#progress").hide();
+      // increment page number
+      $(a).attr('data-page', page+1);
+    });
+    return false;
+  })
+}
+
 $(document).ready(function() {
   $(document).init_search_foursquare();
   $(document).init_add_location_tags();
+  $(document).init_more_locations();
+  $(document).init_change_city();
   
   try {
     // check growls

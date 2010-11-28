@@ -1,12 +1,20 @@
 - tag_link  ||= false
 - edit_link ||= false
 
-.span-10.prepend-1.name
+.span-10.prepend-1
   - if edit_link
-    = link_to location.name, edit_location_path(location), :class => :admin
+    %span.name= link_to location.name, edit_location_path(location), :class => :admin
   - else
-    = location.name
+    %span.name= location.name
   %br
+  - if location.street_city.present?
+    %span.street= location.street_city
+    %br
+  - if has_role?('admin')
+    %span.latlng== #{location.lat}, #{location.lng}
+    %br
+
+.span-9.last
   - tag_list = location.tag_list
   - if tag_list.any? or tag_link
     - if tag_list.any?
@@ -18,11 +26,6 @@
     - location.location_sources.each do |ls|
       %span.sources= ls.source_type + ":" + ls.source_id
       %br
-.span-9.last.address
-  %span.street= location.street_city
-  %br
-  - if has_role?('admin')
-    %span.latlng== #{location.lat}, #{location.lng}
 
 - if false
   .span-7.last.tags
