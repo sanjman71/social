@@ -128,6 +128,10 @@ class Location < ActiveRecord::Base
     [street_address, city.try(:name)].delete_if(&:blank?).join(', ')
   end
 
+  def street_city_state
+    [street_address, city.try(:name), state.try(:code)].delete_if(&:blank?).join(', ')
+  end
+
   # return collection of location's country, state, city, zipcode, neighborhoods
   def localities
     [country, state, city, zipcode].compact + neighborhoods.compact
@@ -186,6 +190,10 @@ class Location < ActiveRecord::Base
     self.refer_to > 0
   end
   
+  def geocoded?
+    lat.present? and lng.present?
+  end
+
   def geocode_latlng!(options={})
     b = geocode_latlng(options)
     raise Exception, "geocode failed" if b == false
@@ -204,9 +212,22 @@ class Location < ActiveRecord::Base
     self.save
   end
 
-  # map lat, lng to street, city, state, zip
-  def reverse_geocode
+  # map coordinates to street, city, state, zipcode
+  def reverse_geocode(force = false)
+    return false if !geocoded?
+    return false if !force and (street_address.present? or city.present? or state.present? or zipcode.present?)
     geoloc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode([lat, lng])
+    object = Locality.resolve("#{geoloc.city}, #{geoloc.state}", :precision => :city, :create => true)
+    raise Exception, "error mapping #{geoloc.city}, #{geoloc.state} to a valid city" if object.blank?
+    self.street_address = geoloc.street_address
+    self.city           = object
+    self.state          = object.state
+    b = self.save
+    self.class.log("[location:#{self.id}] #{self.name} reverse geocoded to #{street_city_state}") if b
+    b
+  rescue Exception => e
+    self.class.log("[location:#{self.id}] #{self.name} reverse geocoding error: #{e.message}")
+    false
   end
 
   def hotness

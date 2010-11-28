@@ -80,7 +80,7 @@ h1.title                                          { font-size: 1.5em; }
 .simple_form input.bucks                          { margin: 10px 0px; color: #fff; background: #111; }
 .simple_form input.bucks.disabled                 { opacity: 0.3; }
 
-#select_city .simple_form label                   { float: none; }
+#select_city .simple_form label                   { float: none; margin: 15px 0px;}
 
 .live_search_places_form                          { margin-bottom: 20px; }
 .live_search_places_form label                    {}

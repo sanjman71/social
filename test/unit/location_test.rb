@@ -198,7 +198,7 @@ class LocationTest < ActiveSupport::TestCase
     end
   end
 
-  fast_context "location with a zip" do
+  fast_context "location with a zipcode" do
     setup do
       @location = Location.create(:name => "Home", :zipcode => @zip, :country => @us)
       assert @location.valid?
@@ -383,6 +383,29 @@ class LocationTest < ActiveSupport::TestCase
     assert_equal -87.62948513031006, @location.lng
     assert_equal ['foursquare'], @location.location_sources.collect(&:source_type)
     assert_equal ['44123'], @location.location_sources.collect(&:source_id)
+  end
+
+  context "reverse geocode" do
+    should "ignore if location is not geocoded" do
+      @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel")
+      assert_false @location.reverse_geocode
+    end
+
+    should "ignore if location has a street addresss" do
+      @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
+                                   :street_address => "200 W Grand Ave")
+      assert_false @location.reverse_geocode
+    end
+
+    should "fill in street, city, state, zipcode for a location with a lat, lng" do
+      @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
+      @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
+                                   :lat => 32.707664, :lng => -117.159876)
+      assert @location.reverse_geocode
+      assert_equal "207 5th Ave", @location.reload.street_address
+      assert_equal "San Diego", @location.reload.city.name
+      assert_equal "CA", @location.reload.state.code
+    end
   end
 
   fast_context "location without refer_to" do
