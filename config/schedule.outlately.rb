@@ -18,7 +18,7 @@ set :environment, :production
 set :path, '/usr/apps/outlately/current'
 
 every :reboot do
-  command "/usr/sbin/monit"
+  command "monit" # might require path to be set in crontab
 end
 
 every 15.minutes do
@@ -26,10 +26,9 @@ every 15.minutes do
   command "curl http://outlate.ly/jobs/poll_checkins?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
 end
 
-every 1.hour do
+every 30.minutes do
   # rebuild sphinx
-  command "curl http://outlate.ly/jobs/sphinx?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 > /dev/null"
-  # rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
+  rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
 end
 
 every 1.hour do
