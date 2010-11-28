@@ -242,22 +242,22 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
   add_index "location_sources", ["tagged_at"], :name => "index_location_sources_on_tagged_at"
 
   create_table "locations", :force => true do |t|
-    t.string   "name",                  :limit => 30
-    t.string   "street_address"
+    t.string   "name",                  :limit => 100
+    t.string   "street_address",        :limit => 100
     t.integer  "city_id"
     t.integer  "state_id"
     t.integer  "zipcode_id"
     t.integer  "country_id"
     t.integer  "timezone_id"
-    t.integer  "checkins_count",                                                      :default => 0
-    t.integer  "neighborhoods_count",                                                 :default => 0
-    t.integer  "phone_numbers_count",                                                 :default => 0
-    t.integer  "email_addresses_count",                                               :default => 0
-    t.decimal  "lat",                                 :precision => 15, :scale => 10
-    t.decimal  "lng",                                 :precision => 15, :scale => 10
-    t.integer  "popularity",                                                          :default => 0
-    t.integer  "status",                                                              :default => 0
-    t.integer  "refer_to",                                                            :default => 0
+    t.integer  "checkins_count",                                                       :default => 0
+    t.integer  "neighborhoods_count",                                                  :default => 0
+    t.integer  "phone_numbers_count",                                                  :default => 0
+    t.integer  "email_addresses_count",                                                :default => 0
+    t.decimal  "lat",                                  :precision => 15, :scale => 10
+    t.decimal  "lng",                                  :precision => 15, :scale => 10
+    t.integer  "popularity",                                                           :default => 0
+    t.integer  "status",                                                               :default => 0
+    t.integer  "refer_to",                                                             :default => 0
     t.boolean  "delta"
     t.datetime "urban_mapping_at"
     t.datetime "created_at"

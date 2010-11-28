@@ -87,8 +87,8 @@ class CreateSocial < ActiveRecord::Migration
     add_index :location_neighborhoods, :neighborhood_id, :name => "index_ln_on_neighborhoods"
     
     create_table :locations do |t|
-      t.string      :name,                  :limit => 30
-      t.string      :street_address,        :default => nil
+      t.string      :name,                  :limit => 100
+      t.string      :street_address,        :limit => 100, :default => nil
       t.references  :city
       t.references  :state
       t.references  :zipcode
