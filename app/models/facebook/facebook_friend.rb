@@ -16,7 +16,7 @@ class FacebookFriend
       log("[user:#{user.id}] #{user.handle} importing facebook friends with checkins")
       friends.each do |friend_hash|
         # check friend limit
-        break if user.friends.count >= FRIEND_LIMIT
+        break if user.friends.count >= Friendship.limit
         begin
           friend_name     = friend_hash['name']
           friend_fbid     = friend_hash['id']

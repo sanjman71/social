@@ -6,6 +6,11 @@ class Friendship < ActiveRecord::Base
 
   after_create  :event_friendship_created
 
+  # limit the number of friends
+  def self.limit
+    100
+  end
+  
   # after create filter
   def event_friendship_created
     self.class.log("[user:#{user.id}] #{user.handle} added friend #{friend.handle}:#{friend.id}")

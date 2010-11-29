@@ -40,13 +40,13 @@ class Oauth < ActiveRecord::Base
     case provider
     when 'foursquare'
       # import all checkins, max of 250
-      FoursquareCheckin.delay.async_import_checkins(self.user, :limit => 250)
+      FoursquareCheckin.delay.async_import_checkins(user, :limit => 250)
     when 'facebook'
       # import all checkins, max of 250
-      FacebookCheckin.delay.async_import_checkins(self.user, :limit => 250)
-      if IMPORT_FRIENDS == 1
+      FacebookCheckin.delay.async_import_checkins(user, :limit => 250)
+      if feature(:import_friends)
         # import friends
-        FacebookFriend.delay.async_import_friends(self.user)
+        FacebookFriend.delay.async_import_friends(user)
       end
     end
   end
