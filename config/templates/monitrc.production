@@ -26,5 +26,14 @@ check process delayed_job
 check host outlate.ly with address outlate.ly every 4 cycles
   if failed url http://outlate.ly/ping?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 then alert
 
-check process sphinx
+check process searchd
   with pidfile "/usr/apps/outlately/current/log/searchd.production.pid"
+
+check file sphinx.index with path /usr/apps/outlately/shared/sphinx/checkin_core.spa
+  if timestamp > 65 minutes then alert
+
+check file delayed_job.log with path /usr/apps/outlately/current/log/delayed_job.log
+  if timestamp > 60 minutes then alert
+
+check directory backups with path /usr/apps/outlately/shared/backups
+  if timestamp > 65 minutes then alert
