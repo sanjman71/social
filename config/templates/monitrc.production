@@ -32,8 +32,5 @@ check process searchd
 check file sphinx.index with path /usr/apps/outlately/shared/sphinx/checkin_core.spa
   if timestamp > 65 minutes then alert
 
-check file delayed_job.log with path /usr/apps/outlately/current/log/delayed_job.log
-  if timestamp > 60 minutes then alert
-
 check directory backups with path /usr/apps/outlately/shared/backups
   if timestamp > 65 minutes then alert
