@@ -11,7 +11,7 @@ set httpd port 2812 and use address localhost
   allow localhost
   allow admin:monit
 
-check system localhost
+check system outlately
   if loadavg (1min) > 1 then alert
   if loadavg (5min) > 1 then alert
   if memory > 75% then alert
