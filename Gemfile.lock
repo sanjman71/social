@@ -159,6 +159,7 @@ GEM
     oauth2 (0.0.13)
       faraday (~> 0.4.1)
       multi_json (>= 0.0.4)
+    paddock (0.2.0)
     polyglot (0.3.1)
     rack (1.2.1)
     rack-mount (0.6.13)
@@ -253,6 +254,7 @@ DEPENDENCIES
   mocha
   oauth (>= 0.4.2)
   oauth2 (>= 0.0.13)
+  paddock
   rails (= 3.0.0)
   random_data
   ruby-debug19

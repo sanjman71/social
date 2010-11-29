@@ -21,6 +21,7 @@ gem 'haml-rails'
 gem 'meta_where',             '>= 0.9.6'
 gem 'oauth',                  '>= 0.4.2'
 gem 'oauth2',                 '>= 0.0.13'
+gem 'paddock'
 gem 'simple_form',            '>= 1.2.2'
 gem "SyslogLogger",           ">= 1.4.0"
 gem 'ts-delayed-delta',       '>= 1.1.1'
