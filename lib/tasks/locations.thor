@@ -9,11 +9,12 @@ class Locations < Thor
     Location.with_latlng.where(:city_id => nil).order('id desc').limit(options[:limit]).each do |l|
       begin
         puts "#{Time.now}: reverse geocoding [#{l.id}:#{l.name}] geo:#{l.lat}:#{l.lng}"
-        l.reverse_geocode
+        result = l.reverse_geocode
+        raise Exception, "error reverse geocoding" if !result
         count += 1
         sleep(1)
-      rescue
-        
+      rescue Exception => e
+        puts "#{Time.now}: <error> #{e.message}"
       end
     end
 
