@@ -4,7 +4,7 @@
 - content_for :mat do
   %h2 Locations
   %h4= pluralize(Location.count, 'location') + (@cities.blank? ? '' : " across " + pluralize(@cities.size, 'city'))
-
+  %h4= pluralize(Location.with_latlng.where(:city_id => nil).count, 'location') + " with coordinates and no city"
 %hr.space
 
 - if @city.present?

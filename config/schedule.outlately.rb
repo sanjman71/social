@@ -31,6 +31,11 @@ every 30.minutes do
   rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
 end
 
+every 30.minutes do
+  # reverse geocode location
+  rake "locations:reverse_geocode >> /usr/apps/outlately/shared/log/reverse_geocode.log"
+end
+
 every 1.hour do
   # backup database
   rake "db:backup DB=outlately_production BACKUP_DIR=/usr/apps/outlately/shared/backups"
