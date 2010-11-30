@@ -10,13 +10,14 @@ class HomeController < ApplicationController
       @stream       = current_stream
       @geo          = current_geo || current_user
       @method       = "search_#{@stream}_checkins"
+      @order        = @stream == 'trending' ? [:sort_closer_locations] : [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations]
       @radius       = 2000
       @checkins     = @user.send(@method, :limit => checkins_start_count,
                                           :geo_origin => [@geo.lat.try(:radians), @geo.lng.try(:radians)],
                                           :geo_distance => 0.0..@radius.miles.meters.value,
-                                          :order => [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations],
+                                          :order => @order,
                                           :group => :user)
-      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Others', 'Outlately', 'Today']
+      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Outlately', 'Trending', 'Today']
       @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']
       # add user city to list of cities
       if current_user.city
@@ -27,9 +28,6 @@ class HomeController < ApplicationController
 
       logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@geo.try(:name) || @geo.try(:handle)}:#{@geo.try(:lat)}:#{@geo.try(:lng)}, stream:#{@stream}")
     end
-
-    # check for growl messages
-    @growls = params[:growls].to_i
   end
 
   # GET /beta

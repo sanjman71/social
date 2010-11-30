@@ -1,8 +1,8 @@
 Feature: Home Streams
   As a user I want to see streams of user activity
 
-  @no-txn
-  Scenario: User sees users in default Outlately stream
+  @javascript
+  Scenario: User sees users in the default Outlately stream
     Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
     And a user "chicago_coffee_gal" in "Chicago, IL" who is a "straight" "female"
     And a user "chicago_coffee_guy" in "Chicago, IL" who is a "straight" "male"
@@ -15,14 +15,13 @@ Feature: Home Streams
     And I should see "chicago_coffee_gal" within "div.stream#outlately"
     And I should see "chicago_coffee_guy" within "div.stream#outlately"
 
-  @no-txn
+  @javascript
   Scenario: User sees checkins in the past day in the Today stream
     Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
     And a user "chicago_coffee_gal" in "Chicago, IL" who is a "straight" "female"
     And a user "chicago_coffee_guy" in "Chicago, IL" who is a "straight" "male"
-    And "chicago_coffee_gal" checked in to "Chicago Starbucks" in "Chicago" at "10 hours ago"
-    And "chicago_coffee_guy" checked in to "Chicago Lavazza" in "Chicago" at "3 days ago"
-    And "chicago_coffee_gal" marked themselves as available now
+    And "chicago_coffee_gal" checked in to "Chicago Starbucks" in "Chicago" about "10 hours ago"
+    And "chicago_coffee_guy" checked in to "Chicago Lavazza" in "Chicago" about "3 days ago"
     And I am logged in as "chicago_guy"
     When sphinx is indexed
     When I go to the home page
@@ -31,8 +30,28 @@ Feature: Home Streams
     And I should see "chicago_coffee_gal" within "div.stream#today"
     And I should not see "chicago_coffee_guy" within "div.stream#today"
 
-  @no-txn
-  Scenario: User without a location is redirected to user edit page
+  @javascript
+  Scenario: User sees trending checkins in the Trending stream
+    Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
+    And a user "chicago_user1" in "Chicago, IL" who is a "straight" "female"
+    And a user "chicago_user2" in "Chicago, IL" who is a "straight" "female"
+    And a user "chicago_user3" in "Chicago, IL" who is a "straight" "female"
+    And a user "chicago_user4" in "Chicago, IL" who is a "straight" "female"
+    And "chicago_user1" checked in to "Chicago Starbucks" in "Chicago" about "1 hour ago"
+    And "chicago_user2" checked in to "Chicago Peets" in "Chicago" about "25 hours ago"
+    And "chicago_user3" checked in to "Chicago Lavazza" in "Chicago" about "49 hours ago"
+    And "chicago_user4" checked in to "Chicago Espresso" in "Chicago" about "73 hours ago"
+    And I am logged in as "chicago_guy"
+    When sphinx is indexed
+    When I go to the home page
+    And I follow "Trending"
+    Then I should see "Trending" within "span.current.stream_name"
+    And I should see "Chicago Starbucks" within "div.stream#trending"
+    And I should see "Chicago Peets" within "div.stream#trending"
+    And I should see "Chicago Lavazza" within "div.stream#trending"
+
+  @javascript
+  Scenario: User without a location is redirected to user edit page and prompted to enter a location
     Given a user "chicago_guy" who is a "straight" "male"
     And I am logged in as "chicago_guy"
     When sphinx is indexed

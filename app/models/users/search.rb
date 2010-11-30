@@ -72,6 +72,15 @@ module Users::Search
     search_checkins(options)
   end
 
+  def search_trending_checkins(options={})
+    add_geo_params(options)
+    # weight checkins by timestamp
+    options[:order] ||= []
+    options[:order].push(:sort_trending_checkins).uniq!
+    # include checkin users marked as available now
+    search_checkins(options)
+  end
+
   # search checkins
   def search_checkins(options={})
     options.update(:klass => Checkin)
@@ -304,6 +313,8 @@ module Users::Search
             send(order.to_s)
           when :sort_other_checkins
             send(order.to_s)
+          when :sort_trending_checkins
+            send(order.to_s)
           else
             nil
           end
@@ -421,6 +432,15 @@ module Users::Search
       sort_expr.push("IF(IN(checkin_ids, %s), 0.1, 1.0)" % my_checkin_ids.join(','))
     end
     sort_expr.any? ? sort_expr : nil
+  end
+
+  # sort trending checkins by timestamp
+  def sort_trending_checkins(options={})
+    dtime1    = 1.day.ago.utc.to_i
+    dtime2    = 2.days.ago.utc.to_i
+    dtime3    = 3.days.ago.utc.to_i
+    sort_expr = "IF(checkin_at > #{dtime1}, 10.0, IF(checkin_at > #{dtime2}, 5.0, IF(checkin_at > #{dtime3}, 2.0, 1.0)))"
+    [sort_expr]
   end
 
   def sort_weight_users(user_ids)

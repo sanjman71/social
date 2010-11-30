@@ -77,7 +77,6 @@
 -#= render(:partial => 'home/plan_location_dialog')
 
 :javascript
-  var growls             = #{@growls};
   var mapping            = #{user_signed_in?};
   var max_locations      = #{@max_objects || 0};
   var geo_checkins_path  = "/users/#{@user.try(:id)}/checkins/geo:#{@geo.try(:lat).to_f}..#{@geo.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"
