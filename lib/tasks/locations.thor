@@ -14,7 +14,7 @@ class Locations < Thor
         count += 1
         sleep(1)
       rescue Exception => e
-        puts "#{Time.now}: <error> #{e.message}"
+        puts "#{Time.now}: *error* #{e.message}"
       end
     end
 
