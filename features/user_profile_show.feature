@@ -1,6 +1,7 @@
 Feature: User Profile
   I want to see user profiles
 
+  @javascript
   Scenario: Visiting a user profile costs 10 bucks
     Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
     And a user "chicago_coffee_gal" in "Chicago, IL" who is a "straight" "female"
