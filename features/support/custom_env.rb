@@ -1,6 +1,9 @@
 require 'cucumber/thinking_sphinx/external_world'
 Cucumber::ThinkingSphinx::ExternalWorld.new
 
+require 'email_spec'
+require 'email_spec/cucumber'
+
 module LocalityWorld
   def init_states_and_cities
     # add default states, cities

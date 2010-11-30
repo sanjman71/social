@@ -39,12 +39,13 @@ group :development, :test do
   gem 'cucumber'
   gem 'cucumber-rails'
   gem 'database_cleaner'
-  gem 'email_spec', "0.6.4", :require => nil
+  gem 'email_spec',             '>= 1.0.0', :require => nil
   gem 'factory_girl_rails'
   gem 'launchy'
   gem 'linecache19'
   gem 'mocha'
   gem 'random_data'
+  gem 'rspec'
   gem 'ruby-debug19'
   gem 'shoulda'
   gem 'single_test'
