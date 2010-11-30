@@ -8,6 +8,7 @@ class Locations < Thor
     require File.expand_path('config/environment.rb')
     Location.with_latlng.where(:city_id => nil).order('id desc').limit(options[:limit]).each do |l|
       begin
+        puts "#{Time.now}: reverse geocoding #{l.name}:#{l.lat}:#{l.lng}"
         l.reverse_geocode
         count += 1
         sleep(1)
