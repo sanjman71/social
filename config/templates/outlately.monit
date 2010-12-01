@@ -20,16 +20,16 @@ check system outlately
   if cpu usage (system) > 30% then alert
   if cpu usage (wait) > 20% then alert
 
-check process delayed_job
-  with pidfile "/usr/apps/outlately/shared/pids/delayed_job.pid"
-
 check host outlate.ly with address outlate.ly every 4 cycles
   if failed url http://outlate.ly/ping?token=5e722026ea70e6e497815ef52f9e73c5ddb8ac26 then alert
+
+check process delayed_job
+  with pidfile "/usr/apps/outlately/shared/pids/delayed_job.pid"
 
 check process searchd
   with pidfile "/usr/apps/outlately/current/log/searchd.production.pid"
 
-check file sphinx.index with path /usr/apps/outlately/shared/sphinx/checkin_core.spa
+check file sphinx with path /usr/apps/outlately/shared/sphinx/checkin_core.spa
   if timestamp > 65 minutes then alert
 
 check directory backups with path /usr/apps/outlately/shared/backups
