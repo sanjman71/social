@@ -8,9 +8,9 @@ class Locations < Thor
     require File.expand_path('config/environment.rb')
     Location.with_latlng.where(:city_id => nil, :street_address => nil).order('id desc').limit(options[:limit]).each do |l|
       begin
-        puts "#{Time.now}: reverse geocoding [#{l.id}:#{l.name}] geo:#{l.lat}:#{l.lng}"
+        puts "#{Time.now}: [#{l.id}:#{l.name}] reverse geocoding geo:#{l.lat}:#{l.lng}"
         result = l.reverse_geocode
-        raise Exception, "error reverse geocoding" if !result
+        raise Exception, "" if !result
         count += 1
         sleep(1)
       rescue Exception => e
