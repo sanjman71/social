@@ -1,0 +1,14 @@
+# Docs
+
+1. https://github.com/defunkt/resque
+2. https://github.com/blog/542-introducing-resque
+
+# Up and Running
+
+1. See locations.rb, asycn and perform methods for sample use case.
+2. Start server with:
+  - redis-server /usr/local/etc/redis.conf
+3. Start queue processing with:
+  - rake QUEUE=* resque:work
+4. Start web server with:
+  - resque-web

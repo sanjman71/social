@@ -18,3 +18,9 @@ begin
 rescue LoadError
   # ignore
 end
+
+begin
+  require 'resque/tasks'
+rescue LoadError
+  # ignore
+end
