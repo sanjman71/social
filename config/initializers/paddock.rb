@@ -1,4 +1,3 @@
-# cucumber doesn't like the 'include Paddock' line
 include Paddock
 
 Paddock(Rails.env) do

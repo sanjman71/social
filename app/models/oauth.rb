@@ -44,7 +44,7 @@ class Oauth < ActiveRecord::Base
     when 'facebook'
       # import all checkins, max of 250
       FacebookCheckin.delay.async_import_checkins(user, :limit => 250)
-      if feature(:import_friends)
+      if enabled(:import_friends)
         # import friends
         FacebookFriend.delay.async_import_friends(user)
       end
