@@ -15,7 +15,6 @@ class LocationTest < ActiveSupport::TestCase
   def setup
     @us           = Factory(:us)
     @canada       = Factory(:canada)
-    @gb           = Factory(:country, :code => "GB", :name => "UK")
     @il           = Factory(:il, :country => @us)
     @on           = Factory(:ontario, :country => @canada)
     @chicago      = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
@@ -435,7 +434,7 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal "CA", @location.reload.country.code
     end
 
-    should "fill in street, city, country for a hereford (london) location" do
+    should "create country and fill in street, city for a hereford (london) location" do
       @location = Location.create!(:name => "Left Bank",
                                    :lat => 52.0528303, :lng => -2.7188012)
       assert @location.reverse_geocode
