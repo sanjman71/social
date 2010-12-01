@@ -33,7 +33,7 @@ end
 
 every 30.minutes do
   # reverse geocode location
-  rake "locations:reverse_geocode >> /usr/apps/outlately/shared/log/reverse_geocode.log"
+  command "cd /usr/apps/outlately/current && thor locations:rgeocode >> /usr/apps/outlately/shared/log/reverse_geocode.log"
 end
 
 every 1.hour do
