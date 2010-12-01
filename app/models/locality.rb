@@ -39,7 +39,7 @@ class Locality
           else
             # international city
             # find country database object
-            country = Country.find_by_name(geoloc.country)
+            country = Country.find_by_code(geoloc.country_code)
             # find city from country
             object  = country.cities.find_by_name(geoloc.city)
             if object.blank? and create
