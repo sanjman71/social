@@ -15,13 +15,14 @@ gem 'delayed_job',            :git => 'git://github.com/collectiveidea/delayed_j
 gem 'devise',                 :git => 'git://github.com/plataformatec/devise.git' # devise with oauth support
 gem 'foursquare',             '>= 0.3.1'
 gem 'geokit',                 '>= 1.5.0'
+gem 'groupme-paddock',        '>= 0.3.1', :require => 'paddock'
 gem 'httparty',               '>= 0.6.1'
 gem 'haml',                   '>= 3.0.18'
 gem 'haml-rails'
 gem 'meta_where',             '>= 0.9.6'
 gem 'oauth',                  '>= 0.4.2'
 gem 'oauth2',                 '>= 0.0.13'
-gem 'groupme-paddock',        '>= 0.3.1', :require => 'paddock'
+gem 'resque',                 '>= 1.10.0'
 gem 'simple_form',            '>= 1.2.2'
 gem "SyslogLogger",           ">= 1.4.0"
 gem 'ts-delayed-delta',       '>= 1.1.1'
@@ -46,7 +47,7 @@ group :development, :test do
   gem 'linecache19'
   gem 'mocha'
   gem 'random_data'
-  gem 'rspec'
+  gem 'rspec-rails',  :require => nil
   gem 'ruby-debug19'
   gem 'shoulda'
   gem 'single_test'
