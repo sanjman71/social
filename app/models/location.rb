@@ -217,17 +217,39 @@ class Location < ActiveRecord::Base
     return false if !geocoded?
     return false if !force and (street_address.present? or city.present? or state.present? or zipcode.present?)
     geoloc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode([lat, lng])
-    object = Locality.resolve("#{geoloc.city}, #{geoloc.state}", :precision => :city, :create => true)
-    raise Exception, "error mapping #{geoloc.city}, #{geoloc.state} to a valid city" if object.blank?
-    self.street_address = geoloc.street_address
-    self.city           = object
-    self.state          = object.state
+    case geoloc.country_code
+    when 'JP'
+      # its normal to have no city, or state
+      object = Country.find_or_create_by_code(geoloc.country_code)
+      self.street_address = geoloc.street_address
+      self.country        = object
+    else
+      object = Locality.resolve("#{geoloc.city}, #{geoloc.state}", :precision => :city, :create => true)
+      raise Exception, "error mapping #{geoloc.city}, #{geoloc.state} to a valid city" if object.blank?
+      self.street_address = geoloc.street_address
+      self.city           = object
+      self.state          = object.state
+      self.country        = object.state.country
+    end
     b = self.save
-    self.class.log("[location:#{self.id}] #{self.name} reverse geocoded to #{street_city_state}") if b
+    self.class.log("[location:#{id}] #{name}:#{lat}:{lng} reverse geocoded to #{street_city_state}") if b
     b
   rescue Exception => e
-    self.class.log("[location:#{self.id}] #{self.name} reverse geocoding error: #{e.message}")
+    self.class.log("[geocoding error] [location:#{id}] #{name}: #{e.message}")
     false
+  end
+  
+  # redis queueu
+  @queue = :locations
+
+  # queue a job to be processed with the perform method
+  def async(method, *args)
+    Resque.enqueue(Location, id, method, *args)
+  end
+
+  # this will be called by a worker when a job needs to be processed
+  def self.perform(id, method, *args)
+    find(id).send(method, *args)
   end
 
   def hotness
