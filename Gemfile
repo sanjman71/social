@@ -45,11 +45,11 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'launchy'
   gem 'linecache19'
-  gem 'mocha'
+  gem 'mocha', :require => nil
   gem 'random_data'
   gem 'rspec-rails',  :require => nil
   gem 'ruby-debug19'
-  gem 'shoulda'
+  gem 'shoulda', :require => nil
   gem 'single_test'
   gem 'timecop', '>= 0.3.5'
 end

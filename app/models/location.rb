@@ -223,7 +223,7 @@ class Location < ActiveRecord::Base
     geoloc  = Geokit::Geocoders::GoogleGeocoder.reverse_geocode([lat, lng])
     # create or find country
     country = Country.find_or_create_by_code(geoloc.country_code, :name => geoloc.country)
-    raise Exception, "invalid country #{geoloc.countrys}" if country.blank? or country.invalid?
+    raise Exception, "invalid country #{geoloc.country_code}" if country.blank? or country.invalid?
     case country.code
     when 'US', 'CA'
       # city, state is required
