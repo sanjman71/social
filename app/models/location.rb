@@ -216,21 +216,20 @@ class Location < ActiveRecord::Base
   def reverse_geocode(force = false)
     return false if !geocoded?
     return false if !force and (street_address.present? or city.present? or state.present? or zipcode.present?)
-    geoloc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode([lat, lng])
-    case geoloc.country_code
-    when 'JP'
-      # its normal to have no city, or state
-      object = Country.find_or_create_by_code(geoloc.country_code)
-      self.street_address = geoloc.street_address
-      self.country        = object
-    else
-      object = Locality.resolve("#{geoloc.city}, #{geoloc.state}", :precision => :city, :create => true)
-      raise Exception, "error mapping #{geoloc.city}, #{geoloc.state} to a valid city" if object.blank?
-      self.street_address = geoloc.street_address
-      self.city           = object
-      self.state          = object.state
-      self.country        = object.state.country
+    geoloc  = Geokit::Geocoders::GoogleGeocoder.reverse_geocode([lat, lng])
+    # create or find country
+    country = Country.find_or_create_by_code(geoloc.country_code, :name => geoloc.country)
+    raise Exception, "invalid country #{geoloc.countrys}" if country.blank? or country.invalid?
+    city    = Locality.resolve("#{geoloc.city}, #{geoloc.state}", :precision => :city, :create => true)
+    case country.code
+    when 'US', 'CA'
+      # city is required
+      raise Exception, "invalid city #{geoloc.city}, #{geoloc.state}" if city.blank? or city.invalid?
     end
+    self.street_address = geoloc.street_address
+    self.city           = city
+    self.state          = city.try(:state)
+    self.country        = country
     b = self.save
     self.class.log("[location:#{id}] #{name}:#{lat}:{lng} reverse geocoded to #{street_city_state}") if b
     b
