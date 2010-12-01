@@ -15,6 +15,7 @@ class LocationTest < ActiveSupport::TestCase
   def setup
     @us           = Factory(:us)
     @canada       = Factory(:canada)
+    @gb           = Factory(:country, :code => "GB", :name => "UK")
     @il           = Factory(:il, :country => @us)
     @on           = Factory(:ontario, :country => @canada)
     @chicago      = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
@@ -397,7 +398,13 @@ class LocationTest < ActiveSupport::TestCase
       assert_false @location.reverse_geocode
     end
 
-    should "fill in street, city, state, zipcode, country for a location with a lat, lng in the US" do
+    should "ignore if location has a city" do
+      @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
+                                   :city => @chicago)
+      assert_false @location.reverse_geocode
+    end
+
+    should "fill in street, city, state, zipcode, country for a san diego location" do
       @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :lat => 32.707664, :lng => -117.159876)
@@ -408,8 +415,17 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal "US", @location.reload.country.code
     end
 
-    should "fill in street, city, state, zipcode, country for a location with a lat, lng in Canada" do
-      # @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
+    should "fill in street, city, state, country for a lake tahoe location" do
+      @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
+      @location = Location.create!(:name => "Gar Woods",
+                                   :lat => 39.22543, :lng => -120.083609)
+      assert @location.reverse_geocode
+      assert_equal "Lake Tahoe", @location.reload.city.name
+      assert_equal "CA", @location.reload.state.code
+      assert_equal "US", @location.reload.country.code
+    end
+
+    should "fill in street, city, state, country for a toronto location" do
       @location = Location.create!(:name => "Blowfish Restaurant & Saki bar",
                                    :lat => 43.6439338, :lng => -79.4025813)
       assert @location.reverse_geocode
@@ -417,6 +433,15 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal "Toronto", @location.reload.city.name
       assert_equal "ON", @location.reload.state.code
       assert_equal "CA", @location.reload.country.code
+    end
+
+    should "fill in street, city, country for a hereford (london) location" do
+      @location = Location.create!(:name => "Left Bank",
+                                   :lat => 52.0528303, :lng => -2.7188012)
+      assert @location.reverse_geocode
+      assert_equal "St Martin'S St", @location.reload.street_address
+      assert_equal "Hereford", @location.reload.city.name
+      assert_equal "GB", @location.reload.country.code
     end
   end
 

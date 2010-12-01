@@ -132,6 +132,10 @@ class Location < ActiveRecord::Base
     [street_address, city.try(:name), state.try(:code)].delete_if(&:blank?).join(', ')
   end
 
+  def street_city_state_country
+    [street_address, city.try(:name), state.try(:code), country.try(:code)].delete_if(&:blank?).join(', ')
+  end
+
   # return collection of location's country, state, city, zipcode, neighborhoods
   def localities
     [country, state, city, zipcode].compact + neighborhoods.compact
@@ -204,7 +208,7 @@ class Location < ActiveRecord::Base
     force = options.has_key?(:force) ? options[:force] : false
     return true if self.lat and self.lng and !force
     # use street_address, city, state, zip unless any are empty
-    geocode_address = [street_address, city ? city.name : nil, state ? state.name : nil, zipcode ? zipcode.name : nil].compact.reject(&:blank?).join(" ")
+    geocode_address = [street_address, city.try(:name), state.try(:name), zipcode.try(:name)].compact.reject(&:blank?).join(" ")
     # multi-geocoder geocode does not throw an exception on failure
     geo = Geokit::Geocoders::MultiGeocoder.geocode(geocode_address)
     return false unless geo.success
@@ -220,18 +224,22 @@ class Location < ActiveRecord::Base
     # create or find country
     country = Country.find_or_create_by_code(geoloc.country_code, :name => geoloc.country)
     raise Exception, "invalid country #{geoloc.countrys}" if country.blank? or country.invalid?
-    city    = Locality.resolve("#{geoloc.city}, #{geoloc.state}", :precision => :city, :create => true)
     case country.code
     when 'US', 'CA'
-      # city is required
+      # city, state is required
+      state = country.states.find_by_code(geoloc.state)
+      city  = state.cities.find_by_name(geoloc.city) || state.cities.create(:name => geoloc.city, :lat => geoloc.lat, :lng => geoloc.lng)
       raise Exception, "invalid city #{geoloc.city}, #{geoloc.state}" if city.blank? or city.invalid?
+    else
+      # try city scoped to country for international locations, but city is not required
+      city  = country.cities.find_by_name(geoloc.city) || country.cities.create(:name => geoloc.city, :lat => geoloc.lat, :lng => geoloc.lng)
     end
     self.street_address = geoloc.street_address
     self.city           = city
     self.state          = city.try(:state)
     self.country        = country
     b = self.save
-    self.class.log("[location:#{id}] #{name}:#{lat}:{lng} reverse geocoded to #{street_city_state}") if b
+    self.class.log("[location:#{id}] #{name}:#{lat}:#{lng} reverse geocoded to #{street_city_state_country}") if b
     b
   rescue Exception => e
     self.class.log("[geocoding error] [location:#{id}] #{name}: #{e.message}")
