@@ -37,7 +37,7 @@ class JobsController < ApplicationController
 
   # GET /jobs/send_todo_reminders
   def send_todo_reminders
-    @reminders = User.all.inject(0) do |count, user|
+    @reminders = User.with_todos.inject(0) do |count, user|
       count += user.send_todo_checkin_reminders
       count
     end

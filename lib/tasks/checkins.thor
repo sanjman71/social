@@ -10,5 +10,16 @@ class Checkins < Thor
     end
     puts "#{Time.now}: completed"
   end
-  
+
+  desc "send_todo_reminders", "send checkin todo reminders"
+  def send_todo_reminders
+    puts "#{Time.now}: checking todo reminders"
+    require File.expand_path('config/environment.rb')
+    users = User.with_todos
+    users.each do |user|
+      count = user.send_todo_checkin_reminders
+      puts "#{Time.now}: [user:#{user.id}] #{user.handle} sending #{count} todo reminders"
+    end
+    puts "#{Time.now}: completed"
+  end
 end

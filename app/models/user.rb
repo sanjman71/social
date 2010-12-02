@@ -108,6 +108,8 @@ class User < ActiveRecord::Base
   scope                     :no_phones, where(:phone_numbers_count => 0)
   scope                     :with_phone, lambda { |s| { :include => :phone_numbers, :conditions => ["phone_numbers.address = ?", s] } }
 
+  scope                     :with_todos, joins(:locationships).where("locationships.todo_checkins > 0").select("distinct users.id, users.*")
+
   scope                     :search_by_name, lambda { |s| { :conditions => ["LOWER(users.name) REGEXP '%s'", s.downcase] }}
   scope                     :order_by_name, order('users.name asc')
 
