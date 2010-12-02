@@ -273,6 +273,10 @@ class Location < ActiveRecord::Base
 
   def event_location_created
     self.class.log("[location:#{self.id}] #{self.name} created")
+    # check if location needs reverse geocoding
+    if geocoded? and city_id.blank? and street_address.blank?
+      self.delay.reverse_geocode
+    end
   end
 
   def self.log(s, level = :info)

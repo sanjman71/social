@@ -388,18 +388,21 @@ class LocationTest < ActiveSupport::TestCase
   context "reverse geocode" do
     should "ignore if location is not geocoded" do
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel")
+      assert_equal 0, match_delayed_jobs(/reverse_geocode/)
       assert_false @location.reverse_geocode
     end
 
     should "ignore if location has a street addresss" do
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :street_address => "200 W Grand Ave")
+      assert_equal 0, match_delayed_jobs(/reverse_geocode/)
       assert_false @location.reverse_geocode
     end
 
     should "ignore if location has a city" do
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :city => @chicago)
+      assert_equal 0, match_delayed_jobs(/reverse_geocode/)
       assert_false @location.reverse_geocode
     end
 
@@ -407,7 +410,8 @@ class LocationTest < ActiveSupport::TestCase
       @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :lat => 32.707664, :lng => -117.159876)
-      assert @location.reverse_geocode
+      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
+      work_off_delayed_jobs(/reverse_geocode/)
       assert_equal "207 5th Ave", @location.reload.street_address
       assert_equal "San Diego", @location.reload.city.name
       assert_equal "CA", @location.reload.state.code
@@ -418,7 +422,8 @@ class LocationTest < ActiveSupport::TestCase
       @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
       @location = Location.create!(:name => "Gar Woods",
                                    :lat => 39.22543, :lng => -120.083609)
-      assert @location.reverse_geocode
+      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
+      work_off_delayed_jobs(/reverse_geocode/)
       assert_equal "Lake Tahoe", @location.reload.city.name
       assert_equal "CA", @location.reload.state.code
       assert_equal "US", @location.reload.country.code
@@ -427,7 +432,8 @@ class LocationTest < ActiveSupport::TestCase
     should "fill in street, city, state, country for a toronto location" do
       @location = Location.create!(:name => "Blowfish Restaurant & Saki bar",
                                    :lat => 43.6439338, :lng => -79.4025813)
-      assert @location.reverse_geocode
+      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
+      work_off_delayed_jobs(/reverse_geocode/)
       assert_equal "668 King St W", @location.reload.street_address
       assert_equal "Toronto", @location.reload.city.name
       assert_equal "ON", @location.reload.state.code
@@ -437,7 +443,8 @@ class LocationTest < ActiveSupport::TestCase
     should "create country and fill in street, city for a hereford (london) location" do
       @location = Location.create!(:name => "Left Bank",
                                    :lat => 52.0528303, :lng => -2.7188012)
-      assert @location.reverse_geocode
+      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
+      work_off_delayed_jobs(/reverse_geocode/)
       assert_equal "St Martin'S St", @location.reload.street_address
       assert_equal "Hereford", @location.reload.city.name
       assert_equal "GB", @location.reload.country.code
