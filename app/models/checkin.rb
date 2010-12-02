@@ -72,6 +72,27 @@ class Checkin < ActiveRecord::Base
     end
   end
 
+  # trigger polling of user checkins
+  def self.event_poll_checkins
+    # find users with oauths, with checkin logs that haven't been checked in poll_interval
+    @users = User.with_oauths.joins(:checkin_logs).
+                  where(:"checkin_logs.last_check_at".lt => poll_interval.ago).select("users.*")
+    
+    @users.each do |user|
+      user.checkin_logs.each do |log|
+        # use delayed job to import these checkins
+        case log.source
+        when 'facebook'
+          FacebookCheckin.delay.async_import_checkins(user, Hash[:since => :last, :limit => 250])
+        when 'foursquare'
+          FoursquareCheckin.delay.async_import_checkins(user, Hash[:sinceid => :last, :limit => 250])
+        end
+      end
+    end
+    
+    @users
+  end
+
   def self.poll_interval
     60.minutes
   end
