@@ -21,7 +21,7 @@ every :reboot do
   command "monit" # might require path to be set in crontab
 end
 
-every 15.minutes do
+every 7.minutes do
   # poll checkins
   command "cd /usr/apps/outlately/current && thor checkins:poll >> /usr/apps/outlately/shared/log/checkins.log"
 end
@@ -31,7 +31,7 @@ every 30.minutes do
   rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
 end
 
-every 2.hours do
+every 4.hours do
   # reverse geocode location
   command "cd /usr/apps/outlately/current && thor locations:rgeocode >> /usr/apps/outlately/shared/log/reverse_geocode.log"
 end
