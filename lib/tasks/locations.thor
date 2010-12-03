@@ -11,7 +11,6 @@ class Locations < Thor
         puts "#{Time.now}: [#{l.id}:#{l.name}] reverse geocoding geo:#{l.lat}:#{l.lng}"
         result = l.reverse_geocode
         raise Exception, "" if !result
-        count += 1
         sleep(1)
       rescue Exception => e
         puts "#{Time.now}: [reverse geocoding error] #{e.message}"
