@@ -4,7 +4,7 @@ var stream_updating     = false;
 
 $.fn.init_stream_map = function() {
   // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
-  if (mapping) {
+  if (stream_map) {
     $('#map').jMapping({
       category_icon_options: {
         'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},

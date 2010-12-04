@@ -69,14 +69,11 @@
           = render(:partial => 'home/user', :locals => {:user => object})
 
     .span-10.last
-      .span-10.last#map
+      .span-10.last.map.stream#map
       .span-10.last#map-side-bar.hide
         = render(:partial => 'locations/locations_map', :locals => {:locations => @checkins.collect(&:location)})
 
-= render(:partial => 'home/meet_user_dialog')
--#= render(:partial => 'home/plan_location_dialog')
-
 :javascript
-  var mapping            = #{user_signed_in?};
-  var max_locations      = #{@max_objects || 0};
-  var geo_checkins_path  = "/users/#{@user.try(:id)}/checkins/geo:#{@geo.try(:lat).to_f}..#{@geo.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"
+  var stream_map        = #{user_signed_in?};
+  var max_locations     = #{@max_objects || 0};
+  var geo_checkins_path = "/users/#{@user.try(:id)}/checkins/geo:#{@geo.try(:lat).to_f}..#{@geo.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"

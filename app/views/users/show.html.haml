@@ -1,6 +1,12 @@
 - stylesheet 'users'
-- javascript 'jquery.cycle.all.min'
+- stylesheet 'map'
+-#- javascript 'jquery.cycle.all.min'
 - javascript 'users'
+- if @checkins.try(:any?)
+  - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
+  - javascript 'mapiconmaker', 'markermanager'
+  - javascript 'jquery.metadata'
+  - javascript 'jquery.jmapping.min'
 
 - content_for :mat do
   .span-23.last.padding-bottom-10
@@ -26,6 +32,12 @@
   .span-4{:style => 'padding-top: 10px;'}
     #user_profile_handle= @user.handle
     #user_profile_data= user_profile_blurb(@user)
+  -# show map of user checkins
+  .span-15.prepend-2.last#checkin_map
+    .span-15.last.map.profile#map
+    .span-15.last#map-side-bar.hide
+      = render(:partial => 'locations/locations_map', :locals => {:locations => @checkins.collect(&:location)})
+
   -# disable matches for now
   - if false #if @viewer == @user
     -# show matches when its your own profile
@@ -65,4 +77,5 @@
     = tags.join(', ')
 
 :javascript
-  var growls = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};
+  var growls        = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};
+  var checkin_map   = #{true};

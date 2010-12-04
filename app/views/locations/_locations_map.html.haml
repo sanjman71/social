@@ -1,6 +1,6 @@
 - category  = 'default' unless local_assigns[:category]
 - highlight = '' unless local_assigns[:highlight]
- 
+
 - locations.each do |location|
   - next unless location.mappable?
   - category = location.hotness > 10 ? 'hot' : category
