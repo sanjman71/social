@@ -8,3 +8,11 @@
 .friend                       { padding-bottom: 10px; }
 .friend #checkins_count_link  { font-size: 0.9em; }
 .friend #checkins_count_data  { font-size: 0.9em; background-color: #EE0; }
+
+.profile #user_profile_handle { }
+.profile #user_profile_data   { font-size: 0.9em; color: #555; }
+
+.profile #user_geo_cloud  span        { font-size: 0.9em; padding-right: 5px; font-size: bold; color: #555; }
+.profile #user_geo_cloud  span.city1  { font-size: 1.5em; }
+.profile #user_geo_cloud  span.city2  { font-size: 1.3em; }
+.profile #user_geo_cloud  span.city3  { font-size: 1.1em; }

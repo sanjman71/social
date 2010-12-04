@@ -26,17 +26,22 @@
   = display_alerts
 
 -# show user profile basics
-.span-24.last#user_profile_basics
+.span-24.last.profile#user_profile_basics
   .span-2.prepend-1#user_profile_picture
     = image_tag @user.primary_photo_url, :size => '50x50'
-  .span-4{:style => 'padding-top: 10px;'}
+  .span-5{:style => 'padding-top: 10px;'}
     #user_profile_handle= @user.handle
     #user_profile_data= user_profile_blurb(@user)
+    %br
+    #user_geo_cloud
+      - @geo_cloud.each_with_index do |tuple, index|
+        - city_name = tuple[0]
+        %span{:class => "city#{index+1}"}= city_name
   -# show map of user checkins
-  .span-15.prepend-2.last#checkin_map
+  .span-15.prepend-1.last#checkin_map
     .span-15.last.map.profile#map
     .span-15.last#map-side-bar.hide
-      = render(:partial => 'locations/locations_map', :locals => {:locations => @checkins.collect(&:location)})
+      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
 
   -# disable matches for now
   - if false #if @viewer == @user

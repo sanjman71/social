@@ -45,10 +45,20 @@ class UsersController < ApplicationController
     # @user, @viewer initialized in before filter
 
     # find user checkins, most recent first
-    @checkins = @user.checkins.order("checkin_at desc")
+    @checkins   = @user.checkins.order("checkin_at desc")
+
+    # find checkin locations
+    @locations  = @checkins.collect(&:location)
+    @geo_cloud  = @locations.inject(ActiveSupport::OrderedHash.new) do |hash, location|
+      if location.city.try(:name)
+        hash[location.city.name] ||= 0
+        hash[location.city.name] += 1
+      end
+      hash
+    end.sort_by { |k, v| -v }
 
     # find user badges
-    @badges   = @user.badges.order("badges.name asc")
+    @badges     = @user.badges.order("badges.name asc")
 
     if @viewer == @user
       # show matching user profiles
