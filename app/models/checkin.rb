@@ -53,8 +53,11 @@ class Checkin < ActiveRecord::Base
     trigger_event_friend_checkins(user, source)
 
     if user.reload.suggestionable?
-      # use dj to create suggestions
-      SuggestionFactory.send_later(:create, user, Hash[:algorithm => [:checkins, :radius_tags, :tags, :gender], :limit => 1])
+      # cap the number of suggestions until this is fixed
+      if user.suggestions.count < UserSuggestion.max_suggestions
+        # create suggetions using delayed job
+        SuggestionFactory.delay.create(user, Hash[:algorithm => [:checkins, :radius_tags, :tags, :gender], :limit => 1])
+      end
     else
       # send alert
       user.send_alert(:id => :need_checkins)

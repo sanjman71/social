@@ -41,6 +41,10 @@ class UserSuggestion < ActiveRecord::Base
   end
   # END acts_as_state_machine
 
+  def self.max_suggestions
+    30
+  end
+
   def event!(s)
     self.update_attribute(:event, s)
   end
@@ -57,10 +61,6 @@ class UserSuggestion < ActiveRecord::Base
 
   def before_create_callback
     self.alert = true
-  end
-
-  def log(level, s, options={})
-    SUGGESTIONS_LOGGER.info("#{Time.now}: [#{level}] suggestion:#{suggestion.id} #{s}")
   end
 
 end
