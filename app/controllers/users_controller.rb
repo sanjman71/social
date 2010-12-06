@@ -47,14 +47,14 @@ class UsersController < ApplicationController
     # find user checkins, most recent first
     @checkins   = @user.checkins.order("checkin_at desc").includes(:location)
 
-    # find checkin locations
+    # find checkin locations, sort by city (city.id => {name, count})
     @locations  = @checkins.collect(&:location)
     @geo_cloud  = @locations.inject(ActiveSupport::OrderedHash.new) do |hash, location|
       hash[location.city_id] ||= {:count => 0, :name => location.city.try(:name)}
       hash[location.city_id][:count] +=1
       hash
     end.sort_by { |k, v| -1 * v[:count] }
-    @city_id    = @geo_cloud.first[0]
+    @city_id    = @geo_cloud.any? ? @geo_cloud.first[0] : nil
 
     # find user badges
     @badges     = @user.badges.order("badges.name asc")
