@@ -2,6 +2,7 @@ $.fn.init_checkin_map = function() {
   // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
   if (checkin_map) {
     $('#map').jMapping({
+      location_selector: ".map-location.visible",
       category_icon_options: {
         'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
         'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
@@ -9,6 +10,21 @@ $.fn.init_checkin_map = function() {
       }
     });
   }
+  
+  $("a#show_checkin_city").click(function() {
+    // mark locations with the selected city as visible
+    city_id = $(this).attr('data-city-id');
+    $("#map-side-bar").find("div.map-location.visible").removeClass('visible');
+    $("#map-side-bar").find("div.map-location[data-city-id='" + city_id + "']").addClass('visible');
+    $("#map").jMapping('update');
+    // mark link as current
+    $("a#show_checkin_city").removeClass('current');
+    $(this).addClass('current');
+    return false;
+  })
+
+  // click on first link
+  $("a#show_checkin_city:first").click();
 }
 
 $.fn.init_match_pictures = function() {

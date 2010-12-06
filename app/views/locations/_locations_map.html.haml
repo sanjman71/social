@@ -1,10 +1,12 @@
 - category  = 'default' unless local_assigns[:category]
 - highlight = '' unless local_assigns[:highlight]
+- city_id   = 0 unless local_assigns[:city_id]
 
 - locations.each do |location|
   - next unless location.mappable?
+  - visible  = (city_id == 0) ? true : location.city_id == city_id
   - category = location.hotness > 10 ? 'hot' : category
-  .map-location{'data-location-id' => location.id, 'data-jmapping' => "{id: #{location.id}, point: {lat: #{location.lat}, lng: #{location.lng}}, category: '#{category}'}"}
+  .map-location{'class' => visible ? 'visible' : '', 'data-location-id' => location.id, 'data-jmapping' => "{id: #{location.id}, point: {lat: #{location.lat}, lng: #{location.lng}}, category: '#{category}'}", 'data-city' => location.city.try(:name), 'data-city-id' => location.city.try(:id).to_i}
     = link_to location.name, '#', :class => ['map-link', highlight]
     .info-box
       %p== #{location.name}, #{location.city}

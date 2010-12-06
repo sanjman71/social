@@ -35,13 +35,14 @@
     %br
     #user_geo_cloud
       - @geo_cloud.each_with_index do |tuple, index|
-        - city_name = tuple[0]
-        %span{:class => "city#{index+1}"}= city_name
+        - city_id   = tuple[0]
+        - city_name = tuple[1][:name]
+        %span{:class => "city#{index+1}"}= link_to city_name, '#', :id => 'show_checkin_city', :class => 'admin', 'data-city-id' => city_id
   -# show map of user checkins
   .span-15.prepend-1.last#checkin_map
     .span-15.last.map.profile#map
     .span-15.last#map-side-bar.hide
-      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations})
+      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations, :city_id => @city_id})
 
   -# disable matches for now
   - if false #if @viewer == @user
