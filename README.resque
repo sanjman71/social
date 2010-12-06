@@ -3,12 +3,20 @@
 1. https://github.com/defunkt/resque
 2. https://github.com/blog/542-introducing-resque
 
+# Ubuntu Install
+
+1. Follow directions on https://github.com/defunkt/resque for redis install via resque:
+  - sudo mkdir /opt/redis
+  - sudo chown -R app:app /opt/redis
+  - PREFIX=/opt/redis rake redis:install dtach:install
+  - rake redis:start
+
 # Up and Running
 
-1. See locations.rb, asycn and perform methods for sample use case.
-2. Start server with:
+1. See locations.rb, async and perform methods for sample use case.
+2. Start server:
   - redis-server /usr/local/etc/redis.conf
-3. Start queue processing with:
+3. Start queue processing:
   - rake QUEUE=* resque:work
-4. Start web server with:
+4. Start web server:
   - resque-web
