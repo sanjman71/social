@@ -114,8 +114,10 @@ a.admin.color:hover                               { color: #FFFFFF; background-c
 
 a.admin.bold                                      { font-weight: bold; }
 
-a.header.link:link, a.header.link:visited         { color: #FFFFFF; }
+a.header.link:link, a.header.link:visited         { color: #FFFFFF; font-size: 1.0em; }
 a.header.link:hover                               { background-color: #3A2313; text-decoration: none; }
+
+a.header.link.admin, a.header.link.admin:visited  { color: #FF0; opacity: 0.8; }
 
 /* logo styles */
 
