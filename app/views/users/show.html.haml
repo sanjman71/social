@@ -27,13 +27,14 @@
 
 -# show user profile basics
 .span-24.last.profile#user_profile_basics
-  .span-2.prepend-1#user_profile_picture
-    = image_tag @user.primary_photo_url, :size => '50x50'
+  .span-2.prepend-1#user_profile_picture= image_tag @user.primary_photo_url, :size => '50x50'
   .span-5{:style => 'padding-top: 10px;'}
     #user_profile_handle= @user.handle
     #user_profile_data= user_profile_blurb(@user)
     %br
     #user_geo_cloud
+      - if @geo_cloud.any?
+        %h4.bottom{:style => 'color: #F60;'} My Cities
       - @geo_cloud.each_with_index do |tuple, index|
         - city_id   = tuple[0]
         - city_name = tuple[1][:name]
@@ -59,6 +60,7 @@
   .span-24.last#badges
     .span-3.prepend-1.border
       %h4= I18n.t("badges.title")
+      %span{:style => 'font-size: 0.9em; color: #777; padding-right: 3px;'}= I18n.t("badges.help")
     .span-19.prepend-1.last
       = render(:partial => 'badges', :locals => {:user => @user, :badges => @badges})
 

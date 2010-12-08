@@ -17,6 +17,9 @@ en:
       title: Where You Should Go
     suggestions:
       title: Who You Should Meet
+    help:
+      "See who is out and about! Below shows you who is checking in and where they are checking in at.
+       See where your friends are! Meet new people who go the same places you go!"
   todo:
     added: "If you go there within %{days} days +$%{plus_points}, otherwise -$%{minus_points}"
   currency:
@@ -64,6 +67,7 @@ en:
       to: "%{name} confirmed so you're going out"
   badges:
     title: Social DNA
+    help: "You are what you do.  Your Social DNA is your authentic profile, based on where you check-in."
   badge:
     adventurous_pallette: "Around the world in twenty bites"
     booze_hound: "Less talking, more drinking"

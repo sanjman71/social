@@ -1,5 +1,5 @@
 %h4#playgrounds
-  -#%span#playground_title Playground:
+  %span#playground_title What city interests you?
   - cities.each do |city_name|
     - if geo.try(:name) == city_name
       %span.playground_name.current= city_name
