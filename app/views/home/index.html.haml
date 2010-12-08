@@ -5,7 +5,8 @@
 - if user_signed_in?
   - if @checkins.try(:any?)
     - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
-    - javascript 'mapiconmaker', 'markermanager'
+    - javascript 'mapiconmaker'
+    - javascript 'markermanager'
     - javascript 'jquery.metadata'
     - javascript 'jquery.jmapping.min'
     - javascript 'stream'
@@ -20,7 +21,7 @@
     .span-7.last
       = render(:partial => 'shared/oauth_links')
   .span-23.last.padding-bottom-10
-    %span{:style => 'font-size: 0.9em; color: #777;'}= I18n.t('home.help')
+    %span{:style => 'font-size: 0.9em; color: #777;'}= I18n.t('home.info')
 
 %hr.space
 
@@ -38,9 +39,12 @@
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions
     - if @user.suggestions.active.count > 0
-      %h3= link_to I18n.t('home.suggestions.title'), suggestions_path, :style => 'color: #0000BB;'
+      %h3
+        = link_to I18n.t('home.suggestions.title'), suggestions_path, :class => 'admin'
+        = link_to 'What is this?', '', :id => 'suggestions_wtf', :class => 'info'
+        .tooltip= I18n.t('home.suggestions.tooltip')
     - else
-      %h3== No suggestions at the moment, but we're working on it.
+      %h4 No suggestions at the moment, but we're working on it.
 
   -# home streams list
   .span-23.prepend-1.last
@@ -57,7 +61,10 @@
             - else
               %span.stream_name= link_to stream_name, home_stream_path(:name => stream_name.parameterize), :class => 'admin', :id => stream_name.downcase.parameterize, :method => :put
     .span-10.last
-      %h4.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.map.title')
+      %h4.bold{:style => 'font-size: 1.5em;'}
+        = I18n.t('home.map.title')
+        = link_to 'What is this?', '', :id => 'map_wtf', :class => 'info'
+        .tooltip= I18n.t('home.map.tooltip')
 
   .span-23.prepend-1.last
     .span-13.stream{:id => @stream.downcase}

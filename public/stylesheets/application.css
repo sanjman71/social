@@ -119,6 +119,17 @@ a.header.link:hover                               { background-color: #3A2313; t
 
 a.header.link.admin, a.header.link.admin:visited  { color: #FF0; opacity: 0.8; }
 
+/* tooltip */
+
+a.info                                            { color: #050; font-size: 10px; font-weight: normal;
+                                                    padding-left: 3px; }
+
+div.tooltip                                       { display: none; background-color: #ffa; border: 1px solid #cc9;
+                                                    padding: 3px; font-size: 11px; font-weight: bold;
+                                                    line-height: 1.25;
+                                                    -moz-box-shadow: 2px 2px 11px #666;
+                                                    -webkit-box-shadow: 2px 2px 11px #666; }
+
 /* logo styles */
 
 a.logo, a.logo:visited                            { outline: none; }

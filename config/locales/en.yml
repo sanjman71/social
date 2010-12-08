@@ -15,9 +15,11 @@ en:
         daters: Daters
     map:
       title: Where You Should Go
+      tooltip: "What are the hottest places in town? Outlately knows, see below! Click on the thumbnails to learn more."
     suggestions:
       title: Who You Should Meet
-    help:
+      tooltip: "You are what you do. Outlately knows what you like doing, and matches you with people who like doing the same things. \nClick on the link to find and meet new people!"
+    info:
       "See who is out and about! Below shows you who is checking in and where they are checking in at.
        See where your friends are! Meet new people who go the same places you go!"
   todo:

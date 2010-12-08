@@ -34,7 +34,7 @@
     %br
     #user_geo_cloud
       - if @geo_cloud.any?
-        %h4.bottom{:style => 'color: #F60;'} My Cities
+        %h4.bottom{:style => 'color: #00F; font-size: 1.0em;'} My Cities
       - @geo_cloud.each_with_index do |tuple, index|
         - city_id   = tuple[0]
         - city_name = tuple[1][:name]
