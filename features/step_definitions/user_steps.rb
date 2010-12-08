@@ -13,15 +13,22 @@ Given /^a user "([^"]*)" who is a "([^"]*)" "([^"]*)"$/ do |handle, orientation,
                                        :gender => gender, :password => 'secret', :password_confirmation => 'secret')
 end
 
-# set user available now
-Given /^"([^"]*)" marked themselves as available now$/ do |handle|
-  user = User.find_by_handle(handle)
-  user.availability_attributes = {:now => 1}
-  user.save
+# add user friend
+Given /^"([^"]*)" is friends with "([^"]*)"$/ do |handle1, handle2|
+  user    = User.find_by_handle!(handle1)
+  friend  = User.find_by_handle!(handle2)
+  user.friendships.create!(:friend => friend)
 end
 
 # set user points
 Given /^a user "([^"]*)" with "([^"]*)" dollars$/ do |handle, points|
   user = User.find_by_handle!(handle)
   user.update_attribute(:points, points)
+end
+
+# set user available now
+Given /^"([^"]*)" marked themselves as available now$/ do |handle|
+  user = User.find_by_handle(handle)
+  user.availability_attributes = {:now => 1}
+  user.save
 end

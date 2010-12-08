@@ -17,8 +17,8 @@ class HomeController < ApplicationController
                                           :geo_distance => 0.0..@radius.miles.meters.value,
                                           :order => @order,
                                           :group => :user)
-      @streams      = ['My', 'Friends', stream_name_daters(current_user), 'Outlately', 'Trending', 'Today']
-      @cities       = ['Boston', 'Chicago', 'New York', 'San Francisco']
+      @streams      = streams
+      @cities       = cities
       # add user city to list of cities
       if current_user.city
         @cities.push(current_user.city.name).uniq!
@@ -85,8 +85,16 @@ class HomeController < ApplicationController
     session[:current_stream] ||= default_stream
   end
 
+  def streams
+    ['Friends', stream_name_daters(current_user), 'Outlately']
+  end
+
   def default_stream
     'outlately'
+  end
+
+  def cities
+    ['Boston', 'Chicago', 'New York', 'San Francisco']
   end
 
   def current_geo
