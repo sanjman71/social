@@ -72,5 +72,15 @@ module ApplicationHelper
   def user_profile_blurb(user)
     "#{user.gender_name.try(:titleize)} / #{user.city.try(:name) || 'Unknown'}"
   end
-  
+
+  def personal_pronoun(user, s=nil)
+    case
+    when user == current_user
+      "My #{s}".strip
+    when user.try(:gender) == 1
+      "Her #{s}".strip
+    when user.try(:gender) == 2
+      "His #{s}".strip
+    end
+  end
 end
