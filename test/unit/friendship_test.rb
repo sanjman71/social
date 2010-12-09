@@ -20,6 +20,8 @@ class FriendshipTest < ActiveSupport::TestCase
     # all users should have friends
     assert_equal [@user2, @user3], @user1.friends + @user1.inverse_friends
     assert_equal [@user3, @user1], @user2.friends + @user2.inverse_friends
+    assert_equal [@user2.id, @user3.id], @user1.friend_ids
+    assert_equal [@user1.id, @user3.id], @user2.friend_ids
   end
 
 end

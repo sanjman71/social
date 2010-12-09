@@ -6,14 +6,16 @@ class SuggestionFactory
     @remaining        = @limit
     @users            = []
     @users_hash       = Hash[]
-    # by default, no repeat suggestion users
-    @without_user_ids = ([user.id] + user.suggestions.collect(&:users).flatten.collect(&:id)).uniq.sort
-
-    # check that user has at least 1 checkin
-    # return [] if user.checkins.count == 0
+    # by default, no repeat suggestion users, exclude user and friends
+    @without_user_ids = ([user.id] + user.friend_ids + user.suggestions.collect(&:users).flatten.collect(&:id)).uniq.sort
 
     @algorithm.each do |algorithm|
       case algorithm
+      when :geo_checkins
+        # find matches based on common checkin locations within a specified radius from user
+        users = user.search_daters_by_checkins(:limit => @remaining, :without_user_ids => @without_user_ids,
+                                               :miles => default_radius)
+        users.each { |u| @users_hash[u.id] = 'geo_checkin'}
       when :checkins
         # find matches based on common checkin locations
         users = user.search_daters_by_checkins(:limit => @remaining, :without_user_ids => @without_user_ids)
@@ -22,7 +24,7 @@ class SuggestionFactory
         # find matches based on location tags within a specified radius from user
         users = user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids,
                                            :miles => default_radius)
-        users.each { |u| @users_hash[u.id] = 'radius_tag'}
+        users.each { |u| @users_hash[u.id] = 'geo_tag'}
       when :tags
         # find matches based on location tags
         users = user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids)
@@ -31,7 +33,7 @@ class SuggestionFactory
         # find matches based on radius from user
         users = user.search_users(:limit => @remaining, :without_user_ids => @without_user_ids,
                                   :miles => default_radius)
-        users.each { |u| @users_hash[u.id] = 'radius'}
+        users.each { |u| @users_hash[u.id] = 'geo'}
       when :gender
         # find matches based on user gender preferences
         users = user.search_gender(:limit => @remaining, :without_user_ids => @without_user_ids)

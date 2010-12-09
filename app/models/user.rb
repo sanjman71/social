@@ -275,7 +275,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  def singular_object
+  def possessive_pronoun
     male? ? 'him' : 'her'
   end
 
@@ -294,6 +294,11 @@ class User < ActiveRecord::Base
       end
     end
     write_attribute(:orientation, s)
+  end
+
+  def friend_ids
+    ids = friendships.select(:friend_id).collect(&:friend_id) + inverse_friendships.select(:user_id).collect(&:user_id)
+    ids.sort
   end
 
   def rpx?

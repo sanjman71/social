@@ -20,4 +20,4 @@
         %span.hide#checkin_plan_added Added
         %br
       -# show meet him/her link
-      = link_to I18n.t("home.stream.meet_user", :name => user.singular_object), user_path(user), :class => 'admin', :id => 'meet_user'
+      = link_to I18n.t("home.stream.meet_user", :name => user.possessive_pronoun), user_path(user), :class => 'admin', :id => 'meet_user'

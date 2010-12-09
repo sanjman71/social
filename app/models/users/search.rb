@@ -96,8 +96,8 @@ module Users::Search
     options.update(:with_location_ids => [loc_ids]) unless options[:with_location_ids]
     # filter users by my gender orientation
     options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
-    # exclude user
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    # exclude user and friends
+    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
     search(options)
   end
 
@@ -109,7 +109,7 @@ module Users::Search
     loc_ids = locationships.friend_checkins.collect(&:location_id)
     options.update(:with_location_ids => [loc_ids]) unless options[:with_location_ids]
     # filter by common friends
-    options.update(:with_user_ids => (friends+inverse_friends).collect(&:id)) unless options[:with_user_ids]
+    options.update(:with_user_ids => friend_ids) unless options[:with_user_ids]
     # exclude user
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
@@ -124,23 +124,6 @@ module Users::Search
     options.update(:with_location_ids => [loc_ids]) unless options[:with_location_ids]
     # exclude user
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
-    search(options)
-  end
-
-  # search locations, filter by matching location tags and optional distance
-  def search_locations_by_tags(options={})
-    options.update(:klass => Location)
-    add_geo_params(options)
-    unless options[:with_tag_ids]
-      # filter by user location tag ids
-      tag_ids = locations.collect(&:tag_ids).flatten
-      # check if there are any tags to search
-      return [] if tag_ids.blank?
-      options.update(:with_tag_ids => tag_ids)
-    end
-    # exclude user checkin locations
-    loc_ids = locationships.my_checkins.collect(&:location_id)
-    options.update(:without_location_ids => [loc_ids])
     search(options)
   end
 
@@ -170,7 +153,7 @@ module Users::Search
     add_geo_params(options)
     options.update(:klass => User)
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
-    options.update(:with_user_ids => (friends+inverse_friends).collect(&:id)) unless options[:with_user_ids]
+    options.update(:with_user_ids => friend_ids) unless options[:with_user_ids]
     search(options)
   end
 
@@ -189,6 +172,23 @@ module Users::Search
     options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     options.update(:klass => User)
+    search(options)
+  end
+
+  # search locations, filter by matching location tags and optional distance
+  def search_locations_by_tags(options={})
+    options.update(:klass => Location)
+    add_geo_params(options)
+    unless options[:with_tag_ids]
+      # filter by user location tag ids
+      tag_ids = locations.collect(&:tag_ids).flatten
+      # check if there are any tags to search
+      return [] if tag_ids.blank?
+      options.update(:with_tag_ids => tag_ids)
+    end
+    # exclude user checkin locations
+    loc_ids = locationships.my_checkins.collect(&:location_id)
+    options.update(:without_location_ids => [loc_ids])
     search(options)
   end
 

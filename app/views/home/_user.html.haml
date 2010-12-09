@@ -8,4 +8,4 @@
   .span-4{:style => 'font-size: 0.9em;'}
     #user_badges= user.badges_list.sort.join(', ')
   .span-3.last.hide#user_toggle
-    = link_to I18n.t("home.stream.meet_user", :name => user.singular_object), '#', :class => 'admin', :id => 'meet_user'
+    = link_to I18n.t("home.stream.meet_user", :name => user.possessive_pronoun), '#', :class => 'admin', :id => 'meet_user'
