@@ -31,27 +31,24 @@
   .span-5{:style => 'padding-top: 10px;'}
     #user_profile_handle= @user.handle
     #user_profile_data= user_profile_blurb(@user)
-    %br
-    #user_geo_cloud
-      - if @geo_cloud.any?
-        %h4.bottom{:style => 'color: #00F; font-size: 1.0em;'}= personal_pronoun(@user, 'Cities')
-      - @geo_cloud.each_with_index do |tuple, index|
-        - city_id   = tuple[0]
-        - city_name = tuple[1][:name]
-        %span{:class => "city#{index+1}"}= link_to city_name, '#', :id => 'show_checkin_city', :class => 'admin', 'data-city-id' => city_id
-  -# show map of user checkins
-  .span-15.prepend-1.last#checkin_map
-    .span-15.last.map.profile#map
-    .span-15.last#map-side-bar.hide
-      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations, :city_id => @city_id})
 
-  -# disable matches for now
-  - if false #if @viewer == @user
-    -# show matches when its your own profile
-    .span-2.border#user_profile_matches_title
-      %h4{:style => 'padding-top: 15px;'}== Matches
-    .span-10.prepend-1.last#user_profile_matches{:style => 'height: 70px;'}
-      = render(:partial => 'users/matches', :locals => {:users => @matches || []})
+%hr.space
+
+.span-24.last#checkin_map_wrapper
+  .span-3.prepend-1.border#checkin_map_prompt
+    %h4 #{link_to I18n.t("user.spots", :pronoun => personal_pronoun(@user)), '#', :class => 'admin', :id => 'show_my_spots', 'data-url' => '/users/1/spots'}
+  .span-3.prepend-1.border#checkin_map_cities.hide
+    -# show checkin city names
+    %h4= personal_pronoun(@user, 'Cities')
+    - @geo_cloud.each_with_index do |tuple, index|
+      - city_id   = tuple[0]
+      - city_name = tuple[1][:name]
+      %span{:class => "city#{index+1}", :style => 'padding-right: 3px;'}= link_to city_name, '#', :id => 'show_checkin_city', :class => 'admin', 'data-city-id' => city_id
+  -# show user checkins map
+  .span-19.prepend-1.last#checkin_map.hide
+    .span-18.last.map.user.checkins#map
+    .span-18.last#map-side-bar.hide
+      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations, :city_id => @city_id})
 
 %hr.space
 
@@ -85,5 +82,4 @@
     = tags.join(', ')
 
 :javascript
-  var growls        = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};
-  var checkin_map   = #{true};
+  var growls  = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};

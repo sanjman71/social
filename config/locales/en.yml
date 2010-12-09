@@ -34,6 +34,7 @@ en:
     need_checkins: "You are just a few checkins from being matched."
     need_bucks: "You are out of bucks.  Click 'Get more bucks' to get some more."
   user:
+    spots: "Show %{pronoun} Spots"
     matchby:
       checkin: 'Sighting'
       tag: 'Tag'
