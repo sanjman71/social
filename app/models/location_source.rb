@@ -5,7 +5,7 @@ class LocationSource < ActiveRecord::Base
   validates_presence_of   :source_id
   validates_presence_of   :source_type
   validates_uniqueness_of :location_id, :scope => [:source_id, :source_type]
-  after_create            :event_location_source_created
+  after_create            :event_loc_source_created
 
   # BEGIN acts_as_state_machine
   include AASM
@@ -13,7 +13,7 @@ class LocationSource < ActiveRecord::Base
   aasm_initial_state    :initialized
   aasm_state            :initialized
   aasm_state            :tagging
-  aasm_state            :tagged, :enter => :after_tagging
+  aasm_state            :tagged, :enter => :event_loc_source_tagged
 
   aasm_event :tagging do
     transitions :to => :tagging, :from => [:initialized]
@@ -39,7 +39,7 @@ class LocationSource < ActiveRecord::Base
     self.source_type == 'foursquare'
   end
 
-  def event_location_source_created
+  def event_loc_source_created
     # log
     self.class.log("[location_source:#{self.id}] location:#{self.location_id} mapped to #{self.source_type}:#{self.source_id}")
     # add tags
@@ -71,15 +71,15 @@ class LocationSource < ActiveRecord::Base
     tagging!
   end
 
-  # mark attributes after a source is tagged
-  def after_tagging
+  # mark attributes after a location source is tagged
+  def event_loc_source_tagged
     # set tag count and timestamp
     # SK: not sure setting the tag count means much because tags can be imported from multiple sources
     self.tag_count  = location.tag_list.size
     self.tagged_at  = Time.zone.now
     self.save
     # propagate event to location
-    location.try(:after_tagging)
+    location.try(:event_location_tagged)
   end
 
   def self.log(s, level = :info)

@@ -263,14 +263,15 @@ class Location < ActiveRecord::Base
     @hotness ||= 5*locationships.my_checkins.count + 2*locationships.todo_checkins.count
   end
 
-  # called after location is tagged
-  def after_tagging
+  # called after location tagged
+  def event_location_tagged
     users.each do |user|
       # add badges for each user linked to this location
       user.delay.async_add_badges
     end
   end
 
+  # called after location created
   def event_location_created
     self.class.log("[location:#{self.id}] #{self.name} created")
     # check if location needs reverse geocoding

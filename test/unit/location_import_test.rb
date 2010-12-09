@@ -88,8 +88,8 @@ class LocationImportTest < ActiveSupport::TestCase
     # create location, location source
     @location = Location.create(:name => 'Starbucks - State St and Ohio St', :address => '600 N State St',
                                 :state => @il, :country => @us)
-    # should call location.after_tagging after tagging location source
-    Location.any_instance.expects(:after_tagging).once
+    # should call location.event_location_tagged after tagging location source
+    Location.any_instance.expects(:event_location_tagged).once
     @source   = @location.location_sources.create(:source_id => '108207', :source_type => 'foursquare')
     # should add job to import tags
     assert_equal 1, Delayed::Job.all.select { |dj| dj.handler.match(/async_import_tags/) }.size
