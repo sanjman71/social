@@ -10,7 +10,7 @@ class Suggestion < ActiveRecord::Base
 
   validates     :state, :presence => true
   validates     :location_id, :presence => true
-  after_create  :after_create_callback
+  after_create  :event_suggestion_created
 
   accepts_nested_attributes_for :party1, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
   accepts_nested_attributes_for :party2, :allow_destroy => true, :reject_if => proc { |attrs| attrs.all? { |k, v| v.blank? } }
@@ -126,7 +126,7 @@ class Suggestion < ActiveRecord::Base
 
   protected
 
-  def after_create_callback
+  def event_suggestion_created
     log("[suggestion:#{self.id}] creator:#{creator.try(:id).to_i}, users:#{party1.try(:user).try(:handle)}:#{party2.try(:user).try(:handle)}, when:#{self.when}")
   end
 
