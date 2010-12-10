@@ -11,9 +11,10 @@
     <![endif]-->
     = yield :stylesheet
     -#= stylesheet_link_tag :all
-    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js'
-    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js'
+    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js'
+    -# include jquery tools before jquery ui
     = javascript_include_tag 'http://cdn.jquerytools.org/1.2.5/jquery.tools.min.js'
+    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'
     = javascript_include_tag 'jquery-ujs'
     = javascript_include_tag 'jquery.growl'
     = javascript_include_tag 'hash'
