@@ -12,6 +12,7 @@ class Locationship < ActiveRecord::Base
   scope         :my_checkins, where(:my_checkins.gt => 0)
   scope         :todo_checkins, where(:todo_checkins.gt => 0)
   scope         :friend_checkins, where(:friend_checkins.gt => 0)
+  scope         :my_todo_checkins, where({:my_checkins.gt => 0} | {:todo_checkins.gt => 0})
 
   # after create filter
   def event_locationship_created

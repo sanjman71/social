@@ -422,12 +422,13 @@ class User < ActiveRecord::Base
   end
 
   # called after a location is tagged
-  def event_location_tagged(location=nil)
-    collection  = location ? Array[location] : checkin_todo_locations
-    add_ids     = collection.inject([]) do |array, l|
-      array += l.tag_ids
-      array
-    end.uniq
+  def event_location_tagged(location, force=false)
+    # check that location is a checkin or todo location
+    if !force and !locationships.my_todo_checkins.select(:location_id).collect(&:location_id).include?(location.try(:id))
+      return false
+    end
+  
+    add_ids = location.tag_ids
     if (add_ids - tag_ids).any?
       # add the new tag ids
       self.tag_ids = add_ids + tag_ids

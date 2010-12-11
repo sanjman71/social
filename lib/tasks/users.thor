@@ -9,7 +9,9 @@ class Users < Thor
     User.all.each do |u|
       begin
         puts "#{Time.now}: [#{u.id}:#{u.handle}] adding tags"
-        u.event_location_tagged
+        u.checkin_todo_locations.each do |l|
+          u.event_location_tagged(l)
+        end
       rescue Exception => e
         puts "#{Time.now}: #{e.message}"
       end
