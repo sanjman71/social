@@ -52,24 +52,30 @@ class SuggestionFactory
 
     @suggestions = []
     @users.each do |u|
-      # pick a location based on the suggestion match type
+      # pick a meeting location based on the suggestion match type
       @match = @users_hash[u.id]
       case @match
-      when 'checkin'
-        @loc_ids  = u.locations.collect(&:id)
-        if @loc_ids.any?
-          # pick a (random) common location
-          @location = user.locations.where('locations.id IN (%s)' % @loc_ids.join(',')).limit(1).order('rand()').first
+      when 'geo_checkin'
+        @checkin_loc_ids = u.checkin_locations.collect(&:id)
+        if @checkin_loc_ids.any?
+          # pick a random common geo location
+          @common_ids = @checkin_loc_ids & user.checkin_locations.collect(&:id)
+          options     = {:without_user_ids => [0], :with_location_ids => @common_ids, :miles => default_radius,
+                         :order => :sort_random, :limit => 1}
+          @location   = user.search_locations(options).first
         else
-          # pick a random location
-          @location = user.locations.limit(1).order('rand()').first
+          # pick a random geo location
+          options   = {:without_user_ids => [0], :miles => default_radius, :order => :sort_random, :limit => 1}
+          @location = user.search_locations(options).first
         end
       else
-        # pick a random location
-        @location = user.locations.limit(1).order('rand()').first
+        # pick a random geo location
+        options   = {:without_user_ids => [0], :miles => default_radius, :order => :sort_random, :limit => 1}
+        @location = user.search_locations(options).first
       end
-      @options    = Hash[:party1_attributes => {:user => user}, :party2_attributes => {:user => u}, :match => @match,
-                         :location => @location, :when => 'next week']
+      @options    = Hash[:party1_attributes => {:user => user},
+                         :party2_attributes => {:user => u},
+                         :match => @match, :location => @location, :when => 'next week']
       @suggestion = Suggestion.create(@options)
       @suggestions.push(@suggestion)
     end

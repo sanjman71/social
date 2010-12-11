@@ -14,13 +14,20 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     @newyork          = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
     @boston           = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
     # create locations
-    @chicago_sbux     = Location.create!(:name => "Chicago Starbucks", :country => @us, :city => @chicago)
-    @chicago_coffee   = Location.create!(:name => "Chicago Coffee", :country => @us, :city => @chicago)
-    @chicago_lous     = Location.create!(:name => "Chicago Lou Malnati's", :country => @us, :city => @chicago)
-    @chicago_pizza    = Location.create!(:name => "Chicago Pizza", :country => @us, :city => @chicago)
-    @newyork_sbux     = Location.create!(:name => "New York Starbucks", :country => @us, :city => @newyork)
-    @boston_sbux      = Location.create!(:name => "Boston Starbucks", :country => @us, :city => @boston)
-    @boston_coffee    = Location.create!(:name => "Boston Coffee", :country => @us, :city => @boston)
+    @chicago_sbux     = Location.create!(:name => "Chicago Starbucks", :country => @us, :city => @chicago,
+                                         :lat => 41.850033, :lng => -87.6500523)
+    @chicago_coffee   = Location.create!(:name => "Chicago Coffee", :country => @us, :city => @chicago,
+                                         :lat => 41.850033, :lng => -87.6500523)
+    @chicago_lous     = Location.create!(:name => "Chicago Lou Malnati's", :country => @us, :city => @chicago,
+                                         :lat => 41.850033, :lng => -87.6500523)
+    @chicago_pizza    = Location.create!(:name => "Chicago Pizza", :country => @us, :city => @chicago,
+                                         :lat => 41.850033, :lng => -87.6500523)
+    @newyork_sbux     = Location.create!(:name => "New York Starbucks", :country => @us, :city => @newyork,
+                                         :lat => 40.7143528, :lng => -74.0059731)
+    @boston_sbux      = Location.create!(:name => "Boston Starbucks", :country => @us, :city => @boston,
+                                         :lat => 42.3584308, :lng => -71.0597732)
+    @boston_coffee    = Location.create!(:name => "Boston Coffee", :country => @us, :city => @boston,
+                                         :lat => 42.3584308, :lng => -71.0597732)
     # tag coffee places
     [@chicago_sbux, @chicago_coffee, @boston_sbux, @boston_coffee].each do |o|
       o.tag_list = ['cafe', 'coffee']
@@ -42,7 +49,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
   end
 
   def teardown
-    [Suggestion, Checkin, CheckinLog, Location, Locationship, Country, State, City, User].each { |o| o.delete_all }
+    [Suggestion, Checkin, CheckinLog, Location, Locationship, Country, State, City, User, Delayed::Job].each { |o| o.delete_all }
   end
 
   context "geo checkins, geo algorithm" do
@@ -52,7 +59,7 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
       @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     end
 
-    context "with geo checkin, and no geo matches" do      
+    context "with geo checkin matches" do
       should "create 1 suggestion with chicago_female1 checkin match" do
         ThinkingSphinx::Test.run do
           @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:geo_checkins, :geo], :limit => 10)
@@ -63,9 +70,29 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
       end
     end
 
+    context "with geo checkin and geo tag matches" do
+      setup do
+        # add another chicago user
+        @chicago_female2  = User.create!(:name => "Chicago Female 2", :handle => 'chicago_female_2', :gender => 1,
+                                         :city => @chicago)
+        # add common user tags
+        @chicago_male1.event_location_tagged(@chicago_sbux)
+        @chicago_female2.event_location_tagged(@chicago_sbux)
+      end
+
+      should "create 1 suggestion with chicago_female1 checkin match and chicago_female2 tag match" do
+        ThinkingSphinx::Test.run do
+          @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => [:geo_checkins, :geo_tags], :limit => 10)
+          assert_equal 2, @suggestions.size
+          assert_equal [[@chicago_male1, @chicago_female1], [@chicago_male1, @chicago_female2]], @suggestions.collect(&:users)
+          assert_equal ['geo_checkin', 'geo_tag'], @suggestions.collect(&:match)
+        end
+      end
+    end
+
     context "with geo checkin and geo matches" do
       setup do
-        # create 2 more chicago users, 1 as a friend
+        # add 2 more chicago users, 1 as a friend
         @chicago_female2  = User.create!(:name => "Chicago Female 2", :handle => 'chicago_female_2', :gender => 1,
                                          :city => @chicago)
         @chicago_female3  = User.create!(:name => "Chicago Female 3", :handle => 'chicago_female_3', :gender => 1,

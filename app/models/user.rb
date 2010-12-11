@@ -38,7 +38,7 @@ class User < ActiveRecord::Base
 
   # checkins
   has_many                  :checkins, :after_add => :after_add_checkin
-  has_many                  :checkin_locations, :through => :checkins
+  # has_many                  :checkin_locations, :through => :checkins   # use locationships instead
   has_many                  :checkin_logs
 
   # photos
@@ -69,6 +69,10 @@ class User < ActiveRecord::Base
                             :conditions => ["my_checkins > 0"]
   has_many                  :todo_locations, :through => :locationships, :source => :location,
                             :conditions => ["todo_checkins > 0"]
+  has_many                  :friend_locations, :through => :locationships, :source => :location,
+                            :conditions => ["friend_checkins > 0"]
+  has_many                  :checkin_todo_locations, :through => :locationships, :source => :location,
+                            :conditions => ["my_checkins > 0 OR todo_checkins > 0"]
 
   # availability
   has_one                   :availability
@@ -89,7 +93,7 @@ class User < ActiveRecord::Base
   attr_accessible           :handle, :password, :password_confirmation, :gender, :orientation, :rpx,
                             :facebook_id, :city, :city_id,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
-                            :city_attributes, :availability_attributes,
+                            :city_attributes, :availability_attributes, :tag_ids,
                             :preferences_phone, :preferences_email
 
   # BEGIN acts_as_state_machine
@@ -124,6 +128,7 @@ class User < ActiveRecord::Base
     indexes handle, :as => :handle
     has gender, :as => :gender
     has availability.now, :as => :now
+    has tag_ids, :as => :tag_ids, :type => :multi
     # checkins
     has checkins(:id), :as => :checkin_ids
     has checkins_count, :as => :checkins_count
@@ -296,6 +301,25 @@ class User < ActiveRecord::Base
     write_attribute(:orientation, s)
   end
 
+  def tag_ids
+    read_attribute(:tag_ids).present? ? read_attribute(:tag_ids).split(',').map(&:to_i) : []
+  end
+
+  def tag_ids=(o)
+    case
+    when o.blank?
+      write_attribute(:tag_ids, nil)
+    when o.is_a?(Array)
+      write_attribute(:tag_ids, o.uniq.sort.join(','))
+    when o.is_a?(String)
+      if o.match(/^\d+(,\d+){0,}$/)
+        write_attribute(:tag_ids, o)
+      end
+    end
+  rescue Exception => e
+    write_attribute(:tag_ids, nil)
+  end
+
   def friend_ids
     ids = friendships.select(:friend_id).collect(&:friend_id) + inverse_friendships.select(:user_id).collect(&:user_id)
     ids.sort
@@ -395,6 +419,22 @@ class User < ActiveRecord::Base
       array
     end
     new_badges
+  end
+
+  # called after a location is tagged
+  def event_location_tagged(location=nil)
+    collection  = location ? Array[location] : checkin_todo_locations
+    add_ids     = collection.inject([]) do |array, l|
+      array += l.tag_ids
+      array
+    end.uniq
+    if (add_ids - tag_ids).any?
+      # add the new tag ids
+      self.tag_ids = add_ids + tag_ids
+      save
+    else
+      false
+    end
   end
 
   def send_alert(options)

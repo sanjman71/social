@@ -27,4 +27,6 @@
       .span-19.last{:style => 'padding-top: 10px;'}
         %h4.bottom
           = t("suggestion.title.simple", :name => other_party.handle, :location => suggestion.location.name)
+          - if suggestion.location.city.present?
+            %span{:style => 'color: #999;'} (#{suggestion.location.city.try(:name)})
         = link_to 'Details', suggestion_path(suggestion), :class => 'admin'

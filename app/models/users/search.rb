@@ -127,19 +127,20 @@ module Users::Search
     search(options)
   end
 
+  # search daters by common tags
   def search_daters_by_tags(options={})
     # filter users by my gender orientation
     options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     search_users_by_tags(options)
   end
 
+  # search users by common tags
   def search_users_by_tags(options={})
     options.update(:klass => User)
     add_geo_params(options)
     unless options[:with_tag_ids]
-      # filter by user location tag ids
-      tag_ids = locations.collect(&:tag_ids).flatten
-      # check if there are any tags to search
+      # filter by user tag ids
+      # check if there are any user tags to search
       return [] if tag_ids.blank?
       options.update(:with_tag_ids => tag_ids)
     end
@@ -237,13 +238,12 @@ module Users::Search
     if options[:with_now] # e.g. 0, 1
       with.update(:now => options[:with_now])
     end
-    # deprecated: no filter by tags for now
-    # if options[:with_tag_ids] # e.g. [1,3,5]
-    #   with.update(:tag_ids => options[:with_tag_ids])
-    # end
-    # if options[:without_tag_ids] # e.g. [1,3,5]
-    #   without.update(:tag_ids => options[:without_tag_ids])
-    # end
+    if options[:with_tag_ids] # e.g. [1,3,5]
+      with.update(:tag_ids => options[:with_tag_ids])
+    end
+    if options[:without_tag_ids] # e.g. [1,3,5]
+      without.update(:tag_ids => options[:without_tag_ids])
+    end
     if options[:with_user_ids] # e.g. [1,2,5]
       with.update(:user_ids => options[:with_user_ids])
     end
@@ -315,6 +315,8 @@ module Users::Search
             send(order.to_s)
           when :sort_trending_checkins
             send(order.to_s)
+          when :sort_random
+            ["@random"]
           else
             nil
           end
@@ -323,6 +325,8 @@ module Users::Search
       if sort_exprs.any?
         sort_mode   = :expr
         sort_order  = sort_exprs.join(' * ')
+        # force extended mode for random ordering
+        sort_mode   = :extended if sort_order.match(/@random/)
       else
         # default sort
         sort_mode   = :extended
@@ -418,7 +422,7 @@ module Users::Search
     if (todo_loc_ids = locationships.todo_checkins.collect(&:location_id)).any?
       sort_expr.push("3.0 * IF(IN(location_ids, %s), 3.0, 1.0)" % todo_loc_ids.join(','))
     end
-    # deprecated: no sorting by tags for now
+    # deprecated: no sorting by location tags for now
     # if (tag_ids = locations.collect(&:tag_ids).flatten.uniq.sort).any?
     #   sort_expr.push("3.0 * IF(IN(tag_ids, %s), 3.0, 1.0)" % tag_ids.join(','))
     # end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101123202908) do
+ActiveRecord::Schema.define(:version => 20101210004730) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -243,7 +243,7 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
 
   create_table "locations", :force => true do |t|
     t.string   "name",                  :limit => 100
-    t.string   "street_address",        :limit => 100
+    t.string   "street_address"
     t.integer  "city_id"
     t.integer  "state_id"
     t.integer  "zipcode_id"
@@ -387,10 +387,10 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
     t.integer  "taggable_id"
-    t.string   "taggable_type", :limit => 50
+    t.string   "taggable_type"
     t.integer  "tagger_id"
-    t.string   "tagger_type",   :limit => 50
-    t.string   "context",       :limit => 50
+    t.string   "tagger_type"
+    t.string   "context"
     t.datetime "created_at"
   end
 
@@ -398,7 +398,7 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
   add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
 
   create_table "tags", :force => true do |t|
-    t.string "name", :limit => 50
+    t.string "name"
   end
 
   create_table "timezones", :force => true do |t|
@@ -451,6 +451,7 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
     t.integer  "suggestion_density",                                                   :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "tag_ids"
   end
 
   add_index "users", ["delta"], :name => "index_users_on_delta"
@@ -474,8 +475,8 @@ ActiveRecord::Schema.define(:version => 20101123202908) do
     t.integer "locations_count",                                               :default => 0
   end
 
-  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zipcodes_on_state_id_and_locations_count"
-  add_index "zipcodes", ["state_id"], :name => "index_zipcodes_on_state_id"
-  add_index "zipcodes", ["timezone_id"], :name => "index_zipcodes_on_timezone_id"
+  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zips_on_state_id_and_locations_count"
+  add_index "zipcodes", ["state_id"], :name => "index_zips_on_state_id"
+  add_index "zipcodes", ["timezone_id"], :name => "index_zips_on_timezone_id"
 
 end

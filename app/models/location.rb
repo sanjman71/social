@@ -32,6 +32,7 @@ class Location < ActiveRecord::Base
     self.country = Country.us if self.country_id.blank?
   end
 
+  # tags
   acts_as_taggable
 
   # Note: the after_save_callback is deprecated, but its left here commented out for documentation purposes
@@ -71,6 +72,7 @@ class Location < ActiveRecord::Base
     has :id, :as => :location_ids
     indexes name, :as => :name
     indexes street_address, :as => :address
+    # deprecated: this takes forever to index
     # location tags
     # indexes tags(:name), :as => :tags
     # has tags(:id), :as => :tag_ids
@@ -268,6 +270,8 @@ class Location < ActiveRecord::Base
     users.each do |user|
       # add badges for each user linked to this location
       user.delay.async_add_badges
+      # propagate to user
+      user.delay.event_location_tagged(self)
     end
   end
 

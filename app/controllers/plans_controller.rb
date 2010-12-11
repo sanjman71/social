@@ -13,6 +13,7 @@ class PlansController < ApplicationController
     end
   end
 
+  # PUT /plans/add
   # PUT /plans/add/1
   def add
     # @location initialized in before filter

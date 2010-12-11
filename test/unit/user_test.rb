@@ -282,6 +282,37 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+    context "tag_ids" do
+      should "start with empty list as default value" do
+        @user1 = User.create!(:handle => "user")
+        assert_equal [], @user1.tag_ids
+      end
+
+      should "set to comma delimited value" do
+        @user1 = User.create!(:handle => "user", :tag_ids => [1,2])
+        assert_equal [1,2], @user1.reload.tag_ids
+      end
+
+      should "set string comma delimited value" do
+        @user1 = User.create!(:handle => "user", :tag_ids => "1,3,5")
+        assert_equal [1,3,5], @user1.reload.tag_ids
+      end
+
+      should "set unique values" do
+        @user1 = User.create!(:handle => "user")
+        @user1.tag_ids = [5,5]
+        @user1.save
+        assert_equal [5], @user1.reload.tag_ids
+      end
+
+      should "set sorted values" do
+        @user1 = User.create!(:handle => "user")
+        @user1.tag_ids = [99,3]
+        @user1.save
+        assert_equal [3,99], @user1.reload.tag_ids
+      end
+    end
+
     # context "with phone required" do
     #   context "but missing" do
     #     setup do

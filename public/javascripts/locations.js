@@ -46,6 +46,30 @@ $.fn.init_search_foursquare = function() {
   }
 }
 
+$.fn.init_live_search_places = function() {
+  url     = $(this).attr('data-url');
+  lat     = $(this).attr('data-lat');
+  lng     = $(this).attr('data-lng');
+  
+  $("input#live_search_places").autocomplete(
+    {source : function(request, response) {
+              $.ajax({url: url, dataType: "json", data : {q: request.term},
+                      success: function(data) {
+                        count   = data.count;
+                        places  = data.locations;
+                        response($.map(places, function(place) {
+                          return {
+                                          label: place.name + ", " + place.address + ", " + place.city,
+                                          value: place.name
+                          }
+                        }));
+                      }
+                    });
+              },
+    minLength : 3,
+  });
+}
+
 $.fn.init_add_location_tags = function() {
   var add_tags        = [];
   var tag_name_field  = $("input#tag_name");
@@ -131,7 +155,8 @@ $.fn.init_more_locations = function() {
 }
 
 $(document).ready(function() {
-  $(document).init_search_foursquare();
+  $(document).init_live_search_places();
+  //$(document).init_search_foursquare();
   $(document).init_add_location_tags();
   $(document).init_more_locations();
   $(document).init_change_city();

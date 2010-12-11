@@ -44,11 +44,11 @@ class UsersController < ApplicationController
   def show
     # @user, @viewer initialized in before filter
 
-    # find user checkins, most recent first
+    # find user checkins and locations, most recent checkins first
     @checkins   = @user.checkins.order("checkin_at desc").includes(:location)
-
-    # find checkin locations, sort by city (city.id => {name, count})
     @locations  = @checkins.collect(&:location)
+
+    # sort checkin locations by city (city.id => {name, count})
     @geo_cloud  = @locations.inject(ActiveSupport::OrderedHash.new) do |hash, location|
       hash[location.city_id] ||= {:count => 0, :name => location.city.try(:name)}
       hash[location.city_id][:count] +=1
@@ -60,8 +60,8 @@ class UsersController < ApplicationController
     @badges     = @user.badges.order("badges.name asc")
 
     if @viewer == @user
-      # show matching user profiles
-      @matches = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
+      # deprecated: show matching user profiles
+      # @matches = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
     else
       # subtract points and add growl message
       @points = @viewer.subtract_points_for_viewing_profile(@user)
