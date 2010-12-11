@@ -55,7 +55,7 @@ class Checkin < ActiveRecord::Base
     if user.reload.suggestionable?
       # cap the number of suggestions until this is fixed
       if user.suggestions.count < UserSuggestion.max_suggestions
-        # create suggetions using delayed job
+        # create suggestions
         SuggestionFactory.delay.create(user, Hash[:algorithm => [:geo_checkins, :geo_tags, :gender], :limit => 1])
       end
     else

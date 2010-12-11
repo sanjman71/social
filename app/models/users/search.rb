@@ -158,11 +158,16 @@ module Users::Search
     search(options)
   end
 
+  # search daters, filter by optional distance
+  def search_daters(options={})
+    options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
+    search_users(options)
+  end
+
   # search users, filter by optional distance
   def search_users(options={})
     add_geo_params(options)
     options.update(:klass => User)
-    options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
   end

@@ -15,29 +15,29 @@ class SuggestionFactory
         # find matches based on common checkin locations within a specified radius from user
         users = user.search_daters_by_checkins(:limit => @remaining, :without_user_ids => @without_user_ids,
                                                :miles => default_radius)
-        users.each { |u| @users_hash[u.id] = 'geo_checkin'}
+        users.each { |u| @users_hash[u.id] = 'geo_checkin' }
       when :checkins
         # find matches based on common checkin locations
         users = user.search_daters_by_checkins(:limit => @remaining, :without_user_ids => @without_user_ids)
-        users.each { |u| @users_hash[u.id] = 'checkin'}
+        users.each { |u| @users_hash[u.id] = 'checkin' }
       when :geo_tags
         # find matches based on location tags within a specified radius from user
         users = user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids,
                                            :miles => default_radius)
-        users.each { |u| @users_hash[u.id] = 'geo_tag'}
+        users.each { |u| @users_hash[u.id] = 'geo_tag' }
       when :tags
         # find matches based on location tags
         users = user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids)
-        users.each { |u| @users_hash[u.id] = 'tag'}
+        users.each { |u| @users_hash[u.id] = 'tag' }
       when :geo
         # find matches based on radius from user
-        users = user.search_users(:limit => @remaining, :without_user_ids => @without_user_ids,
-                                  :miles => default_radius)
-        users.each { |u| @users_hash[u.id] = 'geo'}
+        users = user.search_daters(:limit => @remaining, :without_user_ids => @without_user_ids,
+                                   :miles => default_radius)
+        users.each { |u| @users_hash[u.id] = 'geo' }
       when :gender
         # find matches based on user gender preferences
         users = user.search_gender(:limit => @remaining, :without_user_ids => @without_user_ids)
-        users.each { |u| @users_hash[u.id] = 'gender'}
+        users.each { |u| @users_hash[u.id] = 'gender' }
       else
         users = []
       end
@@ -60,17 +60,17 @@ class SuggestionFactory
         if @checkin_loc_ids.any?
           # pick a random common geo location
           @common_ids = @checkin_loc_ids & user.checkin_locations.collect(&:id)
-          options     = {:without_user_ids => [0], :with_location_ids => @common_ids, :miles => default_radius,
+          options     = {:without_user_ids => [-1], :with_location_ids => @common_ids, :miles => default_radius,
                          :order => :sort_random, :limit => 1}
           @location   = user.search_locations(options).first
         else
           # pick a random geo location
-          options   = {:without_user_ids => [0], :miles => default_radius, :order => :sort_random, :limit => 1}
+          options   = {:without_user_ids => [-1], :miles => default_radius, :order => :sort_random, :limit => 1}
           @location = user.search_locations(options).first
         end
       else
         # pick a random geo location
-        options   = {:without_user_ids => [0], :miles => default_radius, :order => :sort_random, :limit => 1}
+        options   = {:without_user_ids => [-1], :miles => default_radius, :order => :sort_random, :limit => 1}
         @location = user.search_locations(options).first
       end
       @options    = Hash[:party1_attributes => {:user => user},
