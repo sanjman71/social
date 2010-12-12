@@ -37,12 +37,24 @@ class Checkin < ActiveRecord::Base
     set_property :delta => :delayed
   end
 
+  # returns true if this checkin is considered recent
+  def recent_checkin?
+    checkin_at > 3.hours.ago rescue false
+  end
+
   # user checkin was added
   def event_checkin_added
     # log data
     self.class.log("[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
+    if recent_checkin? and !user.oauths.count.zero?
+      self.delay.async_email_checkin_imported
+    end
+  end
+
+  def async_email_checkin_imported
+    CheckinMailer.checkin_imported(self).deliver
   end
 
   # user checkins were imported

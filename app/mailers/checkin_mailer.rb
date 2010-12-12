@@ -35,5 +35,16 @@ class CheckinMailer < ActionMailer::Base
       mail(:to => @email, :subject => "You checked in, but a bit too late.")
     end
   end
-  
+
+  def checkin_imported(checkin, points=0)
+    @user     = checkin.user
+    @location = checkin.location
+    @email    = @user.email_address
+    @points   = points
+
+    unless @email.blank?
+      AppLogger.log("[email:#{@user.id}:#{@email}] checkin_imported:location:#{@location.try(:name)}")
+      mail(:to => @email, :subject => "You checked in at #{@location.try(:name)}")
+    end
+  end
 end

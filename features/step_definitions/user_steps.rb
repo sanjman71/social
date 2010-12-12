@@ -13,6 +13,20 @@ Given /^a user "([^"]*)" who is a "([^"]*)" "([^"]*)"$/ do |handle, orientation,
                                        :gender => gender, :password => 'secret', :password_confirmation => 'secret')
 end
 
+# add user email address
+Given /^user "([^"]*)" has email "([^"]*)"$/ do |handle, email|
+  user = User.find_by_handle!(handle)
+  user.email_addresses_attributes = [{:address => email}]
+  user.save
+end
+
+# add user oauth
+Given /^user "([^"]*)" has oauth "([^"]*)"$/ do |handle, provider|
+  user  = User.find_by_handle!(handle)
+  oauth = user.oauths.create(:provider => provider, :access_token => "111222333")
+end
+
+
 # add user friend
 Given /^"([^"]*)" is friends with "([^"]*)"$/ do |handle1, handle2|
   user    = User.find_by_handle!(handle1)

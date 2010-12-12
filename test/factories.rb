@@ -82,12 +82,12 @@ Factory.define :user do |u|
   u.state                 "active"    # always create users in active state
 end
 
-Factory.define :location do |o|
-  o.country   { |o| Factory(:country) }
-  o.state     { |o| Factory(:state) }
-  o.city      { |o| Factory(:city) }
-  o.zipcode   { |o| Factory(:zipcode) }
-end
+# Factory.define :location do |o|
+#   o.country   { |o| Factory(:country) }
+#   o.state     { |o| Factory(:state) }
+#   o.city      { |o| Factory(:city) }
+#   o.zipcode   { |o| Factory(:zipcode) }
+# end
 
 Factory.define :facebook_checkin, :class => :Checkin do |o|
   o.source_type   'facebook'
@@ -101,11 +101,6 @@ Factory.define :foursquare_checkin, :class => :Checkin do |o|
   o.checkin_at    2.days.ago
 end
 
-Factory.define :company do |o|
-  o.name        { |s| Factory.next :company_name }
-  o.time_zone   "UTC"
-end
-
 Factory.sequence :user_name do |n|
   "User #{n}"
 end
@@ -116,10 +111,6 @@ end
 
 Factory.sequence :user_email do |n|
   "user#{n}@email.com"
-end
-
-Factory.sequence :company_name do |n|
-  "Company #{n}"
 end
 
 Factory.sequence :source_id do |n|
