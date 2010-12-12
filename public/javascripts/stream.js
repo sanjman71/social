@@ -111,6 +111,9 @@ $.fn.init_tooltips = function() {
   $("a#suggestions_wtf").tooltip({effect: 'fade', predelay: 100, fadeOutSpeed: 100, position: "top right",
                                   offset: [0, 0]});
   $("a#suggestions_wtf").click(function() { return false; })
+  $("a#outlately_wtf").tooltip({effect: 'fade', predelay: 100, fadeOutSpeed: 100, position: "top right",
+                                offset: [0, 0]});
+  $("a#outlately_wtf").click(function() { return false; })
 }
 
 $(document).ready(function() {

@@ -12,7 +12,7 @@
     - javascript 'stream'
 
 - content_for :mat do
-  .span-23.last.padding-bottom-10
+  .span-23.last
     .span-3
       %h2 Outlately
     .span-13{:style => 'margin-top: 10px;'}
@@ -20,6 +20,9 @@
         = render(:partial => 'home/playgrounds', :locals => {:cities => @cities.sort, :geo => @geo})
     .span-7.last
       = render(:partial => 'shared/oauth_links')
+  .span-23.last.padding-bottom-10
+    = link_to "How to meet people?", '#', :id => 'outlately_wtf'
+    .tooltip= I18n.t('home.outlately.tooltip')
   .span-23.last.padding-bottom-10
     %span{:style => 'font-size: 0.9em; color: #777;'}= I18n.t('home.info')
 

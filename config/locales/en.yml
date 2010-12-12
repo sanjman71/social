@@ -5,6 +5,8 @@ en:
   hello: "Hello world"
   points: "Spending Cash : $%{points}"
   home:
+    outlately:
+      tooltip: "Check-in through Facebook or Foursquare to build your Social DNA and get matched with people who have your same interests."
     stream:
       title: Social Stream
       plan_location: "I want to go there"
