@@ -56,8 +56,9 @@
 - unless @badges.blank?
   .span-24.last#badges
     .span-3.prepend-1.border
-      %h4= I18n.t("badges.title")
-      %span{:style => 'font-size: 0.9em; color: #777; padding-right: 3px;'}= I18n.t("badges.help")
+      %h4{:style => 'margin-bottom: 0;'}= I18n.t("badges.title")
+      = link_to 'What is this?', '#', :id => 'badges_tip', :class => 'info'
+      .tooltip{:style => 'width: 500px; '}= I18n.t("badges.tip")
     .span-19.prepend-1.last
       = render(:partial => 'badges', :locals => {:user => @user, :badges => @badges})
 

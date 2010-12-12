@@ -75,7 +75,7 @@ en:
       to: "%{name} confirmed so you're going out"
   badges:
     title: Social DNA
-    help: "You are what you do.  Your Social DNA is your authentic profile, based on where you check-in."
+    tip: "You are what you do. Build your Social DNA by checking in through Facebook or Foursquare. A Jetsetter? Check in at an airport. A Caffeine Junkie? Check in at a Coffee Shop."
   badge:
     adventurous_pallette: "Around the world in twenty bites"
     booze_hound: "Less talking, more drinking"

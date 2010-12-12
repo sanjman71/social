@@ -44,10 +44,17 @@ $.fn.init_match_pictures = function() {
   }
 }
 
+$.fn.init_tooltips = function() {
+  $("a#badges_tip").tooltip({effect: 'fade', predelay: 100, fadeOutSpeed: 100, position: "bottom right",
+                             offset: [0,0]});
+  $("a#badges_tip").click(function() { return false; })
+}
+
 $(document).ready(function() {
 
+  $(document).init_tooltips();
+
   $("a#show_my_spots").click(function() {
-    console.log("showing my spots");
     $("div#checkin_map_prompt").hide();
     $("div#checkin_map_cities").show();
     $("div#checkin_map").show();
