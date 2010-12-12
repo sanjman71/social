@@ -366,7 +366,7 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
-  context "search_users filter" do
+  context "search_daters filter" do
     setup do
       # 3 female chicago users + 1 boston female user checkin to different locations
       @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
@@ -379,22 +379,17 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 3 users filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
-        @users = @chicago_male1.search_users(:miles => 10, :order => :sort_similar_locations)
+        @users = @chicago_male1.search_daters(:miles => 10, :order => :sort_similar_locations)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
-        # assert_equal [:location, :tag, :geo_filter], @users.collect(&:matchby)
-        # assert_equal [8.0, 3.0, 0.0], @users.collect(&:matchvalue)
       end
     end
 
     should "find 3 users filtered by distance, ordered by relevance" do
       ThinkingSphinx::Test.run do
-        @users = @chicago_male1.search_users(:miles => 10, :klass => User)
+        @users = @chicago_male1.search_daters(:miles => 10)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }.sort_by(&:id)
-        # assert_equal [:geo_filter, :geo_filter, :geo_filter], @users.collect(&:matchby)
-        # assert_equal [0.0, 0.0, 0.0], @users.collect(&:matchvalue)
-        # assert_equal [1, 1, 1], @users.results[:matches].collect{ |o| o[:weight] }
       end
     end
   end
