@@ -46,6 +46,7 @@ group :development, :test do
   gem 'launchy'
   gem 'linecache19'
   gem 'mocha', :require => nil
+  gem 'pickle',                 '>= 0.4.3'
   gem 'random_data'
   gem 'rspec-rails',  :require => nil
   gem 'ruby-debug19'
