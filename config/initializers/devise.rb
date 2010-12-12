@@ -182,8 +182,9 @@ Devise.setup do |config|
     :site               => 'https://graph.facebook.com/',
     :authorize_path     => '/oauth/authorize',
     :access_token_path  => '/oauth/access_token',
-    :scope              => ['offline_access', 'user_checkins', 'friends_checkins', 'user_about_me', 'user_birthday',
-                            'user_location', 'email']
+    :scope              => ['offline_access', 'email', 'user_checkins', 'friends_checkins',
+                            'user_about_me', 'friends_about_me', 'user_birthday', 'friends_birthday',
+                            'user_location', 'friends_location', 'user_photos', 'friends_photos']
 
   # github - uses oauth2
   config.oauth :github, GITHUB_KEY, GITHUB_SECRET,
