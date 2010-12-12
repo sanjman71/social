@@ -21,11 +21,12 @@
         = render(:partial => 'home/playgrounds', :locals => {:cities => @cities.sort, :geo => @geo})
     .span-7.last
       = render(:partial => 'shared/oauth_links')
-  .span-23.last.padding-bottom-10
-    = link_to "How to meet people?", '#', :id => 'outlately_wtf'
-    .tooltip= I18n.t('home.outlately.tooltip')
-  .span-23.last.padding-bottom-10
-    %span{:style => 'font-size: 0.9em; color: #777;'}= I18n.t('home.info')
+  - if user_signed_in?
+    .span-23.last.padding-bottom-10
+      = link_to "How do I meet people?", '#', :id => 'outlately_wtf'
+      .tooltip= I18n.t('home.outlately.tooltip')
+    .span-23.last.padding-bottom-10
+      %span{:style => 'font-size: 0.9em; color: #777;'}= I18n.t('home.info')
 
 %hr.space
 
