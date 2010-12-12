@@ -78,7 +78,7 @@ class HomeController < ApplicationController
   end
 
   def checkins_end_count
-    8
+    50
   end
 
   def current_stream
