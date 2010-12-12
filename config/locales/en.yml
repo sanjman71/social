@@ -18,7 +18,10 @@ en:
       tooltip: "What are the hottest places in town? Outlately knows, see below! Click on the thumbnails to learn more."
     suggestions:
       title: Who You Should Meet
-      tooltip: "You are what you do. Outlately knows what you like doing, and matches you with people who like doing the same things. \nClick on the link to find and meet new people!"
+      link:
+        tooltip: "You are what you do. Outlately knows what you like doing, and matches you with people who like doing the same things. \nClick on the link to find and meet new people!"
+      how:
+        tooltip: "Outlately recommends people you are compatible with based on the check-ins you do. If you want to meet great people, check-in more places!"
     info:
       "See who is out and about! Below shows you who is checking in and where they are checking in at.
        See where your friends are! Meet new people who go the same places you go!"

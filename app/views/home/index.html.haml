@@ -39,12 +39,15 @@
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions
     - if @user.suggestions.active.count > 0
-      %h3
+      %h4
         = link_to I18n.t('home.suggestions.title'), suggestions_path, :class => 'admin'
         = link_to 'What is this?', '', :id => 'suggestions_wtf', :class => 'info'
-        .tooltip= I18n.t('home.suggestions.tooltip')
+        .tooltip= I18n.t('home.suggestions.link.tooltip')
     - else
-      %h4 No suggestions at the moment, but we're working on it.
+      %h4
+        No suggestions at the moment, but we're working on it.
+        = link_to 'What is this?', '', :id => 'suggestions_wtf', :class => 'info'
+        .tooltip= I18n.t('home.suggestions.how.tooltip')
 
   -# home streams list
   .span-23.prepend-1.last
