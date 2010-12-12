@@ -11,6 +11,8 @@ Feature: Import user checkin
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{1.hour.ago}", source_id: "1", source_type: "foursquare"
     And the delayed jobs are processed
     Then "sanjay@outlately.com" should receive an email with subject "You checked in at Starbucks"
+    When I open the email
+    Then I should see "That checkin got you 10 bucks." in the email body
 
   Scenario: User should not receive an email when a older checkin is imported
     Given a user exists with handle: "sanjay"

@@ -126,7 +126,7 @@ class CheckinTest < ActiveSupport::TestCase
         assert_false @user.suggestionable?
         assert_equal 1, @user.reload.alerts.count
         # should add user points for checkin
-        assert_equal 5, @user.reload.points
+        assert_equal 10, @user.reload.points
       end
     end
 

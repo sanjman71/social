@@ -53,8 +53,10 @@ class Checkin < ActiveRecord::Base
     end
   end
 
+  # send email about the recent checkin
   def async_email_checkin_imported
-    CheckinMailer.checkin_imported(self).deliver
+    points = Currency.points_for_checkin(user, self)
+    CheckinMailer.checkin_imported(self, points).deliver
   end
 
   # user checkins were imported

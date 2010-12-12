@@ -546,7 +546,7 @@ class User < ActiveRecord::Base
   # user added a checkin
   def after_add_checkin(checkin)
     # add points for checkin
-    self.add_points_for_checkin(checkin)
+    add_points(Currency.points_for_checkin(self, checkin))
   end
 
   def after_change_points
