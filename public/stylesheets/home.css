@@ -17,7 +17,11 @@
                                     { font-size: 0.9em; color: #bbb; }
 .stream .checkin #checkin_plan_added
                                     { font-size: 0.9em; color: #333; }
-                                    
+.stream .checkin #checkin_action_wrapper
+                                    { opacity: 0.5; }
+.stream .checkin.hover #checkin_action_wrapper
+                                    { opacity: 1.0; }
+
 #stream_list .stream_title          { color: #333; }
 #stream_list .stream_name           { padding-right: 3px; }
 #stream_list .stream_name.current   { color: #111; font-weight: bold; }
