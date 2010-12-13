@@ -11,6 +11,9 @@ $.fn.init_change_user_city = function() {
     // ignore empty query
     if (query == '') { return; }
 
+    // enable location name to indicate its changed
+    $("input#location_changed").val(1);
+
     // disable city id to indicate city has changed
     $(user_city_id).attr('disabled', 'disabled');
 
@@ -27,7 +30,7 @@ $.fn.init_change_user_city = function() {
       }
       // re-enable submit, update hint
       $(submit).attr('disabled', '');
-      $(hint).text("we found " + loc.city);
+      $(hint).text("hey, its " + loc.city);
     });
   })
   
@@ -36,6 +39,18 @@ $.fn.init_change_user_city = function() {
     value = loc.city + ", " + (loc.state != '' ? loc.state : loc.country);
     $(field).attr('value', value);
   }
+  
+  $("form.simple_form.user").submit(function() {
+    try {
+      // check if location field changed
+      changed = $("input#location_changed").val();
+      if (changed == 0) { 
+        $("input#user_city_name,input#user_city_attributes_id").attr('disabled', 'disabled');
+      }
+    } catch(e) {}
+
+    return true;
+  })
 }
 
 $(document).ready(function() {

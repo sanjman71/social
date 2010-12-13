@@ -283,17 +283,32 @@ class UserTest < ActiveSupport::TestCase
         @il       = Factory(:il, :country => @us)
         @chicago  = Factory(:chicago, :state => @il)
       end
-      
-      should "set city" do
+
+      should "set city to 'chicago'" do
         @user1 = User.create!(:user => "User 1", :handle => "user1", :city => @chicago)
         assert_equal @chicago, @user1.reload.city
       end
     end
 
     context "orientation" do
-      should "set orientation when specified as a string" do
+      should "set orientation to 'bisexual'" do
         @user1 = User.create!(:handle => "Crazy bi", :orientation => 'bisexual')
-        assert_equal 1, @user1.orientation
+        assert_equal 1, @user1.reload.orientation
+      end
+
+      should "set orientation to 'gay'" do
+        @user1 = User.create!(:handle => "Crazy gay", :orientation => 'gay')
+        assert_equal 2, @user1.reload.orientation
+      end
+
+      should "set orientation to 2 (gay)" do
+        @user1 = User.create!(:handle => "Crazy gay", :orientation => 2)
+        assert_equal 2, @user1.reload.orientation
+      end
+
+      should "set orientation to 'straight'" do
+        @user1 = User.create!(:handle => "Crazy straight", :orientation => 'straight')
+        assert_equal 3, @user1.reload.orientation
       end
     end
 

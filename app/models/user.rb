@@ -302,6 +302,19 @@ class User < ActiveRecord::Base
     write_attribute(:orientation, s)
   end
 
+  def orientation_name
+    case self.orientation
+    when 1
+      'bisexual'
+    when 2
+      'gay'
+    when 3
+      'straight'
+    else
+      ''
+    end
+  end
+
   def tag_ids
     read_attribute(:tag_ids).present? ? read_attribute(:tag_ids).split(',').map(&:to_i) : []
   end

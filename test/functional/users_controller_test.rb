@@ -236,6 +236,26 @@ class UsersControllerTest < ActionController::TestCase
       # should change user city
       assert_equal 'Toronto', @chicago_user.reload.city.name
     end
+
+    should "change gender to 'male'" do
+      setup_badges
+      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :gender => 'female')
+      assert_equal 1, @chicago_user.gender
+      sign_in @chicago_user
+      set_beta
+      put :update, :id => @chicago_user.id, :user => {:gender => 'male'}
+      assert_equal 2, @chicago_user.reload.gender
+    end
+
+    should "change orientation to 'gay'" do
+      setup_badges
+      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :orientation => 'straight')
+      assert_equal 3, @chicago_user.orientation
+      sign_in @chicago_user
+      set_beta
+      put :update, :id => @chicago_user.id, :user => {:orientation => 'gay'}
+      assert_equal 2, @chicago_user.reload.orientation
+    end
   end
   
   context "edit" do

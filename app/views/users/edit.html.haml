@@ -29,18 +29,24 @@
     .span-24.last
       -# handle
       = f.input :handle, :hint => 'your name on the site'
+    -# gender and orientation
+    .span-24.last
+      = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name
+    .span-24.last
+      = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name
     -# email address
     .span-24.last
       = f.simple_fields_for :email_addresses do |email_form|
         = email_form.input :address, :label => 'Email Address', :required => false, :hint => 'used for notifications + reminders'
+    -# location
     .span-24.last
       = f.simple_fields_for :city do |city_form|
         -# city
         = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => search_locations_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
+      = hidden_field_tag :location_changed, 0
     .span-24.last
       = f.simple_fields_for :availability do |avail_form|
         = avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
-
     .span-19.prepend-1.last
       = f.submit 'Update', :class => 'big', :id => 'edit_user_submit'
       or
