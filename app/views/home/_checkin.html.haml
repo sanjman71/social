@@ -10,9 +10,9 @@
     -# link handle to user profile
     #checkin_user_location #{link_to user.handle, user_path(user)} : #{truncate(location.name, :length => 35)}
     #checkin_city= location.city
-  .span-3.last.hide#checkin_action_wrapper
-    - unless user == current_user
-      -# show actions for other user's checkins
+  .span-3.last#checkin_action_wrapper
+    - unless user == current_user or !user.member?
+      -# show actions for other members's checkins
       - if current_user.locationships.where({:my_checkins.gt => 0} | {:todo_checkins.gt => 0}, :location_id => location.id).count == 0
         -# user has not checked in here or plans to go here
         = link_to I18n.t("home.stream.plan_location"), '#', :class => 'admin', :id => 'checkin_plan', "data-path" => add_todo_location_path(location.id)

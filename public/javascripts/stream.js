@@ -19,29 +19,15 @@ $.fn.init_stream_objects = function() {
   $(".stream .location, .stream .match, .stream .checkin").live('mouseover mouseout', function(event) {
     if (event.type == 'mouseover') {
       $(this).addClass('hover');
-      $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").show();
+      // always show checkin links
+      // $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").show();
     } else {
       $(this).removeClass('hover');
-      $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").hide();
+      // $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").hide();
     }
   })
-
-  // deprecated: dialogs are deprecated on home page
-  // initialize dialog
-  //$("#meet_user_dialog").dialog({modal: true, autoOpen: false, width: 350, height: 150, show: 'fadeIn(slow)'});
-  //$("#plan_location_dialog").dialog({modal: true, autoOpen: false, width: 350, height: 150, show: 'fadeIn(slow)'});
-
-  // basic dialog for now
-  /*
-  $("a#meet_user").live('click', function() {
-    handle = $(this).parents('.match').attr('data-handle');
-    $("#meet_user_dialog #handle").text("We'll connect you with " + handle);
-    $("#meet_user_dialog").dialog('open');
-    return false;
-  })
-  */
-
-  // 
+  
+  // add checkin to todo list
   $("a#checkin_plan").live('click', function() {
     parent = $(this).parents(".checkin");
     path   = $(this).attr('data-path');
@@ -58,7 +44,6 @@ $.fn.init_stream_objects = function() {
     // update interface
     $(parent).find("#checkin_plan_pending").removeClass('hide');
     $(this).hide();
-    //$("#plan_location_dialog").dialog('open');
     return false;
   })
 }

@@ -44,9 +44,9 @@ Feature: User Streams
     And a state: "IL" should exist with code: "IL"
     # create users
     And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
-    And a user exists with handle: "chicago_friend1", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
-    And a user exists with handle: "chicago_friend2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
-    And a user exists with handle: "chicago_guy2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_friend1", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
+    And a user exists with handle: "chicago_friend2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
+    And a user exists with handle: "chicago_guy2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
     # create locations
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
@@ -66,6 +66,8 @@ Feature: User Streams
     And I should see "chicago_friend1" within "div.stream#friends"
     And I should see "chicago_friend2" within "div.stream#friends"
     And I should not see "chicago_guy2" within "div.stream#friends"
+    And I should not see "I want to go there" within "div.stream#friends"
+    And I should not see "I want to meet him" within "div.stream#friends"
 
   # @javascript
   # Scenario: User sees checkins in the past day in the Today stream
