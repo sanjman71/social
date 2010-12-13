@@ -2,6 +2,8 @@ module Users::Search
 
   def search_all_checkins(options={})
     add_geo_params(options)
+    # include members only
+    options.update(:with_member => 1) unless options[:with_member]
     # include my checkins and friend checkins
     search_checkins(options)
   end
@@ -26,7 +28,6 @@ module Users::Search
     add_geo_params(options)
     # include only friend checkins
     unless options[:with_user_ids]
-      friend_ids = (friends+inverse_friends).collect(&:id)
       return [] if friend_ids.blank?
       options.update(:with_user_ids => friend_ids)
     end
@@ -35,30 +36,28 @@ module Users::Search
 
   def search_gals_checkins(options={})
     add_geo_params(options)
-    # exclude my checkins
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     # filter checkins by females
     options.update(:with_gender => [1]) unless options[:with_gender]
-    search_checkins(options)
+    search_daters_checkins(options)
   end
 
   alias :search_ladies_checkins :search_gals_checkins
 
   def search_guys_checkins(options={})
     add_geo_params(options)
-    # exclude my checkins
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     # filter checkins by males
     options.update(:with_gender => [2]) unless options[:with_gender]
-    search_checkins(options)
+    search_daters_checkins(options)
   end
 
   alias :search_men_checkins :search_guys_checkins
 
   def search_daters_checkins(options={})
     add_geo_params(options)
-    # exclude my checkins
-    options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
+    # exclude checkins by me and my friends
+    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
+    # include members only
+    options.update(:with_member => 1) unless options[:with_member]
     # filter checkins by my gender orientation
     options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     search_checkins(options)
@@ -239,6 +238,9 @@ module Users::Search
     end
     if options[:without_location_ids] # e.g. [1,3,5]
       without.update(:location_ids => options[:without_location_ids])
+    end
+    if options[:with_member] # e.g. 0, 1
+      with.update(:member => options[:with_member])
     end
     if options[:with_now] # e.g. 0, 1
       with.update(:now => options[:with_now])

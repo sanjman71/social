@@ -24,6 +24,7 @@ class Checkin < ActiveRecord::Base
     has user(:id), :as => :user_ids
     indexes user(:handle), :as => :handle
     has user(:gender), :as => :gender
+    has user(:member), :as => :member
     has user.availability(:now), :as => :now
     # checkin location
     has location(:id), :as => :location_ids

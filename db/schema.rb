@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101210004730) do
+ActiveRecord::Schema.define(:version => 20101212192302) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -452,6 +452,7 @@ ActiveRecord::Schema.define(:version => 20101210004730) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "tag_ids"
+    t.boolean  "member",                                                               :default => false
   end
 
   add_index "users", ["delta"], :name => "index_users_on_delta"
@@ -460,6 +461,7 @@ ActiveRecord::Schema.define(:version => 20101210004730) do
   add_index "users", ["foursquare_id"], :name => "index_users_on_foursquare_id"
   add_index "users", ["gender"], :name => "index_users_on_gender"
   add_index "users", ["handle"], :name => "index_users_on_handle"
+  add_index "users", ["member"], :name => "index_users_on_member"
   add_index "users", ["phone_numbers_count"], :name => "index_users_on_phone_numbers_count"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["rpx"], :name => "index_users_on_rpx"

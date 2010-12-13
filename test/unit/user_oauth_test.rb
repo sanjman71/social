@@ -9,7 +9,7 @@ class UserOauthTest < ActiveSupport::TestCase
   end
 
   context "facebook oauth create" do
-    should "create oauth, set user facebook id, facebook photo, import facebook friends" do
+    should "create oauth, set member, set user facebook id + facebook photo, import facebook friends" do
       json_data    = File.open("#{Rails.root}/test/data/facebook_user.json")
       access_token = OAuth2::AccessToken.new('1', '2')
       # stub access token
@@ -17,6 +17,8 @@ class UserOauthTest < ActiveSupport::TestCase
       User.find_for_facebook_oauth(access_token, @user1)
       # should set user facebook id
       assert @user1.facebook_id
+      # should set user member flag
+      assert @user1.member?
       # should create user facebook oauth
       assert_equal 1, @user1.oauths.facebook.count
       # should create user facebook photo

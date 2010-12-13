@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :city, :allow_destroy => true, :reject_if => :all_blank
 
   # oauths
-  has_many                  :oauths
+  has_many                  :oauths, :after_add => :event_oauth_added
   Oauth.providers.each do |s|
     has_one                 "#{s}_oauth".to_sym, :class_name => 'Oauth', :conditions => {:provider => s}
   end
@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
   attr_accessor             :matchby, :matchvalue
 
   attr_accessible           :handle, :password, :password_confirmation, :gender, :orientation, :rpx,
-                            :facebook_id, :city, :city_id,
+                            :facebook_id, :city, :city_id, :member,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
                             :city_attributes, :availability_attributes, :tag_ids,
                             :preferences_phone, :preferences_email
@@ -127,6 +127,7 @@ class User < ActiveRecord::Base
     has :id, :as => :user_ids
     indexes handle, :as => :handle
     has gender, :as => :gender
+    has member, :as => :member
     has availability.now, :as => :now
     has tag_ids, :as => :tag_ids, :type => :multi
     # checkins
@@ -556,4 +557,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  # user added an oauth object
+  def event_oauth_added(oauth)
+    update_attribute(:member, true) if !member?
+  end
 end

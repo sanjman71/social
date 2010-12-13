@@ -2,6 +2,9 @@
 
 .span-23.prepend-1.mat
   %h2== Users
+  - if @members.present?
+    %h4
+      = [pluralize(@users.size, 'user'), pluralize(@members, 'member')].join(', ')
 
 %hr.space
 
@@ -9,9 +12,10 @@
   - @users.each do |user|
     .span-24.last#user.padding-bottom-10
       .span-5.prepend-1#name
-        = link_to user.handle, user_path(user), :class => 'admin'
+        %h4.bottom= link_to user.handle, user_path(user), :class => 'admin'
+        %span{:style => 'font-size: 0.9em; color: #777;'}= user.member? ? "Member" : "User"
       .span-3#checkins
-        = pluralize(user.checkins.count, 'checkin')
+        = pluralize(user.checkins_count, 'checkin')
       .span-5#points
         = I18n.t("points", :points => user.points)
       .span-10.last

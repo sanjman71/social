@@ -8,7 +8,7 @@ class UserTest < ActiveSupport::TestCase
         @user1 = User.create!(:name => "User 1", :handle => 'user1')
       end
 
-      should "create user in active state, no gender, default orientation, no points, default picture + radius" do
+      should "create user in active state, no gender, no points, default orientation, picture + radius" do
         assert_equal "active", @user1.state
         assert_false @user1.gender?
         assert_equal 0, @user1.gender
@@ -18,6 +18,8 @@ class UserTest < ActiveSupport::TestCase
         assert_equal 50, @user1.radius
         assert_equal 0, @user1.user_density
         assert_equal 0, @user1.suggestion_density
+        assert_equal 0, @user1.points
+        assert_false @user1.member?
       end
     end
 
@@ -272,6 +274,19 @@ class UserTest < ActiveSupport::TestCase
         assert_equal 2, @user1.gender
         assert @user1.reload.male?
         assert_equal "http://foursquare.com/img/blank_boy.png", @user1.primary_photo_url
+      end
+    end
+
+    context "city" do
+      setup do
+        @us       = Factory(:us)
+        @il       = Factory(:il, :country => @us)
+        @chicago  = Factory(:chicago, :state => @il)
+      end
+      
+      should "set city" do
+        @user1 = User.create!(:user => "User 1", :handle => "user1", :city => @chicago)
+        assert_equal @chicago, @user1.reload.city
       end
     end
 

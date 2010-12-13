@@ -31,7 +31,8 @@ class UsersController < ApplicationController
                       :geo_distance => 0.0..@radius.miles.meters.value)
       @users        = current_user.search_users(@options)
     else
-      @users        = User.all
+      @users        = User.order("users.member desc, users.id asc")
+      @members      = User.where(:member => 1).count
     end
 
     respond_to do |format|

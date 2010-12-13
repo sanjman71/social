@@ -1,11 +1,12 @@
-Feature: Home Streams
-  As a user I want to see streams of user activity
+Feature: User Streams
+  As a user I want to see streams of user checkin activity
 
   @javascript
-  Scenario: User sees users in the default Outlately stream
-    Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
-    And a user "chicago_coffee_gal" in "Chicago, IL" who is a "straight" "female"
-    And a user "chicago_coffee_guy" in "Chicago, IL" who is a "straight" "male"
+  Scenario: User should see all member checkins in the default Outlately stream
+    Given a city: "Chicago" should exist with name: "Chicago"
+    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And "chicago_coffee_gal" checked in to "Chicago Starbucks" in "Chicago"
     And "chicago_coffee_guy" checked in to "Chicago Lavazza" in "Chicago"
     And I am logged in as "chicago_guy"
@@ -16,10 +17,11 @@ Feature: Home Streams
     And I should see "chicago_coffee_guy" within "div.stream#outlately"
 
   @javascript
-  Scenario: Male user sees females in the Ladies stream
-    Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
-    And a user "chicago_coffee_gal" in "Chicago, IL" who is a "straight" "female"
-    And a user "chicago_coffee_guy" in "Chicago, IL" who is a "straight" "male"
+  Scenario: Male user should see member checkins by females in the Ladies stream
+    Given a city: "Chicago" should exist with name: "Chicago"
+    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And "chicago_coffee_gal" checked in to "Chicago Starbucks" in "Chicago"
     And "chicago_coffee_guy" checked in to "Chicago Lavazza" in "Chicago"
     And I am logged in as "chicago_guy"
@@ -31,14 +33,26 @@ Feature: Home Streams
     And I should not see "chicago_coffee_guy" within "div.stream#ladies"
 
   @javascript
-  Scenario: User sees friends in the Friends stream
-    Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
-    And a user "chicago_friend1" in "Chicago, IL" who is a "straight" "male"
-    And a user "chicago_friend2" in "Chicago, IL" who is a "straight" "male"
-    And a user "chicago_guy2" in "Chicago, IL" who is a "straight" "male"
-    And "chicago_friend1" checked in to "Chicago Starbucks" in "Chicago"
-    And "chicago_friend2" checked in to "Chicago Lavazza" in "Chicago"
-    And "chicago_guy2" checked in to "Chicago Argo Tea" in "Chicago"
+  Scenario: User should see user checkins by friends in the Friends stream
+    Given a city: "Chicago" should exist with name: "Chicago"
+    And a state: "IL" should exist with code: "IL"
+    # create users
+    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_friend1", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_friend2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    # Then a user "chicago_friend2" should exist with handle: "chicago_friend2"
+    And a user exists with handle: "chicago_guy2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    # create locations
+    And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    # Then a location: "Chicago Starbucks" should exist with name: "Chicago Starbucks"
+    And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    And a location exists with name: "Chicago Argo Tea", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    # Then a location: "Chicago Argo Tea" should exist with name: "Chicago Starbucks"
+    # add checkins
+    Given user "chicago_friend1" checked in to "Chicago Starbucks"
+    Given user "chicago_friend2" checked in to "Chicago Lavazza"
+    Given user "chicago_guy2" checked in to "Chicago Argo Tea"
+    # add friends
     And "chicago_friend1" is friends with "chicago_guy"
     And "chicago_friend2" is friends with "chicago_guy"
     And I am logged in as "chicago_guy"

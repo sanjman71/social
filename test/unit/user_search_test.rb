@@ -35,23 +35,23 @@ class UserSearchTest < ActiveSupport::TestCase
     end
     # create users
     @chicago_male1    = User.create!(:name => "Chicago Male 1", :handle => 'chicago_male_1', :gender => 2,
-                                     :city => @chicago)
+                                     :member => 1, :city => @chicago)
     @chicago_male2    = User.create!(:name => "Chicago Male 2", :handle => 'chicago_male_2', :gender => 2,
-                                     :city => @chicago)
+                                     :member => 1, :city => @chicago)
     @chicago_female1  = User.create!(:name => "Chicago Female 1", :handle => 'chicago_female_1', :gender => 1,
-                                     :city => @chicago)
+                                     :member => 1, :city => @chicago)
     @chicago_female2  = User.create!(:name => "Chicago Female 2", :handle => 'chicago_female_2', :gender => 1,
-                                     :city => @chicago)
+                                     :member => 1, :city => @chicago)
     @chicago_female3  = User.create!(:name => "Chicago Female 3", :handle => 'chicago_female_3', :gender => 1,
-                                     :city => @chicago)
+                                     :member => 1, :city => @chicago)
     @newyork_male1    = User.create!(:name => "New York Male 1", :handle => 'newyork_male_1', :gender => 2,
-                                     :city => @newyork)
+                                     :member => 1, :city => @newyork)
     @newyork_female1  = User.create!(:name => "New York Female 1", :handle => 'newyork_female_1', :gender => 1,
-                                     :city => @newyork)
+                                     :member => 1, :city => @newyork)
     @boston_male1     = User.create!(:name => "Boston Male 1", :handle => 'boston_male_1', :gender => 2,
-                                     :city => @boston)
+                                     :member => 1, :city => @boston)
     @boston_female1   = User.create!(:name => "Boston Female 1", :handle => 'boston_female_1', :gender => 1,
-                                     :city => @boston)
+                                     :member => 1, :city => @boston)
   end
 
   def teardown
@@ -90,7 +90,7 @@ class UserSearchTest < ActiveSupport::TestCase
 
     should "find 4 chicago checkins when user searching has no checkins" do
       @chicago_user1 = User.create!(:name => "Chicago User 1", :handle => 'chicago_user_1', :gender => 2,
-                                    :city => @chicago)
+                                    :member => 1, :city => @chicago)
       ThinkingSphinx::Test.run do
         @checkins = @chicago_user1.search_all_checkins(:miles => 50, :order => :sort_similar_locations)
         assert_equal 4, @checkins.size
@@ -177,7 +177,6 @@ class UserSearchTest < ActiveSupport::TestCase
                                                           :order => :sort_similar_locations)
         assert_equal 2, @checkins.size
         assert_equal [@chi_checkin3, @chi_checkin2], @checkins.collect{ |o| o }
-        # assert_equal [:location, :tag], @checkins.collect{ |o| o.try(:matchby) }
       end
     end
   end
@@ -190,7 +189,7 @@ class UserSearchTest < ActiveSupport::TestCase
       @chicago_male1.friendships.create!(:friend => @chicago_male2)
     end
 
-    should "find 2 checkins filtered by distance, ordered by similar locations" do
+    should "find 2 checkins by friends, filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         @checkins = @chicago_male1.search_friends_checkins(:miles => 50,
                                                            :order => :sort_similar_locations)
@@ -203,17 +202,24 @@ class UserSearchTest < ActiveSupport::TestCase
   context "search_daters_checkins filter" do
     setup do
       setup_checkins
-      # add friends
-      @chicago_male1.friendships.create!(:friend => @chicago_female1)
-      @chicago_male1.friendships.create!(:friend => @chicago_male2)
     end
 
-    should "find 1 checkin filtered by distance, ordered by similar locations" do
+    should "find 1 checkin by a female, filtered by distance, ordered by similar locations" do
       ThinkingSphinx::Test.run do
         @checkins = @chicago_male1.search_daters_checkins(:miles => 50,
                                                           :order => :sort_similar_locations)
         assert_equal 1, @checkins.size
         assert_equal [@chi_checkin2], @checkins.collect{ |o| o }
+      end
+    end
+    
+    should "find 0 checkins by a female, filtered by distance, ordered by similar locations" do
+      # add female as friend, which should exclude her as a dater
+      @chicago_male1.friendships.create!(:friend => @chicago_female1)
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_daters_checkins(:miles => 50,
+                                                          :order => :sort_similar_locations)
+        assert_equal 0, @checkins.size
       end
     end
   end
