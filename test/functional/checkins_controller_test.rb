@@ -31,7 +31,7 @@ class CheckinsControllerTest < ActionController::TestCase
   end
 
   context "index" do
-    should "search all checkins anywher" do
+    should "search all checkins anywhere" do
       sign_in @chicago1
       set_beta
       get :index, :user_id => @chicago1.id, :search => 'all'
@@ -87,6 +87,39 @@ class CheckinsControllerTest < ActionController::TestCase
       assert_equal 'friends', assigns(:search)
       assert_equal 'search_friends_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
+    end
+    
+    should "unweight user with at least 1 checkin shown" do
+      # add users, checkins
+      @chicago2   = Factory.create(:user, :handle => 'chicago2', :city => @chicago)
+      @location1  = Location.create!(:name => "Location 1", :country => @us)
+      @checkin1   = @chicago2.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @location1))
+      @checkin2   = @chicago2.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @location1))
+      @checkin3   = @chicago2.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @location1))
+      sign_in @chicago1
+      set_beta
+      @checkin_ids = [@checkin1.id, @checkin2.id].join(',')
+      get :index, :user_id => @chicago1.id, :search => 'all', :without_checkin_ids => @checkin_ids
+      assert_equal Hash[@chicago2.id => [@chicago2.id, @chicago2.id]], assigns(:grouped_user_ids)
+      assert_equal [@chicago2.id], assigns(:unweight_user_ids).to_a
+      assert_equal [], assigns(:without_user_ids).to_a
+    end
+
+    should "exclude user after 3 of their checkins are shown" do
+      # add users, checkins
+      @chicago2   = Factory.create(:user, :handle => 'chicago2', :city => @chicago)
+      @location1  = Location.create!(:name => "Location 1", :country => @us)
+      @checkin1   = @chicago2.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @location1))
+      @checkin2   = @chicago2.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @location1))
+      @checkin3   = @chicago2.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @location1))
+      sign_in @chicago1
+      set_beta
+      @checkin_ids = [@checkin1.id, @checkin2.id, @checkin3.id].join(',')
+      get :index, :user_id => @chicago1.id, :search => 'all', :without_checkin_ids => @checkin_ids,
+          :max_user_checkins => 3
+      assert_equal Hash[@chicago2.id => [@chicago2.id, @chicago2.id, @chicago2.id]], assigns(:grouped_user_ids)
+      assert_equal [], assigns(:unweight_user_ids).to_a
+      assert_equal [@chicago2.id], assigns(:without_user_ids).to_a
     end
   end
 end

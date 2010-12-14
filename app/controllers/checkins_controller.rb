@@ -5,20 +5,34 @@ class CheckinsController < ApplicationController
   respond_to          :html, :json, :js
 
   # GET /users/1/checkins
-  # GET /users/1/checkins/geo:1.23..-23.89/radius:10?limit=5&without_checkin_ids=1,5,3
+  # GET /users/1/checkins/geo:1.23..-23.89/radius:10?limit=5&without_checkin_ids=1,5,3&max_user_checkins=3
   # GET /users/1/checkins/city:chicago?limit=5&without_checkin_ids=1,5,3
   # GET /users/1/checkins/all|friends|guys|gals|my|others|outlately
   # GET /users/1/checkins?order=default
   def index
     # parse general parameters
+    @max_user_checkins    = params[:max_user_checkins] ? params[:max_user_checkins].to_i : 5
     @without_checkin_ids  = params[:without_checkin_ids] ? params[:without_checkin_ids].split(',').map(&:to_i).uniq.sort : nil
-    @unweight_user_ids    = Checkin.find(@without_checkin_ids, :select => :user_id).collect(&:user_id).sort rescue []
+    @grouped_user_ids     = Checkin.where(:id => @without_checkin_ids).select(:user_id).collect{ |o| o.user_id.to_i }.group_by(&:to_i) rescue {}
+    # partition users into exclude, unweight lists based on checkin counts
+    @unweight_user_ids    = Set.new
+    @without_user_ids     = Set.new
+    @grouped_user_ids.keys.each do |user_id|
+      if @grouped_user_ids[user_id].size >= @max_user_checkins
+        # exclude user
+        @without_user_ids.add(user_id)
+      else
+        # unweight user
+        @unweight_user_ids.add(user_id)
+      end
+    end
     @search               = params[:search] ? params[:search].to_s : 'all'
     @method               = "search_#{@search}_checkins"
     @order                = [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations,
-                             :sort_unweight_users => @unweight_user_ids]
+                             :sort_unweight_users => @unweight_user_ids.to_a.sort]
     @limit                = params[:limit] ? params[:limit].to_i : 2**30
     @options              = Hash[:without_checkin_ids => @without_checkin_ids,
+                                 :without_user_ids => @without_user_ids.to_a.sort,
                                  :order => @order, :limit => @limit, :klass => Checkin]
     case
     when params[:geo]
