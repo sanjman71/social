@@ -40,7 +40,7 @@ class Checkin < ActiveRecord::Base
 
   # returns true if this checkin is considered recent
   def recent_checkin?
-    checkin_at > 3.hours.ago rescue false
+    checkin_at > 12.hours.ago rescue false
   end
 
   # user checkin was added
@@ -49,7 +49,7 @@ class Checkin < ActiveRecord::Base
     self.class.log("[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
-    if recent_checkin? and !user.oauths.count.zero?
+    if recent_checkin? && user.member?
       self.delay.async_email_checkin_imported
     end
   end
