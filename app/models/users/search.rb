@@ -233,10 +233,10 @@ module Users::Search
     geo         = Hash[]
 
     # parse klass agnostic options
-    if options[:with_location_ids] # e.g. [1,3,5]
+    if options[:with_location_ids] && options[:with_location_ids].any? # e.g. [1,3,5]
       with.update(:location_ids => options[:with_location_ids])
     end
-    if options[:without_location_ids] # e.g. [1,3,5]
+    if options[:without_location_ids] && options[:without_location_ids].any? # e.g. [1,3,5]
       without.update(:location_ids => options[:without_location_ids])
     end
     if options[:with_member] # e.g. 0, 1
@@ -245,16 +245,16 @@ module Users::Search
     if options[:with_now] # e.g. 0, 1
       with.update(:now => options[:with_now])
     end
-    if options[:with_tag_ids] # e.g. [1,3,5]
+    if options[:with_tag_ids] && options[:with_tag_ids].any? # e.g. [1,3,5]
       with.update(:tag_ids => options[:with_tag_ids])
     end
-    if options[:without_tag_ids] # e.g. [1,3,5]
+    if options[:without_tag_ids] && options[:without_tag_ids].any? # e.g. [1,3,5]
       without.update(:tag_ids => options[:without_tag_ids])
     end
-    if options[:with_user_ids] # e.g. [1,2,5]
+    if options[:with_user_ids] && options[:with_user_ids].any? # e.g. [1,2,5]
       with.update(:user_ids => options[:with_user_ids])
     end
-    if options[:without_user_ids] # e.g. [1,2,3]
+    if options[:without_user_ids] && options[:without_user_ids].any? # e.g. [1,2,3]
       without.update(:user_ids => options[:without_user_ids])
     end
 
@@ -264,10 +264,10 @@ module Users::Search
       if options[:with_checkin_at] # e.g. 1290826420..1290829246 (timestamp converted to ints)
         with.update(:checkin_at => options[:with_checkin_at])
       end
-      if options[:with_checkin_ids] # e.g. [1,3,5]
+      if options[:with_checkin_ids] && options[:with_checkin_ids].any? # e.g. [1,3,5]
         with.update(:checkin_ids => options[:with_checkin_ids])
       end
-      if options[:without_checkin_ids] # e.g. [1,3,5]
+      if options[:without_checkin_ids] && options[:without_checkin_ids].any? # e.g. [1,3,5]
         without.update(:checkin_ids => options[:without_checkin_ids])
       end
       if options[:with_gender] # e.g. 1, [1]
