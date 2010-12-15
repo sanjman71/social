@@ -28,8 +28,8 @@ class CheckinsController < ApplicationController
     end
     @search               = params[:search] ? params[:search].to_s : 'all'
     @method               = "search_#{@search}_checkins"
-    @order                = [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations,
-                             :sort_unweight_users => @unweight_user_ids.to_a.sort]
+    @order                = [:sort_closer_locations, :sort_checkins_past_week,
+                             {:sort_unweight_users => @unweight_user_ids.to_a.sort}]
     @limit                = params[:limit] ? params[:limit].to_i : 2**30
     @options              = Hash[:without_checkin_ids => @without_checkin_ids,
                                  :without_user_ids => @without_user_ids.to_a.sort,

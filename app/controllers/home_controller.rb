@@ -10,7 +10,7 @@ class HomeController < ApplicationController
       @stream       = current_stream
       @geo          = current_geo || current_user
       @method       = "search_#{@stream}_checkins"
-      @order        = @stream == 'trending' ? [:sort_closer_locations] : [:sort_similar_locations, :sort_other_checkins, :sort_closer_locations]
+      @order        = [:sort_closer_locations, :sort_checkins_past_week]
       @radius       = 100
       @checkins     = @user.send(@method, :limit => checkins_start_count,
                                           :geo_origin => [@geo.lat.try(:radians), @geo.lng.try(:radians)],

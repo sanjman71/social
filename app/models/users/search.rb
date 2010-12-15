@@ -71,14 +71,14 @@ module Users::Search
     search_checkins(options)
   end
 
-  def search_trending_checkins(options={})
-    add_geo_params(options)
-    # weight checkins by timestamp
-    options[:order] ||= []
-    options[:order].push(:sort_trending_checkins).uniq!
-    # include checkin users marked as available now
-    search_checkins(options)
-  end
+  # def search_trending_checkins(options={})
+  #   add_geo_params(options)
+  #   # weight checkins by timestamp
+  #   options[:order] ||= []
+  #   options[:order].push(:sort_trending_checkins).uniq!
+  #   # include checkin users marked as available now
+  #   search_checkins(options)
+  # end
 
   # search checkins
   def search_checkins(options={})
@@ -291,7 +291,7 @@ module Users::Search
     if sort_orders.any?
       # build sort expressions
       sort_exprs = sort_orders.collect do |order|
-        # order can be symbol, array or hash
+        # order can be array, hash, or symbol
         if order.is_a?(Array)
           case order[0]
           when :sort_weight_users, :sort_unweight_users
@@ -320,7 +320,7 @@ module Users::Search
             send(order.to_s)
           when :sort_other_checkins
             send(order.to_s)
-          when :sort_trending_checkins
+          when /^sort_checkins_/
             send(order.to_s)
           when :sort_random
             ["@random"]
@@ -445,12 +445,30 @@ module Users::Search
     sort_expr.any? ? sort_expr : nil
   end
 
-  # sort trending checkins by timestamp
-  def sort_trending_checkins(options={})
+  # sort checkins by timestamp
+  # def sort_trending_checkins(options={})
+  #   dtime1    = 1.day.ago.utc.to_i
+  #   dtime2    = 2.days.ago.utc.to_i
+  #   dtime3    = 3.days.ago.utc.to_i
+  #   sort_expr = "IF(checkin_at > #{dtime1}, 10.0, IF(checkin_at > #{dtime2}, 5.0, IF(checkin_at > #{dtime3}, 2.0, 1.0)))"
+  #   [sort_expr]
+  # end
+
+  # sort checkins by utc timestamps, rank last day's checkins higher than older checkins
+  def sort_checkins_past_day(options={})
+    dtime1    = 1.day.ago.utc.to_i
+    sort_expr = "IF(checkin_at > #{dtime1}, 10.0, 1.0)"
+    [sort_expr]
+  end
+
+  # sort checkins by utc timestamp, rank last week's checkins higher than older checkins
+  def sort_checkins_past_week(options={})
     dtime1    = 1.day.ago.utc.to_i
     dtime2    = 2.days.ago.utc.to_i
-    dtime3    = 3.days.ago.utc.to_i
-    sort_expr = "IF(checkin_at > #{dtime1}, 10.0, IF(checkin_at > #{dtime2}, 5.0, IF(checkin_at > #{dtime3}, 2.0, 1.0)))"
+    dtime3    = 5.days.ago.utc.to_i
+    dtime4    = 7.days.ago.utc.to_i
+    sort_expr = "IF(checkin_at > #{dtime1}, 10.0, IF(checkin_at > #{dtime2}, 9.0,
+                 IF(checkin_at > #{dtime3}, 7.0, IF(checkin_at > #{dtime4}, 5.0, 1.0))))"
     [sort_expr]
   end
 

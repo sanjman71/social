@@ -226,6 +226,7 @@ class UserSearchTest < ActiveSupport::TestCase
 
   context "search_today_checkins filter" do
     setup do
+      # add checkins 3 days ago
       setup_checkins(3.days.ago)
     end
 
@@ -245,6 +246,36 @@ class UserSearchTest < ActiveSupport::TestCase
       ThinkingSphinx::Test.run do
         @checkins = @chicago_male1.search_today_checkins
         assert_equal 0, @checkins.size
+      end
+    end
+  end
+
+  context "sort checkins by date" do
+    should "rank past day's checkins higher than older checkins" do
+      @chi_checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 25.hours.ago))
+      @chi_checkin2 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 3.hours.ago))
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_checkins_past_day])
+        assert_equal 2, @checkins.size
+        assert_equal [@chi_checkin2, @chi_checkin1], @checkins.collect{ |o| o }
+      end
+    end
+
+    should "rank past week's checkins higher than older checkins" do
+      @chi_checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 10.days.ago))
+      @chi_checkin2 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 3.days.ago))
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_checkins_past_week])
+        assert_equal 2, @checkins.size
+        assert_equal [@chi_checkin2, @chi_checkin1], @checkins.collect{ |o| o }
       end
     end
   end
