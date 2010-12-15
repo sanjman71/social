@@ -4,7 +4,7 @@
 
 1. http://articles.slicehost.com/2010/10/18/ubuntu-maverick-setup-part-1
 2. http://articles.slicehost.com/2010/10/18/ubuntu-maverick-setup-part-2
-3. sudo aptitude install curl bison build-essential zlib1g-dev openssl libssl-dev libreadline5-dev libxml2-dev git-core libcurl4-openssl-dev libxslt-dev
+3. sudo aptitude install curl bison build-essential zlib1g-dev openssl libssl-dev libreadline5-dev libxml2-dev git-core libcurl4-openssl-dev libxslt-dev imagemagick
 4. http://articles.slicehost.com/2007/9/11/ubuntu-feisty-mysql-and-ror
 5. Mysql config
      - mysql -u root -p
