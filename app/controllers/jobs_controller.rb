@@ -28,23 +28,6 @@ class JobsController < ApplicationController
     redirect_to jobs_path
   end
 
-  # GET /jobs/poll_checkins
-  def poll_checkins
-    @users = Checkin.event_poll_checkins
-    flash[:notice] = "Polling checkins for #{@users.size} users: #{@users.collect(&:handle).join(", ")}"
-    redirect_to jobs_path
-  end
-
-  # GET /jobs/send_todo_reminders
-  def send_todo_reminders
-    @reminders = User.with_todos.inject(0) do |count, user|
-      count += user.send_todo_checkin_reminders
-      count
-    end
-    flash[:notice] = "Sent #{@reminders} todo reminders"
-    redirect_to jobs_path
-  end
-
   # GET /jobs/top
   def top
     @top = Machine.top
