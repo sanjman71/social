@@ -20,7 +20,7 @@
   %h4
     %span{:style => 'color: #060;'} Use the search box below to find and add places you plan to go to.
     %span{:style => 'padding: 0 5px; font-size: 0.9em;'}= link_to 'Nevermind', '#', :id => 'hide_live_search_places_form', :class => 'admin'
-  = text_field_tag :search, '', :id => 'live_search_places',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => add_todo_location_path(:format => 'js'), 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks'
+  = text_field_tag :search, '', :id => 'live_search_places',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => add_todo_location_path(:format => 'js'), 'data-pending-text' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks'
   %span.hint#search_places_hint
   %br
   %span.query#search_places_query

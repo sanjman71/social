@@ -17,6 +17,7 @@ $.fn.init_live_search_places = function() {
   var source_name   = 'foursquare';
   var submit_text   = $(search_field).attr('data-submit-text');
   var submit_url    = $(search_field).attr('data-submit-url');
+  var pending_text  = $(search_field).attr('data-pending-text');
   var return_to     = $(search_field).attr('data-return-to');
 
   $(search_field).autocomplete({
@@ -76,7 +77,7 @@ $.fn.init_live_search_places = function() {
              city_state:$(this).attr('data-city-state'),
              lat:$(this).attr('data-lat'), lng:$(this).attr('data-lng'),
              source:$(this).attr('data-source')}
-    $(this).replaceWith('...');
+    $(this).replaceWith(pending_text);
     $.put(url, {location:loc, return_to:$(this).attr('data-return-to')}, null, "script");
     return false;
   })

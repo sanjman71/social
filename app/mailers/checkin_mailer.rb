@@ -21,7 +21,7 @@ class CheckinMailer < ActionMailer::Base
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_completed:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "You checked in!")
+      mail(:to => @email, :subject => "You checked in at a planned location!")
     end
   end
 
@@ -33,7 +33,7 @@ class CheckinMailer < ActionMailer::Base
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_expired:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "You checked in, but a bit too late.")
+      mail(:to => @email, :subject => "You checked in at a planned location, but not in time.")
     end
   end
 
