@@ -26,11 +26,21 @@ Feature: User's planned checkins
     Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{5.days.ago+1.minute}"
     And user "chicago_guy" has email "chicago_guy@outlately.com"
     And I am logged in as "chicago_guy"
-    And todo checkin reminders are sent
+    And checkin todo reminders are sent
     Then "chicago_guy@outlately.com" should receive an email with subject "Your planned checkin is about to expire"
     When I open the email
     Then I should see "Time is running out to checkin at Chicago Starbucks. You get 50 bucks for doing it!" in the email body
 
-  Scenario: User should receive an email when they checkin to a planned location
-  
+  Scenario: User should receive an email after checking in to a non-expired planned location
+    Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{3.days.ago}"
+    And user "chicago_guy" has email "chicago_guy@outlately.com"
+    And I am logged in as "chicago_guy"
+    And a checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
+    And the delayed jobs are processed
+    Then "chicago_guy@outlately.com" should receive an email with subject "You checked in at a planned location!"
+    When I open the email with subject "You checked in at a planned location!"
+    Then I should see "You said you'd checkin at Chicago Starbucks and you did. That checkin got you 50 bucks." in the email body
+
+  Scenario: User should receive an email after a planned location expires
+
   
