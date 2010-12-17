@@ -84,12 +84,30 @@ class Suggestion < ActiveRecord::Base
     self.scheduled_at = options[:rescheduled_at]
     party.reschedule!
     party.event!(options[:event] || 'reschedule')
-    @other_party = other_party(party) 
+    @other_party = other_party(party)
     @other_party.reschedule!
     @other_party.event!('')
     @other_party.alert!
     save!
-    log("[suggestion:#{self.id}] #{party.handle} rescheduled, suggestion #{self.state}")
+    log("[suggestion:#{self.id}] #{party.handle} rescheduled, suggestion #{state}")
+  end
+
+  def party_relocates(party, options={})
+    self.location = options[:location]
+    if party.aasm_events_for_current_state.include?(:relocate)
+      party.relocate!
+      party.event!(options[:event] || 'relocate')
+      party.alert!(false)
+      @other_party = other_party(party)
+      @other_party.relocate!
+      @other_party.event!('')
+      @other_party.alert!
+      save!
+      log("[suggestion:#{self.id}] #{party.handle} relocated to #{location.name}, suggestion #{state}")
+    elsif state == 'initialized'
+      # just change the location
+      save!
+    end
   end
 
   def party_confirms(party, options={})

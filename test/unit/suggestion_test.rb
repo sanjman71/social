@@ -9,6 +9,7 @@ class SuggestionTest < ActiveSupport::TestCase
     assert @user2.valid?
     @us    = Factory(:us)
     @loc1  = Location.create(:name => "Home", :country => @us)
+    @loc2  = Location.create(:name => "Away", :country => @us)
   end
 
   context "create" do
@@ -46,6 +47,16 @@ class SuggestionTest < ActiveSupport::TestCase
   end
 
   context "state transitions" do
+    should "change location in initialized state without changing states" do
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
+                      :location => @loc1, :when => 'next week']
+      @suggestion = Suggestion.create(@options)
+      # party1 relocates
+      @suggestion.party_relocates(@suggestion.party1, :location => @loc2)
+      # should change suggestion location
+      assert_equal @loc2, @suggestion.reload.location
+    end
+
     should "decline" do
       @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                       :location => @loc1, :when => 'next week']
@@ -71,22 +82,22 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'talking', @suggestion.reload.state
       # compare times without subsec
       assert_equal @tomorrow.to_s(:datetime_schedule), @suggestion.scheduled_at.to_s(:datetime_schedule)
-      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
-      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
       # party1 confirms - should change party2 state to 'scheduled'
       @suggestion.party_confirms(@suggestion.party1)
       assert_equal 'confirmed', @suggestion.party1.state
       assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
-      assert_equal [:decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
-      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal [:decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
       # party2 confirms
       @suggestion.party_confirms(@suggestion.party2)
       assert_equal 'confirmed', @suggestion.party2.state
       assert_equal 'confirmed', @suggestion.party1.state
       assert_equal 'going_out', @suggestion.reload.state
-      assert_equal [:decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
-      assert_equal [:decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal [:decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
     end
     
     should "schedule, then re-schedule" do
@@ -100,8 +111,29 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'scheduled', @suggestion.party1.state
       assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
-      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
-      assert_equal [:confirm, :decline, :dump, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+    end
+
+    should "relocate in scheduled state" do
+      @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
+                      :location => @loc1, :when => 'next week']
+      @suggestion = Suggestion.create(@options)
+      # party1 schedules
+      @suggestion.party_schedules(@suggestion.party1)
+      # party2 relocates
+      @suggestion.party_relocates(@suggestion.party2, :location => @loc2)
+      # should change suggestion location
+      assert_equal @loc2, @suggestion.reload.location
+      assert_equal 'scheduled', @suggestion.party1.state
+      assert_equal 'scheduled', @suggestion.party2.state
+      assert_equal 'talking', @suggestion.reload.state
+      assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
+      assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+    end
+
+    should "relocate in confirmed state" do
+      
     end
   end
 end

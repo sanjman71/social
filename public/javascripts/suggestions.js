@@ -1,3 +1,49 @@
+$.fn.init_suggestion_detail_toggle = function() {
+  $("a#suggestion_details").click(function() {
+    // show details, hide link
+    suggestion_id = $(this).attr('data-suggestion-id');
+    $("div#suggestion_" + suggestion_id + "_details_link_wrapper").hide();
+    $("div#suggestion_" + suggestion_id + "_details").show();
+    // disable all other suggestions
+    $("div.suggestion[data-suggestion-id!="+suggestion_id+"]").fadeTo('slow', 0.3);
+    $("div.suggestion[data-suggestion-id!="+suggestion_id+"]").find("a#suggestion_details").hide('slow');
+    // $("div.suggestion[data-suggestion-id!="+suggestion_id+"]").hide();
+    return false;
+  })
+  
+  $("a#suggestion_nevermind").click(function() {
+    // the inverse of show details
+    suggestion_id = $(this).attr('data-suggestion-id');
+    $("div#suggestion_" + suggestion_id + "_details_link_wrapper").show();
+    $("div#suggestion_" + suggestion_id + "_details").hide();
+    // enable other suggestions
+    $("div.suggestion").fadeTo('slow', 1);
+    $("div.suggestion").find("a#suggestion_details").show();
+    // $("div.suggestion").show();
+    return false;
+  })
+  
+  $("a#suggestion_relocate").click(function() {
+    // hide options
+    options  = $(this).parents("div#options");
+    $(options).hide();
+    // show change location form
+    relocate = $(options).siblings("div#relocate");
+    $(relocate).show();
+    return false;
+  })
+  
+  $("a#suggestion_relocate_nevermind").click(function() {
+    // hide change location form
+    relocate = $(this).parents("div#relocate")
+    $(relocate).hide();
+    // show all options
+    options  = $(relocate).siblings("div#options")
+    $(options).show();
+    return false;
+  })
+}
+
 $.fn.init_suggestion_date = function() {
   $(".datepicker").datepicker({minDate: '+0', maxDate: '+3m'});
   $(".timepicker").timepickr({convention:12});
@@ -64,5 +110,6 @@ $.fn.init_suggestion_date = function() {
 }
 
 $(document).ready(function() {
+  $(document).init_suggestion_detail_toggle();
   $(document).init_suggestion_date();
 })

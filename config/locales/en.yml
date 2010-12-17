@@ -51,7 +51,7 @@ en:
     error:
       flash: "Whoops, that's not allowed"
     title:
-      simple: "meet %{name} @ %{location}"
+      simple: "meet %{name} at '%{location}' in %{city}"
       outlately: "outlate.ly suggests meeting %{name} at %{location}"
     initialized:
       outlately: "Here's a suggestion from outlate.ly"
@@ -67,9 +67,12 @@ en:
       by: "%{name} suggested a different date and time"
       to: "%{name} suggested a different date and time"
       flash: "Suggestion was re-scheduled"
+    relocated:
+      flash: "Suggestion was re-located"
     confirmed:
       by: "%{name} confirmed the date and time"
       to: "%{name} confirmed the date and time"
+      flash: "Suggestion was confirmed"
     goingout:
       by: "%{name} confirmed and are going out"
       to: "%{name} confirmed so you're going out"

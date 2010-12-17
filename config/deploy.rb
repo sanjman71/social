@@ -40,7 +40,7 @@ deploy.task :restart, :roles => :app do
   run "touch #{current_release}/tmp/restart.txt"
 end
 
-# after deploy task
+# after deploy:update_code task
 deploy.task :config, :roles => [:app, :db] do
   run "cp -u #{current_release}/config/templates/database.#{rails_env}.yml #{deploy_to}/shared/config/database.yml"
   run "rm -f #{current_release}/config/database.yml"
@@ -76,4 +76,3 @@ deploy.task :init, :roles => :app do
 end
 
 after "deploy:setup", "deploy:init"
-# after "deploy:setup", "bundle:install"

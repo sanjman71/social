@@ -36,6 +36,10 @@ class UserSuggestion < ActiveRecord::Base
     transitions :to => :scheduled, :from => [:scheduled, :confirmed]
   end
 
+  aasm_event :relocate do
+    transitions :to => :scheduled, :from => [:scheduled, :confirmed]
+  end
+
   aasm_event :confirm do
     transitions :to => :confirmed, :from => [:scheduled]
   end

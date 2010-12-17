@@ -1,6 +1,7 @@
 class SuggestionsController < ApplicationController
-  # before_filter :authenticate_user!
-  before_filter :find_suggestion, :only => [:confirm, :decline, :reschedule, :schedule, :show]
+  before_filter :authenticate_user!
+  before_filter :find_suggestion, :only => [:confirm, :decline, :relocate, :reschedule, :schedule, :show]
+  before_filter :find_location, :only => [:relocate]
   respond_to    :html, :js
 
   # GET /suggestions
@@ -27,9 +28,10 @@ class SuggestionsController < ApplicationController
   rescue Exception => e
     flash[:error] = e.message
   ensure
+    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
     respond_to do |format|
-      format.js { render(:update) { |page| page.redirect_to(suggestion_path(@suggestion)) } }
-      format.html { redirect_to(suggestion_path(@suggestion)) }
+      format.html { redirect_back_to(@redirect_to) and return }
+      format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
     end
   end
 
@@ -45,9 +47,28 @@ class SuggestionsController < ApplicationController
   rescue Exception => e
     flash[:error] = e.message
   ensure
+    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
     respond_to do |format|
-      format.js { render(:update) { |page| page.redirect_to(suggestion_path(@suggestion)) } }
-      format.html { redirect_to(suggestion_path(@suggestion)) }
+      format.html { redirect_back_to(@redirect_to) and return }
+      format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
+    end
+  end
+
+  # POST /suggestions/1/relocate
+  # POST /suggestions/1/relocate/5
+  def relocate
+    # @suggestion, @party, @location initialized in before filter
+    @suggestion.party_relocates(@party, :location => @location)
+    flash[:notice] = I18n.t('suggestion.relocated.flash')
+  rescue AASM::InvalidTransition => e
+    flash[:error] = I18n.t('suggestion.error.flash')
+  rescue Exception => e
+    flash[:error] = e.message
+  ensure
+    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    respond_to do |format|
+      format.html { redirect_back_to(@redirect_to) and return }
+      format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
     end
   end
 
@@ -61,25 +82,45 @@ class SuggestionsController < ApplicationController
   rescue Exception => e
     flash[:error] = e.message
   ensure
-    redirect_to(suggestion_path(@suggestion))
+    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    respond_to do |format|
+      format.html { redirect_back_to(@redirect_to) and return }
+      format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
+    end
   end
 
   # PUT /suggestions/1/confirm
   def confirm
     # @suggestion, @party initialized in before filter
     @suggestion.party_confirms(@party)
-    flash[:notice] = "Suggestion was confirmed"
+    flash[:notice] = I18n.t('suggestion.confirmed.flash')
   rescue AASM::InvalidTransition => e
-    flash[:error] = "Whoops, that's not allowed"
+    flash[:error] = I18n.t('suggestion.error.flash')
+  rescue Exception => e
+    flash[:error] = e.message
   ensure
-    redirect_to(suggestion_path(@suggestion))
+    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    respond_to do |format|
+      format.html { redirect_back_to(@redirect_to) and return }
+      format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
+    end
   end
 
   protected
-  
+
   def find_suggestion
     @suggestion = current_user.suggestions.readonly(false).find(params[:id])
     @party      = @suggestion.parties.find_by_user_id(current_user.id)
+  end
+
+  def find_location
+    if params[:location_id]
+      @location = Location.find(params[:location_id])
+    elsif params[:location]
+      @location = Location.find_or_create_by_source(params[:location])
+    else
+      raise Exception, "missing location"
+    end
   end
 
 end

@@ -1,4 +1,6 @@
 - title('Suggestions')
+- javascript('suggestions', 'location_search', 'jquery.timepickr')
+- stylesheet('jquery.timepickr')
 
 - content_for :mat do
   %h2== Suggestions
@@ -6,9 +8,12 @@
 
 %hr.space
 
+.span.24.last
+  = display_flash(:all)
+
 .span-24.last#suggestions
   - @suggestions.each do |suggestion|
-    .span-24.last#suggestion
+    .span-24.last.suggestion#suggestion{'data-suggestion-id' => suggestion.id}
       .span-2.prepend-1#picture
         - my_party    = suggestion.my_party(current_user)
         - other_party = suggestion.other_party(current_user)
@@ -24,9 +29,10 @@
           -#= link_to image_tag('circle-check.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
         -#- elsif suggestion.bailed?
           -#= link_to image_tag('circle-delete.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
-      .span-19.last{:style => 'padding-top: 10px;'}
+      .span-19.last{:style => 'padding-top: 5px;', :id => "suggestion_#{suggestion.id}_details_link_wrapper"}
         %h4.bottom
-          = t("suggestion.title.simple", :name => other_party.handle, :location => suggestion.location.name)
-          - if suggestion.location.city.present?
-            %span{:style => 'color: #999;'} (#{suggestion.location.city.try(:name)})
-        = link_to 'Details', suggestion_path(suggestion), :class => 'admin'
+          = t("suggestion.title.simple", :name => other_party.handle, :location => suggestion.location.name, :city => suggestion.location.city.try(:name))
+        = link_to 'Details', suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_details', 'data-suggestion-id' => suggestion.id
+      .span-19.last.hide{:id => "suggestion_#{suggestion.id}_details"}
+        = render(:partial => 'suggestion_detail',
+                 :locals => {:suggestion => suggestion, :location => suggestion.location, :my_party => my_party, :other_party => other_party})

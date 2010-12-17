@@ -4,21 +4,30 @@ class SuggestionsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   context "routes" do
-    should route(:put, "/suggestions/1/decline").to(:controller => 'suggestions', :action => 'decline', :id => '1')
-    should route(:put, "/suggestions/1/confirm").to(:controller => 'suggestions', :action => 'confirm', :id => '1')
-    should route(:post, "/suggestions/1/schedule").to(:controller => 'suggestions', :action => 'schedule', :id => '1')
-    should route(:post, "/suggestions/1/reschedule").to(:controller => 'suggestions', :action => 'reschedule', :id => '1')
+    should route(:put, "/suggestions/1/decline").
+      to(:controller => 'suggestions', :action => 'decline', :id => '1')
+    should route(:put, "/suggestions/1/confirm").
+      to(:controller => 'suggestions', :action => 'confirm', :id => '1')
+    should route(:post, "/suggestions/1/schedule").
+      to(:controller => 'suggestions', :action => 'schedule', :id => '1')
+    should route(:post, "/suggestions/1/reschedule").
+      to(:controller => 'suggestions', :action => 'reschedule', :id => '1')
+    should route(:post, "/suggestions/1/relocate").
+      to(:controller => 'suggestions', :action => 'relocate', :id => '1')
+    should route(:post, "/suggestions/1/relocate/5").
+      to(:controller => 'suggestions', :action => 'relocate', :id => '1', :location_id => '5')
   end
 
   def setup
     @user1 = Factory.create(:user, :handle => 'User1')
     @user2 = Factory.create(:user, :handle => "User2")
     @us    = Factory(:us)
-    @loc1  = Location.create(:name => "The Coffee House", :country => @us)
+    @loc1  = Location.create!(:name => "The Coffee House", :country => @us)
+    @loc2  = Location.create!(:name => "Starbucks", :country => @us)
     # create suggestion
     @options    = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                        :location => @loc1, :when => 'next week']
-    @suggestion = Suggestion.create(@options)
+    @suggestion = Suggestion.create!(@options)
   end
 
   context "show" do
@@ -154,6 +163,18 @@ class SuggestionsControllerTest < ActionController::TestCase
       assert_false @suggestion.party1.reload.alert?
       assert_true @suggestion.party2.reload.alert?
       assert_redirected_to "/suggestions/#{@suggestion.id}"
+    end
+  end
+
+  context "relocate" do
+    should "change location to starbucks" do
+      sign_in @user1
+      set_beta
+      post :relocate, :id => @suggestion.id, :location_id => @loc2.id
+      assert_response :redirect
+      assert_equal "Suggestion was re-located", flash[:notice]
+      # should change location
+      assert_equal @loc2, @suggestion.reload.location
     end
   end
 

@@ -51,6 +51,9 @@ Social::Application.routes.draw do
     put :tag, :on => :member
   end
 
+  # suggestion routes
+  match 'suggestions/:id/relocate(/:location_id)', :to => 'suggestions#relocate',
+    :as => :relocate_suggestion, :via => [:post, :put]
   resources :suggestions, :only => [:index, :show] do
     put :decline, :on => :member
     put :confirm, :on => :member
@@ -79,8 +82,6 @@ Social::Application.routes.draw do
   match 'jobs', :to => 'jobs#index', :as => :jobs
   match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
   match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
-  match 'jobs/poll_checkins', :to => 'jobs#poll_checkins', :as => :poll_checkins_job
-  match 'jobs/send_todo_reminders', :to => 'jobs#send_todo_reminders', :as => :send_todo_reminders_job
   match 'jobs/top', :to => 'jobs#top', :as => :top_job
 
   match 'ping', :to => "home#ping", :via => [:get]
