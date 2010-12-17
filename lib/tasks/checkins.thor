@@ -18,7 +18,9 @@ class Checkins < Thor
     users = User.with_todos
     users.each do |user|
       count = user.send_todo_checkin_reminders
-      puts "#{Time.now}: [user:#{user.id}] #{user.handle} sending #{count} todo reminders"
+      if count > 0
+        puts "#{Time.now}: [user:#{user.id}] #{user.handle} sending #{count} todo reminders"
+      end
     end
     puts "#{Time.now}: completed"
   end
