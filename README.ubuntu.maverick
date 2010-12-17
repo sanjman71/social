@@ -54,7 +54,14 @@
 # SSL certificates
 
 1. http://articles.slicehost.com/2007/12/19/ubuntu-gutsy-self-signed-ssl-certificates-and-nginx
-2. (re-)compile nginx with ssl support
+  - openssl req -new -nodes -keyout myssl.key -out myssl.csr
+  - openssl x509 -req -days 365 -in myssl.csr -signkey myssl.key -out myssl.crt
+2. edit nginx configuration
+  - ssl on;
+  - ssl_certificate /etc/ssl/certs/my.domain.crt;
+  - ssl_certificate_key /etc/ssl/private/my.domain.key;
+
+note: (re-)compile nginx with ssl support
   - rvmsudo passenger-install-nginx-module
   - choose the manual install
   - use /tmp/nginx-0.7.64 (as an example) as the source directory
