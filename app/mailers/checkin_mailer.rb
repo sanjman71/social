@@ -5,6 +5,7 @@ class CheckinMailer < ActionMailer::Base
     @user     = user
     @email    = @user.email_address
     @location = location
+    @points   = Currency.for_completed_todo
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_reminder:location:#{@location.try(:name)}")

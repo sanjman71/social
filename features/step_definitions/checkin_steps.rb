@@ -11,4 +11,11 @@ Given /^user "([^"]*)" checked in to "([^"]*)"(?: when "([^"]*)")?$/ do |handle,
   locship.increment!(:my_checkins)
 end
 
+Given /^todo checkin reminders are sent$/ do
+  User.with_todos.each do |user|
+    user.send_todo_checkin_reminders
+  end
+end
+
+
 

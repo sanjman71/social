@@ -32,13 +32,14 @@ class PlansControllerTest < ActionController::TestCase
       # should add growl message
       assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'
+      assert_equal "We added Starbucks to your todo list", flash[:notice]
     end
 
     should "create location and add location to todo list" do
       @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
       sign_in @user1
       set_beta
-      put :add, :location => {:name => "Inteligentsia Coffee",
+      put :add, :location => {:name => "Intelligentsia Coffee",
                               :source => "foursquare:44123",
                               :address => "53 W. Jackson Blvd.",
                               :city_state => "Chicago:IL",
@@ -53,6 +54,7 @@ class PlansControllerTest < ActionController::TestCase
       # should add growl message
       assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'
+      assert_equal "We added Intelligentsia Coffee to your todo list", flash[:notice]
     end
 
     should "ignore if location already on todo list" do
@@ -65,10 +67,13 @@ class PlansControllerTest < ActionController::TestCase
       put :add, :location_id => @sbux.id
       assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
       assert_equal [1], @user1.reload.locationships.collect(&:todo_checkins)
+      # should not add growl message
+      assert_nil assigns(:growls)
       assert_redirected_to '/'
+      assert_nil flash[:notice]
     end
 
-    should "ignore if location already checked in to" do
+    should "ignore if location already on checkin list" do
       @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
       @user1.locationships.create!(:location => @sbux, :my_checkins => 1)
       sign_in @user1
@@ -76,7 +81,10 @@ class PlansControllerTest < ActionController::TestCase
       put :add, :location_id => @sbux.id
       assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
       assert_equal [0], @user1.reload.locationships.collect(&:todo_checkins)
+      # should not add growl message
+      assert_nil assigns(:growls)
       assert_redirected_to '/'
+      assert_nil flash[:notice]
     end
 
     should "redirect to params['return_to]" do
@@ -86,7 +94,6 @@ class PlansControllerTest < ActionController::TestCase
       put :add, :location_id => @sbux.id, :return_to => "/plans"
       assert_redirected_to '/plans'
     end
-
   end
   
 end

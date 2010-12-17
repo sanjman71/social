@@ -3,8 +3,8 @@ Feature: Add Bucks
 
   @javascript
   Scenario: User clicks Get more bucks to add points to their account
-    Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"
-    And a user "chicago_guy" with "0" dollars
+    Given a city: "Chicago" should exist with name: "Chicago"
+    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", points: "0"
     And sphinx is indexed
     And I am logged in as "chicago_guy"
     When I go to the home page

@@ -6,7 +6,7 @@ class PlansController < ApplicationController
   # GET /plans
   def index
     @user           = current_user
-    @locationships  = @user.locationships.todo_checkins
+    @locationships  = @user.locationships.todo_checkins.order("todo_at desc")
 
     if @locationships.any? and @user.primary_email_address.blank?
       flash.now[:notice] = "Add an email address to your profile so we can notify you of checkins on your todo list"
@@ -21,23 +21,26 @@ class PlansController < ApplicationController
     begin
       # set user to current user
       @user         = current_user
-      # update locationship
+      # find or create locationship
       @locationship = @user.locationships.find_or_create_by_location_id(@location.id)
       if @locationship.todo_checkins == 0 and @locationship.my_checkins == 0
-        # user hasn't checked in here or already planned to go here
+        # location is not on user checkin or todo list
         @locationship.increment!(:todo_checkins)
+        # add flash message
+        flash[:notice] = "We added #{@location.name} to your todo list"
+        # add growl message
+        @message = I18n.t("todo.added", :days => Locationship.todo_window_days,
+                                        :plus_points => Currency.for_completed_todo,
+                                        :minus_points => Currency.for_expired_todo.abs)
+        # add growl message
+        @growls = [{:message => @message, :timeout => 2000}]
       end
-      flash[:notice]  = "We added #{@location.name} to your todo list"
-      @status         = 'ok'
-      @message        = I18n.t("todo.added", :days => Locationship.todo_window_days,
-                                             :plus_points => Currency.for_completed_todo,
-                                             :minus_points => Currency.for_expired_todo.abs)
-      # add growl message
-      @growls = [{:message => @message, :timeout => 2000}]
+      # set status
+      @status = 'ok'
     rescue Exception => e
       # @location already planned
-      @status         = 'error'
-      @message        = e.message
+      @status   = 'error'
+      @message  = e.message
     end
 
     # set redirect path
@@ -68,7 +71,7 @@ class PlansController < ApplicationController
   end
 
   protected
-  
+
   def find_location
     if params[:location_id]
       @location = Location.find(params[:location_id])

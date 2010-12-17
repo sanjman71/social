@@ -52,10 +52,14 @@ class Locationship < ActiveRecord::Base
     days_float.ceil
   end
 
+  def todo_expired?
+    (todo_at + self.class.todo_window_days.days) < Time.zone.now
+  end
+
   def self.todo_window_days
     7
   end
-  
+
   def self.log(s, level = :info)
     AppLogger.log(s, nil, level)
   end
@@ -65,7 +69,7 @@ class Locationship < ActiveRecord::Base
   # update todo_at timestamp when user plans a checkin
   def touch_todo_timestamp
     if changes[:todo_checkins] == [0,1]
-      touch(:todo_at)
+      touch(:todo_at) unless todo_at.present?
     end
   end
 
