@@ -1,24 +1,9 @@
-$.fn.init_live_search_places = function() {
-  $("a#show_live_search_places_form").live('click', function() {
-    $(".live_search_places_form").show();
-    $(this).hide();
-    return false;
-  })
-
-  $("a#hide_live_search_places_form").live('click', function() {
-    $(".live_search_places_form").hide();
-    $("a#show_live_search_places_form").show();
-    return false;
-  })
-
-  var search_field  = $("input#live_search_places");
+$.fn.init_search_places_autocomplete = function() {
+  var search_field  = $("input#search_places_autocomplete");
   var search_url    = $(search_field).attr('data-search-url');
   var search_query  = '';
   var source_name   = 'foursquare';
-  var submit_text   = $(search_field).attr('data-submit-text');
-  var submit_url    = $(search_field).attr('data-submit-url');
-  var pending_text  = $(search_field).attr('data-pending-text');
-  var return_to     = $(search_field).attr('data-return-to');
+  var searching     = false;
 
   $(search_field).autocomplete({
     source : function(request, response) {
@@ -47,15 +32,21 @@ $.fn.init_live_search_places = function() {
     minLength : 3,
     delay : 500,
     search : function(event, ui) {
-      $('#search_places_hint').text("searching '" + $(search_field).val() + "'");
+      // ignore search if already searching
+      if (searching) { return false; }
+      // set searching flag
+      searching = true;
+      $(this).siblings('#search_places_hint').text("searching '" + $(this).val() + "'");
       return true;
     },
     open: function(event, ui) {
+      // reset searching flag
+      searching = false;
       // clear hint text when dropdown list is opened
-      $('#search_places_hint').text("");
+      $(this).siblings('#search_places_hint').text("");
     },
     close : function(event, ui) {
-      // $('#search_places_hint').text("");
+      // nothing for now
     },
     select: function(event, ui) {
       a = "<a href='#' id='add_location' class='admin' data-source='" + ui.item.source + "' " +
@@ -64,10 +55,11 @@ $.fn.init_live_search_places = function() {
           "data-city-state='" + ui.item.city + ":" + ui.item.state + "' " +
           "data-lat='" + ui.item.lat + "' " +
           "data-lng='" + ui.item.lng + "' " +
-          "data-url='" + submit_url + "' " +
-          "data-return-to='" + return_to + "' " +
-          ">" + submit_text + "</a>";
-      $('#search_places_hint').html(a);
+          "data-url='" + $(this).attr('data-submit-url') + "' " +
+          "data-waiting='" + $(this).attr('data-waiting') + "' " +
+          "data-return-to='" + $(this).attr('data-return-to') + "' " +
+          ">" + $(this).attr('data-submit-text') + "</a>";
+      $(this).siblings('#search_places_hint').html(a);
     },
   });
 
@@ -77,12 +69,12 @@ $.fn.init_live_search_places = function() {
              city_state:$(this).attr('data-city-state'),
              lat:$(this).attr('data-lat'), lng:$(this).attr('data-lng'),
              source:$(this).attr('data-source')}
-    $(this).replaceWith(pending_text);
+    $(this).replaceWith($(this).attr('data-waiting'));
     $.put(url, {location:loc, return_to:$(this).attr('data-return-to')}, null, "script");
     return false;
   })
 }
 
 $(document).ready(function() {
-  $(document).init_live_search_places();
+  $(document).init_search_places_autocomplete();
 })

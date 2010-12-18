@@ -1,5 +1,5 @@
 - title('Plans')
-- javascript('location_search')
+- javascript('plans', 'location_search')
 
 - content_for :mat do
   %h2 Planned Checkins
@@ -14,13 +14,13 @@
 .span-23.prepend-1
   %h3
     You have #{pluralize(@locationships.size, "planned checkin")} on your list
-    %span{:style => 'padding: 0 5px; font-size: 0.8em;'}= link_to 'Add More', '#', :id => 'show_live_search_places_form', :class => 'admin'
+    %span{:style => 'padding: 0 5px; font-size: 0.8em;'}= link_to 'Add More', '#', :id => 'show_search_places_autocomplete_form', :class => 'admin'
 
-.span-23.prepend-1.last.live_search_places_form.hide
+.span-23.prepend-1.last.search_places_autocomplete_form.hide
   %h4
     %span{:style => 'color: #060;'} Use the search box below to find and add places you plan to go to.
-    %span{:style => 'padding: 0 5px; font-size: 0.9em;'}= link_to 'Nevermind', '#', :id => 'hide_live_search_places_form', :class => 'admin'
-  = text_field_tag :search, '', :id => 'live_search_places',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => add_todo_location_path(:format => 'js'), 'data-pending-text' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks'
+    %span{:style => 'padding: 0 5px; font-size: 0.9em;'}= link_to 'Nevermind', '#', :id => 'hide_search_places_autocomplete_form', :class => 'admin'
+  = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => add_todo_location_path(:format => 'js'), 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks'
   %span.hint#search_places_hint
   %br
   %span.query#search_places_query

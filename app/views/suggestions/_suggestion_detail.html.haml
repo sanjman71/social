@@ -59,7 +59,7 @@
     - if my_party.aasm_events_for_current_state.include?(:decline)
       - links.push(link_to('Decline', decline_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure'))
     -# add 'No Changes' link
-    - links.push(link_to('No Changes', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
+    - links.push(link_to('Nevermind', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
     - links.each_with_index do |link, index|
       = link
       - unless index == links.size-1
@@ -88,9 +88,9 @@
     ==&nbsp;or&nbsp;
     = link_to 'Nevermind', '#', :id => 'suggestion_repick_date_nevermind', :class => 'admin'
 
-  .span-15.last.live_search_places_form.hide#relocate
+  .span-15.last.search_places_autocomplete_form.hide#relocate
     -#%h4.bottom Search for a new location
-    = text_field_tag :search, '', :id => 'live_search_places',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => "That's the place", 'data-submit-url' => relocate_suggestion_path(suggestion, :format => 'js'), 'data-pending-text' => 'please wait ...', 'data-return-to' => request.request_uri, :placeholder => 'e.g. starbucks', :style => 'width: 400px;'
+    = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => "That's the place", 'data-submit-url' => relocate_suggestion_path(suggestion, :format => 'js'), 'data-waiting' => 're-locating ...', 'data-return-to' => request.request_uri, :placeholder => 'e.g. starbucks', :style => 'width: 450px;'
     %span.hint#search_places_hint
     %br
     = link_to 'Nevermind', '#', :id => 'suggestion_relocate_nevermind', :class => 'admin big'
