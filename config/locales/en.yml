@@ -62,17 +62,17 @@ en:
     scheduled:
       by: "%{name} suggested a date and time"
       to: "%{name} suggested a date and time"
-      flash: "Suggestion was scheduled"
+      flash: "Your suggestion was scheduled!"
     rescheduled:
       by: "%{name} suggested a different date and time"
       to: "%{name} suggested a different date and time"
-      flash: "Suggestion was re-scheduled"
+      flash: "Your suggestion was re-scheduled!"
     relocated:
-      flash: "Suggestion was re-located"
+      flash: "Your suggestion was re-located!"
     confirmed:
       by: "%{name} confirmed the date and time"
       to: "%{name} confirmed the date and time"
-      flash: "Suggestion was confirmed"
+      flash: "Your suggestion was confirmed!"
     goingout:
       by: "%{name} confirmed and are going out"
       to: "%{name} confirmed so you're going out"

@@ -28,7 +28,7 @@ class SuggestionsController < ApplicationController
   rescue Exception => e
     flash[:error] = e.message
   ensure
-    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    @redirect_to = redirect_back_path(suggestions_path)
     respond_to do |format|
       format.html { redirect_back_to(@redirect_to) and return }
       format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
@@ -42,12 +42,13 @@ class SuggestionsController < ApplicationController
     # party reschedules
     @suggestion.party_reschedules(@party, :rescheduled_at => params[:suggestion][:date])
     @suggestion.party_confirms(@party, :message => :keep, :event => 'reschedule')
+    flash[:notice] = I18n.t('suggestion.rescheduled.flash')
   rescue AASM::InvalidTransition => e
     flash[:error] = I18n.t('suggestion.error.flash')
   rescue Exception => e
     flash[:error] = e.message
   ensure
-    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    @redirect_to = redirect_back_path(suggestions_path)
     respond_to do |format|
       format.html { redirect_back_to(@redirect_to) and return }
       format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
@@ -65,7 +66,7 @@ class SuggestionsController < ApplicationController
   rescue Exception => e
     flash[:error] = e.message
   ensure
-    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    @redirect_to = redirect_back_path(suggestions_path)
     respond_to do |format|
       format.html { redirect_back_to(@redirect_to) and return }
       format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
@@ -82,7 +83,7 @@ class SuggestionsController < ApplicationController
   rescue Exception => e
     flash[:error] = e.message
   ensure
-    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    @redirect_to = redirect_back_path(suggestions_path)
     respond_to do |format|
       format.html { redirect_back_to(@redirect_to) and return }
       format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }
@@ -99,7 +100,7 @@ class SuggestionsController < ApplicationController
   rescue Exception => e
     flash[:error] = e.message
   ensure
-    @redirect_to = redirect_back_path(suggestion_path(@suggestion))
+    @redirect_to = redirect_back_path(suggestions_path)
     respond_to do |format|
       format.html { redirect_back_to(@redirect_to) and return }
       format.js   { render(:update) { |page| page.redirect_to(@redirect_to) } }

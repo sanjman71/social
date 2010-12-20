@@ -74,12 +74,13 @@ class SuggestionTest < ActiveSupport::TestCase
       @options = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                       :location => @loc1, :when => 'next week']
       @suggestion = Suggestion.create(@options)
-      # party1 schedules - should change party1 to confirmed, party2 to scheduled
+      # party1 schedules - should change party1 to confirmed, party2 to scheduled, send email to party2
       @tomorrow   = Time.zone.now.end_of_day + 1.second + 10.hours
       @suggestion.party_schedules(@suggestion.party1, :scheduled_at => @tomorrow)
       assert_equal 'scheduled', @suggestion.party1.state
       assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
+      assert_equal 1, match_delayed_jobs(/async_scheduled_event/)
       # compare times without subsec
       assert_equal @tomorrow.to_s(:datetime_schedule), @suggestion.scheduled_at.to_s(:datetime_schedule)
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
@@ -91,6 +92,7 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'talking', @suggestion.reload.state
       assert_equal [:decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal 1, match_delayed_jobs(/async_confirmed_event/)
       # party2 confirms
       @suggestion.party_confirms(@suggestion.party2)
       assert_equal 'confirmed', @suggestion.party2.state
@@ -98,6 +100,7 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'going_out', @suggestion.reload.state
       assert_equal [:decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal 1, match_delayed_jobs(/async_confirmed_event/)
     end
     
     should "schedule, then re-schedule" do
@@ -113,6 +116,7 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal 'talking', @suggestion.reload.state
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal 1, match_delayed_jobs(/async_rescheduled_event/)
     end
 
     should "relocate in scheduled state" do
@@ -123,13 +127,14 @@ class SuggestionTest < ActiveSupport::TestCase
       @suggestion.party_schedules(@suggestion.party1)
       # party2 relocates
       @suggestion.party_relocates(@suggestion.party2, :location => @loc2)
-      # should change suggestion location
+      # should change suggestion location and send email
       assert_equal @loc2, @suggestion.reload.location
       assert_equal 'scheduled', @suggestion.party1.state
       assert_equal 'scheduled', @suggestion.party2.state
       assert_equal 'talking', @suggestion.reload.state
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
+      assert_equal 1, match_delayed_jobs(/async_relocated_event/)
     end
 
     should "relocate in confirmed state" do

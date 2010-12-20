@@ -1,3 +1,3 @@
-When /^I wait "([^"]*)" second(?:s)$/ do |seconds|
+When /^I wait for "([^"]*)" second(?:s)$/ do |seconds|
   sleep(seconds.to_f)
 end

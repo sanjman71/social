@@ -49,44 +49,54 @@ $.fn.init_suggestion_date = function() {
   $(".timepicker").timepickr({convention:12});
   
   // pick a date, used to 'schedule'
-  $("#suggestion_pick_date").click(function() {
-    $("div#datetime").show();
-    $("div#message").show();
-    $("div#schedule_submit").show();
+  $("a#suggestion_pick_date").click(function() {
+    suggestion_id   = $(this).attr('data-suggestion-id');
+    suggestion_div  = "div#suggestion_" + suggestion_id + "_";
+    $(suggestion_div + "datetime").show();
+    $(suggestion_div + "message").show();
+    $(suggestion_div + "schedule_submit").show();
     $("div#options").hide();
     return false;
   })
 
   // repick a date, used to 'reschedule'
-  $("#suggestion_repick_date").click(function() {
-    $("div#datetime").show();
-    $("div#message").show();
-    $("div#reschedule_submit").show();
+  $("a#suggestion_repick_date").click(function() {
+    suggestion_id   = $(this).attr('data-suggestion-id');
+    suggestion_div  = "div#suggestion_" + suggestion_id + "_";
+    $(suggestion_div + "datetime").show();
+    $(suggestion_div + "message").show();
+    $(suggestion_div + "reschedule_submit").show();
     $("div#options").hide();
     return false;
   })
 
-  // close the pick date option
-  $("#suggestion_pick_date_nevermind").click(function() {
-    $("div#datetime").hide();
-    $("div#message").hide();
-    $("div#schedule_submit").hide();
+  // close the (re-)pick date option
+  $("a#suggestion_pick_date_nevermind, a#suggestion_repick_date_nevermind").click(function() {
+    suggestion_id   = $(this).attr('data-suggestion-id');
+    suggestion_div  = "div#suggestion_" + suggestion_id + "_";
+    $(suggestion_div + "datetime").hide();
+    $(suggestion_div + "message").hide();
+    $(suggestion_div + "schedule_submit").hide();
+    $(suggestion_div + "reschedule_submit").hide();
     $("div#options").show();
     return false;
   })
 
   // close the repick date option
+  /*
   $("#suggestion_repick_date_nevermind").click(function() {
+    suggestion_id = $(this).attr('data-suggestion-id');
     $("div#datetime").hide();
     $("div#message").hide();
     $("div#reschedule_submit").hide();
     $("div#options").show();
     return false;
   })
+  */
 
   // schedule or re-schedule
   $("#suggestion_schedule_date, #suggestion_reschedule_date").click(function() {
-    var form = "form#suggestion_form";
+    var form = $(this).parents("form#suggestion_form");
     
     // check date
     var date = $(form).find("input#suggestion_date").val();
@@ -100,11 +110,10 @@ $.fn.init_suggestion_date = function() {
     var id   = $(this).attr('id');
     var url  = id.match(/reschedule/) ? $(form).attr('data-reschedule-url') : $(form).attr('data-schedule-url');
 
-    // show progress text
-    $(form).find("div#schedule_submit").hide();
-
+    // disable submit
+    $(this).attr('disabled', 'disabled');
+    // post data
     $.post(url, data)
-
     return false;
   })
 }

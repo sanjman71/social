@@ -72,12 +72,19 @@ class Suggestion < ActiveRecord::Base
     party.schedule!
     party.event!(options[:event] || 'schedule')
     party.alert!(false)
-    @other_party = other_party(party) 
+    @other_party = other_party(party)
     @other_party.schedule!
     @other_party.event!('')
     @other_party.alert!
     talk!
+    self.delay.async_scheduled_event(:party => party, :other_party => @other_party)
     log("[suggestion:#{self.id}] #{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion talking")
+  end
+
+  def async_scheduled_event(hash)
+    party       = hash[:party]
+    other_party = hash[:other_party]
+    SuggestionMailer.suggestion_scheduled(self, party, other_party).deliver
   end
 
   def party_reschedules(party, options={})
@@ -89,7 +96,14 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     save!
+    self.delay.async_rescheduled_event(:party => party, :other_party => @other_party)
     log("[suggestion:#{self.id}] #{party.handle} rescheduled, suggestion #{state}")
+  end
+
+  def async_rescheduled_event(hash)
+    party       = hash[:party]
+    other_party = hash[:other_party]
+    SuggestionMailer.suggestion_rescheduled(self, party, other_party).deliver
   end
 
   def party_relocates(party, options={})
@@ -103,11 +117,18 @@ class Suggestion < ActiveRecord::Base
       @other_party.event!('')
       @other_party.alert!
       save!
+      self.delay.async_relocated_event(:party => party, :other_party => @other_party)
       log("[suggestion:#{self.id}] #{party.handle} relocated to #{location.name}, suggestion #{state}")
     elsif state == 'initialized'
       # just change the location
       save!
     end
+  end
+
+  def async_relocated_event(hash)
+    party       = hash[:party]
+    other_party = hash[:other_party]
+    SuggestionMailer.suggestion_relocated(self, party, other_party).deliver
   end
 
   def party_confirms(party, options={})

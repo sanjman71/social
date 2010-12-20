@@ -17,6 +17,9 @@ module NavigationHelpers
     when /login page/
       '/login?login=1'
 
+    when /logout page/
+      '/logout'
+
     when /^(.*)'s profile page$/i
       user_path(User.find_by_handle($1))
 

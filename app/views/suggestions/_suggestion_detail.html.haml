@@ -7,90 +7,84 @@
 .suggestion_text#text
   - case
   - when suggestion.initialized?
-    == outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
+    outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
     %br
-    == Pick a date as your next step.
-    -# add 'No Changes' link
-    -#- links.push(link_to('No Changes', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
+    Pick a date as your next step.
   - when suggestion.talking?
     - if my_party.event == 'schedule'
       -# you scheduled a datetime
-      == You suggested meeting #{other_party.user.handle} at #{location.name} on #{suggestion.scheduled_at.to_s(:datetime_dow)}.
+      You suggested meeting #{other_party.user.handle} at #{location.name} on #{suggestion.scheduled_at.to_s(:date_dow_ddmmyyyy)}.
       %br
-      == We are waiting for #{other_party.user.handle} to confirm.  You can re-schedule at any time.
+      We are waiting for #{other_party.user.handle} to confirm.
     - if my_party.event.blank? and other_party.event == 'schedule'
       -# other party scheduled a datetime
-      == #{other_party.user.handle} suggested meeting at #{location.name} on #{suggestion.scheduled_at.to_s(:datetime_dow)}.
-      == Its your turn to confirm.
+      #{other_party.user.handle} suggested meeting at #{location.name} on #{suggestion.scheduled_at.to_s(:datetime_dow)}.
+      Its your turn to confirm.
     - if my_party.event == 'reschedule'
       -# you rescheduled
-      == You rescheduled at #{location.name} for #{suggestion.scheduled_at.to_s(:datetime_dow)}.
+      You rescheduled at #{location.name} for #{suggestion.scheduled_at.to_s(:datetime_dow)}.
       %br
-      == We are waiting for #{other_party.user.handle} to confirm.
-      -# add 'No Changes' link
-      -#- links.push(link_to('No Changes', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
+      We are waiting for #{other_party.user.handle} to confirm.
     - if my_party.event.blank? and other_party.event == 'reschedule'
       -# other party rescheduled
-      == #{other_party.user.handle} rescheduled at #{location.name} for #{suggestion.scheduled_at.to_s(:datetime_dow)}.
+      #{other_party.user.handle} rescheduled at #{location.name} for #{suggestion.scheduled_at.to_s(:datetime_dow)}.
       %br
-      == Now you just need to confirm.
+      Now you just need to confirm.
   - when suggestion.bailed?
     - if my_party.declined?
-      == outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
+      outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
       %br
-      == You declined this suggestion.
+      You declined this suggestion.
     - else
-      == outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
+      outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
       %br
-      == They declined this suggestion.
+      They declined this suggestion.
   - else
-    == foo
+    Whoops
 
 = form_for(suggestion, :html => {:id => 'suggestion_form', "data-schedule-url" => schedule_suggestion_path(suggestion, :format => 'js'), "data-reschedule-url" => reschedule_suggestion_path(suggestion, :format => 'js')}) do |f|
-
   .span-15.last.padding-top-10#options
     - if my_party.aasm_events_for_current_state.include?(:schedule)
-      - links.push(link_to('Pick a Date', '#', :class => 'admin big', :id => 'suggestion_pick_date'))
-      - links.push(link_to('Change Location', '#', :class => 'admin big', :id => 'suggestion_relocate'))
+      - links.push(link_to('Pick a Date', '#', :class => 'admin big', :id => 'suggestion_pick_date', 'data-suggestion-id' => suggestion.id))
     - if my_party.aasm_events_for_current_state.include?(:reschedule)
-      - links.push(link_to('Re-schedule', '#', :class => 'admin big', :id => 'suggestion_repick_date'))
+      - links.push(link_to('Re-schedule', '#', :class => 'admin big', :id => 'suggestion_repick_date', 'data-suggestion-id' => suggestion.id))
+    - if my_party.aasm_events_for_current_state.include?(:relocate) || my_party.initialized?
+      - links.push(link_to('Change Location', '#', :class => 'admin big', :id => 'suggestion_relocate', 'data-suggestion-id' => suggestion.id))
     - if my_party.aasm_events_for_current_state.include?(:confirm)
-      - links.push(link_to('Confirm', confirm_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_confirm', :method => :put))
+      - links.push(link_to('Confirm', confirm_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_confirm', :method => :put, 'data-suggestion-id' => suggestion.id))
     - if my_party.aasm_events_for_current_state.include?(:decline)
-      - links.push(link_to('Decline', decline_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure'))
-    -# add 'No Changes' link
+      - links.push(link_to('Decline', decline_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure', 'data-suggestion-id' => suggestion.id))
     - links.push(link_to('Nevermind', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
     - links.each_with_index do |link, index|
       = link
       - unless index == links.size-1
         ==&nbsp;or&nbsp;
 
-  .span-15.last.padding-top-10.padding-bottom-10.hide#datetime
+  .span-15.last.padding-top-10.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_datetime"}
     .span-2.label.block.light
-      %h4.bigger.block.bottom== Date:
+      %h4.bigger.block.bottom Date:
     .span-11.last
       = text_field_tag 'suggestion[date]', '', :class => 'datepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 12, :autocomplete => 'off'
       -#= text_field_tag 'suggestion[time]', '', :class => 'timepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 9, :autocomplete => 'off'
 
-  .span-15.last.padding-bottom-10.hide#message
+  .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_message"}
     .span-2.label.block.light
-      %h4.bigger.block.bottom== Message:
+      %h4.bigger.block.bottom Message:
     .span-11.last
       = text_field_tag 'suggestion[message]', '', :class => 'big top', :style => 'padding: 3px; margin: 0px;', :size => 50, :autocomplete => 'off'
   
-  .span-15.last.padding-bottom-10.hide#schedule_submit
-    = submit_tag 'Schedule', :id => 'suggestion_schedule_date'
+  .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_schedule_submit"}
+    = submit_tag 'Schedule', :id => 'suggestion_schedule_date', 'data-disable-with' => "scheduling ..."
     ==&nbsp;or&nbsp;
-    = link_to 'Nevermind', '#', :id => 'suggestion_pick_date_nevermind', :class => 'admin'
+    = link_to 'Nevermind', '#', :id => 'suggestion_pick_date_nevermind', :class => 'admin big', 'data-suggestion-id' => suggestion.id
 
-  .span-15.last.padding-bottom-10.hide#reschedule_submit
-    = submit_tag 'Reschedule', :id => 'suggestion_reschedule_date'
+  .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_reschedule_submit"}
+    = submit_tag 'Reschedule', :id => 'suggestion_reschedule_date', 'data-disable-with' => "re-scheduling ..."
     ==&nbsp;or&nbsp;
-    = link_to 'Nevermind', '#', :id => 'suggestion_repick_date_nevermind', :class => 'admin'
+    = link_to 'Nevermind', '#', :id => 'suggestion_repick_date_nevermind', :class => 'admin big', 'data-suggestion-id' => suggestion.id
 
   .span-15.last.search_places_autocomplete_form.hide#relocate
-    -#%h4.bottom Search for a new location
-    = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => "That's the place", 'data-submit-url' => relocate_suggestion_path(suggestion, :format => 'js'), 'data-waiting' => 're-locating ...', 'data-return-to' => request.request_uri, :placeholder => 'e.g. starbucks', :style => 'width: 450px;'
+    = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => "That's the place", 'data-submit-url' => relocate_suggestion_path(suggestion, :format => 'js'), 'data-waiting' => 're-locating ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks', :style => 'width: 450px;'
     %span.hint#search_places_hint
     %br
     = link_to 'Nevermind', '#', :id => 'suggestion_relocate_nevermind', :class => 'admin big'
