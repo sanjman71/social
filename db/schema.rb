@@ -243,7 +243,7 @@ ActiveRecord::Schema.define(:version => 20101212192302) do
 
   create_table "locations", :force => true do |t|
     t.string   "name",                  :limit => 100
-    t.string   "street_address"
+    t.string   "street_address",        :limit => 100
     t.integer  "city_id"
     t.integer  "state_id"
     t.integer  "zipcode_id"
@@ -387,10 +387,10 @@ ActiveRecord::Schema.define(:version => 20101212192302) do
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
     t.integer  "taggable_id"
-    t.string   "taggable_type"
+    t.string   "taggable_type", :limit => 50
     t.integer  "tagger_id"
-    t.string   "tagger_type"
-    t.string   "context"
+    t.string   "tagger_type",   :limit => 50
+    t.string   "context",       :limit => 50
     t.datetime "created_at"
   end
 
@@ -398,7 +398,7 @@ ActiveRecord::Schema.define(:version => 20101212192302) do
   add_index "taggings", ["taggable_id", "taggable_type", "context"], :name => "index_taggings_on_taggable_id_and_taggable_type_and_context"
 
   create_table "tags", :force => true do |t|
-    t.string "name"
+    t.string "name", :limit => 50
   end
 
   create_table "timezones", :force => true do |t|
@@ -477,8 +477,8 @@ ActiveRecord::Schema.define(:version => 20101212192302) do
     t.integer "locations_count",                                               :default => 0
   end
 
-  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zips_on_state_id_and_locations_count"
-  add_index "zipcodes", ["state_id"], :name => "index_zips_on_state_id"
-  add_index "zipcodes", ["timezone_id"], :name => "index_zips_on_timezone_id"
+  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zipcodes_on_state_id_and_locations_count"
+  add_index "zipcodes", ["state_id"], :name => "index_zipcodes_on_state_id"
+  add_index "zipcodes", ["timezone_id"], :name => "index_zipcodes_on_timezone_id"
 
 end
