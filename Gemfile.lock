@@ -1,8 +1,8 @@
 GIT
   remote: git://github.com/collectiveidea/delayed_job.git
-  revision: fcca64c20c60b5d93d2ca7ad416ae30e33e588e7
+  revision: 411719b38c51a7fbd060ea139fd64adb20107a5d
   specs:
-    delayed_job (2.1.1)
+    delayed_job (2.1.2)
       activesupport (~> 3.0)
       daemons
 
