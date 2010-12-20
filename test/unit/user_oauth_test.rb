@@ -10,11 +10,11 @@ class UserOauthTest < ActiveSupport::TestCase
 
   context "facebook oauth create" do
     should "create oauth, set member, set user facebook id + facebook photo, import facebook friends" do
-      json_data    = File.open("#{Rails.root}/test/data/facebook_user.json")
-      access_token = OAuth2::AccessToken.new('1', '2')
-      # stub access token
-      access_token.stubs(:get).returns(json_data)
-      User.find_for_facebook_oauth(access_token, @user1)
+      # parse json into a hash
+      json_data     = File.open("#{Rails.root}/test/data/facebook_user.json")
+      user_data     = Crack::JSON.parse(File.read(json_data))
+      credentials   = {'token' => "1"}
+      User.find_for_facebook_oauth(credentials, user_data, @user1)
       # should set user facebook id
       assert @user1.facebook_id
       # should set user member flag
@@ -45,11 +45,11 @@ class UserOauthTest < ActiveSupport::TestCase
     end
     
     should "add friends without creating users if they already exist" do
-      json_data    = File.open("#{Rails.root}/test/data/facebook_user.json")
-      access_token = OAuth2::AccessToken.new('1', '2')
-      # stub access token
-      access_token.stubs(:get).returns(json_data)
-      User.find_for_facebook_oauth(access_token, @user1)
+      # parse json into a hash
+      json_data     = File.open("#{Rails.root}/test/data/facebook_user.json")
+      user_data     = Crack::JSON.parse(File.read(json_data))
+      credentials   = {'token' => "1"}
+      User.find_for_facebook_oauth(credentials, user_data, @user1)
       # add user, who will be friended, to the system
       @adam = User.create!(:handle => "marchick", :facebook_id => "620186040", :gender => 2)
       # stub friends data
@@ -68,11 +68,11 @@ class UserOauthTest < ActiveSupport::TestCase
     end
 
     should "not re-add friends during import friends process" do
-      json_data    = File.open("#{Rails.root}/test/data/facebook_user.json")
-      access_token = OAuth2::AccessToken.new('1', '2')
-      # stub access token
-      access_token.stubs(:get).returns(json_data)
-      User.find_for_facebook_oauth(access_token, @user1)
+      # parse json into a hash
+      json_data     = File.open("#{Rails.root}/test/data/facebook_user.json")
+      user_data     = Crack::JSON.parse(File.read(json_data))
+      credentials   = {'token' => "1"}
+      User.find_for_facebook_oauth(credentials, user_data, @user1)
       # add user as friend
       @adam = User.create!(:handle => "marchick", :facebook_id => "620186040", :gender => 2)
       @user1.friendships.create!(:friend => @adam)
@@ -94,19 +94,16 @@ class UserOauthTest < ActiveSupport::TestCase
 
   context "foursquare oauth create" do
     should "create oauth, set user foursquare id, foursquare photo" do
-      json_data    = File.open("#{Rails.root}/test/data/foursquare_user.json")
-      access_token = OAuth2::AccessToken.new('1', '2')
-      # create mock to hold json data
-      json_mock    = mock()
-      json_mock.stubs(:body).returns(json_data)
-      # stub access token
-      access_token.stubs(:get).returns(json_mock)
-      User.find_for_foursquare_oauth(access_token, @user1)
+      # parse json into a hash
+      json_data     = File.open("#{Rails.root}/test/data/foursquare_user.json")
+      user_data     = Crack::JSON.parse(File.read(json_data))['user']
+      credentials   = {'token' => "1", 'secret' => 'xyz'} # note: foursquare currently uses oauth1 so a secret is passed in
+      User.find_for_foursquare_oauth(credentials, user_data, @user1)
       # should create user foursquare oauth
       assert_equal 1, @user1.oauths.foursquare.count
       # should set user foursquare id
       assert @user1.foursquare_id
-      # should create user foursquare photo
+      # should set user foursquare photo
       assert_equal 1, @user1.photos.foursquare.count
       assert_equal [3], @user1.photos.foursquare.collect(&:priority)
       assert_equal ["http://foursquare.com/img/blank_boy.png"], @user1.photos.foursquare.collect(&:url)
@@ -119,19 +116,16 @@ class UserOauthTest < ActiveSupport::TestCase
 
   context "twitter oauth create" do
     should "create oauth, set user twitter id, twitter photo" do
-      json_data    = File.open("#{Rails.root}/test/data/twitter_user.json")
-      access_token = OAuth2::AccessToken.new('1', '2')
-      # create mock to hold json data
-      json_mock    = mock()
-      json_mock.stubs(:body).returns(json_data)
-      # stub access token
-      access_token.stubs(:get).returns(json_mock)
-      User.find_for_twitter_oauth(access_token, @user1)
+      # parse json into a hash
+      json_data     = File.open("#{Rails.root}/test/data/twitter_user.json")
+      user_data     = Crack::JSON.parse(File.read(json_data))
+      credentials   = {'token' => "1"}
+      User.find_for_twitter_oauth(credentials, user_data, @user1)
       # should create user twitter oauth
       assert_equal 1, @user1.oauths.twitter.count
       # should set user twitter id
       assert @user1.twitter_id
-      # should create user twitter photo
+      # should set user twitter photo
       assert_equal 1, @user1.photos.twitter.count
       assert_equal [5], @user1.photos.twitter.collect(&:priority)
       assert_equal ["http://s.twimg.com/a/1284949838/images/default_profile_0_normal.png"], @user1.photos.twitter.collect(&:url)

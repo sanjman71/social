@@ -25,6 +25,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Reset session for the default the sign_out redirect path method
+  # def after_sign_out_path_for(resource_or_scope)
+  #   session.try(:delete, :beta)
+  #   super
+  # end
+
   # use specified path if no params[:return_to]
   def redirect_back_path(path)
     params[:return_to] ? params[:return_to] : path
@@ -62,14 +68,6 @@ class ApplicationController < ActionController::Base
     match_radius = params[:radius].to_s.match(/radius:(\d+)/)
     match_radius ? match_radius[1].to_i : default_radius
   end
-
-  # def build_geo_origin(lat_degrees, lng_degrees)
-  #   [lat_degrees.radians, lng_degrees.radians]
-  # end
-
-  # def geo_distance(radius)
-  #   0.0..radius.miles.meters.value
-  # end
 
   def default_radius
     50

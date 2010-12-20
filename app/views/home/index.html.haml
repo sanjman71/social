@@ -39,7 +39,7 @@
     -# always sign in with facebook
     %span{:style => 'font-size: 1.5em;'}Sign in
     %br
-    = link_to image_tag('facebook_64.png'), user_oauth_authorize_url(:facebook)
+    = link_to image_tag('facebook_64.png'), user_omniauth_authorize_path(:facebook)
 
 - if user_signed_in?
   .span-23.prepend-1.last#suggestions

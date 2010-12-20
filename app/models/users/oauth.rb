@@ -8,72 +8,72 @@ module Users::Oauth
     end
 
     # devise oauth callback to map access token to a resource/user
-    def base.find_for_facebook_oauth(access_token, signed_in_resource=nil)
-      begin
-        data = ActiveSupport::JSON.decode(access_token.get('https://graph.facebook.com/me'))
-      rescue Exception => e
-        # whoops
-        data = nil
-        self.class.log("facebook oauth error #{e.message}", :error) rescue nil
-        return signed_in_resource
-      end
+    def base.find_for_facebook_oauth(credentials, user_data, signed_in_resource=nil)
+      # begin
+      #   data = ActiveSupport::JSON.decode(access_token.get('https://graph.facebook.com/me'))
+      # rescue Exception => e
+      #   # whoops
+      #   data = nil
+      #   self.class.log("facebook oauth error #{e.message}", :error) rescue nil
+      #   return signed_in_resource
+      # end
 
-      user = signed_in_resource || find_or_create_facebook_user(data)
-      user.update_from_facebook(data)
+      user = signed_in_resource || find_or_create_facebook_user(user_data)
+      user.update_from_facebook(user_data)
       # initialize oauth object
-      find_for_service_oauth('facebook', access_token, user)
+      find_for_service_oauth('facebook', credentials, user)
     end
 
     # devise oauth callback to map access token to a resource/user
-    def base.find_for_foursquare_oauth(access_token, signed_in_resource=nil)
-      begin
-        data = ActiveSupport::JSON.decode(access_token.get('http://api.foursquare.com/v1/user.json').body)["user"]
-      rescue Exception => e
-        # whoops
-        data = nil
-        self.class.log("foursquare oauth error #{e.message}", :error) rescue nil
-        return signed_in_resource
-      end
+    def base.find_for_foursquare_oauth(credentials, user_data, signed_in_resource=nil)
+      # begin
+      #   data = ActiveSupport::JSON.decode(access_token.get('http://api.foursquare.com/v1/user.json').body)["user"]
+      # rescue Exception => e
+      #   # whoops
+      #   data = nil
+      #   self.class.log("foursquare oauth error #{e.message}", :error) rescue nil
+      #   return signed_in_resource
+      # end
 
-      user = signed_in_resource || find_or_create_foursquare_user(data)
-      user.update_from_foursquare(data)
+      user = signed_in_resource || find_or_create_foursquare_user(user_data)
+      user.update_from_foursquare(user_data)
       # initialize oauth object
-      find_for_service_oauth('foursquare', access_token, user)
+      find_for_service_oauth('foursquare', credentials, user)
     end
 
     # devise oauth callback to map access token to a resource/user
-    def base.find_for_twitter_oauth(access_token, signed_in_resource=nil)
-      begin
-        # get account info
-        data = ActiveSupport::JSON.decode(access_token.get('http://api.twitter.com/1/account/verify_credentials.json').body)
-      rescue Exception => e
-        # whoops
-        data = nil
-        self.class.log("twitter oauth error #{e.message}", :error) rescue nil
-        return signed_in_resource
-      end
+    def base.find_for_twitter_oauth(credentials, user_data, signed_in_resource=nil)
+      # begin
+      #   # get account info
+      #   data = ActiveSupport::JSON.decode(access_token.get('http://api.twitter.com/1/account/verify_credentials.json').body)
+      # rescue Exception => e
+      #   # whoops
+      #   data = nil
+      #   self.class.log("twitter oauth error #{e.message}", :error) rescue nil
+      #   return signed_in_resource
+      # end
 
-      user = signed_in_resource || find_or_create_twitter_user(data)
-      user.update_from_twitter(data)
+      user = signed_in_resource || find_or_create_twitter_user(user_data)
+      user.update_from_twitter(user_data)
       # initialize oauth object
-      find_for_service_oauth('twitter', access_token, user)
+      find_for_service_oauth('twitter', credentials, user)
     end
 
     # generic method to create or update user's oauth token for the specified service
-    def base.find_for_service_oauth(service, access_token, user=nil)
+    def base.find_for_service_oauth(service, credentials, user=nil)
       return unless user
       oauth = user.oauths.find_by_provider(service)
       # note: oauth1 uses an access_token_secret, but oauth2 does not
       if oauth
-        # update token
-        oauth.access_token        = access_token.token
-        oauth.access_token_secret = (access_token.secret rescue nil)
+        # update token, secret is optional
+        oauth.access_token        = credentials['token']
+        oauth.access_token_secret = credentials['secret']
         oauth.save
         user.class.log("[user:#{user.id}] #{user.handle} updated oauth token")
       else
-        # create oauth object with token
-        oauth = user.oauths.create(:provider => service, :access_token => access_token.token,
-                                   :access_token_secret => (access_token.secret rescue nil))
+        # create oauth object with token, and secret if provided
+        oauth = user.oauths.create(:provider => service, :access_token => credentials['token'],
+                                   :access_token_secret => credentials['secret'])
         user.class.log("[user:#{user.id}] #{user.handle} created oauth #{service} token")
       end
       user

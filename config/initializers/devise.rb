@@ -50,6 +50,21 @@ end
 GITHUB_KEY          = "6aff6b46cf25d31469dc"
 GITHUB_SECRET       = "ea1701de8a783fa829df2a727200a72b9f018da3"
 
+# used for testing, primarily with cucumber
+module OmniAuth
+  module Strategies
+    class Outlately < OAuth2
+      def initialize(app, client_id = nil, client_secret = nil, options = {}, &block)
+        super(app, :outlately, client_id, client_secret, {:site => 'http://outlate.ly'}, &block)
+      end
+
+      def user_data
+        @data ||= {}
+      end
+    end
+  end
+end
+
 # Use this hook to configure devise mailer, warden hooks and so forth. The first
 # four configuration values can also be set straight in your models.
 Devise.setup do |config|
@@ -68,25 +83,25 @@ Devise.setup do |config|
   # config.params_authenticatable = true
 
   # Tell if authentication through HTTP Basic Auth is enabled. True by default.
-  # config.http_authenticatable = true
+  config.http_authenticatable = false
 
   # The realm used in Http Basic Authentication
   # config.http_authentication_realm = "Application"
 
-  # ==> Configuration for :database_authenticatable
-  # Invoke `rake secret` and use the printed value to setup a pepper to generate
-  # the encrypted password. By default no pepper is used.
-  # config.pepper = "rake secret output"
-
   # Configure how many times you want the password is reencrypted. Default is 10.
-  # config.stretches = 10
+  config.stretches = 10
 
   # Define which will be the encryption algorithm. Supported algorithms are :sha1
   # (default), :sha512 and :bcrypt. Devise also supports encryptors from others
   # authentication tools as :clearance_sha1, :authlogic_sha512 (then you should set
   # stretches above to 20 for default behavior) and :restful_authentication_sha1
   # (then you should set stretches to 10, and copy REST_AUTH_SITE_KEY to pepper)
-  config.encryptor = :sha1
+  # config.encryptor = :bcrypt
+
+  # ==> Configuration for :database_authenticatable
+  # Invoke `rake secret` and use the printed value to setup a pepper to generate
+  # the encrypted password. By default no pepper is used.
+  config.pepper = "62b3538572fed0f5e5343a61b38c924022635f1e908b129c0be1f4eb2e6b635461ed19d1c07b93a9698e7d58cd1775537e6932506176944ba8f52f8d8824b068"
 
   # ==> Configuration for :confirmable
   # The time you want give to your user to confirm his account. During this time
@@ -153,6 +168,14 @@ Devise.setup do |config|
   # role declared in your routes.
   # config.default_scope = :user
 
+  # ==> Navigation configuration
+  # Lists the formats that should be treated as navigational. Formats like
+  # :html, should redirect to the sign in page when the user does not have
+  # access, but formats like :xml or :json, should return 401.
+  # If you have any extra navigational formats, like :iphone or :mobile, you
+  # should add them to the navigational formats lists. Default is [:html]
+  config.navigational_formats = [:html]
+
   # If you want to use other strategies, that are not (yet) supported by Devise,
   # you can configure them inside the config.warden block. The example below
   # allows you to setup OAuth, using http://github.com/roman/warden_oauth
@@ -169,35 +192,13 @@ Devise.setup do |config|
   # oauth configuration
   # - these settings handle users logging in, signing up, or linking accounts using oauth
   # - the oauth callbacks include User.find_for_foursquare_oauth where the mapping of oauth token to use happens
-  
-  # foursquare - currently uses oauth
-  config.oauth :foursquare, FOURSQUARE_KEY, FOURSQUARE_SECRET,
-    :site               => 'http://foursquare.com/',
-    :authorize_path     => '/oauth/authorize',
-    :access_token_path  => '/oauth/access_token',
-    :scope              => ''
 
-  # facebook - uses oauth2
-  config.oauth :facebook, FACEBOOK_KEY, FACEBOOK_SECRET,
-    :site               => 'https://graph.facebook.com/',
-    :authorize_path     => '/oauth/authorize',
-    :access_token_path  => '/oauth/access_token',
-    :scope              => ['offline_access', 'email', 'user_checkins', 'friends_checkins',
-                            'user_about_me', 'friends_about_me', 'user_birthday', 'friends_birthday',
-                            'user_location', 'friends_location', 'user_photos', 'friends_photos']
-
-  # github - uses oauth2
-  config.oauth :github, GITHUB_KEY, GITHUB_SECRET,
-    :site               => 'https://github.com/',
-    :authorize_path     => '/login/oauth/authorize',
-    :access_token_path  => '/login/oauth/access_token',
-    :scope              => ['user', 'public_repo']
-
-  # twitter - uses oauth
-  config.oauth :twitter, TWITTER_KEY, TWITTER_SECRET,
-    :site               => 'http://twitter.com',
-    :authorize_path     => '/oauth/authorize',
-    :access_token_path  => '/oauth/access_token',
-    :scope              => ''
-  
+  config.omniauth :facebook, FACEBOOK_KEY, FACEBOOK_SECRET,
+                  :scope => 'offline_access,email,user_checkins,friends_checkins,user_about_me,friends_about_me,
+                             user_birthday,friends_birthday,user_location,friends_location,user_photos,
+                             friends_photos'
+  config.omniauth :foursquare, FOURSQUARE_KEY, FOURSQUARE_SECRET
+  config.omniauth :twitter, TWITTER_KEY, TWITTER_SECRET
+  config.omniauth :github, GITHUB_KEY, GITHUB_SECRET
+  config.omniauth :outlately, "test", "test"
 end

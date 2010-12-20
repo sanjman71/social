@@ -19,8 +19,4 @@
           = link_to 'Unlink', unlink_account_path(service), :method => :delete, :confirm => 'Are you sure', :class => 'admin', :style => 'margin-left: 5px;'
           =#= @oauth_hash[service].access_token
         - else
-          - if service.to_sym == :foursquare
-            %h5= link_to("Link to Account", oauth_initiate_path(:foursquare), :class => 'admin') rescue nil
-          - else
-            %h5= link_to("Link to Account", user_oauth_authorize_url(service.to_sym), :class => 'admin') rescue nil
-    
+          %h5= link_to("Link to Account", user_omniauth_authorize_path(service.to_sym), :class => 'admin') rescue nil

@@ -3,7 +3,7 @@ Social::Application.routes.draw do
   root :to => "home#index"
 
   # devise
-  devise_for :users
+  devise_for :users, :controllers => {:omniauth_callbacks => "oauth" }
   devise_scope :user do
     get "/login" => "devise/sessions#new"
     get "/logout" => "devise/sessions#destroy"
@@ -11,8 +11,8 @@ Social::Application.routes.draw do
   end
 
   # oauth routes
-  match 'oauth/:service/initiate', :to => "oauth#initiate", :as => :oauth_initiate
-  match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
+  # match 'oauth/:service/initiate', :to => "oauth#initiate", :as => :oauth_initiate
+  # match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
 
   # checkin routes
   match 'users/:user_id/checkins/:geo/:radius(/:search)', :to => 'checkins#index',

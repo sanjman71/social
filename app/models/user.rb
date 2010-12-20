@@ -5,7 +5,7 @@ require 'thinking_sphinx/deltas/delayed_delta.rb'
 class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :lockable, :timeoutable and :activatable, :validatable
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :oauthable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :omniauthable
 
   # Badges for authorization
   badges_authorized_user
@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
 
   attr_accessor             :matchby, :matchvalue
 
-  attr_accessible           :handle, :password, :password_confirmation, :gender, :orientation, :rpx,
+  attr_accessible           :handle, :password, :password_confirmation, :remember_me, :gender, :orientation, :rpx,
                             :facebook_id, :city, :city_id, :member,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
                             :city_attributes, :availability_attributes, :tag_ids,
