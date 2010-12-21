@@ -162,7 +162,7 @@ class SuggestionsControllerTest < ActionController::TestCase
       assert_equal 'bailed', @suggestion.reload.state
       assert_false @suggestion.party1.reload.alert?
       assert_true @suggestion.party2.reload.alert?
-      assert_redirected_to "/suggestions/#{@suggestion.id}"
+      assert_redirected_to "/suggestions"
     end
   end
 
@@ -172,7 +172,7 @@ class SuggestionsControllerTest < ActionController::TestCase
       set_beta
       post :relocate, :id => @suggestion.id, :location_id => @loc2.id
       assert_response :redirect
-      assert_equal "Suggestion was re-located", flash[:notice]
+      assert_equal "Your suggestion was re-located!", flash[:notice]
       # should change location
       assert_equal @loc2, @suggestion.reload.location
     end
@@ -216,7 +216,7 @@ class SuggestionsControllerTest < ActionController::TestCase
         sign_in @user1
         set_beta
         post :schedule, :id => @suggestion.id, :suggestion => {:date => '10/01/2010'}
-        assert_redirected_to "/suggestions/#{@suggestion.id}"
+        assert_redirected_to "/suggestions"
       end
     end
   end
