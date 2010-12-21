@@ -95,7 +95,7 @@ class LocationImportTest < ActiveSupport::TestCase
     assert_equal 1, Delayed::Job.all.select { |dj| dj.handler.match(/async_import_tags/) }.size
     work_off_delayed_jobs(/async_import_tags/)
     # should add location tags
-    assert_equal ['coffee shop', 'food'], @location.reload.tag_list
+    assert_equal ['coffee shop', 'food'], @location.reload.tag_list.sort
     # should mark location_source tag_count, tagged_at
     assert @source.reload.tagged?
     assert_equal 2, @source.reload.tag_count

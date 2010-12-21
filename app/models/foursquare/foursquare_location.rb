@@ -7,8 +7,9 @@ class FoursquareLocation
     # initialize foursquare client, no auth required
     foursquare = FoursquareClient.new
 
-    # initialize location sources
-    location_sources = options[:location_sources] ? LocationSource.find(options[:location_sources]) : LocationSource.foursquare.all(:include => :location)
+    # initialize location sources, using specified ids collection or all
+    conditions        = options[:location_sources] ? options[:location_sources] : :all
+    location_sources  = LocationSource.foursquare.find(conditions, :include => :location)
 
     Array(location_sources).each do |ls|
       # check if we have already imported tags from this source
