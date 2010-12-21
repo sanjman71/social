@@ -4,6 +4,9 @@ class SuggestionsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   context "routes" do
+    should route(:get, "/suggestions").to(:controller => 'suggestions', :action => 'index')
+    should route(:get, "/suggestions/filter:1,3").
+      to(:controller => 'suggestions', :action => 'index', :ids => '1,3')
     should route(:put, "/suggestions/1/decline").
       to(:controller => 'suggestions', :action => 'decline', :id => '1')
     should route(:put, "/suggestions/1/confirm").
@@ -28,6 +31,24 @@ class SuggestionsControllerTest < ActionController::TestCase
     @options    = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                        :location => @loc1, :when => 'next week']
     @suggestion = Suggestion.create!(@options)
+  end
+
+  context "index" do
+    should "show all suggestions" do
+      sign_in @user1
+      set_beta
+      get :index
+      assert_equal nil, assigns(:filter)
+      assert_equal [@suggestion], assigns(:suggestions)
+    end
+    
+    should "show filtered suggestions" do
+      sign_in @user1
+      set_beta
+      get :index, :ids => "#{@suggestion.id}"
+      assert_equal [@suggestion.id], assigns(:filter)
+      assert_equal [@suggestion], assigns(:suggestions)
+    end
   end
 
   context "show" do

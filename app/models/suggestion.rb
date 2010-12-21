@@ -152,7 +152,7 @@ class Suggestion < ActiveRecord::Base
   def async_confirmed_event(hash)
     party       = UserSuggestion.find_by_id(hash[:party_id])
     other_party = UserSuggestion.find_by_id(hash[:other_party_id])
-    # SuggestionMailer.suggestion_confirmed(self, party, other_party).deliver
+    SuggestionMailer.suggestion_confirmed(self, party, other_party).deliver
   end
 
   def other_party(party)

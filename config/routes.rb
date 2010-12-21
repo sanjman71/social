@@ -54,7 +54,9 @@ Social::Application.routes.draw do
   # suggestion routes
   match 'suggestions/:id/relocate(/:location_id)', :to => 'suggestions#relocate',
     :as => :relocate_suggestion, :via => [:post, :put]
+  match 'suggestions/filter::ids', :to => 'suggestions#index', :as => :filter_suggestions, :via => [:get]
   resources :suggestions, :only => [:index, :show] do
+    put :add, :on => :collection
     put :decline, :on => :member
     put :confirm, :on => :member
     post :schedule, :on => :member

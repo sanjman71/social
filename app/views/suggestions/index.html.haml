@@ -3,8 +3,12 @@
 - stylesheet('jquery.timepickr')
 
 - content_for :mat do
-  %h2== Suggestions
-  %h4== My Suggestions
+  %h2
+    My Suggestions
+    - if current_user.has_role?('admin')
+      = link_to 'Add', add_suggestions_path, :method => :put, :id => 'add_suggestion', :class => 'admin', :style => 'font-size: 0.5em; margin-left: 7px;'
+  - if @filter
+    %h4= link_to 'All Suggestions', suggestions_path, :class => 'admin'
 
 %hr.space
 
@@ -13,7 +17,7 @@
 
 .span-24.last#suggestions
   - @suggestions.each do |suggestion|
-    .span-24.last.suggestion#suggestion{'data-suggestion-id' => suggestion.id}
+    .span-24.last.suggestion#suggestion{'data-suggestion-id' => suggestion.id, :class => suggestion.state}
       .span-2.prepend-1#picture
         - my_party    = suggestion.my_party(current_user)
         - other_party = suggestion.other_party(current_user)

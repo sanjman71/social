@@ -42,7 +42,7 @@ Feature: User suggestions
     And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting at Paramount Room"
 
     @javascript
-    Scenario: User should receive an email when a suggestion is scheduled and be able to re-schedule
+    Scenario: User should receive an email when a suggestion is scheduled, and then re-schedule
       Given I am logged in as "chicago_gal"
       And "chicago_guy" schedules his suggestion with "chicago_gal" "1.day.from_now"
       Then "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting tomorrow"
@@ -58,3 +58,23 @@ Feature: User suggestions
 
       Then I should see "Your suggestion was re-scheduled!"
       And "chicago_guy@outlately.com" should receive an email with subject "Outlately: chicago_gal re-scheduled and suggested meeting tomorrow"
+
+    @javascript
+    Scenario: User should receive an email when a suggestion is scheduled, and then confirm
+      Given I am logged in as "chicago_gal"
+      And "chicago_guy" schedules his suggestion with "chicago_gal" "1.day.from_now"
+      Then "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting tomorrow"
+      When I open the email
+      And I follow "confirm" in the email
+      Then I should see "chicago_guy" within "div#suggestion"
+      And I follow "Details"
+      And I follow "Confirm"
+      And the delayed jobs are processed
+
+      Then I should see "Your suggestion was confirmed!"
+      And "chicago_guy@outlately.com" should receive an email with subject "Outlately: chicago_gal confirmed"
+      When I open the email
+      Then I should see "Click" in the email body
+      And I follow "here" in the email
+      Then I should see "chicago_guy" within "div#suggestion"
+    

@@ -5,8 +5,25 @@ class SuggestionsController < ApplicationController
   respond_to    :html, :js
 
   # GET /suggestions
+  # GET /suggestions/filter:1,5
   def index
-    @suggestions = current_user.suggestions
+    # find all active suggestions
+    @filter       = params[:ids] ? params[:ids].to_s.split(',').map(&:to_i) : nil
+    @suggestions  = current_user.suggestions.active.find(@filter || :all)
+  rescue Exception => e
+    if @filter
+      redirect_to suggestions_path
+    else
+      raise
+    end
+  end
+
+  # PUT /suggestions/add
+  def add
+    SuggestionFactory.delay.create({:user_id => current_user.id, :algorithm => [:geo_checkins, :geo_tags, :gender],
+                                    :limit => 1})
+    flash[:notice] = "Adding suggestion"
+    redirect_to suggestions_path
   end
 
   # GET /suggestions/1

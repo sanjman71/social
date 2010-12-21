@@ -193,8 +193,7 @@ a.location.name:hover                             { color: #FFFFFF; background-c
 
 /* user styles */
 
-#edit_user_link                                   { padding-left: 3px; }
-#edit_user_link a                                 { font-size: 0.5em; color: #005500; }
+#edit_user_link                                   { margin-left: 3px; }
 
 /* sidebar styles */
 
