@@ -46,7 +46,7 @@ class UserSuggestion < ActiveRecord::Base
   # END acts_as_state_machine
 
   def self.max_suggestions
-    0
+    1
   end
 
   def event!(s)
