@@ -37,17 +37,24 @@ Feature: User suggestions
     And I wait for "3" seconds
     And I select the option containing "Paramount Room" in the autocomplete list
     And I follow "That's the place"
+
     Then I should see "Your suggestion was re-located!"
     And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting at Paramount Room"
 
     @javascript
-    Scenario: User should receive an email when a suggestion is scheduled
-      Given I am logged in as "bogus"
+    Scenario: User should receive an email when a suggestion is scheduled and be able to re-schedule
+      Given I am logged in as "chicago_gal"
       And "chicago_guy" schedules his suggestion with "chicago_gal" "1.day.from_now"
       Then "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting tomorrow"
       When I open the email
       And I follow "confirm" in the email
       Then I should see "chicago_guy" within "div#suggestion"
       And I follow "Details"
-      And I wait for "5" seconds
-    
+      And I follow "Re-schedule"
+      And I fill in "suggestion_date" with tomorrow
+      And I fill in "suggestion_message" with "Fun, fun"
+      And I press "Re-schedule"
+      And the delayed jobs are processed
+
+      Then I should see "Your suggestion was re-scheduled!"
+      And "chicago_guy@outlately.com" should receive an email with subject "Outlately: chicago_gal re-scheduled and suggested meeting tomorrow"

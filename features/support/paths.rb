@@ -15,10 +15,13 @@ module NavigationHelpers
       '/beta'
 
     when /login page/
-      '/login?login=1'
+      '/login'
 
     when /logout page/
       '/logout'
+
+    when /^(.*)'s outlately oauth page$/i
+      "/users/auth/outlately/callback?handle=#{$1}"
 
     when /^(.*)'s profile page$/i
       user_path(User.find_by_handle($1))

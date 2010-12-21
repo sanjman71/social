@@ -71,7 +71,7 @@ class OauthController < Devise::OmniauthCallbacksController
   #   end
   # end
 
-  # GET /oauth/foursquare/callback
+  # helper method
   def callback(service)
     @credentials  = env["omniauth.auth"]['credentials'] rescue {}
     @user_data    = env["omniauth.auth"]['extra']['user_hash'] rescue {}

@@ -7,14 +7,6 @@ GIT
       daemons
 
 GIT
-  remote: git://github.com/plataformatec/devise.git
-  revision: 0f0eb4e
-  specs:
-    devise (1.2.0)
-      bcrypt-ruby (~> 2.1.2)
-      warden (~> 0.10.7)
-
-GIT
   remote: git://github.com/sanjman71/crack.git
   revision: 1f3495c1205c134509dba0be3b570ee8adbefe83
   specs:
@@ -54,12 +46,12 @@ GEM
       activesupport (= 3.0.0)
     activesupport (3.0.0)
     acts-as-taggable-on (2.0.6)
-    addressable (2.2.0)
+    addressable (2.2.2)
     alchemist (0.1.2)
     archive-tar-minitar (0.5.2)
     arel (1.0.1)
       activesupport (~> 3.0.0)
-    bcrypt-ruby (2.1.2)
+    bcrypt-ruby (2.1.3)
     builder (2.1.2)
     capistrano (2.5.19)
       highline
@@ -94,7 +86,12 @@ GEM
     culerity (0.2.12)
     daemons (1.0.10)
     database_cleaner (0.6.0)
+    devise (1.2.rc)
+      bcrypt-ruby (~> 2.1.2)
+      orm_adapter (~> 0.0.2)
+      warden (~> 1.0.2)
     diff-lcs (1.1.2)
+    dotiw (0.4.1)
     email_spec (1.0.0)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -102,9 +99,10 @@ GEM
     factory_girl_rails (1.0)
       factory_girl (~> 1.3)
       rails (>= 3.0.0.beta4)
-    faraday (0.4.6)
-      addressable (>= 2.1.1)
-      rack (>= 1.0.1)
+    faraday (0.5.3)
+      addressable (~> 2.2.2)
+      multipart-post (~> 1.0.1)
+      rack (>= 1.1.0, < 2)
     ffi (0.6.3)
       rake (>= 0.8.7)
     foursquare (0.3.4)
@@ -148,7 +146,9 @@ GEM
     mime-types (1.16)
     mocha (0.9.8)
       rake
-    multi_json (0.0.4)
+    multi_json (0.0.5)
+    multipart-post (1.0.1)
+    net-ldap (0.1.1)
     net-scp (1.0.3)
       net-ssh (>= 1.99.1)
     net-sftp (2.0.5)
@@ -157,19 +157,53 @@ GEM
     net-ssh-gateway (1.0.1)
       net-ssh (>= 1.99.1)
     nokogiri (1.4.3.1)
+    oa-basic (0.1.6)
+      multi_json (~> 0.0.2)
+      nokogiri (~> 1.4.2)
+      oa-core (= 0.1.6)
+      rest-client (~> 1.6.0)
+    oa-core (0.1.6)
+      rack (~> 1.1)
+    oa-enterprise (0.1.6)
+      net-ldap (~> 0.1.1)
+      nokogiri (~> 1.4.2)
+      oa-core (= 0.1.6)
+      pyu-ruby-sasl (~> 0.0.3.1)
+      rubyntlm (~> 0.1.1)
+    oa-oauth (0.1.6)
+      multi_json (~> 0.0.2)
+      nokogiri (~> 1.4.2)
+      oa-core (= 0.1.6)
+      oauth (~> 0.4.0)
+      oauth2 (~> 0.1.0)
+    oa-openid (0.1.6)
+      oa-core (= 0.1.6)
+      rack-openid (~> 1.2.0)
+      ruby-openid-apps-discovery
     oauth (0.4.2)
-    oauth2 (0.0.13)
-      faraday (~> 0.4.1)
-      multi_json (>= 0.0.4)
+    oauth2 (0.1.0)
+      faraday (~> 0.5.0)
+      multi_json (~> 0.0.4)
+    omniauth (0.1.6)
+      oa-basic (= 0.1.6)
+      oa-core (= 0.1.6)
+      oa-enterprise (= 0.1.6)
+      oa-oauth (= 0.1.6)
+      oa-openid (= 0.1.6)
+    orm_adapter (0.0.3)
     pickle (0.4.3)
       cucumber (>= 0.8)
       rake
       rspec (>= 1.3)
       yard
     polyglot (0.3.1)
+    pyu-ruby-sasl (0.0.3.2)
     rack (1.2.1)
     rack-mount (0.6.13)
       rack (>= 1.0.0)
+    rack-openid (1.2.0)
+      rack (>= 1.1.0)
+      ruby-openid (>= 2.1.8)
     rack-test (0.5.4)
       rack (>= 1.0)
     rails (3.0.0)
@@ -195,6 +229,8 @@ GEM
       redis-namespace (~> 0.8.0)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
     riddle (1.2.1)
     rspec (2.2.0)
       rspec-core (~> 2.2)
@@ -216,10 +252,14 @@ GEM
       linecache19 (>= 0.5.11)
       ruby-debug-base19 (>= 0.11.19)
     ruby-mysql (2.9.3)
+    ruby-openid (2.1.8)
+    ruby-openid-apps-discovery (1.2.0)
+      ruby-openid (>= 2.1.7)
     ruby_core_source (0.1.4)
       archive-tar-minitar (>= 0.5.2)
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
+    rubyntlm (0.1.1)
     rubyzip (0.9.4)
     selenium-webdriver (0.0.29)
       childprocess (>= 0.0.7)
@@ -248,7 +288,7 @@ GEM
     tzinfo (0.3.23)
     vegas (0.1.8)
       rack (>= 1.0.0)
-    warden (0.10.7)
+    warden (1.0.3)
       rack (>= 1.0.0)
     whenever (0.5.0)
       chronic (>= 0.2.3)
@@ -273,7 +313,8 @@ DEPENDENCIES
   daemons (= 1.0.10)
   database_cleaner
   delayed_job!
-  devise!
+  devise (>= 1.2.rc)
+  dotiw (>= 0.4.1)
   email_spec (>= 1.0.0)
   factory_girl_rails
   foursquare (>= 0.3.1)
@@ -286,8 +327,8 @@ DEPENDENCIES
   linecache19
   meta_where (>= 0.9.6)
   mocha
-  oauth (>= 0.4.2)
-  oauth2 (>= 0.0.13)
+  oa-oauth
+  omniauth (>= 0.1.6)
   pickle (>= 0.4.3)
   rails (= 3.0.0)
   random_data
