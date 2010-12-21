@@ -3,13 +3,11 @@ require 'test_helper'
 class SuggestionTest < ActiveSupport::TestCase
 
   def setup
-    @user1 = User.create(:name => "User 1", :handle => 'user1')
-    assert @user1.valid?
-    @user2 = User.create(:name => "User 2", :handle => 'user2')
-    assert @user2.valid?
+    @user1 = User.create!(:name => "User 1", :handle => 'user1')
+    @user2 = User.create!(:name => "User 2", :handle => 'user2')
     @us    = Factory(:us)
-    @loc1  = Location.create(:name => "Home", :country => @us)
-    @loc2  = Location.create(:name => "Away", :country => @us)
+    @loc1  = Location.create!(:name => "Home", :country => @us)
+    @loc2  = Location.create!(:name => "Away", :country => @us)
   end
 
   context "create" do
@@ -85,7 +83,7 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal @tomorrow.to_s(:datetime_schedule), @suggestion.scheduled_at.to_s(:datetime_schedule)
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
-      # party1 confirms - should change party2 state to 'scheduled'
+      # party1 confirms - should change party2 state to 'scheduled', and send email
       @suggestion.party_confirms(@suggestion.party1)
       assert_equal 'confirmed', @suggestion.party1.state
       assert_equal 'scheduled', @suggestion.party2.state
@@ -93,7 +91,8 @@ class SuggestionTest < ActiveSupport::TestCase
       assert_equal [:decline, :dump, :relocate, :reschedule], @suggestion.party1.aasm_events_for_current_state.sort
       assert_equal [:confirm, :decline, :dump, :relocate, :reschedule], @suggestion.party2.aasm_events_for_current_state.sort
       assert_equal 1, match_delayed_jobs(/async_confirmed_event/)
-      # party2 confirms
+      Delayed::Job.delete_all
+      # party2 confirms, should send another email
       @suggestion.party_confirms(@suggestion.party2)
       assert_equal 'confirmed', @suggestion.party2.state
       assert_equal 'confirmed', @suggestion.party1.state

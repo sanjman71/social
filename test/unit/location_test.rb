@@ -423,7 +423,7 @@ class LocationTest < ActiveSupport::TestCase
                                    :lat => 32.707664, :lng => -117.159876)
       assert_equal 1, match_delayed_jobs(/reverse_geocode/)
       work_off_delayed_jobs(/reverse_geocode/)
-      assert_equal "207 5th Ave", @location.reload.street_address
+      assert_equal "209 5th Ave", @location.reload.street_address
       assert_equal "San Diego", @location.reload.city.name
       assert_equal "CA", @location.reload.state.code
       assert_equal "US", @location.reload.country.code

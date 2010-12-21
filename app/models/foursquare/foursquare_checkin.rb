@@ -5,8 +5,9 @@ class FoursquareCheckin
   end
 
   # import checkins for the specified user, usually called asynchronously
-  def self.async_import_checkins(user, options={})
+  def self.async_import_checkins(options)
     # find user oauth object
+    user            = User.find_by_id(options[:user_id])
     oauth           = options[:oauth_id] ? Oauth.find_by_id(params[:oauth_id]) : Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 
@@ -16,7 +17,7 @@ class FoursquareCheckin
     # compare last check timestamp + check interval vs current timestamp
     last_check_at   = checkin_log.last_check_at
     last_check_mins = options[:minutes_since] ? options.delete(:minutes_since).to_i.minutes : Checkin.poll_interval
-    
+
     case
     when last_check_at.blank?
       mm = 0

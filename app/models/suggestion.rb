@@ -77,13 +77,13 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     talk!
-    self.delay.async_scheduled_event(:party => party, :other_party => @other_party)
+    self.delay.async_scheduled_event(:party_id => party.id, :other_party_id => @other_party.id)
     log("[suggestion:#{self.id}] #{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion talking")
   end
 
   def async_scheduled_event(hash)
-    party       = hash[:party]
-    other_party = hash[:other_party]
+    party       = UserSuggestion.find_by_id(hash[:party_id])
+    other_party = UserSuggestion.find_by_id(hash[:other_party_id])
     SuggestionMailer.suggestion_scheduled(self, party, other_party).deliver
   end
 
@@ -96,13 +96,13 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     save!
-    self.delay.async_rescheduled_event(:party => party, :other_party => @other_party)
+    self.delay.async_rescheduled_event(:party_id => party.id, :other_party_id => @other_party.id)
     log("[suggestion:#{self.id}] #{party.handle} rescheduled, suggestion #{state}")
   end
 
   def async_rescheduled_event(hash)
-    party       = hash[:party]
-    other_party = hash[:other_party]
+    party       = UserSuggestion.find_by_id(hash[:party_id])
+    other_party = UserSuggestion.find_by_id(hash[:other_party_id])
     SuggestionMailer.suggestion_rescheduled(self, party, other_party).deliver
   end
 
@@ -117,7 +117,7 @@ class Suggestion < ActiveRecord::Base
       @other_party.event!('')
       @other_party.alert!
       save!
-      self.delay.async_relocated_event(:party => party, :other_party => @other_party)
+      self.delay.async_relocated_event(:party_id => party.id, :other_party_id => @other_party.id)
       log("[suggestion:#{self.id}] #{party.handle} relocated to #{location.name}, suggestion #{state}")
     elsif state == 'initialized'
       # just change the location
@@ -126,8 +126,8 @@ class Suggestion < ActiveRecord::Base
   end
 
   def async_relocated_event(hash)
-    party       = hash[:party]
-    other_party = hash[:other_party]
+    party       = UserSuggestion.find_by_id(hash[:party_id])
+    other_party = UserSuggestion.find_by_id(hash[:other_party_id])
     SuggestionMailer.suggestion_relocated(self, party, other_party).deliver
   end
 
@@ -141,8 +141,18 @@ class Suggestion < ActiveRecord::Base
     if party.confirmed? and @other_party.confirmed?
       # both parties have confirmed
       go_out!
+      self.delay.async_confirmed_event(:party_id => party.id, :other_party_id => @other_party.id)
       log("[suggestion:#{self.id}] suggestion going out")
+    else
+      # one party still needs to confirm
+      self.delay.async_confirmed_event(:party_id => party.id, :other_party_id => @other_party.id)
     end
+  end
+
+  def async_confirmed_event(hash)
+    party       = UserSuggestion.find_by_id(hash[:party_id])
+    other_party = UserSuggestion.find_by_id(hash[:other_party_id])
+    # SuggestionMailer.suggestion_confirmed(self, party, other_party).deliver
   end
 
   def other_party(party)

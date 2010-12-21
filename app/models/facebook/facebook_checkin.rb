@@ -10,8 +10,9 @@ class FacebookCheckin
   end
 
   # import all checkins for the specfied user, usually called asynchronously
-  def self.async_import_checkins(user, options={})
+  def self.async_import_checkins(options)
     # find user oauth object
+    user            = User.find_by_id(options[:user_id])
     oauth           = options[:oauth_id] ? Oauth.find_by_id(options[:oauth_id]) : Oauth.find_user_oauth(user, source)
     return nil if oauth.blank?
 

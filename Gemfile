@@ -26,7 +26,7 @@ gem 'omniauth',               '>= 0.1.6'
 gem 'resque',                 '>= 1.10.0'
 gem 'simple_form',            '>= 1.2.2'
 gem "SyslogLogger",           ">= 1.4.0"
-gem 'ts-delayed-delta',       '>= 1.1.1'
+gem 'ts-delayed-delta',       :git => 'git://github.com/freelancing-god/ts-delayed-delta.git'
 gem 'test-unit',              '>= 2.1.1'  # used by teamcity
 gem 'thor',                   '>= 0.14.6'
 gem 'thinking-sphinx',        '>= 2.0.0', :require => 'thinking_sphinx'

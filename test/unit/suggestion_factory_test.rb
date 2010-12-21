@@ -80,7 +80,8 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
       @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
       @chicago_male1.friendships.create!(:friend => @chicago_female1)
       ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => @algorithm, :limit => 10)
+        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id,
+                                                :algorithm => @algorithm, :limit => 10)
       end
       assert_equal 0, @suggestions.size
     end
@@ -92,7 +93,8 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
       @boston_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
       ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => @algorithm, :limit => 10)
+        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+                                                :limit => 10)
       end
       assert_equal 0, @suggestions.size
     end
@@ -105,7 +107,8 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
       @chicago_male1.save
       @newyork_female1.save
       ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => @algorithm, :limit => 10)
+        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+                                                :limit => 10)
       end
       assert_equal 0, @suggestions.size
     end
@@ -113,7 +116,8 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     should "create suggestion with local daters" do
       setup_chicago_users
       ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(@chicago_male1, :algorithm => @algorithm, :limit => 10)
+        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+                                                :limit => 10)
       end
       assert_equal 1, @suggestions.size
       assert_equal [[@chicago_male1.id, @chicago_female1.id].sort].flatten, @suggestions.map{ |s| [s.users.collect(&:id).sort]}.flatten

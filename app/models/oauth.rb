@@ -33,17 +33,17 @@ class Oauth < ActiveRecord::Base
 
   def event_oauth_created
     # add user points
-    self.user.add_points_for_oauth(self)
+    user.add_points_for_oauth(self)
     # send user alert
-    self.user.send_alert(:id => :linked_account)
+    user.send_alert(:id => :linked_account)
     # import user checkins, friends
     case provider
     when 'foursquare'
       # import all checkins, max of 250
-      FoursquareCheckin.delay.async_import_checkins(user, :limit => 250)
+      FoursquareCheckin.delay.async_import_checkins({:user_id => user.id, :limit => 250})
     when 'facebook'
       # import all checkins, max of 250
-      FacebookCheckin.delay.async_import_checkins(user, :limit => 250)
+      FacebookCheckin.delay.async_import_checkins({:user_id => user.id, :limit => 250})
       if enabled(:import_friends)
         # import friends
         FacebookFriend.delay.async_import_friends(user)

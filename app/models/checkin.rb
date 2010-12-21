@@ -50,14 +50,10 @@ class Checkin < ActiveRecord::Base
     # update locationships
     self.delay.async_update_locationships
     if recent_checkin? && user.member?
-      self.delay.async_email_checkin_imported
+      # send email
+      CheckinMailer.delay.checkin_imported({:checkin_id => self.id,
+                                            :points => Currency.points_for_checkin(user, self)})
     end
-  end
-
-  # send email about the recent checkin
-  def async_email_checkin_imported
-    points = Currency.points_for_checkin(user, self)
-    CheckinMailer.checkin_imported(self, points).deliver
   end
 
   # user checkins were imported
@@ -71,11 +67,12 @@ class Checkin < ActiveRecord::Base
       # cap the number of suggestions until this is fixed
       if user.suggestions.count < UserSuggestion.max_suggestions
         # create suggestions
-        SuggestionFactory.delay.create(user, Hash[:algorithm => [:geo_checkins, :geo_tags, :gender], :limit => 1])
+        SuggestionFactory.delay.create({:user_id => user.id, :algorithm => [:geo_checkins, :geo_tags, :gender],
+                                        :limit => 1})
       end
     else
       # send alert
-      user.send_alert(:id => :need_checkins)
+      # user.send_alert(:id => :need_checkins)
     end
   end
 
@@ -85,7 +82,8 @@ class Checkin < ActiveRecord::Base
       # import checkins for friends without facebook oauths
       user.friends.select{ |o| o.facebook_oauth.nil? }.each do |friend|
         log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
-        FacebookCheckin.delay.async_import_checkins(friend, Hash[:since => :last, :limit => 250, :oauth_id => user.facebook_oauth.try(:id)])
+        FacebookCheckin.delay.async_import_checkins({:user_id => friend.id, :since => :last, :limit => 250,
+                                                     :oauth_id => user.facebook_oauth.try(:id)})
       end
     end
   end
@@ -101,9 +99,9 @@ class Checkin < ActiveRecord::Base
         # use delayed job to import these checkins
         case log.source
         when 'facebook'
-          FacebookCheckin.delay.async_import_checkins(user, Hash[:since => :last, :limit => 250])
+          FacebookCheckin.delay.async_import_checkins({:user_id => user.id, :since => :last, :limit => 250})
         when 'foursquare'
-          FoursquareCheckin.delay.async_import_checkins(user, Hash[:sinceid => :last, :limit => 250])
+          FoursquareCheckin.delay.async_import_checkins({:user_id => user.id, :sinceid => :last, :limit => 250})
         end
       end
     end

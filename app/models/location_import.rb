@@ -59,10 +59,10 @@ class LocationImport
     end
     
     # normalize address
-    @address        = StreetAddress.normalize(@address) 
+    @address        = StreetAddress.normalize(@address)
 
     # create location
-    options         = Hash[:name => hash['name'], :country => @country, :state => @state, :city => @city, 
+    options         = Hash[:name => hash['name'], :country => @country, :state => @state, :city => @city,
                            :street_address => @address, :lat => @lat, :lng => @lng]
     @location       = Location.create(options)
   end

@@ -480,7 +480,7 @@ class User < ActiveRecord::Base
     # look for todos planned between 4 and 5 days ago
     reminders = locationships.todo_checkins.where(:todo_at.lt => 4.days.ago, :todo_at.gt => 5.days.ago)
     reminders.each do |locationship|
-      CheckinMailer.todo_reminder(self, locationship.location).deliver
+      CheckinMailer.delay.todo_reminder({:user_id => self.id, :location_id => locationship.location})
     end
     reminders.size
   end
@@ -528,7 +528,7 @@ class User < ActiveRecord::Base
 
   # send email after a user signup using delayed job
   def send_signup_email
-    Delayed::Job.enqueue(EmailJob.new(:user_id => self.id, :object => 'user', :action => 'signup'), 0)
+    UserMailer.delay.user_signup(self)
   end
 
   def after_add_email_address(email_address)
