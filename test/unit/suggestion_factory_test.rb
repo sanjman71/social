@@ -42,35 +42,46 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
 
   def setup_chicago_female_users
     @chicago_female1  = User.create!(:name => "Chicago Female 1", :handle => 'chicago_female_1', :gender => 1,
-                                     :city => @chicago, :lat => 41.850033, :lng => -87.6500523)
+                                     :member => 1, :city => @chicago, :lat => 41.850033, :lng => -87.6500523)
   end
 
   def setup_chicago_male_users
     @chicago_male1    = User.create!(:name => "Chicago Male 1", :handle => 'chicago_male_1', :gender => 2,
-                                     :city => @chicago, :lat => 41.850033, :lng => -87.6500523)
+                                     :member => 1, :city => @chicago, :lat => 41.850033, :lng => -87.6500523)
   end
 
   def setup_ny_users
     @newyork_male1    = User.create!(:name => "New York Male 1", :handle => 'newyork_male_1', :gender => 2,
-                                     :city => @newyork, :lat => 40.7143528, :lng => -74.0059731)
+                                     :member => 1, :city => @newyork, :lat => 40.7143528, :lng => -74.0059731)
     @newyork_female1  = User.create!(:name => "New York Female 1", :handle => 'newyork_female_1', :gender => 1,
-                                     :city => @newyork, :lat => 40.7143528, :lng => -74.0059731)
+                                     :member => 1, :city => @newyork, :lat => 40.7143528, :lng => -74.0059731)
   end
 
   def setup_boston_users
     @boston_male1     = User.create!(:name => "Boston Male 1", :handle => 'boston_male_1', :gender => 2,
-                                     :city => @boston, :lat => 42.3584308, :lng => -71.0597732)
+                                     :member => 1, :city => @boston, :lat => 42.3584308, :lng => -71.0597732)
     @boston_female1   = User.create!(:name => "Boston Female 1", :handle => 'boston_female_1', :gender => 1,
-                                     :city => @boston, :lat => 42.3584308, :lng => -71.0597732)
+                                     :member => 1, :city => @boston, :lat => 42.3584308, :lng => -71.0597732)
   end
 
   def teardown
     [Suggestion, Checkin, CheckinLog, Location, Locationship, Country, State, City, User, Delayed::Job].each { |o| o.delete_all }
   end
 
-  context "xxx geo based algorithm" do
+  context "geo based algorithm" do
     setup do
       @algorithm = [:geo_checkins, :geo_tags, :geo]
+    end
+
+    should "not create suggestions with non-member users" do
+      setup_chicago_users
+      # make sure other chicago users are non-members
+      @chicago_female1.update_attribute(:member, 0)
+      ThinkingSphinx::Test.run do
+        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+                                                :limit => 10)
+      end
+      assert_equal 0, @suggestions.size
     end
 
     should "not create suggestions with friends" do

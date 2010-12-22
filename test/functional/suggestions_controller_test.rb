@@ -22,8 +22,8 @@ class SuggestionsControllerTest < ActionController::TestCase
   end
 
   def setup
-    @user1 = Factory.create(:user, :handle => 'User1')
-    @user2 = Factory.create(:user, :handle => "User2")
+    @user1 = Factory.create(:user, :handle => 'User1', :member => 1)
+    @user2 = Factory.create(:user, :handle => "User2", :member => 1)
     @us    = Factory(:us)
     @loc1  = Location.create!(:name => "The Coffee House", :country => @us)
     @loc2  = Location.create!(:name => "Starbucks", :country => @us)

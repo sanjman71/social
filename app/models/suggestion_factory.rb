@@ -11,33 +11,35 @@ class SuggestionFactory
     @without_user_ids = ([@user.id] + @user.friend_ids + @user.suggestions.collect(&:users).flatten.collect(&:id)).uniq.sort
 
     @algorithm.each do |algorithm|
+      # base options
+      @options = {:with_member => 1, :without_user_ids => @without_user_ids, :limit => @remaining}
       case algorithm
       when :geo_checkins
         # find matches based on common checkin locations within a specified radius from user
-        users = @user.search_daters_by_checkins(:limit => @remaining, :without_user_ids => @without_user_ids,
-                                                :miles => default_radius)
+        @options.merge!(:miles => default_radius)
+        users = @user.search_daters_by_checkins(@options)
         users.each { |u| @users_hash[u.id] = 'geo_checkin' }
       when :checkins
         # find matches based on common checkin locations
-        users = @user.search_daters_by_checkins(:limit => @remaining, :without_user_ids => @without_user_ids)
+        users = @user.search_daters_by_checkins(@options)
         users.each { |u| @users_hash[u.id] = 'checkin' }
       when :geo_tags
         # find matches based on location tags within a specified radius from user
-        users = @user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids,
-                                            :miles => default_radius)
+        @options.merge!(:miles => default_radius)
+        users = @user.search_daters_by_tags(@options)
         users.each { |u| @users_hash[u.id] = 'geo_tag' }
       when :tags
         # find matches based on location tags
-        users = @user.search_daters_by_tags(:limit => @remaining, :without_user_ids => @without_user_ids)
+        users = @user.search_daters_by_tags(@options)
         users.each { |u| @users_hash[u.id] = 'tag' }
       when :geo
         # find matches based on radius from user
-        users = @user.search_daters(:limit => @remaining, :without_user_ids => @without_user_ids,
-                                    :miles => default_radius)
+        @options.merge!(:miles => default_radius)
+        users = @user.search_daters(@options)
         users.each { |u| @users_hash[u.id] = 'geo' }
       when :gender
         # find matches based on user gender preferences
-        users = @user.search_gender(:limit => @remaining, :without_user_ids => @without_user_ids)
+        users = @user.search_gender(@options)
         users.each { |u| @users_hash[u.id] = 'gender' }
       else
         users = []

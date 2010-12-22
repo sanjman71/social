@@ -5,10 +5,17 @@ class UserSuggestion < ActiveRecord::Base
   validates     :state, :presence => true
   validates     :user_id, :presence => true, :uniqueness => {:scope => :suggestion_id}
   # validates     :suggestion_id, :presence => true # doesn't work with nested attributes
+  validate      :validate_user_membership
 
   delegate      :handle, :to => :user
 
   before_create :before_create_callback
+
+  def validate_user_membership
+    if user.present? and !user.member?
+      errors.add(:base, "user is not a member")
+    end
+  end
 
   # BEGIN acts_as_state_machine
   include AASM
