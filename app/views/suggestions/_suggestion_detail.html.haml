@@ -53,7 +53,7 @@
     - if my_party.aasm_events_for_current_state.include?(:confirm)
       - links.push(link_to('Confirm', confirm_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_confirm', :method => :put, 'data-suggestion-id' => suggestion.id))
     - if my_party.aasm_events_for_current_state.include?(:decline)
-      - links.push(link_to('Decline', decline_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure', 'data-suggestion-id' => suggestion.id))
+      - links.push(link_to('Decline', decline_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure?', 'data-suggestion-id' => suggestion.id))
     - links.push(link_to('Nevermind', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
     - links.each_with_index do |link, index|
       = link

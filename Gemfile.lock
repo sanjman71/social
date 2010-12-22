@@ -136,6 +136,9 @@ GEM
     httparty (0.6.1)
       crack (= 0.1.8)
     i18n (0.4.2)
+    jquery-rails (0.2.6)
+      rails (~> 3.0)
+      thor (~> 0.14.4)
     json (1.4.6)
     json_pure (1.4.6)
     launchy (0.3.7)
@@ -328,6 +331,7 @@ DEPENDENCIES
   haml (>= 3.0.18)
   haml-rails
   httparty (>= 0.6.1)
+  jquery-rails (>= 0.2.6)
   launchy
   linecache19
   meta_where (>= 0.9.6)
