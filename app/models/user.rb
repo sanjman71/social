@@ -103,6 +103,7 @@ class User < ActiveRecord::Base
   aasm_state                :active
   # END acts_as_state_machine
 
+  scope                     :member, where(:member => 1)
   scope                     :with_oauths, joins(:oauths).where("oauths.id is not null").select("distinct users.id")
   scope                     :with_emails, where(:email_addresses_count.gt => 0)
   scope                     :no_emails, where(:email_addresses_count => 0)
