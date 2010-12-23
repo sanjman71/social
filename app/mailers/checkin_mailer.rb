@@ -54,9 +54,11 @@ class CheckinMailer < ActionMailer::Base
   end
 
   def checkin_stats(options)
-    @emails       = options[:emails].join(', ')
-    @attachments  = File.read(options[:file])
-    @subject      = "Outlately: checkin stats"
+    @emails     = options[:emails].join(', ')
+    @file       = File.read(options[:file])
+    @subject    = "Outlately: checkin stats"
+    # add attachment
+    attachments["checkin_stats.csv"] = @file
     mail(:to => @emails, :subject => @subject)
   end
 
