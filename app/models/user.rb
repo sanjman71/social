@@ -478,6 +478,8 @@ class User < ActiveRecord::Base
   end
 
   def send_todo_checkin_reminders
+    # check if user has an email address
+    return 0 if email_addresses_count == 0
     # look for todos planned between 4 and 5 days ago
     reminders = locationships.todo_checkins.where(:todo_at.lt => 4.days.ago, :todo_at.gt => 5.days.ago)
     reminders.each do |locationship|

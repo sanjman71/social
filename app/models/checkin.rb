@@ -49,7 +49,7 @@ class Checkin < ActiveRecord::Base
     self.class.log("[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
-    if recent_checkin? && user.member?
+    if recent_checkin? && user.member? && user.email_addresses_count?
       # send email
       CheckinMailer.delay.checkin_imported({:checkin_id => self.id,
                                             :points => Currency.points_for_checkin(user, self)})

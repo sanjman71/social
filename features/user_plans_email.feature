@@ -14,7 +14,6 @@ Feature: User's planned checkins
   Scenario: User should receive an email reminder a few days before a planned checkin expires
     Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{5.days.ago+1.minute}", todo_expires_at: "#{5.days.ago+1.minute+7.days}"
     And user "chicago_guy" has email "chicago_guy@outlately.com"
-    And I am logged in as "chicago_guy"
     And checkin todo reminders are sent
     Then "chicago_guy@outlately.com" should receive an email with subject "Your planned checkin at Chicago Starbucks is about to expire"
     When I open the email

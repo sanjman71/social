@@ -112,9 +112,11 @@ class Locationship < ActiveRecord::Base
       self.todo_at = self.todo_expires_at = nil
       # add points
       user.add_points_for_todo_completed_checkin(Currency.for_completed_todo)
-      # send email
-      CheckinMailer.delay.todo_completed({:user_id => user.id, :location_id => location.id,
-                                          :points => Currency.for_completed_todo})
+      if user.email_addresses_count?
+        # send email
+        CheckinMailer.delay.todo_completed({:user_id => user.id, :location_id => location.id,
+                                            :points => Currency.for_completed_todo})
+      end
     else
       # too late
       @todo_resolution = :expired
@@ -123,9 +125,11 @@ class Locationship < ActiveRecord::Base
       self.todo_at = self.todo_expires_at = nil
       # subtract points
       user.add_points_for_todo_expired_checkin(Currency.for_expired_todo)
-      # send email
-      CheckinMailer.delay.todo_expired({:user_id => user.id, :location_id => location.id, :checkins => my_checkins,
-                                        :points => Currency.for_expired_todo})
+      if user.email_addresses_count?
+        # send email
+        CheckinMailer.delay.todo_expired({:user_id => user.id, :location_id => location.id, :checkins => my_checkins,
+                                          :points => Currency.for_expired_todo})
+      end
     end
     # reset todo_checkins
     decrement!(:todo_checkins)
