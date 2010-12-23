@@ -23,8 +23,8 @@ Feature: User suggestions
     Then I should see "meet chicago_gal"
     And I follow "Details"
     And I follow "Pick a Date"
-    And I fill in "suggestion_date" with tomorrow
-    And I fill in "suggestion_message" with "Fun, fun"
+    And I fill in "Date" with tomorrow
+    And I fill in "Message" with "Fun, fun"
     And I press "Schedule"
     And the delayed jobs are processed
 
@@ -51,8 +51,8 @@ Feature: User suggestions
       Then I should see "chicago_guy" within "div#suggestion"
       And I follow "Details"
       And I follow "Re-schedule"
-      And I fill in "suggestion_date" with tomorrow
-      And I fill in "suggestion_message" with "Fun, fun"
+      And I fill in "Date" with tomorrow
+      And I fill in "Message" with "Fun, fun"
       And I press "Re-schedule"
       And the delayed jobs are processed
 

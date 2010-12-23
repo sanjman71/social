@@ -62,16 +62,16 @@
 
   .span-15.last.padding-top-10.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_datetime"}
     .span-2.label.block.light
-      %h4.bigger.block.bottom Date:
+      %h4.bigger.block.bottom= label_tag "suggestion_#{suggestion.id}_date", 'Date'
     .span-11.last
       = text_field_tag 'suggestion[date]', '', :id => "suggestion_#{suggestion.id}_date", :class => 'datepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 12, :autocomplete => 'off'
       -#= text_field_tag 'suggestion[time]', '', :class => 'timepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 9, :autocomplete => 'off'
 
   .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_message"}
     .span-2.label.block.light
-      %h4.bigger.block.bottom Message:
+      %h4.bigger.block.bottom= label_tag "suggestion_#{suggestion.id}_message", 'Message'
     .span-11.last
-      = text_field_tag 'suggestion[message]', '', :class => 'big top', :style => 'padding: 3px; margin: 0px;', :size => 50, :autocomplete => 'off'
+      = text_field_tag 'suggestion[message]', '', :id => "suggestion_#{suggestion.id}_message", :class => 'big top', :style => 'padding: 3px; margin: 0px;', :size => 50, :autocomplete => 'off'
   
   .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_schedule_submit"}
     = submit_tag 'Schedule', :id => 'suggestion_schedule_date', 'data-disable-with' => "scheduling ..."
