@@ -33,13 +33,55 @@ class Checkins < Thor
     puts "#{Time.now}: expired #{expired} todos"
   end
 
-  desc "report", "report checkin numbers over days, weeks"
-  method_options :emails => nil
-  def report
+  desc "stats", "checkin stats over numbers over days, weeks"
+  method_options :sendto => nil
+  method_options :filename => nil
+  def stats
     require File.expand_path('config/environment.rb')
-    puts "#{Time.now}: running checkins report ..."
-    emails = options[:emails].split(',') rescue []
+    require 'csv'
+    puts "#{Time.now}: building queries ..."
+    sendto    = options[:sendto].split(',') rescue []
+    filename  = options[:filename]
 
-    puts "#{Time.now}: sending report to: #{emails.any? ? emails.inspect : 'nobody'}"
+    # find total users, member users, non-oath users
+    total_users   = User.count
+    member_users  = User.member.count
+    other_users   = total_users - member_users
+
+    # build daily checkins data
+    checkins      = {}
+    1.upto(6) do |i|
+      checkins_count = Checkin.where(:checkin_at.gt => eval("#{i}.days.ago"), :checkin_at.lt => eval("#{i-1}.days.ago")).count
+      checkins[i] = checkins_count
+    end
+
+    # build weekly checkin data
+    [7, 14, 21, 28].each do |i|
+      checkins_count = Checkin.where(:checkin_at.gt => eval("#{i}.days.ago"), :checkin_at.lt => eval("#{i-7}.days.ago")).count
+      checkins[i] = checkins_count
+    end
+
+    data = CSV.generate(:col_sep => ',') do |csv|
+      csv << ['total users', 'members', 'others',
+              'checkins 1 day ago', 'checkins 2 days ago', 'checkins 3 days ago', 'checkins 4 days ago',
+              'checkins 5 days ago', 'checkins 6 days ago',
+              'checkins last week', 'checkins 2 weeks ago', 'checkins 3 weeks ago', 'checkins 4 weeks ago']
+      csv << [total_users, member_users, other_users,
+              checkins[1], checkins[2], checkins[3], checkins[4], checkins[5], checkins[6],
+              checkins[7], checkins[14], checkins[21], checkins[28]
+             ]
+    end
+
+    # puts data.inspect
+
+    filename ||= "basic_user_checkins.#{Time.zone.now.to_s(:datetime_compact)}.csv"
+    file = File.open(filename, 'w')
+    file.write(data)
+    file.close
+
+    if sendto.any?
+      puts "#{Time.now}: sending to: #{sendto.inspect}, file: #{filename}"
+      CheckinMailer.checkin_stats(:emails => sendto, :file => filename).deliver
+    end
   end
 end

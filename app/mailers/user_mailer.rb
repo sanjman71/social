@@ -4,4 +4,5 @@ class UserMailer < ActionMailer::Base
   def user_signup(user)
     mail(:to => 'sanjay@jarna.com', :subject => "User signup: #{user.handle}")
   end
+
 end
