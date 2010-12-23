@@ -24,4 +24,22 @@ class Checkins < Thor
     end
     puts "#{Time.now}: completed"
   end
+
+  desc "expire_todos", "expire past todo checkins"
+  def expire_todos
+    puts "#{Time.now}: expiring todos"
+    require File.expand_path('config/environment.rb')
+    expired = Locationship.expire_todos
+    puts "#{Time.now}: expired #{expired} todos"
+  end
+
+  desc "report", "report checkin numbers over days, weeks"
+  method_options :emails => nil
+  def report
+    require File.expand_path('config/environment.rb')
+    puts "#{Time.now}: running checkins report ..."
+    emails = options[:emails].split(',') rescue []
+
+    puts "#{Time.now}: sending report to: #{emails.any? ? emails.inspect : 'nobody'}"
+  end
 end

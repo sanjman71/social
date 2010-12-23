@@ -439,7 +439,7 @@ class User < ActiveRecord::Base
   # called after a location is tagged
   def event_location_tagged(location, force=false)
     # check that location is a checkin or todo location
-    if !force and !locationships.my_todo_checkins.select(:location_id).collect(&:location_id).include?(location.try(:id))
+    if !force and !locationships.my_todo_or_checkin.select(:location_id).collect(&:location_id).include?(location.try(:id))
       return false
     end
   

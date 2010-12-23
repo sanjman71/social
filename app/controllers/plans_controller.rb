@@ -5,10 +5,11 @@ class PlansController < ApplicationController
 
   # GET /plans
   def index
-    @user           = current_user
-    @locationships  = @user.locationships.todo_checkins.order("todo_at desc")
+    @user     = current_user
+    @todos    = @user.locationships.todo_checkins.order("todo_at desc")
+    @expired  = @user.locationships.expired_todo_checkins.order("todo_expired_at desc")
 
-    if @locationships.any? and @user.primary_email_address.blank?
+    if @todos.any? and @user.primary_email_address.blank?
       flash.now[:notice] = "Add an email address to your profile so we can notify you of checkins on your todo list"
     end
   end
@@ -29,7 +30,7 @@ class PlansController < ApplicationController
         # add flash message
         flash[:notice] = "We added #{@location.name} to your todo list"
         # add growl message
-        @message = I18n.t("todo.added", :days => Locationship.todo_window_days,
+        @message = I18n.t("todo.added", :days => Locationship.todo_days,
                                         :plus_points => Currency.for_completed_todo,
                                         :minus_points => Currency.for_expired_todo.abs)
         # add growl message

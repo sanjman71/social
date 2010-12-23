@@ -13,7 +13,7 @@
 
 .span-23.prepend-1
   %h3
-    You have #{pluralize(@locationships.size, "planned checkin")} on your list
+    You have #{@todos.size} planned and #{pluralize(@expired.size, "expired checkin")} on your list
     %span{:style => 'padding: 0 5px; font-size: 0.8em;'}= link_to 'Add More', '#', :id => 'show_search_places_autocomplete_form', :class => 'admin'
 
 .span-23.prepend-1.last.search_places_autocomplete_form.hide
@@ -27,6 +27,6 @@
   #search_results
 
 .span-24.last#todos
-  - @locationships.each do |locationship|
+  - @todos.each do |locationship|
     .span-24.last.location.padding-bottom-10
       = render(:partial => 'plans/todo_location', :locals => {:locationship => locationship})

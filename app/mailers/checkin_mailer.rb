@@ -23,7 +23,7 @@ class CheckinMailer < ActionMailer::Base
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_reminder:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "Your planned checkin is about to expire")
+      mail(:to => @email, :subject => "Your planned checkin at #{@location.name} is about to expire")
     end
   end
 
@@ -35,7 +35,7 @@ class CheckinMailer < ActionMailer::Base
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_completed:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "You checked in at a planned location!")
+      mail(:to => @email, :subject => "Your planned checkin at #{@location.name} was completed!")
     end
   end
 
@@ -43,11 +43,13 @@ class CheckinMailer < ActionMailer::Base
     @user     = User.find_by_id(options[:user_id])
     @email    = @user.email_address
     @location = Location.find_by_id(options[:location_id])
+    @checkins = options[:checkins]
     @points   = options[:points]
+    @subject  = @checkins == 0 ? "Your planned checkin at #{@location.name} expired" : "You checked in at #{@location.name}, but not in time"
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_expired:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "You checked in at a planned location, but not in time.")
+      mail(:to => @email, :subject => @subject)
     end
   end
 

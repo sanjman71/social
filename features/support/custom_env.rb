@@ -19,7 +19,12 @@ end
 World(LocalityWorld)
 
 Before do
+  Timecop.return
   ThinkingSphinx::Test.index
   Badges::Init.add_roles_and_privileges
   init_states_and_cities
+end
+
+After do
+  Timecop.return
 end

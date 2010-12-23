@@ -521,6 +521,8 @@ class LocationTest < ActiveSupport::TestCase
       @user1  = Factory(:user)
       @user2  = Factory(:user)
       @user3  = Factory(:user)
+      @user4  = Factory(:user)
+      @user5  = Factory(:user)
     end
 
     should "be 10 for location with 2 user checkins" do
@@ -537,11 +539,13 @@ class LocationTest < ActiveSupport::TestCase
       assert_equal 4, @location.hotness
     end
 
-    should "be 19 for location with 3 user checkins + 2 todo checkins" do
-      @location = Location.create(:country => @us, :state => @illinois)
-      @user1.locationships.create(:location => @location, :my_checkins => 1, :todo_checkins => 1)
-      @user2.locationships.create(:location => @location, :my_checkins => 1, :todo_checkins => 1)
+    should "be 19 for location with 3 user checkins and 2 todo checkins" do
+      @location = Location.create(:name => "Location 1", :country => @us, :state => @illinois)
+      @user1.locationships.create(:location => @location, :my_checkins => 1)
+      @user2.locationships.create(:location => @location, :my_checkins => 1)
       @user3.locationships.create(:location => @location, :my_checkins => 1)
+      @user4.locationships.create(:location => @location, :todo_checkins => 1)
+      @user5.locationships.create(:location => @location, :todo_checkins => 1)
       assert_equal 19, @location.hotness
     end
   end

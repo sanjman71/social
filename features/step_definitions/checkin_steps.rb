@@ -17,5 +17,10 @@ Given /^checkin todo reminders are sent$/ do
   end
 end
 
+Given /^checkin todos are expired$/ do
+  Locationship.expire_todos
+end
+
+
 
 

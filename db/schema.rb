@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101212192302) do
+ActiveRecord::Schema.define(:version => 20101222044519) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -276,18 +276,24 @@ ActiveRecord::Schema.define(:version => 20101212192302) do
   add_index "locations", ["updated_at"], :name => "index_locations_on_updated_at"
 
   create_table "locationships", :force => true do |t|
-    t.integer  "location_id",                    :null => false
-    t.integer  "user_id",                        :null => false
-    t.integer  "my_checkins",     :default => 0
-    t.integer  "friend_checkins", :default => 0
-    t.integer  "todo_checkins",   :default => 0
+    t.integer  "location_id",                      :null => false
+    t.integer  "user_id",                          :null => false
+    t.integer  "my_checkins",       :default => 0
+    t.integer  "friend_checkins",   :default => 0
+    t.integer  "todo_checkins",     :default => 0
     t.datetime "todo_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "todo_expires_at"
+    t.datetime "todo_completed_at"
+    t.datetime "todo_expired_at"
   end
 
   add_index "locationships", ["location_id"], :name => "index_locationships_on_location_id"
   add_index "locationships", ["todo_at"], :name => "index_locationships_on_todo_at"
+  add_index "locationships", ["todo_completed_at"], :name => "index_locationships_on_todo_completed_at"
+  add_index "locationships", ["todo_expired_at"], :name => "index_locationships_on_todo_expired_at"
+  add_index "locationships", ["todo_expires_at"], :name => "index_locationships_on_todo_expires_at"
   add_index "locationships", ["user_id", "friend_checkins"], :name => "index_locationships_on_user_id_and_friend_checkins"
   add_index "locationships", ["user_id", "my_checkins"], :name => "index_locationships_on_user_id_and_my_checkins"
   add_index "locationships", ["user_id", "todo_checkins"], :name => "index_locationships_on_user_id_and_todo_checkins"
@@ -477,8 +483,8 @@ ActiveRecord::Schema.define(:version => 20101212192302) do
     t.integer "locations_count",                                               :default => 0
   end
 
-  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zipcodes_on_state_id_and_locations_count"
-  add_index "zipcodes", ["state_id"], :name => "index_zipcodes_on_state_id"
-  add_index "zipcodes", ["timezone_id"], :name => "index_zipcodes_on_timezone_id"
+  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zips_on_state_id_and_locations_count"
+  add_index "zipcodes", ["state_id"], :name => "index_zips_on_state_id"
+  add_index "zipcodes", ["timezone_id"], :name => "index_zips_on_timezone_id"
 
 end
