@@ -89,15 +89,15 @@ class LocationshipTest < ActiveSupport::TestCase
   context "todo reminders" do
     should "send reminder email 2 days before todo expires" do
       @user1      = Factory.create(:user)
-      @user1.stubs(:email_address).returns('reminders@jarna.com')
+      @user1.email_addresses.create(:address => 'user1@outlately.com')
       @location1  = Location.create(:name => "Location 1", :country => @us)
       # user adds to their todo list
       @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
       # should have no reminders right now
-      assert_equal 0, @user1.send_todo_checkin_reminders
+      assert_equal 0, @user1.reload.send_todo_checkin_reminders
       Timecop.travel(Time.now+4.days+1.minute) do
         # should have 1 reminder to send in 4 days
-        assert_equal 1, @user1.send_todo_checkin_reminders
+        assert_equal 1, @user1.reload.send_todo_checkin_reminders
       end
     end
   end
@@ -118,6 +118,7 @@ class LocationshipTest < ActiveSupport::TestCase
 
     should "resolve as completed when a user checks in to a todo location within the time limit" do
       @user1      = Factory.create(:user)
+      @user1.email_addresses.create(:address => 'user1@outlately.com')
       @location1  = Location.create(:name => "Location 1", :country => @us)
       # user adds todo list checkin
       @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
@@ -136,6 +137,7 @@ class LocationshipTest < ActiveSupport::TestCase
 
     should "resolve as expired when a user checks in to a todo location after the time limit" do
       @user1      = Factory.create(:user)
+      @user1.email_addresses.create(:address => 'user1@outlately.com')
       @location1  = Location.create(:name => "Location 1", :country => @us)
       # user adds checkin to todo list
       @locship    = @user1.locationships.create!(:location => @location1, :todo_checkins => 1)
@@ -161,6 +163,7 @@ class LocationshipTest < ActiveSupport::TestCase
     
     should "resolve as expired when user does not checkin and time expires" do
       @user1      = Factory.create(:user)
+      @user1.email_addresses.create(:address => 'user1@outlately.com')
       @location1  = Location.create(:name => "Location 1", :country => @us)
       @points     = @user1.points
       # user adds checkin to todo list
