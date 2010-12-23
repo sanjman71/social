@@ -64,7 +64,7 @@
     .span-2.label.block.light
       %h4.bigger.block.bottom Date:
     .span-11.last
-      = text_field_tag 'suggestion[date]', '', :class => 'datepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 12, :autocomplete => 'off'
+      = text_field_tag 'suggestion[date]', '', :id => "suggestion_#{suggestion.id}_date", :class => 'datepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 12, :autocomplete => 'off'
       -#= text_field_tag 'suggestion[time]', '', :class => 'timepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 9, :autocomplete => 'off'
 
   .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_message"}

@@ -1,4 +1,4 @@
-$.fn.init_suggestion_detail_toggle = function() {
+$.fn.init_suggestion_details_toggle = function() {
   $("a#suggestion_details").click(function() {
     // show details, hide link
     suggestion_id = $(this).attr('data-suggestion-id');
@@ -44,9 +44,13 @@ $.fn.init_suggestion_detail_toggle = function() {
   })
 }
 
-$.fn.init_suggestion_date = function() {
-  $(".datepicker").datepicker({minDate: '+0', maxDate: '+3m'});
-  $(".timepicker").timepickr({convention:12});
+$.fn.init_suggestion_dates = function() {
+  // find all suggestions and enable each datepicker
+  $("div#suggestion").each(function() {
+    suggestion_id = $(this).attr('data-suggestion-id');
+    $("#suggestion_" + suggestion_id + "_date").datepicker({minDate: '+0', maxDate: '+3m'});
+  })
+  //$(".timepicker").timepickr({convention:12});
   
   // pick a date, used to 'schedule'
   $("a#suggestion_pick_date").click(function() {
@@ -112,6 +116,8 @@ $.fn.init_suggestion_date = function() {
 
     // disable submit
     $(this).attr('disabled', 'disabled');
+    $(this).val($(this).attr('data-disable-with'));
+
     // post data
     $.post(url, data)
     return false;
@@ -119,6 +125,6 @@ $.fn.init_suggestion_date = function() {
 }
 
 $(document).ready(function() {
-  $(document).init_suggestion_detail_toggle();
-  $(document).init_suggestion_date();
+  $(document).init_suggestion_details_toggle();
+  $(document).init_suggestion_dates();
 })
