@@ -22,7 +22,7 @@
       Its your turn to confirm.
     - if my_party.event == 'reschedule'
       -# you rescheduled
-      You rescheduled at #{location.name} for #{suggestion.scheduled_at.to_s(:datetime_dow)}.
+      You rescheduled at #{location.name} for #{suggestion.scheduled_at.to_s(:date_dow_ddmmyyyy)}.
       %br
       We are waiting for #{other_party.user.handle} to confirm.
     - if my_party.event.blank? and other_party.event == 'reschedule'
