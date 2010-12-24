@@ -5,7 +5,7 @@ set mailserver smtp.gmail.com port 587
   username "outlately@jarna.com" password "outlately" using tlsv1
   with timeout 30 seconds
 
-set alert sanjay@jarna.com
+set alert monit@jarna.com
 
 set httpd port 2812 and use address localhost
   allow localhost
