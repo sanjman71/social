@@ -330,7 +330,7 @@ DEPENDENCIES
   geokit (>= 1.5.0)
   groupme-paddock (>= 0.3.1)
   haml (>= 3.0.18)
-  haml-rails
+  haml-rails (>= 0.3.4)
   high_voltage
   httparty (>= 0.6.1)
   jquery-rails (>= 0.2.6)
