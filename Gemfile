@@ -20,6 +20,7 @@ gem 'groupme-paddock',        '>= 0.3.1', :require => 'paddock'
 gem 'httparty',               '>= 0.6.1'
 gem 'haml',                   '>= 3.0.18'
 gem 'haml-rails'
+gem 'high_voltage'
 gem 'jquery-rails',           '>= 0.2.6'
 gem 'meta_where',             '>= 0.9.6'
 gem 'oa-oauth',               :require => "omniauth/oauth"

@@ -91,6 +91,9 @@ Social::Application.routes.draw do
   match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
   match 'geo/:name', :to => "home#geo", :via => [:put], :as => :home_geo
 
+  # pages routes
+  resources :pages, :controller => 'pages', :only => :show
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
