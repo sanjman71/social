@@ -57,3 +57,8 @@ group :development, :test do
   gem 'single_test'
   gem 'timecop', '>= 0.3.5'
 end
+
+platforms :ruby_19 do
+  gem 'linecache19' # used by ruby debug
+  gem 'ruby-debug19'
+end
