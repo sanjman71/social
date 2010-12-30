@@ -14,7 +14,7 @@ Feature: User sends signup invitations
     And I fill in "search_invitee_autocomplete" with "invitee@outlately.com"
     And I wait for "3" seconds
     And I select the option containing "invitee@outlately.com" in the autocomplete list
-    Then I should see "invitee@outlately.com" within "div#to"
+    Then I should see "invitee@outlately.com" within "div#to span#display"
     And I press "Send"
     Then I should see "Sent Invitation"
     And the delayed jobs are processed
@@ -32,7 +32,7 @@ Feature: User sends signup invitations
     And I fill in "search_invitee_autocomplete" with "chicago_guy"
     And I wait for "3" seconds
     And I select the option containing "chicago_guy <chicago_guy@outlately.com>" in the autocomplete list
-    Then I should see "chicago_guy@outlately.com" within "div#to"
+    Then I should see "chicago_guy" within "div#to span#display"
     And I press "Send"
     Then I should see "Sent Invitation"
     And the delayed jobs are processed
@@ -47,7 +47,7 @@ Feature: User sends signup invitations
     And I fill in "search_invitee_autocomplete" with "friend"
     And I wait for "3" seconds
     And I select the option containing "friendly@gmail.com" in the autocomplete list
-    Then I should see "friendly@gmail.com" within "div#to"
+    Then I should see "friendly@gmail.com" within "div#to span#display"
     And I press "Send"
     Then I should see "Sent Invitation"
     And the delayed jobs are processed

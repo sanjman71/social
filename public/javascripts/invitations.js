@@ -29,7 +29,7 @@ $.fn.init_invite_autocomplete = function() {
                   if (invitee.source == 'Outlately') {
                     // show handle and email address
                     list_value      = invitee.handle + " <" + invitee.email + ">";
-                    selected_value  = invitee.handle + " <" + invitee.email + ">";
+                    selected_value  = invitee.handle;
                   } else {
                     // just show email address
                     list_value      = invitee.email;
@@ -54,7 +54,7 @@ $.fn.init_invite_autocomplete = function() {
     },
     select: function(event, ui) {
       // add to 'to' list
-      add_email(ui.item.email);
+      add_email(ui.item.value, ui.item.email);
       change_submit(true);
     },
     open: function(event, ui) {
@@ -67,9 +67,10 @@ $.fn.init_invite_autocomplete = function() {
     },
   });
 
-  function add_email(email) {
+  function add_email(display, email) {
     $("#to").append("<div id='email' style='margin-bottom: 5px;'>" +
-                    "<span id='address'>" + email + "</span>" +
+                    "<span id='display' style='font-weight: bold;'>" + display + "</span>" +
+                    "<span id='address' style='display: none;'>" + email + "</span>" +
                     "<a href='#' id='remove_invitee' class='admin' style='margin-left: 7px;'>Remove</a>" +
                     "</div>");
   }
@@ -107,7 +108,7 @@ $.fn.init_invite_autocomplete = function() {
       text = $(invitee_field).val();
       if (validate_email_address(text)) {
         // add email
-        add_email(text);
+        add_email(text, text);
         // enable submit
         change_submit(true);
         // close selection list
