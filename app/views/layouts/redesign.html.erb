@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>OutLately</title>
+    <%= stylesheet_link_tag 'redesign', :media => 'screen' %>
+  </head>
+  <body class="home">
+    <div id="header">
+      <div class="wrapper">
+        <h1><%= link_to("Outlately", '#') %></h1>
+        <ul id="nav">
+          <li id="nav-home"><%= link_to("Home", '#') %></li>
+          <li id="nav-my-profile"><%= link_to("My Profile", '#') %></li>
+          <li id="nav-friends"><%= link_to("Friends", '#') %></li>
+          <li id="nav-plans"><%= link_to("Plans", '#') %></li>
+          <li id="nav-sign-out"><%= link_to("Sign Out", '#') %></li>
+        </ul>
+      </div>
+    </div>
+    <div id="sub-header" class="wrapper clearfix">
+      <div id="me">
+        <%= image_tag("/images/temp-avatar.png", :alt => 'my avatar') %>
+        <h2>Fred Yates</h2>
+        <div id="city-menu">
+          Boston
+          <span><%= image_tag("/images/city-menu-arrow.png", :alt => 'city menu arrow') %></span>
+          <ul>
+            <li><a href="#">Boston</a></li>
+            <li><a href="#">Chicago</a></li>
+            <li><a href="#">San Francisco</a></li>
+          </ul>
+        </div>
+        <div id="my-points">
+          <div id="points">
+            <div id="points-top">
+              <%= link_to("?", '#', :id => "points-info") %>
+              <div id="screen">1,337</div>
+              <span>Points</span>
+            </div>
+          </div>
+          <%= link_to("Get More Points", '#', :id => 'get-more-points' )%>
+        </div>
+      </div>
+      <%= link_to("What is Outlately?", '#', :id => 'what-is-outlately') %>
+    </div>
+    <div id="main" class="wrapper">
+      <%= yield %>
+    </div>
+    <div id="footer" class="wrapper">
+      <span>&copy; 2011 Outlately</span>
+      <ul>
+        <li><a href="#">Footer Link</a></li>
+        <li><a href="#">Footer Link</a></li>
+        <li><a href="#">Footer Link</a></li>
+      </ul>
+    </div>
+  </body>
+</html>
