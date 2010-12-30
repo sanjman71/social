@@ -17,6 +17,9 @@ module NavigationHelpers
     when /login page/
       '/login'
 
+    when /login password page/
+      '/login?login=1'
+
     when /logout page/
       '/logout'
 

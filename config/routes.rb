@@ -94,6 +94,11 @@ Social::Application.routes.draw do
   # pages routes
   resources :pages, :controller => 'pages', :only => :show
 
+  # invitations
+  match 'invite', :to => "invitations#new", :as => :invite, :via => [:get]
+  match 'invite', :to => "invitations#create", :via => [:post]
+  match 'invitees/search', :to => "invitations#search", :as => :invitee_search, :via => [:get]
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

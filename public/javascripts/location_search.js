@@ -6,6 +6,8 @@ $.fn.init_search_places_autocomplete = function() {
   var searching     = false;
 
   $(search_field).autocomplete({
+    minLength : 3,
+    delay : 500,
     source : function(request, response) {
       // cache the most recent query string
       search_query = request.term;
@@ -26,11 +28,18 @@ $.fn.init_search_places_autocomplete = function() {
                            lng: place.geolong,
                          }
                 }));
+                // reset searching flag
+                searching = false;
+                if (count == 0) {
+                  // reset hint text
+                  $(this).siblings('#search_places_hint').text("no results");
+                } else {
+                  // reset hint text
+                  $(this).siblings('#search_places_hint').text("");
+                }
               }
       });
     },
-    minLength : 3,
-    delay : 500,
     search : function(event, ui) {
       // ignore search if already searching
       if (searching) { return false; }
@@ -40,10 +49,7 @@ $.fn.init_search_places_autocomplete = function() {
       return true;
     },
     open: function(event, ui) {
-      // reset searching flag
-      searching = false;
-      // clear hint text when dropdown list is opened
-      $(this).siblings('#search_places_hint').text("");
+      // nothing for now
     },
     close : function(event, ui) {
       // nothing for now

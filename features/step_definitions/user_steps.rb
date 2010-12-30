@@ -42,7 +42,13 @@ end
 
 # set user available now
 Given /^"([^"]*)" marked themselves as available now$/ do |handle|
-  user = User.find_by_handle(handle)
+  user = User.find_by_handle!(handle)
   user.availability_attributes = {:now => 1}
   user.save
+end
+
+# user invited another user
+Given /^user "([^"]*)" invited "([^"]*)"$/ do |handle, email|
+  user = User.find_by_handle!(handle)
+  user.invitations.create!(:recipient_email => email)
 end

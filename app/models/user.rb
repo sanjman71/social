@@ -74,6 +74,9 @@ class User < ActiveRecord::Base
   has_many                  :checkin_todo_locations, :through => :locationships, :source => :location,
                             :conditions => ["my_checkins > 0 OR todo_checkins > 0"]
 
+  # invitations
+  has_many                  :invitations, :foreign_key => :sender_id
+
   # availability
   has_one                   :availability
   accepts_nested_attributes_for :availability, :allow_destroy => true
@@ -214,6 +217,10 @@ class User < ActiveRecord::Base
 
   def self.valid_facebook_handle?(s)
     s.blank? ? false : s.match(/^\w+$/)
+  end
+
+  def self.regex_email
+    /^[a-zA-Z0-9\+._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
   end
 
   # the special user 'anyone'

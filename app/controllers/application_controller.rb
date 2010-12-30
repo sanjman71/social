@@ -73,8 +73,14 @@ class ApplicationController < ActionController::Base
     50
   end
 
-  # check that user has signed up for the beta
+  # check that user has signed up for the beta or has an invite
   def check_beta
+    # check params 'token'
+    if params[:token] && Invitation.find_by_token(params[:token])
+      # set session 'beta' key
+      session[:beta] = 1
+    end
+
     if session[:beta].to_i != 1
       redirect_to(beta_path) and return
     end

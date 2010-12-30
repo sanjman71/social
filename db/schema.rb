@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101222044519) do
+ActiveRecord::Schema.define(:version => 20101228031710) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -208,6 +208,20 @@ ActiveRecord::Schema.define(:version => 20101222044519) do
   add_index "friendships", ["friend_id"], :name => "index_friendships_on_friend_id"
   add_index "friendships", ["user_id", "friend_id"], :name => "index_friendships_on_user_id_and_friend_id"
   add_index "friendships", ["user_id"], :name => "index_friendships_on_user_id"
+
+  create_table "invitations", :force => true do |t|
+    t.integer  "sender_id",                      :null => false
+    t.string   "recipient_email"
+    t.string   "token",           :limit => 20,  :null => false
+    t.string   "subject",         :limit => 200
+    t.text     "body"
+    t.datetime "sent_at"
+    t.datetime "expires_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "invitations", ["token"], :name => "index_invitations_on_token"
 
   create_table "location_neighborhoods", :force => true do |t|
     t.integer "location_id"
@@ -459,6 +473,7 @@ ActiveRecord::Schema.define(:version => 20101222044519) do
     t.datetime "updated_at"
     t.text     "tag_ids"
     t.boolean  "member",                                                               :default => false
+    t.string   "invitation_token",      :limit => 20
   end
 
   add_index "users", ["delta"], :name => "index_users_on_delta"
@@ -467,6 +482,7 @@ ActiveRecord::Schema.define(:version => 20101222044519) do
   add_index "users", ["foursquare_id"], :name => "index_users_on_foursquare_id"
   add_index "users", ["gender"], :name => "index_users_on_gender"
   add_index "users", ["handle"], :name => "index_users_on_handle"
+  add_index "users", ["invitation_token"], :name => "index_users_on_invitation_token"
   add_index "users", ["member"], :name => "index_users_on_member"
   add_index "users", ["phone_numbers_count"], :name => "index_users_on_phone_numbers_count"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true

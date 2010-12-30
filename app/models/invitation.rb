@@ -1,0 +1,21 @@
+class Invitation < ActiveRecord::Base
+  belongs_to      :sender,        :class_name => 'User'
+  validates       :sender_id,     :presence => true
+
+  before_create   :generate_invitation_token
+  after_create    :send_async!
+
+  attr_accessor   :list
+
+  def send_async!
+    UserMailer.delay.user_invite(:invitation_id => self.id)
+  end
+
+  protected
+
+  def generate_invitation_token
+    self.token    = Devise.friendly_token
+    self.sent_at  = Time.now.utc
+  end
+
+end

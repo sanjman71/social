@@ -18,9 +18,15 @@ class HomeControllerTest < ActionController::TestCase
   end
 
   context "get index" do
-    should "allow guests" do
+    should "allow guests with beta password" do
       set_beta
       get :index
+      assert_template "home/index"
+    end
+
+    should "allow invited users" do
+      @invitation = @user.invitations.create!(:recipient_email => 'invitee@outlately.com')
+      get :index, :token => @invitation.reload.token
       assert_template "home/index"
     end
 
