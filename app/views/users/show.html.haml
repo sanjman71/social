@@ -12,9 +12,11 @@
   .span-23.last.padding-bottom-10
     .span-16
       %h2
-        = user_display_name(@user, current_user, 'Me')
+        = user_display_name(@user, current_user, 'My Profile')
         - if has_privilege?('manage users', @user)
           %span#edit_user_link= link_to 'Edit', edit_user_path(@user), :class => 'admin', :style => 'font-size: 0.5em;'
+      - if has_privilege?('manage users', @user)
+        %h4.bottom= link_to 'Invite Friends', invite_path, :class => 'admin'
     .span-7.last
       - if current_user == @user
         = render(:partial => 'shared/oauth_links')
