@@ -8,7 +8,7 @@ $.fn.init_invite_autocomplete = function() {
   var invitee_field   = $("input#search_invitee_autocomplete");
   var search_url      = $(invitee_field).attr('data-search-url');
   var searching       = false;
-  var selecting       = false;
+  var added           = false;
 
   $(invitee_field).autocomplete({
     minLength : 3,
@@ -29,7 +29,7 @@ $.fn.init_invite_autocomplete = function() {
                   if (invitee.source == 'Outlately') {
                     // show handle and email address
                     list_value      = invitee.handle + " <" + invitee.email + ">";
-                    selected_value  = invitee.handle;
+                    selected_value  = invitee.handle + " &lt;" + invitee.email + "&gt;";
                   } else {
                     // just show email address
                     list_value      = invitee.email;
@@ -56,14 +56,19 @@ $.fn.init_invite_autocomplete = function() {
       // add to 'to' list
       add_email(ui.item.value, ui.item.email);
       change_submit(true);
+      // prevent input value from being updated
+      return false;
+    },
+    focus: function(event, ui) {
+      // prevent input value from being updated
+      return false;
     },
     open: function(event, ui) {
-      selecting = true;
+      added = false;
     },
     close: function(event, ui) {
-      selecting = false;
-      // clear search field
-      clear_search();
+      // clear the field if something was added
+      if (added) { clear_autocomplete(); }
     },
   });
 
@@ -73,6 +78,7 @@ $.fn.init_invite_autocomplete = function() {
                     "<span id='address' style='display: none;'>" + email + "</span>" +
                     "<a href='#' id='remove_invitee' class='admin' style='margin-left: 7px;'>Remove</a>" +
                     "</div>");
+    added = true;
   }
 
   function change_submit(enable) {
@@ -87,7 +93,7 @@ $.fn.init_invite_autocomplete = function() {
     $(invitee_field).autocomplete('close');
   }
 
-  function clear_search() {
+  function clear_autocomplete() {
     // clear search field
     $(invitee_field).val('');
   }
@@ -102,8 +108,8 @@ $.fn.init_invite_autocomplete = function() {
   })
 
   $(invitee_field).bind('keypress', function(e) {
-    if(e.keyCode==13 && selecting){
-      // enter pressed while in the selecting state
+    if(e.keyCode==13){
+      // enter pressed
       // check that input field is a valid email address
       text = $(invitee_field).val();
       if (validate_email_address(text)) {
@@ -113,8 +119,8 @@ $.fn.init_invite_autocomplete = function() {
         change_submit(true);
         // close selection list
         close_autocomplete();
-        // clear search
-        clear_search();
+        // clear search field
+        clear_autocomplete();
       }
       return false;
     }

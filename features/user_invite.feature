@@ -32,7 +32,7 @@ Feature: User sends signup invitations
     And I fill in "search_invitee_autocomplete" with "chicago_guy"
     And I wait for "3" seconds
     And I select the option containing "chicago_guy <chicago_guy@outlately.com>" in the autocomplete list
-    Then I should see "chicago_guy" within "div#to span#display"
+    Then I should see "chicago_guy <chicago_guy@outlately.com>" within "div#to span#display"
     And I press "Send"
     Then I should see "Sent Invitation"
     And the delayed jobs are processed
