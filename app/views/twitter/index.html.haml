@@ -1,0 +1,7 @@
+- content_for :mat do
+  %h2 Twitter Info
+
+.span-23.prepend-1.last
+  %h4= pluralize(@tweets, "Tweet")
+  %h4= pluralize(@followers, "Follower")
+  %h4= pluralize(@friends, "Friend")
