@@ -1,48 +1,40 @@
 class HomeController < ApplicationController
-  skip_before_filter  :check_beta, :only => [:beta, :ping]
-  before_filter       :check_user_has_city
+  skip_before_filter  :check_beta, :only => [:ping]
+  before_filter       :authenticate_user!, :only => [:index]
+  before_filter       :check_user_has_city, :only => [:index]
 
   # GET /
   def index
-    if user_signed_in?
-      # find matching checkins
-      @user         = current_user
-      @stream       = current_stream
-      @geo          = current_geo || current_user
-      @method       = "search_#{@stream}_checkins"
-      @order        = [:sort_closer_locations, :sort_checkins_past_week]
-      @radius       = 100
-      @checkins     = @user.send(@method, :limit => checkins_start_count,
-                                          :geo_origin => [@geo.lat.try(:radians), @geo.lng.try(:radians)],
-                                          :geo_distance => 0.0..@radius.miles.meters.value,
-                                          :order => @order,
-                                          :group => :user)
-      @streams      = streams
-      @cities       = cities
-      # add user city to list of cities
-      if current_user.city
-        @cities.push(current_user.city.name).uniq!
-      end
+    # find checkins and/or todos
+    @user         = current_user
+    @stream       = current_stream
+    @city         = current_city || current_user
+    @selector     = rand(2) == 0 ? 'checkins' : 'todos'
+    @method       = "search_#{@stream}_#{@selector}"
+    @order        = [:sort_closer_locations] #[:sort_closer_locations, :sort_checkins_past_week]
+    @radius       = 100
+    @objects      = @user.send(@method, :limit => checkins_start_count,
+                                        :geo_origin => [@city.lat.try(:radians), @city.lng.try(:radians)],
+                                        :geo_distance => 0.0..@radius.miles.meters.value,
+                                        :order => @order,
+                                        :group => :user)
+    @streams      = streams
+    @cities       = cities
 
-      @max_objects  = checkins_end_count
-
-      logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@geo.try(:name) || @geo.try(:handle)}:#{@geo.try(:lat)}:#{@geo.try(:lng)}, stream:#{@stream}")
+    # add user city to list of cities
+    if current_user.city
+      @cities.push(current_user.city.name).uniq!
     end
-  end
 
-  # GET /beta
-  # POST /beta
-  def beta
-    if request.post?
-      case params[:code].downcase
-      when BETA_CODE
-        session[:beta] = 1
-        redirect_to(root_path) and return
-      else
-        session[:beta] = 0
-        flash[:notice] = "Invalid access code"
-        redirect_to(beta_path) and return
-      end
+    @max_objects  = checkins_max_count
+    @max_visible  = 10
+
+    logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@city.try(:name) || @city.try(:handle)}:#{@city.try(:lat)}:#{@city.try(:lng)}, stream:#{@stream}")
+
+    if params[:v].present?
+      render(:action => 'index0', :layout => 'application')
+    else
+      render(:action => 'index')
     end
   end
 
@@ -60,10 +52,10 @@ class HomeController < ApplicationController
     redirect_to root_path and return
   end
 
-  # PUT /geo/chicago
-  def geo
-    # change the user's current stream
-    session[:current_geo] = params[:name]
+  # PUT /city/chicago
+  def city
+    # change the user's current city
+    session[:current_city] = params[:name]
     redirect_to root_path and return
   end
 
@@ -77,7 +69,7 @@ class HomeController < ApplicationController
     3
   end
 
-  def checkins_end_count
+  def checkins_max_count
     50
   end
 
@@ -86,30 +78,30 @@ class HomeController < ApplicationController
   end
 
   def streams
-    ['Friends', stream_name_daters(current_user), 'Outlately']
+    [stream_name_daters(current_user), 'Friends', 'Everyone']
   end
 
   def default_stream
-    'outlately'
+    'everyone'
   end
 
   def cities
     ['Boston', 'Chicago', 'New York', 'San Francisco']
   end
 
-  def current_geo
-    session[:current_geo] ||= default_geo
-    current_geo_object
+  def current_city
+    session[:current_city] ||= default_city
+    current_city_object
   end
 
-  def default_geo
+  def default_city
     # default to curren't user city, if there is one
     current_user.try(:city).try(:name).try(:downcase)
   end
 
-  def current_geo_object
+  def current_city_object
     # map geo string to city object
-    City.find_by_name(session[:current_geo].try(:titleize))
+    City.find_by_name(session[:current_city].try(:titleize))
   end
 
   def stream_name_daters(user)

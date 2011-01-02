@@ -31,21 +31,18 @@ function check_growls() {
   }, 'json');
 }
 
-function update_user_points(points) {
-  field   = "span#user_points";
-  cur_str =  $(field).text();
-  $(field).text(cur_str.replace(/\d+/, points));
-}
+$.fn.init_get_points = function() {
+  var points_field    = $("a#get-more-points");
+  var points_text     = $(points_field).text();
+  var points_disabled = "Getting ...";
 
-$.fn.init_add_bucks = function() {
-  $("input#add_bucks").click(function() {
+  $(points_field).click(function() {
     var url = $(this).attr('data-url');
-    // disable submit input
-    $(this).attr('disabled', 'disabled');
-    $(this).addClass('disabled');
+    disable_points();
     $.put(url, {}, function(data) {
       // update points
-      update_user_points(data.points);
+      update_points(data.points);
+      enable_points();
       // show growls
       if (data['growls']) {
         show_growls(data.growls);
@@ -53,8 +50,23 @@ $.fn.init_add_bucks = function() {
     }, 'json');
     return false;
   })
+
+  function disable_points() {
+    $(points_field).text(points_disabled);
+    $(points_field).addClass('disabled');
+  }
+
+  function enable_points() {
+    $(points_field).text(points_text);
+    $(points_field).removeClass('disabled');
+  }
+
+  function update_points(points) {
+    field = "div#my-points div#screen";
+    $(field).text(points);
+  }
 }
 
 $(document).ready(function() {
-  $(document).init_add_bucks();
+  $(document).init_get_points();
 })

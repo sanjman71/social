@@ -5,21 +5,21 @@ Social::Application.routes.draw do
   # devise
   devise_for :users, :controllers => {:omniauth_callbacks => "oauth" }
   devise_scope :user do
-    get "/login" => "devise/sessions#new"
-    get "/logout" => "devise/sessions#destroy"
-    get "/signup" => "devise/registrations#new"
+    get "/login" => "devise/sessions#new", :as => :new_user_session
+    get "/logout" => "devise/sessions#destroy", :as => :logout
+    get "/signup" => "devise/registrations#new", :as => :signup
   end
 
-  # oauth routes
-  # match 'oauth/:service/initiate', :to => "oauth#initiate", :as => :oauth_initiate
-  # match 'oauth/:service/callback', :to => "oauth#callback", :as => :oauth_callback
-
   # checkin routes
-  match 'users/:user_id/checkins/:geo/:radius(/:search)', :to => 'checkins#index',
-    :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_checkins
-  match 'users/:user_id/checkins/:city/:radius(/:search)', :to => 'checkins#index',
-    :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_checkins
-  match 'users/:user_id/checkins(/:search)', :to => "checkins#index"
+  match 'users/:user_id/:checkins/:geo/:radius(/:search)', :to => 'checkins#index',
+    :constraints => {:checkins => /checkins|todos/, :geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/,
+                     :radius => /radius:\d+/},
+    :as => :geo_checkins
+  match 'users/:user_id/:checkins/:city/:radius(/:search)', :to => 'checkins#index',
+    :constraints => {:checkins => /checkins|todos/, :city => /city:[a-z-]+/, :radius => /radius:\d+/},
+    :as => :city_checkins
+  match 'users/:user_id/:checkins(/:search)', :to => "checkins#index",
+    :constraints => {:checkins => /checkins|todos/}, :as => :checkins
 
   match 'sightings', :to => "sightings#index"
   match 'accounts', :to => "accounts#index"
@@ -80,16 +80,10 @@ Social::Application.routes.draw do
   # unauthorized
   match 'unauthorized', :to => 'home#unauthorized'
 
-  # jobs routes
-  match 'jobs', :to => 'jobs#index', :as => :jobs
-  match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
-  match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
-  match 'jobs/top', :to => 'jobs#top', :as => :top_job
-
   match 'ping', :to => "home#ping", :via => [:get]
-  match 'beta', :to => "home#beta", :via => [:get, :post]
+  match 'beta', :to => "beta#show", :via => [:get, :post]
   match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
-  match 'geo/:name', :to => "home#geo", :via => [:put], :as => :home_geo
+  match 'city/:name', :to => "home#city", :via => [:put], :as => :home_city
 
   # pages routes
   resources :pages, :controller => 'pages', :only => :show
@@ -98,6 +92,15 @@ Social::Application.routes.draw do
   match 'invite', :to => "invitations#new", :as => :invite, :via => [:get]
   match 'invite', :to => "invitations#create", :via => [:post]
   match 'invitees/search', :to => "invitations#search", :as => :invitee_search, :via => [:get]
+
+  # twitter
+  match 'twitter', :to => 'twitter#index'
+
+  # jobs routes
+  match 'jobs', :to => 'jobs#index', :as => :jobs
+  match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
+  match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
+  match 'jobs/top', :to => 'jobs#top', :as => :top_job
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

@@ -26,7 +26,7 @@ $.fn.init_invite_autocomplete = function() {
               success: function(data) {
                 invitees  = data.invitees;
                 response($.map(invitees, function(invitee) {
-                  if (invitee.source == 'Outlately') {
+                  if (invitee.source == 'Member' || invitee.source == 'User') {
                     // show handle and email address
                     list_value      = invitee.handle + " <" + invitee.email + ">";
                     selected_value  = invitee.handle + " &lt;" + invitee.email + "&gt;";
@@ -53,6 +53,10 @@ $.fn.init_invite_autocomplete = function() {
       });
     },
     select: function(event, ui) {
+      if (ui.item.source == 'Member') {
+        alert(ui.item.handle + " is already registered")
+        return false;
+      }
       // add to 'to' list
       add_email(ui.item.value, ui.item.email);
       change_submit(true);

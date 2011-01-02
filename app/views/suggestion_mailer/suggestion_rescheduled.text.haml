@@ -1,1 +1,5 @@
+- if @message
+  = "'" + @message + "'"
+  %p
+
 #{@handle} re-scheduled, now we need you to #{link_to("confirm", filter_suggestions_url(:ids => @suggestion.id))}.

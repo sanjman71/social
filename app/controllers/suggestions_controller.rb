@@ -37,7 +37,8 @@ class SuggestionsController < ApplicationController
     # @suggestion, @party initialized in before filter
 
     # party schedules and confirms
-    @suggestion.party_schedules(@party, :scheduled_at => params[:suggestion][:date])
+    @suggestion.party_schedules(@party, :scheduled_at => params[:suggestion][:date],
+                                :message => params[:suggestion][:message])
     @suggestion.party_confirms(@party, :message => :keep, :event => 'schedule')
     flash[:notice] = I18n.t('suggestion.scheduled.flash')
   rescue AASM::InvalidTransition => e
@@ -56,8 +57,9 @@ class SuggestionsController < ApplicationController
   def reschedule
     # @suggestion, @party initialized in before filter
 
-    # party reschedules
-    @suggestion.party_reschedules(@party, :rescheduled_at => params[:suggestion][:date])
+    # party reschedules and confirms
+    @suggestion.party_reschedules(@party, :rescheduled_at => params[:suggestion][:date],
+                                  :message => params[:suggestion][:message])
     @suggestion.party_confirms(@party, :message => :keep, :event => 'reschedule')
     flash[:notice] = I18n.t('suggestion.rescheduled.flash')
   rescue AASM::InvalidTransition => e

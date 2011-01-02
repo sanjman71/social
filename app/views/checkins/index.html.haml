@@ -7,11 +7,11 @@
 %hr.space
 
 .span-23.prepend-1.last
-  - checkin_title = "#{@search.capitalize} Checkins"
+  - checkin_title = "#{@search.capitalize} #{@filter.capitalize}"
   - checkin_title += (@city and @radius) ? ", #{@radius} miles around #{@city.name.titleize}" : ', Anywhere'
   %h4
     %span#checkin_title= checkin_title
-    %span#checkin_count returned #{pluralize(@checkins.size, 'Checkin')}
+    %span#checkin_count returned #{pluralize(@objects.size, @filter)}
   %h4
     City:
     - radius = @radius || 50
@@ -26,8 +26,8 @@
       %span{:style => 'padding-right: 3px;'}= link_to s.titleize, url_for(:search => s)
 
 .span-23.prepend-1.last#checkins
-  - @checkins.sort_by{|c| -1 * c.checkin_at.to_i}.each do |checkin|
-    = render(:partial => 'home/checkin', :locals => {:checkin => checkin})
+  - @objects.sort_by{|c| -1 * c.checkin_at.to_i}.each do |checkin|
+    = render(:partial => 'home/checkins', :locals => {:checkins => [checkin]})
     / .span-23.last.padding-bottom-5
     /   .span-7= checkin.location.try(:name)
     /   .span-16.last= checkin.checkin_at.to_s(:datetime)

@@ -1,1 +1,5 @@
+- if @message
+  = "'" + @message + "'"
+  %p
+
 #{@handle} scheduled it, now its your turn to #{link_to("confirm", filter_suggestions_url(:ids => @suggestion.id))}.

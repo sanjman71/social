@@ -9,7 +9,7 @@ class InvitationsControllerTest < ActionController::TestCase
   end
 
   context "search" do
-    should "search outlately users" do
+    should "search member users" do
       @user = Factory.create(:user, :handle => 'outlater', :member => 1)
       @user.email_addresses.create!(:address => "outlater@outlately.com")
       set_beta
@@ -18,7 +18,20 @@ class InvitationsControllerTest < ActionController::TestCase
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
-      assert_equal [{'handle' => 'outlater', 'email' => 'outlater@outlately.com', 'source' => 'Outlately'}],
+      assert_equal [{'handle' => 'outlater', 'email' => 'outlater@outlately.com', 'source' => 'Member'}],
+                   @json['invitees']
+    end
+
+    should "search non-member users" do
+      @user = Factory.create(:user, :handle => 'outlater', :member => 0)
+      @user.email_addresses.create!(:address => "outlater@outlately.com")
+      set_beta
+      sign_in :user, @user
+      get :search, :q => "out", :format => 'json'
+      assert_equal "application/json", @response.content_type
+      @json = JSON.parse(@response.body)
+      assert_equal 'ok', @json['status']
+      assert_equal [{'handle' => 'outlater', 'email' => 'outlater@outlately.com', 'source' => 'User'}],
                    @json['invitees']
     end
 
@@ -31,7 +44,7 @@ class InvitationsControllerTest < ActionController::TestCase
       assert_equal "application/json", @response.content_type
       @json = JSON.parse(@response.body)
       assert_equal 'ok', @json['status']
-      assert_equal [{'handle' => 'invitee@outlately.com', 'email' => 'invitee@outlately.com', 'source' => 'Invite'}],
+      assert_equal [{'handle' => 'invitee@outlately.com', 'email' => 'invitee@outlately.com', 'source' => 'Invited'}],
                    @json['invitees']
     end
     

@@ -1,6 +1,5 @@
 class InvitationsController < ApplicationController
-  respond_to :html
-  
+  respond_to    :html
   before_filter :authenticate_user!
   
   # GET /invite
@@ -29,16 +28,16 @@ class InvitationsController < ApplicationController
   def search
     @query  = params[:q]
     # find users matching query
-    @users  = User.member.joins(:email_addresses).where(:handle.matches % "%#{@query}%" |
-                          {:email_addresses => [:address.matches % "%#{@query}%"]}).map do |u|
-      {'handle' => u.handle, 'email' => u.email_address, 'source' => 'Outlately'}
+    @users  = User.joins(:email_addresses).where(:handle.matches % "%#{@query}%" |
+                         {:email_addresses => [:address.matches % "%#{@query}%"]}).map do |u|
+      {'handle' => u.handle, 'email' => u.email_address, 'source' => u.member ? 'Member' : 'User'}
     end
     emails  = @users.collect{ |u| u['email'] }
     # find sent invitations matching query
     @users  += current_user.invitations.where(:recipient_email.matches % "%#{@query}%").map do |o|
       # ignore if invitee email is also a registered user
       if !emails.include?(o.recipient_email)
-        {'handle' => o.recipient_email, 'email' => o.recipient_email, 'source' => 'Invite'}
+        {'handle' => o.recipient_email, 'email' => o.recipient_email, 'source' => 'Invited'}
       else
         nil
       end

@@ -6,8 +6,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :growls, :has_role?
 
-  # default application layout
-  layout 'application'
+  # default layout
+  layout 'outlately'
 
   # called by devise after a successful user login
   def after_sign_in_path_for(resource_or_scope)

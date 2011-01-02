@@ -103,7 +103,7 @@ $.fn.init_suggestion_dates = function() {
     var form = $(this).parents("form#suggestion_form");
     
     // check date
-    var date = $(form).find("input#suggestion_date").val();
+    var date = $(form).find("input.datepicker").val();
     if (date == '') {
       alert("Please pick a date");
       return false;
@@ -124,7 +124,25 @@ $.fn.init_suggestion_dates = function() {
   })
 }
 
+$.fn.init_suggestion_message_counter = function() {
+  function textCounting(field, limit) {
+    if (field.value.length > limit) { // if too long...trim it!
+      // over the limit, truncate field
+      field.value = field.value.substring(0, limit);
+    } else {
+      // update counter
+      $(field).siblings("span#message_count").text(limit-field.value.length);
+    }
+  }
+
+  // test character counter
+  $('input.message').keyup(function() {
+    textCounting(this, 50);
+  });
+}
+
 $(document).ready(function() {
   $(document).init_suggestion_details_toggle();
   $(document).init_suggestion_dates();
+  $(document).init_suggestion_message_counter();
 })

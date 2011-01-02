@@ -9,8 +9,8 @@ en:
       tooltip: "Check-in through Facebook or Foursquare to build your Social DNA and get matched with people who have your same interests."
     stream:
       title: Social Stream
-      plan_location: "I want to go there"
-      meet_user: "I want to meet %{name}"
+      plan_location: "Go Here"
+      meet_user: "Meet %{name}"
       name:
         guys: Men
         gals: Ladies

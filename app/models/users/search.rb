@@ -1,31 +1,32 @@
 module Users::Search
 
+  #
+  # search checkins
+  #
+
   def search_all_checkins(options={})
-    add_geo_params(options)
     # include members only
     options.update(:with_member => 1) unless options[:with_member]
     # include my checkins and friend checkins
     search_checkins(options)
   end
 
+  alias :search_everyone_checkins :search_all_checkins
   alias :search_outlately_checkins :search_all_checkins
 
   def search_my_checkins(options={})
-    add_geo_params(options)
     # include my checkins
     options.update(:with_user_ids => [self.id]) unless options[:with_user_ids]
     search_checkins(options)
   end
   
   def search_others_checkins(options={})
-    add_geo_params(options)
     # exclude my checkins
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search_checkins(options)
   end
 
   def search_friends_checkins(options={})
-    add_geo_params(options)
     # include only friend checkins
     unless options[:with_user_ids]
       return [] if friend_ids.blank?
@@ -35,7 +36,6 @@ module Users::Search
   end
 
   def search_gals_checkins(options={})
-    add_geo_params(options)
     # filter checkins by females
     options.update(:with_gender => [1]) unless options[:with_gender]
     search_daters_checkins(options)
@@ -44,7 +44,6 @@ module Users::Search
   alias :search_ladies_checkins :search_gals_checkins
 
   def search_guys_checkins(options={})
-    add_geo_params(options)
     # filter checkins by males
     options.update(:with_gender => [2]) unless options[:with_gender]
     search_daters_checkins(options)
@@ -53,7 +52,6 @@ module Users::Search
   alias :search_men_checkins :search_guys_checkins
 
   def search_daters_checkins(options={})
-    add_geo_params(options)
     # exclude checkins by me and my friends
     options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
     # include members only
@@ -64,15 +62,13 @@ module Users::Search
   end
 
   def search_today_checkins(options={})
-    add_geo_params(options)
-    # search based on checkin timestamp, which sphinx stores in utc format
+    # search checkins based on timestamp (which sphinx stores in utc format)
     options.update(:with_checkin_at => (Time.zone.now-1.day).to_i..(Time.zone.now+1.minute).utc.to_i)
     # include checkin users marked as available now
     search_checkins(options)
   end
 
   # def search_trending_checkins(options={})
-  #   add_geo_params(options)
   #   # weight checkins by timestamp
   #   options[:order] ||= []
   #   options[:order].push(:sort_trending_checkins).uniq!
@@ -80,9 +76,46 @@ module Users::Search
   #   search_checkins(options)
   # end
 
-  # search checkins
   def search_checkins(options={})
-    options.update(:klass => Checkin)
+    add_geo_params(options)
+    options.update(:klass => Checkin) unless options[:klass]
+    search(options)
+  end
+
+  #
+  # search todos
+  #
+
+  def search_all_todos(options={})
+    search_todos(options)
+  end
+
+  alias :search_everyone_todos :search_all_todos
+
+  def search_ladies_todos(options={})
+    # filter todos by females
+    options.update(:with_gender => [1]) unless options[:with_gender]
+    search_todos(options)
+  end
+
+  def search_men_todos(options={})
+    # filter todos by males
+    options.update(:with_gender => [2]) unless options[:with_gender]
+    search_todos(options)
+  end
+
+  def search_friends_todos(options={})
+    # filter todos by friends
+    unless options[:with_user_ids]
+      return [] if friend_ids.blank?
+      options.update(:with_user_ids => friend_ids)
+    end
+    search_todos(options)
+  end
+
+  def search_todos(options={})
+    add_geo_params(options)
+    options.update(:klass => Locationship) unless options[:klass]
     search(options)
   end
 
@@ -261,7 +294,7 @@ module Users::Search
     case klass.to_s
     when 'Checkin'
       # parse checkin specific options
-      if options[:with_checkin_at] # e.g. 1290826420..1290829246 (timestamp converted to ints)
+      if options[:with_checkin_at] # e.g. 1290826420..1290829246 (timestamp converted to int)
         with.update(:checkin_at => options[:with_checkin_at])
       end
       if options[:with_checkin_ids] && options[:with_checkin_ids].any? # e.g. [1,3,5]
@@ -274,6 +307,14 @@ module Users::Search
         with.update(:gender => Array(options[:with_gender]))
       end
     when 'Location'
+    when 'Locationship'
+      # parse locationship specific options
+      if options[:with_todo_ids] && options[:with_todo_ids].any? # e.g. [1,3,5]
+        with.update(:todo_ids => options[:with_todo_ids])
+      end
+      if options[:without_todo_ids] && options[:without_todo_ids].any? # e.g. [1,3,5]
+        without.update(:todo_ids => options[:without_todo_ids])
+      end
     when 'User'
       # parse user specific options
       if options[:with_gender] # e.g. 1, [1]

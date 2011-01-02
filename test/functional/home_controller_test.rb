@@ -5,7 +5,7 @@ class HomeControllerTest < ActionController::TestCase
 
   context "routes" do
     should route(:put, '/stream/daters').to(:controller => 'home', :action => 'stream', :name => 'daters')
-    should route(:put, '/geo/chicago').to(:controller => 'home', :action => 'geo', :name => 'chicago')
+    should route(:put, '/city/chicago').to(:controller => 'home', :action => 'city', :name => 'chicago')
   end
 
   def setup
@@ -18,25 +18,30 @@ class HomeControllerTest < ActionController::TestCase
   end
 
   context "get index" do
-    should "allow guests with beta password" do
-      set_beta
+    should "redirect guests without beta password to beta#show" do
       get :index
-      assert_template "home/index"
+      assert_redirected_to "/beta"
     end
 
-    should "allow invited users" do
+    should "redirect guests with beta password to login" do
+      set_beta
+      get :index
+      assert_redirected_to "/login"
+    end
+
+    should "redirect invited users to login" do
       @invitation = @user.invitations.create!(:recipient_email => 'invitee@outlately.com')
       get :index, :token => @invitation.reload.token
-      assert_template "home/index"
+      assert_redirected_to "/login"
     end
 
     context "current_stream" do
-      should "set default stream to 'outlately'" do
+      should "set default stream to 'everyone'" do
         set_beta
         sign_in @user
         get :index
-        assert_equal 'outlately', assigns(:stream)
-        assert_equal 'outlately', session[:current_stream]
+        assert_equal 'everyone', assigns(:stream)
+        assert_equal 'everyone', session[:current_stream]
       end
       
       should "use stream from session value" do
@@ -49,22 +54,22 @@ class HomeControllerTest < ActionController::TestCase
       end
     end
 
-    context "current_geo" do
-      should "set default geo to user city" do
+    context "current_city" do
+      should "set default city to user city" do
         set_beta
         sign_in @user
         get :index
-        assert_equal @chicago, assigns(:geo)
-        assert_equal 'chicago', session[:current_geo]
+        assert_equal @chicago, assigns(:city)
+        assert_equal 'chicago', session[:current_city]
       end
       
-      should "use geo from session value" do
+      should "use city from session value" do
         set_beta
         sign_in @user
-        session[:current_geo] = 'boston'
+        session[:current_city] = 'boston'
         get :index
-        assert_equal @boston, assigns(:geo)
-        assert_equal 'boston', session[:current_geo]
+        assert_equal @boston, assigns(:city)
+        assert_equal 'boston', session[:current_city]
       end
     end
   end
@@ -79,12 +84,12 @@ class HomeControllerTest < ActionController::TestCase
     end
   end
 
-  context "put geo" do
-    should "set session[:current_geo]" do
+  context "put city" do
+    should "set session[:current_city]" do
       set_beta
       sign_in @user
-      put :geo, :name => 'boston'
-      assert_equal 'boston', session[:current_geo]
+      put :city, :name => 'boston'
+      assert_equal 'boston', session[:current_city]
       assert_redirected_to "/"
     end
   end

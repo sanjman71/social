@@ -1,0 +1,17 @@
+- visible = '' unless local_assigns[:visible]
+
+- objects.each do |locationship|
+  - user      = locationship.user
+  - location  = locationship.location
+  %li.todo{'data-id' => locationship.id, 'data-location-id' => location.id, :class => [visible, 'not-counted']}
+    = image_tag(user.primary_photo_url, :size => '50x50', :alt => 'social stream avatar')
+    %h4
+      = user.handle
+      %small plans on going soon
+    %h3= location.name
+    %div#actions
+      - if user.member? and (user != current_user)
+        - if current_user.locationships.where({:my_checkins.gt => 0} | {:todo_checkins.gt => 0}, :location_id => location.id).count == 0
+          -# not a user checkin or planned checkin
+          = link_to(I18n.t("home.stream.plan_location"), '#')
+        = link_to(I18n.t("home.stream.meet_user", :name => user.possessive_pronoun.titleize), '#')

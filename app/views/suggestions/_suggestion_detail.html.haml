@@ -4,7 +4,7 @@
 -# build links based on suggestion state
 - links = []
 
-.suggestion_text#text
+.text#text
   - case
   - when suggestion.initialized?
     outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
@@ -39,10 +39,12 @@
       outlate.ly suggests meeting #{other_party.user.handle} at #{location.name} #{suggestion.when}.
       %br
       They declined this suggestion.
+  - when suggestion.going_out?
+    Its confirmed.
   - else
     Whoops
 
-= form_for(suggestion, :html => {:id => 'suggestion_form', "data-schedule-url" => schedule_suggestion_path(suggestion, :format => 'js'), "data-reschedule-url" => reschedule_suggestion_path(suggestion, :format => 'js')}) do |f|
+= form_for(suggestion, :html => {:id => 'suggestion_form', :class => 'suggestion_form', "data-schedule-url" => schedule_suggestion_path(suggestion, :format => 'js'), "data-reschedule-url" => reschedule_suggestion_path(suggestion, :format => 'js')}) do |f|
   .span-15.last.padding-top-10#options
     - if my_party.aasm_events_for_current_state.include?(:schedule)
       - links.push(link_to('Pick a Date', '#', :class => 'admin big', :id => 'suggestion_pick_date', 'data-suggestion-id' => suggestion.id))
@@ -54,25 +56,27 @@
       - links.push(link_to('Confirm', confirm_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_confirm', :method => :put, 'data-suggestion-id' => suggestion.id))
     - if my_party.aasm_events_for_current_state.include?(:decline)
       - links.push(link_to('Decline', decline_suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure?', 'data-suggestion-id' => suggestion.id))
-    - links.push(link_to('Nevermind', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
+    -# no need to hide this now
+    -#- links.push(link_to('Nevermind', suggestions_path, :class => 'admin big', :id => 'suggestion_nevermind', 'data-suggestion-id' => suggestion.id))
     - links.each_with_index do |link, index|
       = link
       - unless index == links.size-1
         ==&nbsp;or&nbsp;
 
   .span-15.last.padding-top-10.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_datetime"}
-    .span-2.label.block.light
-      %h4.bigger.block.bottom= label_tag "suggestion_#{suggestion.id}_date", 'Date'
-    .span-11.last
-      = text_field_tag 'suggestion[date]', '', :id => "suggestion_#{suggestion.id}_date", :class => 'datepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 12, :autocomplete => 'off'
+    .span-2.label
+      = label_tag "suggestion_#{suggestion.id}_date", 'Date'
+    .span-13.last
+      = text_field_tag 'suggestion[date]', '', :id => "suggestion_#{suggestion.id}_date", :class => 'datepicker top', :size => 12, :autocomplete => 'off'
       -#= text_field_tag 'suggestion[time]', '', :class => 'timepicker big top', :style => 'padding: 3px; margin: 0px;', :size => 9, :autocomplete => 'off'
 
   .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_message"}
-    .span-2.label.block.light
-      %h4.bigger.block.bottom= label_tag "suggestion_#{suggestion.id}_message", 'Message'
-    .span-11.last
-      = text_field_tag 'suggestion[message]', '', :id => "suggestion_#{suggestion.id}_message", :class => 'big top', :style => 'padding: 3px; margin: 0px;', :size => 50, :autocomplete => 'off'
-  
+    .span-2.label
+      = label_tag "suggestion_#{suggestion.id}_message", 'Message'
+    .span-13.last
+      = text_field_tag 'suggestion[message]', '', :id => "suggestion_#{suggestion.id}_message", :class => 'message', :autocomplete => 'off'
+      %span#message_count 50
+
   .span-15.last.padding-bottom-10.hide{:id => "suggestion_#{suggestion.id}_schedule_submit"}
     = submit_tag 'Schedule', :id => 'suggestion_schedule_date', 'data-disable-with' => "scheduling ..."
     ==&nbsp;or&nbsp;
@@ -84,7 +88,7 @@
     = link_to 'Nevermind', '#', :id => 'suggestion_repick_date_nevermind', :class => 'admin big', 'data-suggestion-id' => suggestion.id
 
   .span-15.last.search_places_autocomplete_form.hide#relocate
-    = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => "That's the place", 'data-submit-url' => relocate_suggestion_path(suggestion, :format => 'js'), 'data-waiting' => 're-locating ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks', :style => 'width: 450px;'
+    = text_field_tag :search, '', :id => 'search_places_autocomplete', 'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => "That's the place", 'data-submit-url' => relocate_suggestion_path(suggestion, :format => 'js'), 'data-waiting' => 're-locating ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks'
     %span.hint#search_places_hint
     %br
     = link_to 'Nevermind', '#', :id => 'suggestion_relocate_nevermind', :class => 'admin big'

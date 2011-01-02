@@ -1,0 +1,4 @@
+- streams.each do |stream_name|
+  - klasses = []
+  - klasses.push('active') if stream_name.split.first.downcase == current_stream
+  %li{:class => klasses}= link_to stream_name, home_stream_path(:name => stream_name.parameterize), :id => stream_name.downcase.parameterize, :method => :put

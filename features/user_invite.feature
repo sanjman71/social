@@ -2,7 +2,7 @@ Feature: User sends signup invitations
   As a user I want to send invitations to others to signup.
   
   Background:
-    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", member: "1"
+    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", member: "0"
     Then a user "chicago_guy" should exist with handle: "chicago_guy"
     And user "chicago_guy" has email "chicago_guy@outlately.com"
     And I am logged in as "chicago_guy"
@@ -23,10 +23,10 @@ Feature: User sends signup invitations
     And I open the email
     Then I should see "chicago_guy invited you to join Outlately." in the email body
     And I follow "here" in the email
-    Then I should be on the home page
+    Then I should be on the login page
 
   @javascript
-  Scenario: User sends an invite to an outlately user's email address
+  Scenario: User sends an invite to an non-member user's email address
     When I go to the invite page
     Then I should see "Invite Friends"
     And I fill in "search_invitee_autocomplete" with "chicago_guy"

@@ -297,6 +297,21 @@ class UserSearchTest < ActiveSupport::TestCase
   #   end
   # end
 
+  context "search_all_todos filter" do
+    setup do
+      # create todo(s)
+      @todo1 = @chicago_male1.locationships.create!(:location => @chicago_coffee, :todo_checkins => 1)
+    end
+
+    should "find 1 todos" do
+      ThinkingSphinx::Test.run do
+        @todos = @chicago_male1.search_all_todos
+        assert_equal 1, @todos.size
+        assert_equal [@todo1], @todos.collect{ |o| o }
+      end
+    end
+  end
+
   context "search_daters_by_checkins filter" do
     setup do
       # 3 female chicago users + 1 boston female user checkins at different locations
@@ -315,30 +330,28 @@ class UserSearchTest < ActiveSupport::TestCase
         @users = @chicago_male1.search_daters_by_checkins(:order => :sort_similar_locations)
         assert_equal 3, @users.size
         assert_equal [@chicago_female1, @chicago_female2, @chicago_female3], @users.collect{ |o| o }
-        # assert_equal [:location, :location, :filter], @users.collect(&:matchby)
-        # assert_equal [8.0, 6.0, 0.0], @users.collect(&:matchvalue)
       end
     end
   end
 
-  context "search_locations_by_tags filter" do
-    should "find 0 locations with same tags when user has no checkin location tags" do
-      ThinkingSphinx::Test.run do
-        @locations = @chicago_male1.search_locations_by_tags
-        assert_equal 0, @locations.size
-      end
-    end
-
-    # deprecated: no search by locations tags for now
-    # should "find 3 locations with same tags when user has checkin location tags" do
-    #   @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-    #   ThinkingSphinx::Test.run do
-    #     @locations = @chicago_male1.search_locations_by_tags
-    #     assert_equal 3, @locations.size
-    #     assert_equal [@chicago_coffee, @boston_sbux, @boston_coffee], @locations.collect{ |o| o }
-    #   end
-    # end
-  end
+  # deprecated: no search by locations tags for now
+  # context "search_locations_by_tags filter" do
+  #   should "find 0 locations with same tags when user has no checkin location tags" do
+  #     ThinkingSphinx::Test.run do
+  #       @locations = @chicago_male1.search_locations_by_tags
+  #       assert_equal 0, @locations.size
+  #     end
+  #   end
+  # 
+  #   should "find 3 locations with same tags when user has checkin location tags" do
+  #     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+  #     ThinkingSphinx::Test.run do
+  #       @locations = @chicago_male1.search_locations_by_tags
+  #       assert_equal 3, @locations.size
+  #       assert_equal [@chicago_coffee, @boston_sbux, @boston_coffee], @locations.collect{ |o| o }
+  #     end
+  #   end
+  # end
 
   context "search_friends filter" do
     setup do
@@ -373,16 +386,6 @@ class UserSearchTest < ActiveSupport::TestCase
         assert_equal [@chicago_male2, @chicago_female1], @users.collect{ |o| o }
       end
     end
-  
-    # should "find 2 locations filtered by friend checkins" do
-    #   ThinkingSphinx::Test.run do
-    #     ThinkingSphinx::Test.index
-    #     sleep(0.25)
-    #     @locations = @chicago_male1.search_geo_friend_checkins(:miles => 10, :klass => Location)
-    #     assert_equal 2, @locations.size
-    #     assert_equal [@chicago_sbux, @chicago_pizza], @locations.collect{ |o| o }
-    #   end
-    # end
   end
 
   context "search_users_by_checkins filter" do
@@ -468,9 +471,7 @@ class UserSearchTest < ActiveSupport::TestCase
         assert_equal 1, @users.size
       end
     end
-  end
 
-  context "search_gender filter" do
     should "find 5 female users filtered by default gender" do
       ThinkingSphinx::Test.run do
         @users = @chicago_male1.search_gender
@@ -485,4 +486,5 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
   end
+
 end

@@ -3,12 +3,13 @@ class SuggestionMailer < ActionMailer::Base
 
   default :from => "outlately@jarna.com"
 
-  def suggestion_scheduled(suggestion, scheduling_party, other_party)
+  def suggestion_scheduled(suggestion, scheduling_party, other_party, options={})
     @suggestion = suggestion
     @email      = other_party.user.email_address
     @handle     = scheduling_party.user.handle
+    @message    = options[:message]
 
-    # figure out when in days
+    # set when in days
     @distance   = distance_of_time_in_words_hash(Time.zone.now, @suggestion.scheduled_at)
     @days       = @distance['days'].to_i
     @when       = @days <= 1  ? 'tomorrow' : "in #{@days} days"
@@ -19,12 +20,13 @@ class SuggestionMailer < ActionMailer::Base
     end
   end
 
-  def suggestion_rescheduled(suggestion, scheduling_party, other_party)
+  def suggestion_rescheduled(suggestion, scheduling_party, other_party, options={})
     @suggestion = suggestion
     @email      = other_party.user.email_address
     @handle     = scheduling_party.user.handle
+    @message    = options[:message]
 
-    # figure out when in days
+    # set when in days
     @distance   = distance_of_time_in_words_hash(Time.zone.now, @suggestion.scheduled_at)
     @days       = @distance['days'].to_i
     @when       = @days <= 1  ? 'tomorrow' : "in #{@days} days"

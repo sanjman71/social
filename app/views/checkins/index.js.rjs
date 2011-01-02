@@ -1,10 +1,14 @@
-@checkins.each do |checkin|
-  # add to objects collection; start with object hidden, then show by sliding down
-  page[".stream"].prepend(render(:partial => 'home/checkin', :locals => {:checkin => checkin, :visible => 'hide'}))
-  page["#checkin_#{checkin.id}"].slideDown(2000)
-  # add new map location
-  page["#map-side-bar"].append(render(:partial => 'locations/locations_map',
-                                      :locals => {:locations => [checkin.location], :category => 'async'}))
+# add to objects collection; start with object hidden, then reveal one at a time by sliding down
+page["#social-stream"].prepend(render(:partial => "home/#{@filter}",
+                                      :locals => {:objects => @objects, :visible => 'hide'}))
+
+# add object locations to map
+page["#map-side-bar"].append(render(:partial => 'locations/locations_map',
+                                    :locals => {:locations => @objects.collect(&:location), :category => 'async'}))
+
+# reveal objects one at a time
+@objects.reverse.each do |object|
+  page["li[data-id='#{object.id}']"].slideDown(2000)
 end
 
 # update map

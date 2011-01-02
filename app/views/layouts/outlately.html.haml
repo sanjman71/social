@@ -1,0 +1,65 @@
+!!! 5
+%html
+  %head
+    %meta{:"http-equiv" => 'Content-Type', :content => 'text/html; charset=utf-8'}
+    %title= yield(:title).to_s + " | Outlate.ly"
+    = csrf_meta_tag
+    %link{:rel => "icon", :href =>"/favicon.ico", :type => "image/x-icon"}
+    = stylesheet_link_tag 'blueprint/screen'
+    = stylesheet_link_tag 'redesign'
+    = stylesheet_link_tag 'outlately'  # overrides redesign
+    = stylesheet_link_tag 'growl'
+    = stylesheet_link_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/black-tie/jquery-ui.css'
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection">
+    <![endif]-->
+    = yield :stylesheet
+    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js'
+    -# include jquery tools before jquery ui
+    = javascript_include_tag 'http://cdn.jquerytools.org/1.2.5/tiny/jquery.tools.min.js'
+    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'
+    = javascript_include_tag 'rails' # jquery-ujs implementation, supports jquery 1.4.4
+    = javascript_include_tag 'jquery.growl'
+    = javascript_include_tag 'hash'
+    = javascript_include_tag 'application'
+    = yield :javascript
+    = yield :head
+
+  %body{:class => controller.controller_name}
+    #header
+      .wrapper
+        %h1= link_to("Outlately", '#')
+        %ul#nav
+          %li#nav-home= link_to("Home", root_path)
+          - if user_signed_in?
+            %li#nav-my-profile= link_to("My Profile", user_path(current_user))
+            %li#nav-friends= link_to("Friends", friends_path)
+            %li#nav-plans= link_to("Plans", plans_path)
+            %li#nav-invitations= link_to("Invitations", invite_path)
+            %li#nav-sign-out= link_to("Sign Out", logout_path)
+
+    - if controller.controller_name == 'home'
+      #sub-header.wrapper.clearfix
+        #me
+          = image_tag(current_user.try(:primary_photo_url), :size => '64x64', :alt => 'my avatar')
+          %h2= current_user.try(:handle)
+          #city-menu
+            = render(:partial => 'home/cities', :locals => {:city_names => @cities.sort, :current_city => @city})
+          #my-points
+            #points
+              #points-top
+                = link_to("?", '#', :id => "points-info")
+                #screen= current_user.try(:points).to_i
+                %span Points
+            = link_to("Get More Points", '#', :id => 'get-more-points', 'data-url' => add_bucks_user_path(current_user, 100), 'data-method' => 'put')
+        = link_to("What is Outlately?", '#', :id => 'what-is-outlately')
+
+    #main.wrapper.container
+      .span-23.prepend-1.mat
+        = yield :mat
+      = yield
+
+    #footer.wrapper
+      %span &copy; 2011 Outlately
+      %ul
+        %li= link_to 'Footer Link', '#'

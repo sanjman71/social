@@ -5,9 +5,9 @@
   %br
   %span.street= location.street_city
 .span-12.last.planned_at
-  Added: #{locationship.todo_at.try(:today?) ? 'Today' : locationship.todo_at.try(:to_s, :datetime_short)}
-  %br
   - if locationship.todo_expired?
     %strong Expired
   - else
+    Added: #{locationship.todo_at.try(:today?) ? 'Today' : locationship.todo_at.try(:to_s, :datetime_short)}
+    %br
     %strong #{pluralize(locationship.todo_days_left, 'day')} left to check in here

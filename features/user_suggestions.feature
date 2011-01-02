@@ -20,18 +20,18 @@ Feature: User suggestions
   Scenario: User should be able to schedule a date, and then re-locate
     Given I am logged in as "chicago_guy"
     When I go to the suggestions page
-    Then I should see "meet chicago_gal"
-    And I follow "Details"
+    Then I should see "outlate.ly suggests meeting chicago_gal"
     And I follow "Pick a Date"
     And I fill in "Date" with tomorrow
     And I fill in "Message" with "Fun, fun"
     And I press "Schedule"
-    And the delayed jobs are processed
-
     Then I should see "Your suggestion was scheduled!"
-    And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting tomorrow"
 
-    When I follow "Details"
+    And the delayed jobs are processed
+    Then "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting tomorrow"
+    When I open the email
+    Then I should see "Fun, fun" in the email body
+
     And I follow "Change Location"
     When I fill in "search_places_autocomplete" with "Paramount Room"
     And I wait for "3" seconds
@@ -49,15 +49,16 @@ Feature: User suggestions
       When I open the email
       And I follow "confirm" in the email
       Then I should see "chicago_guy" within "div#suggestion"
-      And I follow "Details"
       And I follow "Re-schedule"
       And I fill in "Date" with tomorrow
       And I fill in "Message" with "Fun, fun"
       And I press "Re-schedule"
-      And the delayed jobs are processed
-
       Then I should see "Your suggestion was re-scheduled!"
-      And "chicago_guy@outlately.com" should receive an email with subject "Outlately: chicago_gal re-scheduled and suggested meeting tomorrow"
+
+      And the delayed jobs are processed
+      Then "chicago_guy@outlately.com" should receive an email with subject "Outlately: chicago_gal re-scheduled and suggested meeting tomorrow"
+      When I open the email
+      Then I should see "Fun, fun" in the email body
 
     @javascript
     Scenario: User should receive an email when a suggestion is scheduled, and then confirm
@@ -67,14 +68,13 @@ Feature: User suggestions
       When I open the email
       And I follow "confirm" in the email
       Then I should see "chicago_guy" within "div#suggestion"
-      And I follow "Details"
       And I follow "Confirm"
-      And the delayed jobs are processed
-
       Then I should see "Your suggestion was confirmed!"
-      And "chicago_guy@outlately.com" should receive an email with subject "Outlately: chicago_gal confirmed"
+
+      And the delayed jobs are processed
+      Then "chicago_guy@outlately.com" should receive an email with subject "Outlately: chicago_gal confirmed"
       When I open the email
       Then I should see "Click" in the email body
       And I follow "here" in the email
-      Then I should see "chicago_guy" within "div#suggestion"
+      Then I should see "Its confirmed" within "div#suggestion"
     

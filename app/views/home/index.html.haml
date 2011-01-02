@@ -1,96 +1,39 @@
 - title('Home')
-- stylesheet 'map'
-- stylesheet 'home'
+- stylesheet('map')
 - javascript('home')
 
-- if user_signed_in?
-  - if @checkins.try(:any?)
-    - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
-    - javascript 'mapiconmaker'
-    - javascript 'markermanager'
-    - javascript 'jquery.metadata'
-    - javascript 'jquery.jmapping.min'
-    - javascript 'stream'
+- if user_signed_in? and @objects.try(:any?)
+  - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
+  - javascript 'mapiconmaker'
+  - javascript 'markermanager'
+  - javascript 'jquery.metadata'
+  - javascript 'jquery.jmapping.min'
+  - javascript 'stream'
 
-- content_for :mat do
-  .span-23.last
-    .span-3
-      %h2 Outlately
-    .span-13{:style => 'margin-top: 10px;'}
-      - if @cities
-        = render(:partial => 'home/playgrounds', :locals => {:cities => @cities.sort, :geo => @geo})
-    .span-7.last
-      = render(:partial => 'shared/oauth_links')
-  - if user_signed_in?
-    .span-23.last.padding-bottom-10
-      = link_to "How do I meet people?", '#', :id => 'outlately_wtf'
-      .tooltip= I18n.t('home.outlately.tooltip')
-    .span-23.last.padding-bottom-10
-      %span{:style => 'font-size: 0.9em; color: #777;'}= I18n.t('home.info')
+#page-header
+  %h2 Social Stream
+  %ul#social-stream-nav
+    = render(:partial => 'stream_header', :locals => {:streams => @streams, :current_stream => @stream})
 
-%hr.space
-
-.span.24.last
-  = display_flash(:all)
-  = display_alerts
-
-- if !user_signed_in?
-  .span-23.prepend-1.last
-    -# always sign in with facebook
-    %span{:style => 'font-size: 1.5em;'}Sign in
-    %br
-    = link_to image_tag('facebook_64.png'), user_omniauth_authorize_path(:facebook)
-
-- if user_signed_in?
-  .span-23.prepend-1.last#suggestions
-    - if @user.suggestions.active.count > 0
-      %h4
-        = link_to I18n.t('home.suggestions.title'), suggestions_path, :class => 'admin'
-        = link_to 'What is this?', '', :id => 'suggestions_wtf', :class => 'info'
-        .tooltip= I18n.t('home.suggestions.link.tooltip')
-    - else
-      %h4
-        No suggestions at the moment, but we're working on it.
-        = link_to 'What is this?', '', :id => 'suggestions_wtf', :class => 'info'
-        .tooltip= I18n.t('home.suggestions.how.tooltip')
-
-  -# home streams list
-  .span-23.prepend-1.last
-    .span-13
-      %h4
-        %span.bold{:style => 'font-size: 1.5em;'}= I18n.t('home.stream.title')
-        -# allow selection between different streams
-        %span#stream_list{:style => 'padding-left: 5px; font-size: 0.9em;'}
-          %span.stream_title Streams:
-          - @streams.each do |stream_name|
-            -# check if this is the current stream
-            - if stream_name.split.first.downcase == @stream
-              %span.stream_name.current= stream_name
-            - else
-              %span.stream_name= link_to stream_name, home_stream_path(:name => stream_name.parameterize), :class => 'admin', :id => stream_name.downcase.parameterize, :method => :put
-    .span-10.last
-      %h4.bold{:style => 'font-size: 1.5em;'}
-        = I18n.t('home.map.title')
-        = link_to 'What is this?', '', :id => 'map_wtf', :class => 'info'
-        .tooltip= I18n.t('home.map.tooltip')
-
-  .span-23.prepend-1.last
-    .span-13.stream{:id => @stream.downcase}
-      - @checkins.sort_by{ rand }.each do |object|
+#content.clearfix
+  .half-col
+    %ul#social-stream
+      - @objects.sort_by{ rand }.each do |object|
         - case object.class.to_s.downcase
         - when 'checkin'
-          = render(:partial => 'home/checkin', :locals => {:checkin => object})
-        - when 'location'
-          = render(:partial => 'home/location', :locals => {:location => object})
-        - when 'user'
-          = render(:partial => 'home/user', :locals => {:user => object})
+          = render(:partial => 'home/checkins', :locals => {:objects => [object]})
+        - when 'locationship'
+          = render(:partial => 'home/todos', :locals => {:objects => [object]})
 
-    .span-10.last
-      .span-10.last.map.stream#map
-      .span-10.last#map-side-bar.hide
-        = render(:partial => 'locations/locations_map', :locals => {:locations => @checkins.collect(&:location)})
+  .half-col.right
+    #map.home
+      -# map is here
+    #map-side-bar.hide
+      = render(:partial => 'locations/locations_map', :locals => {:locations => @objects.collect(&:location)})
 
 :javascript
   var stream_map        = #{user_signed_in?};
-  var max_locations     = #{@max_objects || 0};
-  var geo_checkins_path = "/users/#{@user.try(:id)}/checkins/geo:#{@geo.try(:lat).to_f}..#{@geo.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"
+  var max_objects       = #{@max_objects || 0};
+  var max_visible       = #{@max_visible || @max_objects || 0};
+  var geo_checkins_path = "/users/#{@user.try(:id)}/checkins/geo:#{@city.try(:lat).to_f}..#{@city.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"
+  var geo_todos_path    = "/users/#{@user.try(:id)}/todos/geo:#{@city.try(:lat).to_f}..#{@city.try(:lng).to_f}/radius:#{@radius.to_i}/#{@stream}"

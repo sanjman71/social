@@ -15,6 +15,30 @@ class Locationship < ActiveRecord::Base
   scope         :friend_checkins, where(:friend_checkins.gt => 0)
   scope         :my_todo_or_checkin, where({:my_checkins.gt => 0} | {:todo_checkins.gt => 0})
 
+  define_index do
+    has :id, :as => :todo_ids
+    has :todo_at, :as => :todo_at
+    has :todo_at, :as => :timestamp_at
+    # user
+    has user(:id), :as => :user_ids
+    indexes user(:handle), :as => :handle
+    has user(:gender), :as => :gender
+    has user(:member), :as => :member
+    has user.availability(:now), :as => :now
+    # location
+    has location(:id), :as => :location_ids
+    # location tags
+    # indexes location.tags(:name), :as => :tags
+    has location.tags(:id), :as => :tag_ids
+    # convert degrees to radians for sphinx
+    has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
+    has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
+    # use delayed job for delta index
+    # set_property :delta => :delayed
+    # only index todo locationships
+    where "todo_checkins = '1' AND todo_expires_at > NOW()"
+  end
+
   # after create filter
   def event_locationship_created
     # self.class.log(:ok, "[#{user.handle}] created locationship:#{self.id} for location #{location.name}:#{location.id}")
@@ -67,6 +91,9 @@ class Locationship < ActiveRecord::Base
   end
 
   def todo_expired?
+    # check if already expired
+    return true if todo_expired_at?
+    # check expires_at timestamp
     todo_expires_at ? todo_expires_at < Time.zone.now : false
   end
 

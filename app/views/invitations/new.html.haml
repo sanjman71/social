@@ -1,8 +1,7 @@
 - javascript('invitations')
 
 - content_for :mat do
-  .span-23.last
-    %h2{:style => 'margin-top: 10px;'} Invite Friends
+  %h2{:style => 'margin-top: 10px;'} Invite Friends
 
 %hr.space
 
@@ -12,7 +11,7 @@
 
 .span-23.prepend-1#invite{:style => 'margin-top: 10px;'}
   .span-13#search
-    %h4 Add invitee(s) by name or email address
+    %h4 Add invitee(s) by email address
     = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks', :style => 'width: 325px; font-size: 1.0em; padding: 0.25em 0.25em; margin: 0px;'
     %span.hint#search_invitees_hint{:style => 'margin-left: 5px; font-size: 0.8em; color: #777;'}
     %p{:style => 'padding-top: 100px;'}

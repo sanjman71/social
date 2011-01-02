@@ -1,0 +1,163 @@
+@background_color: #fff;
+
+body.accounts,
+body.friends,
+body.invitations,
+body.plans,
+body.sessions,
+body.suggestions,
+body.twitter,
+body.beta {
+  background: @background_color;
+}
+
+@nav_menu_selected_color: #fc0;
+
+body.invitations ul#nav li#nav-invitations a {
+  color: @nav_menu_selected_color;
+}
+
+#me h2 {
+  margin: 5px 0 5px 0;
+}
+
+#city-menu ul li {
+  display: block;
+}
+
+.simple_form {
+  label {
+    float: left;
+    width: 100px;
+    text-align: right;
+    margin: 15px 10px;
+  }
+
+  select {
+    margin: 15px 0px;
+    font-size: 1.2em;
+  }
+  
+  div.input {
+    margin-bottom: 10px;
+  }
+  
+  input[type='text'] {
+    font-size: 1.5em;
+  }
+  
+  input[type='checkbox'] {
+    margin: 15px 5px;
+  }
+
+  input[type='submit'] {
+    margin-top: 20px;
+  }
+
+  span.hint {
+    padding-left: 5px;
+    font-size: 0.9em;
+    color: #777;
+  }
+}
+
+.search_places_autocomplete_form { 
+  margin-bottom: 20px;
+  
+  input[type='text'] {
+    font-size: 1.3em;
+    width: 550px;
+    padding: 5px 3px;
+  }
+  
+  span.hint {
+    padding-left: 5px;
+    font-size: 0.9em;
+    color: #777;
+  }
+  
+  span.query {
+    font-size: 0.9em;
+    color: #777;
+  }
+}
+
+.suggestion_form {
+  .label {
+    font-weight: normal;
+    text-align: right;
+    padding: 0px;
+    margin-top: 10px;
+  }
+
+  input[type='text'] {
+    font-size: 1.0em;
+    padding: 5px 3px;
+  }
+  
+  input.message {
+    width: 350px;
+  }
+
+  input#search_places_autocomplete {
+    width: 450px;
+  }
+
+  span#message_count {
+    margin-left: 5px;
+    color: #777;
+  }
+}
+
+.suggestion_title {
+  a {
+    color: #00f;
+  }
+}
+
+.suggestion  {
+  margin-top: 20px;
+  height: 160px;
+
+  a {
+    color: #00f;
+  }
+
+  .text {
+    font-size: 1.1em;
+    font-weight: normal;
+    color: #333;
+    line-height: 2.0em;
+  }
+}
+
+div#todo_header {
+  a {
+    color: #00f;
+  }
+}
+
+div#todo_search {
+  a {
+    color: #00f;
+  }
+
+  span#help {
+    color: #555;
+  }
+}
+
+div#todos {
+  .location {
+    margin-bottom: 10px;
+
+    .name {
+      color: #111;
+      font-weight: bold;
+    }
+
+    .street {
+      color: #999;
+    }
+  }
+}

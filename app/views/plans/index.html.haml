@@ -9,16 +9,14 @@
 .span.24.last
   = display_flash(:all)
 
-%hr.space
-
-.span-23.prepend-1
+.span-23.prepend-1#todo_header
   %h3
-    You have #{@todos.size} planned and #{pluralize(@expired.size, "expired checkin")} on your list
+    You have #{pluralize(@todos.size, "planned checkin")} (+#{@expired.size} expired) on your list
     %span{:style => 'padding: 0 5px; font-size: 0.8em;'}= link_to 'Add More', '#', :id => 'show_search_places_autocomplete_form', :class => 'admin'
 
-.span-23.prepend-1.last.search_places_autocomplete_form.hide
+.span-23.prepend-1.last.search_places_autocomplete_form.hide#todo_search
   %h4
-    %span{:style => 'color: #060;'} Use the search box below to find and add places you plan to go to.
+    %span#help Use the search box below to add places you plan to go to.
     %span{:style => 'padding: 0 5px; font-size: 0.9em;'}= link_to 'Nevermind', '#', :id => 'hide_search_places_autocomplete_form', :class => 'admin'
   = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => add_todo_location_path(:format => 'js'), 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks'
   %span.hint#search_places_hint
@@ -28,5 +26,9 @@
 
 .span-24.last#todos
   - @todos.each do |locationship|
+    .span-24.last.location.padding-bottom-10
+      = render(:partial => 'plans/todo_location', :locals => {:locationship => locationship})
+
+  - @expired.each do |locationship|
     .span-24.last.location.padding-bottom-10
       = render(:partial => 'plans/todo_location', :locals => {:locationship => locationship})

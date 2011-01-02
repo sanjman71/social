@@ -1,8 +1,8 @@
-Feature: User Streams
-  As a user I want to see streams of user checkin activity
+Feature: Home Streams
+  As a user I want to see streams of user checkin activity on the home page
 
   @javascript
-  Scenario: User should see all member checkins in the default Outlately stream
+  Scenario: User should see all member checkins in the default Everyone stream
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
     And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
@@ -13,11 +13,11 @@ Feature: User Streams
     And user "chicago_coffee_gal" checked in to "Chicago Starbucks"
     And user "chicago_coffee_guy" checked in to "Chicago Lavazza"
     And I am logged in as "chicago_guy"
-    When sphinx is indexed
+    And sphinx is indexed
     When I go to the home page
-    Then I should see "Outlately" within "span.current.stream_name"
-    And I should see "chicago_coffee_gal" within "div.stream#outlately"
-    And I should see "chicago_coffee_guy" within "div.stream#outlately"
+    Then I should see "Everyone" within "ul#social-stream-nav li.active"
+    And I should see "chicago_coffee_gal" within "ul#social-stream"
+    And I should see "chicago_coffee_guy" within "ul#social-stream"
 
   @javascript
   Scenario: Male user should see member checkins by females in the Ladies stream
@@ -31,12 +31,12 @@ Feature: User Streams
     And user "chicago_coffee_gal" checked in to "Chicago Starbucks"
     And user "chicago_coffee_guy" checked in to "Chicago Lavazza"
     And I am logged in as "chicago_guy"
-    When sphinx is indexed
+    And sphinx is indexed
     When I go to the home page
-    And I follow "Ladies" within "span#stream_list"
-    Then I should see "Ladies" within "span.current.stream_name"
-    And I should see "chicago_coffee_gal" within "div.stream#ladies"
-    And I should not see "chicago_coffee_guy" within "div.stream#ladies"
+    And I follow "Ladies" within "ul#social-stream-nav"
+    Then I should see "Ladies" within "ul#social-stream-nav li.active"
+    And I should see "chicago_coffee_gal" within "ul#social-stream"
+    And I should not see "chicago_coffee_guy" within "ul#social-stream"
 
   @javascript
   Scenario: User should see user checkins by friends in the Friends stream
@@ -59,15 +59,15 @@ Feature: User Streams
     And "chicago_friend1" is friends with "chicago_guy"
     And "chicago_friend2" is friends with "chicago_guy"
     And I am logged in as "chicago_guy"
-    When sphinx is indexed
+    And sphinx is indexed
     When I go to the home page
-    And I follow "Friends" within "span#stream_list"
-    Then I should see "Friends" within "span.current.stream_name"
-    And I should see "chicago_friend1" within "div.stream#friends"
-    And I should see "chicago_friend2" within "div.stream#friends"
-    And I should not see "chicago_guy2" within "div.stream#friends"
-    And I should not see "I want to go there" within "div.stream#friends"
-    And I should not see "I want to meet him" within "div.stream#friends"
+    And I follow "Friends" within "ul#social-stream-nav"
+    Then I should see "Friends" within "ul#social-stream-nav li.active"
+    And I should see "chicago_friend1" within "ul#social-stream"
+    And I should see "chicago_friend2" within "ul#social-stream"
+    And I should not see "chicago_guy2" within "ul#social-stream"
+    And I should not see "Go Here" within "ul#social-stream"
+    And I should not see "Meet Him" within "ul#social-stream"
 
   # @javascript
   # Scenario: User sees checkins in the past day in the Today stream

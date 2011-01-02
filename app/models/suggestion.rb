@@ -77,14 +77,15 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     talk!
-    self.delay.async_scheduled_event(:party_id => party.id, :other_party_id => @other_party.id)
-    log("[suggestion:#{self.id}] #{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion talking")
+    self.delay.async_scheduled_event(:party_id => party.id, :other_party_id => @other_party.id,
+                                     :message => options[:message])
+    log("[suggestion:#{self.id}] #{party.handle} scheduled, #{@other_party.handle} changed to scheduled, suggestion #{state}")
   end
 
-  def async_scheduled_event(hash)
-    party       = UserSuggestion.find_by_id(hash[:party_id])
-    other_party = UserSuggestion.find_by_id(hash[:other_party_id])
-    SuggestionMailer.suggestion_scheduled(self, party, other_party).deliver
+  def async_scheduled_event(options)
+    party       = UserSuggestion.find_by_id(options[:party_id])
+    other_party = UserSuggestion.find_by_id(options[:other_party_id])
+    SuggestionMailer.suggestion_scheduled(self, party, other_party, options).deliver
   end
 
   def party_reschedules(party, options={})
@@ -96,14 +97,15 @@ class Suggestion < ActiveRecord::Base
     @other_party.event!('')
     @other_party.alert!
     save!
-    self.delay.async_rescheduled_event(:party_id => party.id, :other_party_id => @other_party.id)
+    self.delay.async_rescheduled_event(:party_id => party.id, :other_party_id => @other_party.id,
+                                       :message => options[:message])
     log("[suggestion:#{self.id}] #{party.handle} rescheduled, suggestion #{state}")
   end
 
-  def async_rescheduled_event(hash)
-    party       = UserSuggestion.find_by_id(hash[:party_id])
-    other_party = UserSuggestion.find_by_id(hash[:other_party_id])
-    SuggestionMailer.suggestion_rescheduled(self, party, other_party).deliver
+  def async_rescheduled_event(options)
+    party       = UserSuggestion.find_by_id(options[:party_id])
+    other_party = UserSuggestion.find_by_id(options[:other_party_id])
+    SuggestionMailer.suggestion_rescheduled(self, party, other_party, options).deliver
   end
 
   def party_relocates(party, options={})
@@ -125,9 +127,9 @@ class Suggestion < ActiveRecord::Base
     end
   end
 
-  def async_relocated_event(hash)
-    party       = UserSuggestion.find_by_id(hash[:party_id])
-    other_party = UserSuggestion.find_by_id(hash[:other_party_id])
+  def async_relocated_event(options)
+    party       = UserSuggestion.find_by_id(options[:party_id])
+    other_party = UserSuggestion.find_by_id(options[:other_party_id])
     SuggestionMailer.suggestion_relocated(self, party, other_party).deliver
   end
 
