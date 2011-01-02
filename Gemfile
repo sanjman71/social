@@ -22,6 +22,7 @@ gem 'haml',                   '>= 3.0.18'
 gem 'haml-rails',             '>= 0.3.4'
 gem 'high_voltage'
 gem 'jquery-rails',           '>= 0.2.6'
+gem 'less',                   '>= 1.2.21'
 gem 'meta_where',             '>= 0.9.6'
 gem 'oa-oauth',               :require => "omniauth/oauth"
 gem 'omniauth',               '>= 0.1.6'
@@ -32,6 +33,7 @@ gem 'ts-delayed-delta',       :git => 'git://github.com/freelancing-god/ts-delay
 gem 'test-unit',              '>= 2.1.1'  # used by teamcity
 gem 'thor',                   '>= 0.14.6'
 gem 'thinking-sphinx',        '>= 2.0.0', :require => 'thinking_sphinx'
+gem 'twitter',                '>= 1.0.0'
 gem 'will_paginate',          '3.0.pre2'
 gem 'whenever',               '>= 0.5.0'
 
