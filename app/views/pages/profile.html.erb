@@ -1,0 +1,19 @@
+<div id="page-header">
+  <div id="profile-header">
+    <%= image_tag("/images/temp-avatar3.jpg", :alt => 'profile-avatar') %>
+    <h3>mmiler79</h3>
+    <h4>Los Angeles, CA</h4>
+  </div>
+  <ul id="profile-nav">
+    <li><%= link_to("Meet Up", '#') %></li>
+  </ul>
+</div>
+<div id="content" class="clearfix">
+  <div id="profile-photos">
+    <%= link_to(image_tag("/images/photo-back.png", :alt => 'photo back'), '#', :id => 'photo-back' )%>
+    <%= link_to(image_tag("/images/photo-forward.png", :alt => 'photo forward'), '#', :id => 'photo-forward' )%>
+    <%= link_to(image_tag("/images/profile-photo1.jpg", :alt => 'profile photo'), '#') %>
+    <%= link_to(image_tag("/images/profile-photo2.jpg", :alt => 'profile photo'), '#') %>
+    <%= link_to(image_tag("/images/profile-photo3.jpg", :alt => 'profile photo'), '#') %>
+  </div>
+</div>
