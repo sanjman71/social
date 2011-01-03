@@ -26,7 +26,7 @@ every 7.minutes do
   command "cd /usr/apps/outlately/current && thor checkins:poll >> /usr/apps/outlately/shared/log/checkins.log"
 end
 
-every 30.minutes do
+every 10.minutes do
   # rebuild sphinx
   rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
 end
