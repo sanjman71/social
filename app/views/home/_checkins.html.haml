@@ -7,7 +7,7 @@
     = image_tag(user.primary_photo_url, :size => '50x50', :alt => 'social stream avatar')
     %h4
       = user.handle
-      %small= distance_of_time_in_words(Time.zone.now, checkin.checkin_at) + " ago"
+      %small= distance_of_time_in_words(Time.zone.now, checkin.checkin_at, false) + " ago"
     %h3= location.name
     %div#actions
       - if user.member? and (user != current_user)

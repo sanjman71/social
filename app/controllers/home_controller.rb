@@ -27,7 +27,6 @@ class HomeController < ApplicationController
 
     @max_objects  = checkins_max_count
     @max_visible  = 10
-    @prob_todos   = 40  # probability of todos vs checkins
 
     logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@city.try(:name) || @city.try(:handle)}:#{@city.try(:lat)}:#{@city.try(:lng)}, stream:#{@stream}")
 

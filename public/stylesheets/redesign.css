@@ -109,7 +109,7 @@ ul#nav li a:hover {
 }
 
 body.home ul#nav li#nav-home a,
-body.my-profile ul#nav li#nav-my-profile a,
+body.users ul#nav li#nav-my-profile a,
 body.friends ul#nav li#nav-friends a,
 body.plans ul#nav li#nav-plans a {
   color: #fc0;
