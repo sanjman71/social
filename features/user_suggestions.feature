@@ -15,6 +15,7 @@ Feature: User suggestions
     And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     Then a location "Chicago Lavazza" should exist with name: "Chicago Lavazza"
     And a suggestion exists for users "chicago_guy" and "chicago_gal" at location "Chicago Starbucks"
+    And the delayed jobs are deleted
 
   @javascript
   Scenario: User should be able to schedule a date, and then re-locate
@@ -36,10 +37,14 @@ Feature: User suggestions
     When I fill in "search_places_autocomplete" with "Paramount Room"
     And I wait for "3" seconds
     And I select the option containing "Paramount Room" in the autocomplete list
-    And I follow "That's the place"
-
+    And I fill in "suggestion_relocate_message" with "Love their burger"
+    And I press "Relocate"
     Then I should see "Your suggestion was re-located!"
-    And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting at Paramount Room"
+
+    And the delayed jobs are processed
+    Then "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy suggested meeting at Paramount Room"
+    When I open the email with subject "Outlately: chicago_guy suggested meeting at Paramount Room"
+    Then I should see "Love their burger" in the email body
 
     @javascript
     Scenario: User should receive an email when a suggestion is scheduled, and then re-schedule

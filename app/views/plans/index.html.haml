@@ -11,18 +11,19 @@
 
 .span-23.prepend-1#todo_header
   %h3
-    You have #{pluralize(@todos.size, "planned checkin")} (+#{@expired.size} expired) on your list
+    You have #{pluralize(@todos.size, "planned checkin")} on your list
     %span{:style => 'padding: 0 5px; font-size: 0.8em;'}= link_to 'Add More', '#', :id => 'show_search_places_autocomplete_form', :class => 'admin'
 
 .span-23.prepend-1.last.search_places_autocomplete_form.hide#todo_search
-  %h4
-    %span#help Use the search box below to add places you plan to go to.
+  .span-23.last
+    %span#help Use the search box below to add planned checkins.
     %span{:style => 'padding: 0 5px; font-size: 0.9em;'}= link_to 'Nevermind', '#', :id => 'hide_search_places_autocomplete_form', :class => 'admin'
-  = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => add_todo_location_path(:format => 'js'), 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks'
-  %span.hint#search_places_hint
-  %br
-  %span.query#search_places_query
-  #search_results
+  .span-23.last
+    = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), :placeholder => 'e.g. starbucks'
+    %span#hint{:style => 'margin-left: 5px;'}
+    #place.hide
+  .span-23.last
+    = link_to 'Add', '#', :id => 'add_todo', 'data-url' => add_todo_location_path(:format => 'js'), 'data-disable-with' => 'adding ...', 'data-return-to' => request.fullpath
 
 .span-24.last#todos
   - @todos.each do |locationship|

@@ -1,7 +1,6 @@
 $.fn.init_search_places_autocomplete = function() {
   var search_field  = $("input#search_places_autocomplete");
   var search_url    = $(search_field).attr('data-search-url');
-  var search_query  = '';
   var source_name   = 'foursquare';
   var searching     = false;
 
@@ -9,8 +8,6 @@ $.fn.init_search_places_autocomplete = function() {
     minLength : 3,
     delay : 500,
     source : function(request, response) {
-      // cache the most recent query string
-      search_query = request.term;
       $.ajax({url: search_url, dataType: "json", data : {q: request.term},
               success: function(data) {
                 count   = data.count;
@@ -30,13 +27,6 @@ $.fn.init_search_places_autocomplete = function() {
                 }));
                 // reset searching flag
                 searching = false;
-                if (count == 0) {
-                  // reset hint text
-                  $(this).siblings('#search_places_hint').text("no results");
-                } else {
-                  // reset hint text
-                  $(this).siblings('#search_places_hint').text("");
-                }
               }
       });
     },
@@ -45,40 +35,30 @@ $.fn.init_search_places_autocomplete = function() {
       if (searching) { return false; }
       // set searching flag
       searching = true;
-      $(this).siblings('#search_places_hint').text("searching '" + $(this).val() + "'");
+      // reset selected flag
+      $(this).siblings("#place").removeClass('selected');
+      // set hint
+      $(this).siblings('#hint').text("'" + $(this).val() + "'");
       return true;
     },
     open: function(event, ui) {
-      // nothing for now
+      // reset hint
+      $(this).siblings("#hint").text('');
     },
     close : function(event, ui) {
-      // nothing for now
+      // reset hint
+      $(this).siblings("#hint").text('');
     },
     select: function(event, ui) {
-      a = "<a href='#' id='add_location' class='admin' data-source='" + ui.item.source + "' " +
-          "data-name='" + ui.item.name + "' " +
-          "data-address='" + ui.item.address + "' " +
-          "data-city-state='" + ui.item.city + ":" + ui.item.state + "' " +
-          "data-lat='" + ui.item.lat + "' " +
-          "data-lng='" + ui.item.lng + "' " +
-          "data-url='" + $(this).attr('data-submit-url') + "' " +
-          "data-waiting='" + $(this).attr('data-waiting') + "' " +
-          "data-return-to='" + $(this).attr('data-return-to') + "' " +
-          ">" + $(this).attr('data-submit-text') + "</a>";
-      $(this).siblings('#search_places_hint').html(a);
+      // set place attributes
+      place = $(this).siblings("#place");
+      $(place).attr('data-source', ui.item.source);
+      $(place).attr('data-name', ui.item.name).attr('data-address', ui.item.address);
+      $(place).attr('data-city-state', ui.item.city + ":" + ui.item.state);
+      $(place).attr('data-lat', ui.item.lat).attr('data-lng', ui.item.lng);
+      $(place).addClass("selected");
     },
   });
-
-  $("a#add_location").live('click', function(event) {
-    url   = $(this).attr('data-url');
-    loc   = {name:$(this).attr('data-name'), address:$(this).attr('data-address'),
-             city_state:$(this).attr('data-city-state'),
-             lat:$(this).attr('data-lat'), lng:$(this).attr('data-lng'),
-             source:$(this).attr('data-source')}
-    $(this).replaceWith($(this).attr('data-waiting'));
-    $.put(url, {location:loc, return_to:$(this).attr('data-return-to')}, null, "script");
-    return false;
-  })
 }
 
 $(document).ready(function() {

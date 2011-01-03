@@ -37,18 +37,19 @@ class SuggestionMailer < ActionMailer::Base
     end
   end
 
-  def suggestion_relocated(suggestion, scheduling_party, other_party)
+  def suggestion_relocated(suggestion, scheduling_party, other_party, options={})
     @suggestion = suggestion
     @email      = other_party.user.email_address
     @handle     = scheduling_party.user.handle
     @location   = suggestion.location
+    @message    = options[:message]
 
     unless @email.blank?
       mail(:to => @email, :subject => "Outlately: #{@handle} suggested meeting at #{@location.name}")
     end
   end
 
-  def suggestion_confirmed(suggestion, scheduling_party, other_party)
+  def suggestion_confirmed(suggestion, scheduling_party, other_party, options={})
     @suggestion = suggestion
     @email      = other_party.user.email_address
     @handle     = scheduling_party.user.handle

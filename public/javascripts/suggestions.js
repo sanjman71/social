@@ -122,6 +122,38 @@ $.fn.init_suggestion_dates = function() {
     $.post(url, data)
     return false;
   })
+
+  // re-locate
+  $("#suggestion_relocate_date").click(function() {
+    // check location
+    relocate      = $(this).closest("#relocate");
+    place_elem    = $(relocate).find("#place");
+    msg_elem      = $(relocate).find("input.message");
+
+    if (!$(place_elem).hasClass('selected')) {
+      alert("Please select a new location");
+      return false;
+    }
+
+    // build place, message data
+    url       = $(place_elem).attr('data-url');
+    place     = {name : $(place_elem).attr('data-name'),
+                 address : $(place_elem).attr('data-address'),
+                 city_state : $(place_elem).attr('data-city-state'),
+                 lat : $(place_elem).attr('data-lat'),
+                 lng : $(place_elem).attr('data-lng'),
+                 source : $(place_elem).attr('data-source')};
+    message   = $(msg_elem).val();
+    return_to = $(place_elem).attr('data-return-to');
+
+    // disable submit
+    $(this).attr('disabled', 'disabled');
+    $(this).val($(this).attr('data-disable-with'));
+
+    $.put(url, {location:place, message:message, return_to:return_to}, null, "script");
+
+    return false;
+  })
 }
 
 $.fn.init_suggestion_message_counter = function() {

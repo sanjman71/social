@@ -24,15 +24,11 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
 .search_places_autocomplete_form { margin-bottom: 20px; }
 .search_places_autocomplete_form input[type='text'] {
   font-size: 1.3em;
-  width: 550px;
+  width: 580px;
   padding: 5px 3px;
 }
-.search_places_autocomplete_form span.hint {
-  padding-left: 5px;
-  font-size: 0.9em;
-  color: #777777;
-}
-.search_places_autocomplete_form span.query {
+.search_places_autocomplete_form #hint {
+  margin-top: 10px;
   font-size: 0.9em;
   color: #777777;
 }
@@ -47,7 +43,6 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
   padding: 5px 3px;
 }
 .suggestion_form input.message { width: 350px; }
-.suggestion_form input#search_places_autocomplete { width: 450px; }
 .suggestion_form span#message_count {
   margin-left: 5px;
   color: #777777;
@@ -66,6 +61,21 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
 }
 div#todo_header a { color: #0000ff; }
 div#todo_search a { color: #0000ff; }
+div#todo_search a#add_todo {
+  height: 20px;
+  width: 35px;
+  line-height: 20px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #ffffff;
+  background-color: #ff6f00;
+  padding: 0 10px;
+  text-decoration: none;
+  display: block;
+  font-size: 11px;
+  text-align: center;
+}
 div#todo_search span#help { color: #555555; }
 div#todos .location { margin-bottom: 10px; }
 div#todos .location .name {

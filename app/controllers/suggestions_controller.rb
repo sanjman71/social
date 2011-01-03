@@ -78,7 +78,7 @@ class SuggestionsController < ApplicationController
   # POST /suggestions/1/relocate/5
   def relocate
     # @suggestion, @party, @location initialized in before filter
-    @suggestion.party_relocates(@party, :location => @location)
+    @suggestion.party_relocates(@party, :location => @location, :message => params[:message])
     flash[:notice] = I18n.t('suggestion.relocated.flash')
   rescue AASM::InvalidTransition => e
     flash[:error] = I18n.t('suggestion.error.flash')

@@ -119,7 +119,8 @@ class Suggestion < ActiveRecord::Base
       @other_party.event!('')
       @other_party.alert!
       save!
-      self.delay.async_relocated_event(:party_id => party.id, :other_party_id => @other_party.id)
+      self.delay.async_relocated_event(:party_id => party.id, :other_party_id => @other_party.id,
+                                       :message => options[:message])
       log("[suggestion:#{self.id}] #{party.handle} relocated to #{location.name}, suggestion #{state}")
     elsif state == 'initialized'
       # just change the location
@@ -130,7 +131,7 @@ class Suggestion < ActiveRecord::Base
   def async_relocated_event(options)
     party       = UserSuggestion.find_by_id(options[:party_id])
     other_party = UserSuggestion.find_by_id(options[:other_party_id])
-    SuggestionMailer.suggestion_relocated(self, party, other_party).deliver
+    SuggestionMailer.suggestion_relocated(self, party, other_party, options).deliver
   end
 
   def party_confirms(party, options={})
