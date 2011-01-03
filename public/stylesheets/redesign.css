@@ -484,6 +484,8 @@ a#get-more-points:hover {
 .full-col {
   width: 940px;
   float: left;
+  position: relative;
+  margin: 15px 0 0 0;
 }
 
 .half-col {
@@ -796,4 +798,128 @@ ul#profile-social-dna li h6 {
   color: #fff;
   margin: 0;
   font-weight: normal;
+}
+
+#profile-label-tags,
+#profile-label-dna {
+  position: absolute;
+  top: 14px;
+  font-size: 12px;
+  height: 12px;
+  color: #363636;
+  font-weight: bold;
+  padding: 0 0 0 28px;
+}
+
+#profile-label-tags {
+  left: 425px;
+  background: url(/images/profile-tags.png) 0 0 no-repeat;
+}
+
+#profile-label-dna {
+  left: 685px;
+  background: url(/images/profile-dna.png) 0 0 no-repeat;
+}
+
+ul#profile-checked-in-at {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+ul#profile-checked-in-at li {
+   margin: 0 0 5px 0;
+  -webkit-box-shadow:    0 1px 4px rgba(0,0,0,.35);
+  -moz-box-shadow:       0 1px 4px rgba(0,0,0,.35);
+  box-shadow:            0 1px 4px rgba(0,0,0,.35);
+  -webkit-border-radius: 5px;
+  -moz-border-radius:    5px;
+  border-radius:         5px;
+  padding: 5px 10px;
+  background-color: #f2f2f2;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fff), color-stop(100%,#f2f2f2));
+  background: -moz-linear-gradient(top,                                  #fff 0%,             #f2f2f2 100%);
+}
+
+ul#profile-checked-in-at li h4 {
+  width: 400px;
+  position: relative; 
+  padding: 0 0 12px 0;
+  font-size: 18px;
+  color: #0075ab;
+  margin: 0;
+  float: left;
+}
+
+ul#profile-checked-in-at li small {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 12px;
+  font-size: 10px;
+  color: #777;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: normal;
+}
+
+ul#profile-checked-in-at li div {
+  position: relative;
+  float: left;
+  width: 240px;
+  padding: 5px 5px 2px 5px;
+  margin: 0 0 0 10px;
+  background: rgba(0,0,0,.1);
+  -webkit-border-radius: 3px;
+  -moz-border-radius:    3px;
+  border-radius:         3px;
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.3), 0 1px 0 #fff;
+  -moz-box-shadow:    inset 0 1px 2px rgba(0,0,0,.3), 0 1px 0 #fff;
+  box-shadow:         inset 0 1px 2px rgba(0,0,0,.3), 0 1px 0 #fff;
+}
+
+ul#profile-checked-in-at li div a {
+  background: rgba(0,0,0,.5);
+  height: 24px;
+  line-height: 25px;
+  float: left;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 0 10px;
+  -webkit-border-radius: 13px;
+  -moz-border-radius:    13px;
+  border-radius:         13px;
+  display: block;
+  text-decoration: none;
+  margin: 0 3px 3px 0;
+}
+
+ul#profile-checked-in-at li div a:hover {
+  background: rgba(0,0,0,.7);
+}
+
+ul#profile-checked-in-at li div.profile-checked-in-at-tags {
+  width: 210px;
+  padding: 5px 30px 2px 5px;
+}
+
+ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  padding: 2px;
+  height: 18px;
+  width: 18px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius:    3px;
+  border-radius:         3px;
+  background: rgba(0,0,0,.3);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.3), 0 1px 0 #fff;
+  -moz-box-shadow:    inset 0 1px 2px rgba(0,0,0,.3), 0 1px 0 #fff;
+  box-shadow:         inset 0 1px 2px rgba(0,0,0,.3), 0 1px 0 #fff;
+}
+
+ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:hover {
+  background: rgba(0,0,0,.3);
 }

@@ -49,5 +49,21 @@
   </div>
   <div class="full-col clearfix">
     <h4>Recently Checked In At</h4>
+    <div id="profile-label-tags">Tags</div>
+    <div id="profile-label-dna">Social DNA</div>
+    <ul id="profile-checked-in-at">
+      <li class="clearfix">
+        <h4>Liberty Hotel<small>13 minutes ago</small></h4>
+        <div class="profile-checked-in-at-tags">
+          <%= link_to("hotel", '#') %>
+          <%= link_to("downtown Boston", '#') %>
+          <%= link_to(image_tag("/images/profile-add-tags.png", :alt => "add tags"), '#', :class => 'profile-add-tags') %>
+        </div>
+        <div class="profile-checked-in-at-dna">
+          <%= link_to("Nomad", '#') %>
+          <%= link_to("Jetsetter", '#') %>
+        </div>
+      </li>
+    </ul>
   </div>
 </div>
