@@ -54,7 +54,7 @@ $.fn.init_tooltips = function() {
   $("a#badges_tip").click(function() { return false; })
 }
 
-.fn.init_growls = function() {
+$.fn.init_growls = function() {
   try {
     // check growls
     if (growls.length > 0) { show_growls(growls); }
