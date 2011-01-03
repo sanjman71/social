@@ -3,7 +3,12 @@
 1. https://github.com/defunkt/resque
 2. https://github.com/blog/542-introducing-resque
 
-# Ubuntu Install
+# Redis OX X Install
+
+brew install redis
+redis-server /usr/local/etc/redis.conf
+
+# Redis Ubuntu Install
 
 1. Follow directions on https://github.com/defunkt/resque for redis install via resque:
   - sudo mkdir /opt/redis
@@ -11,7 +16,7 @@
   - PREFIX=/opt/redis rake redis:install dtach:install
   - rake redis:start
 
-# Up and Running
+# Resque Up and Running
 
 1. See locations.rb, async and perform methods for sample use case.
 2. Start server:
