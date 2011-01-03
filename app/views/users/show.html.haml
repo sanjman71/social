@@ -1,88 +1,36 @@
-- stylesheet 'users'
-- stylesheet 'map'
--#- javascript 'jquery.cycle.all.min'
-- javascript 'users'
+- title('Profile')
+- stylesheet('map')
+- javascript ('users')
+
 - if @checkins.try(:any?)
   - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
   - javascript 'mapiconmaker', 'markermanager'
   - javascript 'jquery.metadata'
   - javascript 'jquery.jmapping.min'
 
-- content_for :mat do
-  .span-23.last.padding-bottom-10
-    .span-16
-      %h2
-        = user_display_name(@user, current_user, 'My Profile')
-        - if has_privilege?('manage users', @user)
-          %span#edit_user_link= link_to 'Edit', edit_user_path(@user), :class => 'admin', :style => 'font-size: 0.5em;'
-      - if has_privilege?('manage users', @user)
-        %h4.bottom= link_to 'Invite Friends', invite_path, :class => 'admin'
-    .span-7.last
-      - if current_user == @user
-        = render(:partial => 'shared/oauth_links')
-
-%hr.space
-
-.span-24.last
-  = display_flash(:all)
-  = display_alerts
-
--# show user profile basics
-.span-24.last.profile#user_profile_basics
-  .span-2.prepend-1#user_profile_picture= image_tag @user.primary_photo_url, :size => '50x50'
-  .span-5{:style => 'padding-top: 10px;'}
-    #user_profile_handle= @user.handle
-    #user_profile_data= user_profile_blurb(@user)
-
-%hr.space
-
-.span-24.last#checkin_map_wrapper
-  .span-3.prepend-1.border#checkin_map_prompt
-    %h4 #{link_to I18n.t("user.spots", :pronoun => personal_pronoun(@user)), '#', :class => 'admin', :id => 'show_my_spots', 'data-url' => '/users/1/spots'}
-  .span-3.prepend-1.border#checkin_map_cities.hide
-    -# show checkin city names
-    %h4= personal_pronoun(@user, 'Cities')
-    - @geo_cloud.each_with_index do |tuple, index|
-      - city_id   = tuple[0]
-      - city_name = tuple[1][:name]
-      %span{:class => "city#{index+1}", :style => 'padding-right: 3px;'}= link_to city_name, '#', :id => 'show_checkin_city', :class => 'admin', 'data-city-id' => city_id
-  -# show user checkins map
-  .span-19.prepend-1.last#checkin_map.hide
-    .span-18.last.map.user.checkins#map
-    .span-18.last#map-side-bar.hide
-      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations, :city_id => @city_id})
-
-%hr.space
-
--# show user badges
-- unless @badges.blank?
-  .span-24.last#badges
-    .span-3.prepend-1.border
-      %h4{:style => 'margin-bottom: 0;'}= I18n.t("badges.title")
-      = link_to 'What is this?', '#', :id => 'badges_tip', :class => 'info'
-      .tooltip{:style => 'width: 500px; '}= I18n.t("badges.tip")
-    .span-19.prepend-1.last
+#content.clearfix
+  -##profile-photos
+    -# todo
+  .half-col
+    %h4
+      My Social DNA
+      = link_to("What is this?", '#')
+    %ul#profile-social-dna
       = render(:partial => 'badges', :locals => {:user => @user, :badges => @badges})
 
-  %hr.space
+  .half-col.right
+    %h4 Where I've Been
+    #map.user_profile
+      -# map is here
+      -#= image_tag("/images/temp-map.jpg")
+    #map-side-bar.hide
+      = render(:partial => 'locations/locations_map', :locals => {:locations => @locations, :city_id => @city_id})
 
--# show user checkins
-.span-24.last#checkins
-  .span-3.prepend-1.border
-    %h4== Checkins
-  .span-20.last
-    - @checkins.each do |checkin|
-      .span-20.last.location
-        = render(:partial => 'locations/location', :locals => {:location => checkin.location, :tag_link => true, :edit_link => false})
+  .full-col.clearfix
+    %h4 Recently Checked In At
+    #profile-label-tags Tags
+    #profile-label-dna Social DNA
 
-%hr.space
-
-.span-24.last
-  .span-3.prepend-1.border
-    %h4== Tags
-  .span-19.prepend-1.last#tags
-    - tags = @user.checkin_locations.collect(&:tag_list).flatten.uniq.compact.sort
-    = tags.join(', ')
-
-:javascript
-  var growls  = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};
+    %ul#profile-checked-in-at
+      = render(:partial => 'checkins', :locals => {:checkins => @checkins})
+  

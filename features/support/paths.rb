@@ -8,6 +8,9 @@ module NavigationHelpers
   def path_to(page_name)
     case page_name
 
+    when /path "(.+)"/
+      $1
+
     when /the home\s?page/
       '/'
 
@@ -27,10 +30,12 @@ module NavigationHelpers
       "/users/auth/outlately/callback?handle=#{$1}"
 
     when /^(.*)'s profile page$/i
-      user_path(User.find_by_handle($1))
+      user = User.find_by_handle($1)
+      "/users/#{user.id}"
 
     when /^(.*)'s user edit page$/i
-      edit_user_path(User.find_by_handle($1))
+      user = User.find_by_handle($1)
+      "/users/#{user.id}/edit"
 
     when /^(.*)'s plans page$/i
       plans_path

@@ -1,0 +1,15 @@
+- checkins.each do |checkin|
+  - location = checkin.location
+  %li.clearfix
+    %h4
+      = location.name
+      %small= distance_of_time_in_words(Time.zone.now, checkin.checkin_at) + " ago"
+    %div.profile-checked-in-at-tags
+      - if location.tag_list.any?
+        - location.tag_list.each do |tag_name|
+          = link_to tag_name, '#'
+      -# add location tags
+      = link_to(image_tag("/images/profile-add-tags.png", :alt => "add tags"), '#', :class => 'profile-add-tags')
+    .profile-checked-in-at-dna
+      = link_to("Nomad", '#')
+      = link_to("Jetsetter", '#')

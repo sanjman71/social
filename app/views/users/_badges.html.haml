@@ -1,20 +1,4 @@
-- badges.each do |badge|
-  -# find badge votes, partition into agree, disagree votes
-  - votes     = user.badging_votes.where(:badge_id => badge.try(:id)).partition{ |o| o.vote == 1 }
-  - agrees    = votes[0].size
-  - disagrees = votes[1].size
-  -# set voted to true if user has already voted on this badge
-  - voted     = (votes[0] + votes[1]).any?{ |o| o.voter_id == current_user.try(:id) }
-  .span-20.last.badge
-    #badge_name_wrapper
-      %span#badge_name= badge.name
-      - if agrees > 0 or disagrees > 0
-        %span#badge_votes (#{agrees} Agree, #{disagrees} Disagree)
-      - else
-        %span#badge_votes (Be the first to vote)
-      - unless voted
-        -# agree, disagree buttons
-        %span#agree_disagree
-          = link_to 'agree', vote_user_badge_path(user.try(:id), badge.id, 'agree'), :method => :put, :id => 'badge_agree'
-          = link_to 'disagree', vote_user_badge_path(user.try(:id), badge.id, 'disagree'), :method => :put, :id => 'badge_disagree'
-    #badge_label= I18n.t("badge.#{badge.translation}")
+- @badges.each do |badge|
+  %li
+    %h5= badge.name
+    %h6= I18n.t("badge.#{badge.translation}")

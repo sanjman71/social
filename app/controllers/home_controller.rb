@@ -9,9 +9,8 @@ class HomeController < ApplicationController
     @user         = current_user
     @stream       = current_stream
     @city         = current_city || current_user
-    @selector     = rand(2) == 0 ? 'checkins' : 'todos'
-    @method       = "search_#{@stream}_#{@selector}"
-    @order        = [:sort_closer_locations] #[:sort_closer_locations, :sort_checkins_past_week]
+    @method       = "search_#{@stream}_checkins"
+    @order        = [:sort_closer_locations, :sort_checkins_past_week]
     @radius       = 100
     @objects      = @user.send(@method, :limit => checkins_start_count,
                                         :geo_origin => [@city.lat.try(:radians), @city.lng.try(:radians)],
@@ -28,6 +27,7 @@ class HomeController < ApplicationController
 
     @max_objects  = checkins_max_count
     @max_visible  = 10
+    @prob_todos   = 40  # probability of todos vs checkins
 
     logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@city.try(:name) || @city.try(:handle)}:#{@city.try(:lat)}:#{@city.try(:lng)}, stream:#{@stream}")
 

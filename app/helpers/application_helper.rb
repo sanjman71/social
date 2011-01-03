@@ -35,6 +35,11 @@ module ApplicationHelper
     end
   end
 
+  # returns 'controller#action'
+  def controller_hash_action
+    "#{controller.controller_name}##{controller.action_name}"
+  end
+
   # build user display name based on context of the current user
   def user_display_name(user, current_user, me = 'Me')
     case

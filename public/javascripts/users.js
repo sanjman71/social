@@ -9,6 +9,7 @@ $.fn.init_checkin_map = function() {
     }
   });
   
+  /*
   $("a#show_checkin_city").click(function() {
     // mark locations with the selected city as visible
     city_id = $(this).attr('data-city-id');
@@ -23,8 +24,10 @@ $.fn.init_checkin_map = function() {
 
   // click on first city link
   $("a#show_checkin_city:first").click();
+  */
 }
 
+/*
 $.fn.init_match_pictures = function() {
   $("#pics").cycle({fx:'fade', timeout:5000, speed:1000, before:onBefore, after:onAfter});
 
@@ -43,6 +46,7 @@ $.fn.init_match_pictures = function() {
     $("#match #matchby").html(matchby);
   }
 }
+*/
 
 $.fn.init_tooltips = function() {
   $("a#badges_tip").tooltip({effect: 'fade', predelay: 100, fadeOutSpeed: 100, position: "bottom right",
@@ -50,20 +54,16 @@ $.fn.init_tooltips = function() {
   $("a#badges_tip").click(function() { return false; })
 }
 
-$(document).ready(function() {
-
-  $(document).init_tooltips();
-
-  $("a#show_my_spots").click(function() {
-    $("div#checkin_map_prompt").hide();
-    $("div#checkin_map_cities").show();
-    $("div#checkin_map").show();
-    $(document).init_checkin_map();
-    return false;
-  })
-
+.fn.init_growls = function() {
   try {
     // check growls
     if (growls.length > 0) { show_growls(growls); }
   } catch(e) { }
+}
+
+$(document).ready(function() {
+
+  $(document).init_tooltips();
+  $(document).init_checkin_map();
+  $(document).init_growls();
 })

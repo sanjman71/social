@@ -37,7 +37,7 @@ Feature: User's planned checkins
     And checkin todos are expired
     Then "chicago_guy@outlately.com" should receive an email with subject "Your planned checkin at Chicago Starbucks expired"
     When I open the email
-    Then I should see "Your planned checked expired.  That cost you 10 bucks" in the email body
+    Then I should see "Your planned checkin expired.  That cost you 10 bucks" in the email body
 
   Scenario: User should receive an email after checking in to an expired planned checkin
     Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{5.days.ago}", todo_expires_at: "#{5.days.ago+7.days}"
@@ -48,4 +48,4 @@ Feature: User's planned checkins
     Then "chicago_guy@outlately.com" should receive 2 emails
     And "chicago_guy@outlately.com" should receive an email with subject "You checked in at Chicago Starbucks, but not in time"
     When I open the email with subject "You checked in at Chicago Starbucks, but not in time"
-    Then I should see "Your planned checked expired.  That cost you 10 bucks" in the email body
+    Then I should see "Your planned checkin expired.  That cost you 10 bucks" in the email body
