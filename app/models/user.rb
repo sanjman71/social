@@ -426,10 +426,10 @@ class User < ActiveRecord::Base
     self.checkins_count >= Checkin.min_checkins_for_suggestion
   end
 
-  # add user badges based on location tags
+  # add user badges based on checkin location tags
   # note: usually called asynchronously
   def async_add_badges
-    tag_names   = locations.collect(&:tags).flatten.collect(&:name)
+    tag_names   = checkin_locations.collect(&:tags).flatten.collect(&:name)
     return [] if tag_names.blank?
     new_badges  = Badge.all.inject([]) do |array, badge|
       matches = tag_names.grep(Regexp.new(badge.regex))

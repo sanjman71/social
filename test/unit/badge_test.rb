@@ -55,13 +55,31 @@ class BadgeTest < ActiveSupport::TestCase
     assert_equal [], @chicago_male1.badges_list
   end
 
-  should "create user badgings using location tags that match badge" do
-    # create chicago locationship
+  should "add user badges from matching checkin location tags" do
+    # create chicago checkin locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     # create badge
     @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+    # should add badge
     assert_equal 1, @chicago_male1.async_add_badges.size
     assert_equal ['Caffeine Junkie'], @chicago_male1.badges_list
   end
 
+  should "not add user badges from matching friend location tags" do
+    # create chicago friend locationship
+    @chicago_male1.locationships.create!(:location => @chicago_sbux, :friend_checkins => 1)
+    # create badge
+    @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+    # should not add badge
+    assert_equal 0, @chicago_male1.async_add_badges.size
+  end
+
+  should "reverse map tags to matching badges" do
+    # create badges
+    @badge1 = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+    @badge2 = Badge.create(:regex => "coffee|tea", :name => 'Tea Addict')
+    assert_equal [@badge1, @badge2], Badge.reverse_map('coffee')
+    assert_equal [@badge2], Badge.reverse_map('tea')
+    assert_equal [], Badge.reverse_map('tea shop')
+  end
 end
