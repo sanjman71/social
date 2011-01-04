@@ -86,12 +86,16 @@ $.fn.init_stream_timer = function() {
     return tracked;
   }
 
-  function hideObjects(count) {
-    $("#social-stream li:visible:last").slideUp(2000);
+  function countTotalObjects() {
+    return stream_checkin_ids.length + stream_todo_ids.length;
   }
 
-  function countObjects() {
-    return stream_checkin_ids.length + stream_todo_ids.length;
+  function countVisibleObjects() {
+    $("#social-stream li:visible").length;
+  }
+
+  function hideVisibleObjects(count) {
+    $("#social-stream li:visible:last").slideUp(2000);
   }
 
   // add unique objects
@@ -114,14 +118,17 @@ $.fn.init_stream_timer = function() {
       // remove the stream if there were no results
       if (tracked == 0) { removeStream(stream_current); }
 
-      if (countObjects() > max_visible) {
+      // check visible object count
+      if (countVisibleObjects() > max_visible) {
         // hide the last visible object
-        hideObjects(1);
+        hideVisibleObjects(1);
       }
 
       // reset updating flag
       stream_updating = false;
-      if (countObjects() >= max_objects) {
+
+      // check total object count
+      if (countTotalObjects() >= max_objects) {
         // cancel timer
         // console.log("cancelling interval timer");
         clearInterval(stream_timer_id);
