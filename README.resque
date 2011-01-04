@@ -10,6 +10,9 @@ redis-server /usr/local/etc/redis.conf
 
 # Redis Ubuntu Install
 
+sudo aptitude install redis-server
+redis-server /etc/redis/redis.conf
+
 1. Follow directions on https://github.com/defunkt/resque for redis install via resque:
   - sudo mkdir /opt/redis
   - sudo chown -R app:app /opt/redis
