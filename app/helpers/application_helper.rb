@@ -51,7 +51,7 @@ module ApplicationHelper
       user.handle
     end
   end
-
+  
   def build_missing_oauth_links
     missing_oauths = []
     return missing_oauths if !user_signed_in?
@@ -72,18 +72,19 @@ module ApplicationHelper
     missing_oauths
   end
 
-  def user_profile_blurb(user)
-    "#{user.gender_name.try(:titleize)} / #{user.city.try(:name) || 'Unknown'}"
-  end
+  # def user_profile_blurb(user)
+  #   "#{user.gender_name.try(:titleize)} / #{user.city.try(:name) || 'Unknown'}"
+  # end
 
-  def personal_pronoun(user, s=nil)
-    case
-    when user == current_user
-      "My #{s}".strip
-    when user.try(:gender) == 1
-      "Her #{s}".strip
-    when user.try(:gender) == 2
-      "His #{s}".strip
-    end
-  end
+  # def personal_pronoun(user, s=nil)
+  #   case
+  #   when user == current_user
+  #     "My #{s}".strip
+  #   when user.try(:gender) == 1
+  #     "Her #{s}".strip
+  #   when user.try(:gender) == 2
+  #     "His #{s}".strip
+  #   end
+  # end
+
 end

@@ -3,7 +3,7 @@
   %li.clearfix
     %h4
       = location.name
-      %small= distance_of_time_in_words(Time.zone.now, checkin.checkin_at) + " ago"
+      %small= checkin_time_ago(checkin.checkin_at)
     %div.profile-checked-in-at-tags
       - if location.tag_list.any?
         - location.tag_list.each do |tag_name|
