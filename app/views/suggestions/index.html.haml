@@ -2,43 +2,43 @@
 - javascript('suggestions', 'location_search', 'jquery.timepickr')
 - stylesheet('jquery.timepickr')
 
-- content_for :mat do
-  %h2#suggestion_title
-    My Suggestions
-    - if current_user.has_role?('admin')
-      = link_to 'Add', add_suggestions_path, :method => :put, :id => 'add_suggestion', :class => 'admin', :style => 'font-size: 0.5em; margin-left: 7px;'
-  - if @filter
-    %h4= link_to 'All Suggestions', suggestions_path
+#page-header
+  .span-23.prepend-1.last
+    %h2
+      My Suggestions
+      - if current_user.has_role?('admin')
+        = link_to 'Add', add_suggestions_path, :method => :put, :id => 'add_suggestion', :style => 'font-size: 0.5em; margin-left: 7px; color: #fff;'
+    - if @filter
+      %h4= link_to 'All Suggestions', suggestions_path
 
-%hr.space
+#content.clearfix
+  .span.24.last
+    = display_flash(:all)
 
-.span.24.last
-  = display_flash(:all)
-
-.span-24.last#suggestions
-  - @suggestions.each do |suggestion|
-    .span-24.last.suggestion#suggestion{'data-suggestion-id' => suggestion.id, :class => suggestion.state}
-      .span-2.prepend-1#picture
-        - my_party    = suggestion.my_party(current_user)
-        - other_party = suggestion.other_party(current_user)
-        = image_tag(other_party.user.primary_photo_url, :size => '50x50')
-      .span-1#icons
-        -# decline button
-        = link_to(image_tag('circle-delete.png', :size => '25x25', :style => 'margin-top: 10px;'), decline_suggestion_path(suggestion), :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure?', 'data-suggestion-id' => suggestion.id)
-        -#- if my_party.alert?
-          -#= link_to image_tag('circle-alert.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
-        -#- else
-          -#== &nbsp;
-        -#- elsif suggestion.talking?
-          -#= link_to image_tag('pencil.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
-        -#- elsif suggestion.going_out?
-          -#= link_to image_tag('circle-check.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
-        -#- elsif suggestion.bailed?
-          -#= link_to image_tag('circle-delete.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
-      -#.span-19.last.hide{:style => 'padding-top: 5px;', :id => "suggestion_#{suggestion.id}_details_link_wrapper"}
-        -#%h4.bottom.text
-          -#= t("suggestion.title.simple", :name => other_party.handle, :location => suggestion.location.name, :city => suggestion.location.city.try(:name))
-        -#= link_to 'Details', suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_details', 'data-suggestion-id' => suggestion.id
-      .span-19.last{:id => "suggestion_#{suggestion.id}_details"}
-        = render(:partial => 'suggestion_detail',
-                 :locals => {:suggestion => suggestion, :location => suggestion.location, :my_party => my_party, :other_party => other_party})
+  .span-24.last#suggestions
+    - @suggestions.each do |suggestion|
+      .span-24.last.suggestion#suggestion{'data-suggestion-id' => suggestion.id, :class => suggestion.state}
+        .span-2.prepend-1#picture
+          - my_party    = suggestion.my_party(current_user)
+          - other_party = suggestion.other_party(current_user)
+          = image_tag(other_party.user.primary_photo_url, :size => '50x50')
+        .span-1#icons
+          -# decline button
+          = link_to(image_tag('circle-delete.png', :size => '25x25', :style => 'margin-top: 10px;'), decline_suggestion_path(suggestion), :id => 'suggestion_decline', :method => :put, :confirm => 'Are you sure?', 'data-suggestion-id' => suggestion.id)
+          -#- if my_party.alert?
+            -#= link_to image_tag('circle-alert.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+          -#- else
+            -#== &nbsp;
+          -#- elsif suggestion.talking?
+            -#= link_to image_tag('pencil.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+          -#- elsif suggestion.going_out?
+            -#= link_to image_tag('circle-check.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+          -#- elsif suggestion.bailed?
+            -#= link_to image_tag('circle-delete.png', :size => '25x25', :style => 'padding-top: 10px;'), suggestion_path(suggestion)
+        -#.span-19.last.hide{:style => 'padding-top: 5px;', :id => "suggestion_#{suggestion.id}_details_link_wrapper"}
+          -#%h4.bottom.text
+            -#= t("suggestion.title.simple", :name => other_party.handle, :location => suggestion.location.name, :city => suggestion.location.city.try(:name))
+          -#= link_to 'Details', suggestion_path(suggestion), :class => 'admin big', :id => 'suggestion_details', 'data-suggestion-id' => suggestion.id
+        .span-19.last{:id => "suggestion_#{suggestion.id}_details"}
+          = render(:partial => 'suggestion_detail',
+                   :locals => {:suggestion => suggestion, :location => suggestion.location, :my_party => my_party, :other_party => other_party})
