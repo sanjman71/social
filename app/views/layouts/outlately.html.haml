@@ -33,7 +33,6 @@
           %li#nav-home= link_to("Home", root_path)
           - if user_signed_in?
             %li#nav-my-profile= link_to("My Profile", user_path(current_user))
-            %li#nav-friends= link_to("Friends", friends_path)
             %li#nav-plans= link_to("Plans", plans_path)
             %li#nav-invitations= link_to("Invitations", invite_path)
             %li#nav-sign-out= link_to("Sign Out", logout_path)
