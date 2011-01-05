@@ -43,9 +43,10 @@
         #me
           = image_tag(current_user.try(:primary_photo_url), :size => '64x64', :alt => 'my avatar')
           %h2= current_user.try(:handle)
-          #city-menu
-            - if @cities.present?
-              = render(:partial => 'home/cities', :locals => {:city_names => @cities.sort, :current_city => @city})
+          %h3= current_user.city.try(:name)
+          -##city-menu
+            -#- if @cities.present?
+              -#= render(:partial => 'home/cities', :locals => {:city_names => @cities.sort, :current_city => @city})
           #my-points
             #points
               #points-top

@@ -57,10 +57,6 @@ class UsersController < ApplicationController
     end.sort_by { |k, v| -1 * v[:count] }
     @city_id    = @geo_cloud.any? ? @geo_cloud.first[0] : nil
 
-    # initalize cities and user's current city
-    @city       = @user.city || City.new(:name => 'Unknown')
-    @cities     = [@city.try(:name)]
-
     # find user badges
     @badges     = @user.badges.order("badges.name asc")
 

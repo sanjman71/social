@@ -8,6 +8,15 @@
   - javascript 'jquery.metadata'
   - javascript 'jquery.jmapping.min'
 
+- if current_user != @user
+  #page-header
+    #profile-header
+      = image_tag(@user.try(:primary_photo_url), :alt => 'profile-avatar')
+      %h3= @user.handle
+      %h4= @user.city.try(:name)
+    %ul#profile-nav
+      %li= link_to("Meet Up", '#')
+
 #content.clearfix
   -##profile-photos
     -# todo
