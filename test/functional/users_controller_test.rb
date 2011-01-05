@@ -7,6 +7,7 @@ class UsersControllerTest < ActionController::TestCase
   self.use_transactional_fixtures = false
 
   context "routes" do
+    should route(:get, "/profile").to(:controller => 'users', :action => 'show')
     should route(:get, "/users/geo:1.23..-77.89/radius:50").
       to(:controller => 'users', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
     should route(:get, "/users/city:chicago/radius:75").
@@ -38,7 +39,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   def cleanup
-    [Country, State, City, Location, User].each { |klass| klass.delete_all }
+    [Country, State, City, Location, Badge, User].each { |klass| klass.delete_all }
   end
 
   context "index" do
@@ -99,21 +100,21 @@ class UsersControllerTest < ActionController::TestCase
       @badging  = @user1.badges.push(@badge)
     end
 
-    context "edit user link" do
-      should "show edit link when viewing my profile" do
-        sign_in @user1
-        set_beta
-        get :show, :id => @user1.id
-        assert_select "#edit_user_link", 1
-      end
-      
-      should "not show edit link when viewing another user's profile" do
-        sign_in @voter
-        set_beta
-        get :show, :id => @user1.id
-        assert_select "#edit_user_link", 0
-      end
-    end
+    # context "edit user link" do
+    #   should "show edit link when viewing my profile" do
+    #     sign_in @user1
+    #     set_beta
+    #     get :show, :id => @user1.id
+    #     assert_select "#edit_user_link", 1
+    #   end
+    #   
+    #   should "not show edit link when viewing another user's profile" do
+    #     sign_in @voter
+    #     set_beta
+    #     get :show, :id => @user1.id
+    #     assert_select "#edit_user_link", 0
+    #   end
+    # end
 
     context "points for viewing profile" do
       should "cost 10 points to see another user's profile" do
@@ -139,134 +140,34 @@ class UsersControllerTest < ActionController::TestCase
       end
     end
 
-    context "profile matches" do
-      should "not show matches when viewing somebody else's profile" do
-        sign_in @voter
-        set_beta
-        get :show, :id => @user1.id
-        assert_select "div#user_profile_matches_title", 0
-        assert_select "div#user_profile_matches", 0
-      end
-
-      # should "show matches when viewing your own profile" do
-      #   sign_in @user1
-      #   set_beta
-      #   get :show, :id => @user1.id
-      #   assert_select "div#user_profile_matches_title", 1
-      #   assert_select "div#user_profile_matches", 1
-      # end
-    end
-
-    context "badge voting" do
-      should "show agree/disagree if user has not voted yet" do
-        ThinkingSphinx::Test.run do
-          sign_in @voter
-          set_beta
-          get :show, :id => @user1.id
-          assert_template 'show'
-          assert_select "span#badge_name", :text => 'Shopaholic'
-          assert_select "span#badge_votes", 1
-          assert_select "span#agree_disagree", 1
-        end
-      end
-
-      should "not show agree/disagree if user has already voted" do
-        # add badging vote
-        @user1.badging_votes.create!(:badge => @badge, :voter => @voter, :vote => 1)
-        ThinkingSphinx::Test.run do
-          sign_in @voter
-          set_beta
-          get :show, :id => @user1.id
-          assert_template 'show'
-          assert_select "span#badge_name", :text => 'Shopaholic'
-          assert_select "span#badge_votes", 1
-          assert_select "span#agree_disagree", 0
-        end
-      end
-    end
-  end
-
-  context "update" do
-    should "not allow another user to update your profile" do
-      setup_badges
-      @user1 = Factory.create(:user, :handle => 'user1')
-      @user2 = Factory.create(:user, :handle => 'user2')
-      sign_in @user1
-      set_beta
-      put :update, :id => @user2.id, :user => {}
-      assert_redirected_to "/unauthorized"
-    end
-  
-    should "not change user city when id is specified" do
-      setup_badges
-      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
-      sign_in @chicago_user
-      set_beta
-      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:id => @chicago.id, :name => 'Chicago'}}
-      # should not change user city
-      assert_equal @chicago, @chicago_user.reload.city
-    end
-
-    should "not change user city when name is specified" do
-      setup_badges
-      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
-      sign_in @chicago_user
-      set_beta
-      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:name => 'Chicago'}}
-      # should not change user city
-      assert_equal @chicago, @chicago_user.reload.city
-    end
-
-    should "change user city to boston" do
-      setup_badges
-      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
-      sign_in @chicago_user
-      set_beta
-      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:name => 'Boston, MA'}}
-      # should change user city
-      assert_equal @boston, @chicago_user.reload.city
-    end
-
-    should "change user city to toronto" do
-      setup_badges
-      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :city => @chicago)
-      sign_in @chicago_user
-      set_beta
-      put :update, :id => @chicago_user.id, :user => {:city_attributes => {:name => 'Toronto canada'}}
-      # should change user city
-      assert_equal 'Toronto', @chicago_user.reload.city.name
-    end
-
-    should "change gender to 'male'" do
-      setup_badges
-      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :gender => 'female')
-      assert_equal 1, @chicago_user.gender
-      sign_in @chicago_user
-      set_beta
-      put :update, :id => @chicago_user.id, :user => {:gender => 'male'}
-      assert_equal 2, @chicago_user.reload.gender
-    end
-
-    should "change orientation to 'gay'" do
-      setup_badges
-      @chicago_user = Factory.create(:user, :handle => 'chicago_user', :orientation => 'straight')
-      assert_equal 3, @chicago_user.orientation
-      sign_in @chicago_user
-      set_beta
-      put :update, :id => @chicago_user.id, :user => {:orientation => 'gay'}
-      assert_equal 2, @chicago_user.reload.orientation
-    end
+    # deprecated for now
+    # context "badge voting" do
+    #   should "show agree/disagree if user has not voted yet" do
+    #     ThinkingSphinx::Test.run do
+    #       sign_in @voter
+    #       set_beta
+    #       get :show, :id => @user1.id
+    #       assert_template 'show'
+    #       assert_select "span#badge_name", :text => 'Shopaholic'
+    #       assert_select "span#badge_votes", 1
+    #       assert_select "span#agree_disagree", 1
+    #     end
+    #   end
+    # 
+    #   should "not show agree/disagree if user has already voted" do
+    #     # add badging vote
+    #     @user1.badging_votes.create!(:badge => @badge, :voter => @voter, :vote => 1)
+    #     ThinkingSphinx::Test.run do
+    #       sign_in @voter
+    #       set_beta
+    #       get :show, :id => @user1.id
+    #       assert_template 'show'
+    #       assert_select "span#badge_name", :text => 'Shopaholic'
+    #       assert_select "span#badge_votes", 1
+    #       assert_select "span#agree_disagree", 0
+    #     end
+    #   end
+    # end
   end
   
-  context "edit" do
-    should "not allow another user to edit your profile" do
-      setup_badges
-      @user1 = Factory.create(:user, :handle => 'user1')
-      @user2 = Factory.create(:user, :handle => 'user2')
-      sign_in @user1
-      set_beta
-      put :update, :id => @user2.id, :user => {}
-      assert_redirected_to "/unauthorized"
-    end
-  end
 end

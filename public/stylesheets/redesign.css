@@ -110,6 +110,7 @@ ul#nav li a:hover {
 
 body.home ul#nav li#nav-home a,
 body.users ul#nav li#nav-my-profile a,
+body.settings ul#nav li#nav-settings a,
 body.friends ul#nav li#nav-friends a,
 body.plans ul#nav li#nav-plans a {
   color: #fc0;

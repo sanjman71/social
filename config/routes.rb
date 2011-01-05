@@ -34,6 +34,10 @@ Social::Application.routes.draw do
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_users
   match 'users/:id/bucks/:points', :to => "users#bucks", :as => :add_bucks_user
 
+  match 'profile', :to => 'users#show', :via => :get
+  match 'settings', :to => 'settings#show', :via => :get
+  match 'settings', :to => 'settings#update', :via => :put
+
   resources :users do
     get :become, :on => :member
   end

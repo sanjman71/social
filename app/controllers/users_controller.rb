@@ -1,11 +1,11 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:become, :bucks, :edit, :show, :update]
+  before_filter :find_user, :only => [:become, :bucks, :show]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
   privilege_required 'admin', :only => [:become]
-  privilege_required 'manage users', :only => [:bucks, :edit, :update], :on => :user
+  privilege_required 'manage users', :only => [:bucks], :on => :user
 
   # GET /users
   # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_user_ids=1,5,3
@@ -70,23 +70,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # GET /users/1/edit
-  def edit
-    # @user initialized in before filter
-    @show_handle_message = params[:handle].to_i == 1
-  end
-
-  # POST /users/1
-  def update
-    if @user.update_attributes(params[:user])
-      User.log("[user:#{@user.id}] #{@user.handle} updated #{params[:user].inspect}")
-      flash[:notice] = "Profile updated"
-    else
-      flash[:error]  = "There was an error updating your profile"
-    end
-    redirect_back_to(edit_user_path(@user))
-  end
-
   # GET /users/1/become
   # note: admin privileges required
   def become
@@ -112,7 +95,7 @@ class UsersController < ApplicationController
   protected
 
   def find_user
-    @user = User.find(params[:id])
+    @user = params[:id] ? User.find(params[:id]) : current_user
   end
 
   def find_viewer

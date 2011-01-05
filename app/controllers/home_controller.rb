@@ -118,7 +118,7 @@ class HomeController < ApplicationController
   def check_user_has_city
     if user_signed_in? and current_user.city.blank?
       flash[:notice] = "Please choose a location"
-      redirect_to(edit_user_path(current_user)) and return
+      redirect_to(settings_path) and return
     end
   end
   

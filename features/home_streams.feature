@@ -105,10 +105,10 @@ Feature: Home Streams
   #   And I should see "Chicago Lavazza" within "div.stream#trending"
 
   @javascript
-  Scenario: User without a location is redirected to user edit page and prompted to enter a location
+  Scenario: User without a location is redirected to their settings page and prompted to enter a location
     Given a user "chicago_guy" who is a "straight" "male"
     And I am logged in as "chicago_guy"
     When sphinx is indexed
     When I go to the home page
-    Then I should be on chicago_guy's user edit page
-    And I should see "My Profile" within "div.mat"
+    Then I should be on path "/settings"
+    And I should see "My Settings"
