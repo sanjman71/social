@@ -9,7 +9,7 @@
         - location.tag_list.each do |tag_name|
           = link_to tag_name, '#'
       -# add location tags
-      = link_to(image_tag("/images/profile-add-tags.png", :alt => "add tags"), '#', :class => 'profile-add-tags')
+      -#= link_to(image_tag("/images/profile-add-tags.png", :alt => "add tags"), '#', :class => 'profile-add-tags')
     .profile-checked-in-at-dna
       -# reverse map tags to badges
       - badges = location.tag_list.map{ |tag_name| Badge.reverse_map(tag_name) }.flatten.compact.uniq
