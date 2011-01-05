@@ -91,7 +91,7 @@ $.fn.init_stream_timer = function() {
   }
 
   function countVisibleObjects() {
-    $("#social-stream li:visible").length;
+    return $("#social-stream li:visible").length;
   }
 
   function hideVisibleObjects(count) {
