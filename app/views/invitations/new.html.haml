@@ -1,28 +1,28 @@
 - javascript('invitations')
 
-- content_for :mat do
-  %h2{:style => 'margin-top: 10px;'} Invite Friends
+#page-header
+  .span-23.prepend-1.last
+    %h2 Invite Friends
 
-%hr.space
+#content.clearfix
+  .span.24.last
+    = display_flash(:all)
+    = display_alerts
 
-.span.24.last
-  = display_flash(:all)
-  = display_alerts
+  .span-23.prepend-1#invite{:style => 'margin-top: 10px;'}
+    .span-13#search
+      %h4 Add invitee(s) by email address
+      = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks', :style => 'width: 325px; font-size: 1.0em; padding: 0.25em 0.25em; margin: 0px;'
+      %span.hint#search_invitees_hint{:style => 'margin-left: 5px; font-size: 0.8em; color: #777;'}
+      %p{:style => 'padding-top: 100px;'}
 
-.span-23.prepend-1#invite{:style => 'margin-top: 10px;'}
-  .span-13#search
-    %h4 Add invitee(s) by email address
-    = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks', :style => 'width: 325px; font-size: 1.0em; padding: 0.25em 0.25em; margin: 0px;'
-    %span.hint#search_invitees_hint{:style => 'margin-left: 5px; font-size: 0.8em; color: #777;'}
-    %p{:style => 'padding-top: 100px;'}
+    .span-10.last#to
+      %h4 To:
 
-  .span-10.last#to
-    %h4 To:
-
-  .span-10.last#send
-    = form_for @invitation, :url => invite_path, :html => {:class => 'invite'} do |f|
-      -# list of invitees email addresses
-      = text_field_tag :invitees, '', :style => 'display: none;'
-      %p{:style => 'padding-top: 20px;'}
-        = f.submit "Send", :disabled => true
+    .span-10.last#send
+      = form_for @invitation, :url => invite_path, :html => {:class => 'invite'} do |f|
+        -# list of invitees email addresses
+        = text_field_tag :invitees, '', :style => 'display: none;'
+        %p{:style => 'padding-top: 20px;'}
+          = f.submit "Send", :disabled => true
     

@@ -37,12 +37,12 @@
             %li#nav-invitations= link_to("Invitations", invite_path)
             %li#nav-sign-out= link_to("Sign Out", logout_path)
 
-    - if ["home#index", "users#show"].include?(controller_hash_action)
+    - if true #["home#index", "users#show"].include?(controller_hash_action)
       #sub-header.wrapper.clearfix
         #me
           = image_tag(current_user.try(:primary_photo_url), :size => '64x64', :alt => 'my avatar')
           %h2= current_user.try(:handle)
-          %h3= current_user.city.try(:name)
+          %h4= current_user.city.try(:name)
           -##city-menu
             -#- if @cities.present?
               -#= render(:partial => 'home/cities', :locals => {:city_names => @cities.sort, :current_city => @city})
