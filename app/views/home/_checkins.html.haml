@@ -10,8 +10,4 @@
       %small= checkin_time_ago(checkin.checkin_at)
     %h3= location.name
     %div#actions
-      - if user.member? and (user != current_user)
-        - if current_user.locationships.where({:my_checkins.gt => 0} | {:todo_checkins.gt => 0}, :location_id => location.id).count == 0
-          -# not a user checkin or planned checkin
-          = link_to(I18n.t("home.stream.plan_location"), '#', :id => 'plan_checkin', "data-path" => add_todo_location_path(location.id))
-        = link_to(I18n.t("home.stream.meet_user", :name => user.possessive_pronoun.titleize), '#')
+      = render(:partial => 'home/actions', :locals => {:user => user, :location => location})

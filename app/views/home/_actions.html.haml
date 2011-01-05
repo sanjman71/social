@@ -1,0 +1,9 @@
+-# always allowed to add location to todo list
+= link_to(I18n.t("home.stream.plan_location"), '#', :id => 'plan_checkin', "data-path" => add_todo_location_path(location.id))
+- if (user != current_user)
+  - if user.member?
+    -# can meet members
+    = link_to(I18n.t("home.stream.meet_user", :name => user.possessive_pronoun.titleize), user_path(user))
+  - else
+    -# invite others
+    = link_to(I18n.t("home.stream.invite_user", :name => user.possessive_pronoun.titleize), invite_path)

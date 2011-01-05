@@ -11,6 +11,7 @@ en:
       title: Social Stream
       plan_location: "Go Here"
       meet_user: "Meet %{name}"
+      invite_user: "Invite %{name}"
       name:
         guys: Men
         gals: Ladies
