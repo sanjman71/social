@@ -1,24 +1,46 @@
 class InvitationsController < ApplicationController
   respond_to    :html
   before_filter :authenticate_user!
-  
+
   # GET /invite
-  # GET /list/3/invite
+  # GET /invite?to=user:5
   def new
+    if params[:to].to_s.match(/user:(\d+)/)
+      @to = User.find_by_id($1)
+    end
     @invitation = current_user.invitations.new
   end
 
   # POST /invite
   def create
-    @emails = (params.delete(:invitees).try(:split, ',') || []).map(&:strip)
+    @subject  = params[:invitation][:subject]
+    @body     = params[:invitation][:body]
+    @emails   = (params.delete(:invitees).try(:split, ',') || []).map(&:strip)
+    @ignored  = []
     @emails.each do |email|
-      @options    = {:recipient_email => email}
+      # check if email is already a member
+      members     = User.with_email(email).where(:member => 1)
+      if members.any?
+        @ignored.push(email)
+        next
+      end
+      @options    = {:recipient_email => email, :subject => @subject, :body => @body}
       @invitation = current_user.invitations.create!(@options)
     end
-    if @emails.size == 1
+    case @emails.size - @ignored.size
+    when 0
+      flash[:notice] = "No Invitations Sent"
+    when 1
       flash[:notice] = "Sent Invitation"
     else
       flash[:notice] = "Sent #{@emails.size} Invitations"
+    end
+    if @ignored.any?
+      if @ignored.size == 1
+        flash[:notice] += "<br />There is already a member with email #{@ignored.join(', ')}"
+      else
+        flash[:notice] += "<br />There are already members with emails #{@ignored.join(', ')}"
+      end
     end
     @redirect_path = invite_path
     redirect_to @redirect_path

@@ -6,4 +6,4 @@
     = link_to(I18n.t("home.stream.meet_user", :name => user.possessive_pronoun.titleize), user_path(user))
   - else
     -# invite others
-    = link_to(I18n.t("home.stream.invite_user", :name => user.possessive_pronoun.titleize), invite_path)
+    = link_to(I18n.t("home.stream.invite_user", :name => user.possessive_pronoun.titleize), invite_path(:to => "user:#{user.id}"))

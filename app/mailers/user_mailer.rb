@@ -9,7 +9,8 @@ class UserMailer < ActionMailer::Base
     @invitation = Invitation.find(options[:invitation_id])
     @email      = @invitation.recipient_email
     @sender     = @invitation.sender
-    @subject    = "Outlately Invitation!"
+    @subject    = @invitation.subject || "Outlately Invitation!"
+    @message    = @invitation.body
     mail(:to => @email, :subject => @subject)
   end
 end

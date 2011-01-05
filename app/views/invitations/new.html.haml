@@ -10,19 +10,28 @@
     = display_alerts
 
   .span-23.prepend-1#invite{:style => 'margin-top: 10px;'}
-    .span-13#search
-      %h4 Add invitee(s) by email address
-      = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. starbucks', :style => 'width: 325px; font-size: 1.0em; padding: 0.25em 0.25em; margin: 0px;'
+    .span-23#search
+      - if @to
+        -# user specific help text
+        %h4 Invite '#{@to.handle}' by typing in their email address below
+      - else
+        -# general help text
+        %h4 Add invitee(s) by email address
+
+      = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. user@gmail.com', :style => 'width: 500px; font-size: 1.3em; padding: 0.25em 0.25em; margin: 0px;'
       %span.hint#search_invitees_hint{:style => 'margin-left: 5px; font-size: 0.8em; color: #777;'}
-      %p{:style => 'padding-top: 100px;'}
 
-    .span-10.last#to
-      %h4 To:
+    .span-23.last#to{:style => 'margin-top: 20px;'}
+      %h4{:style => 'margin-bottom: 0.5em;'} To:
 
-    .span-10.last#send
+    .span-23.last#send{:style => 'margin-top: 10px;'}
       = form_for @invitation, :url => invite_path, :html => {:class => 'invite'} do |f|
+        %h4.bottom Subject:
+        = f.text_field :subject, :value => I18n.t("invite.subject", :name => current_user.handle), :style => 'width: 500px; font-size: 1.3em; padding: 0.25em 0.25em;'
+        %h4.bottom Body:
+        = f.text_area :body, :value => I18n.t("invite.body"), :style => 'width: 500px; height: 200px; font-size: 1.1em;'
         -# list of invitees email addresses
         = text_field_tag :invitees, '', :style => 'display: none;'
         %p{:style => 'padding-top: 20px;'}
           = f.submit "Send", :disabled => true
-    
+

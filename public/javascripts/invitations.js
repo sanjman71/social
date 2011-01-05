@@ -10,7 +10,9 @@ $.fn.init_invite_autocomplete = function() {
   var searching       = false;
   var added           = false;
 
+  // disable autocomplete
   $(invitee_field).autocomplete({
+    disabled: true,
     minLength : 3,
     delay : 500,
     search : function(event, ui) {
@@ -102,6 +104,10 @@ $.fn.init_invite_autocomplete = function() {
     $(invitee_field).val('');
   }
 
+  function set_hint(s) {
+    $(invitee_field).siblings('#search_invitees_hint').text(s);
+  }
+
   $("a#remove_invitee").live('click', function(event) {
     $(this).parents("div#email").remove();
     if ($("div#to div#email").length == 0) {
@@ -111,12 +117,22 @@ $.fn.init_invite_autocomplete = function() {
     return false;
   })
 
-  $(invitee_field).bind('keypress', function(e) {
+  $(invitee_field).bind('keyup', function(e) {
+    // check input field for a valid email address
+    text  = $(invitee_field).val();
+    email = false;
+    if (validate_email_address(text)) {
+      set_hint("press return to add");
+      email = true
+    } else {
+      set_hint('');
+      email = false;
+    }
+
     if(e.keyCode==13){
       // enter pressed
       // check that input field is a valid email address
-      text = $(invitee_field).val();
-      if (validate_email_address(text)) {
+      if (email) {
         // add email
         add_email(text, text);
         // enable submit
@@ -125,6 +141,8 @@ $.fn.init_invite_autocomplete = function() {
         close_autocomplete();
         // clear search field
         clear_autocomplete();
+        // cleaer hint
+        set_hint('');
       }
       return false;
     }
