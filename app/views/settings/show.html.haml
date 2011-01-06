@@ -33,6 +33,9 @@
         = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name
       .span-24.last
         = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name
+      -# birthdate
+      .span-24.last
+        = f.input :birthdate, :as => :date, :start_year => Date.today.year - 60, :end_year => Date.today.year - 12, :order => [:month, :day, :year]
       -# email address
       .span-24.last
         = f.simple_fields_for :email_addresses do |email_form|

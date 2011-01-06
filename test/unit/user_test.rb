@@ -44,6 +44,13 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+    context "with birthdate" do
+      should "calculate age" do
+        @user1 = User.create!(:name => "User 1", :handle => 'user1', :birthdate => Date.today-13.months)
+        assert_equal 1, @user1.reload.age
+      end
+    end
+
     context "with an empty nested email address hash" do
       setup do
         options = Hash[:name => "User 1", :handle => 'user1', :password => 'secret', :password_confirmation => 'secret',

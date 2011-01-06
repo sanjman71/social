@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101228031710) do
+ActiveRecord::Schema.define(:version => 20110105214924) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -441,6 +441,7 @@ ActiveRecord::Schema.define(:version => 20101228031710) do
     t.string   "handle",                :limit => 100
     t.string   "email",                                                                :default => "",    :null => false
     t.string   "encrypted_password",    :limit => 128,                                 :default => "",    :null => false
+    t.string   "password_salt",                                                        :default => "",    :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
@@ -473,8 +474,11 @@ ActiveRecord::Schema.define(:version => 20101228031710) do
     t.text     "tag_ids"
     t.boolean  "member",                                                               :default => false
     t.string   "invitation_token",      :limit => 20
+    t.date     "birthdate"
+    t.integer  "age",                                                                  :default => 0
   end
 
+  add_index "users", ["age"], :name => "index_users_on_age"
   add_index "users", ["delta"], :name => "index_users_on_delta"
   add_index "users", ["email_addresses_count"], :name => "index_users_on_email_addresses_count"
   add_index "users", ["facebook_id"], :name => "index_users_on_facebook_id"
@@ -498,8 +502,8 @@ ActiveRecord::Schema.define(:version => 20101228031710) do
     t.integer "locations_count",                                               :default => 0
   end
 
-  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zipcodes_on_state_id_and_locations_count"
-  add_index "zipcodes", ["state_id"], :name => "index_zipcodes_on_state_id"
-  add_index "zipcodes", ["timezone_id"], :name => "index_zipcodes_on_timezone_id"
+  add_index "zipcodes", ["state_id", "locations_count"], :name => "index_zips_on_state_id_and_locations_count"
+  add_index "zipcodes", ["state_id"], :name => "index_zips_on_state_id"
+  add_index "zipcodes", ["timezone_id"], :name => "index_zips_on_timezone_id"
 
 end

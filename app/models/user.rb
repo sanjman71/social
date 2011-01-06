@@ -90,11 +90,12 @@ class User < ActiveRecord::Base
   after_create              :send_signup_email
   after_save                :after_add_facebook_id
   after_save                :after_change_points
+  before_save               :before_change_birthdate
 
   attr_accessor             :matchby, :matchvalue
 
   attr_accessible           :handle, :password, :password_confirmation, :remember_me, :gender, :orientation, :rpx,
-                            :facebook_id, :city, :city_id, :member,
+                            :facebook_id, :city, :city_id, :member, :birthdate, :age,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
                             :city_attributes, :availability_attributes, :tag_ids,
                             :preferences_phone, :preferences_email
@@ -577,6 +578,13 @@ class User < ActiveRecord::Base
     if changes[:points] and changes[:points][0] > 0 and changes[:points][1] <= 0
       # points went from positive to negative
       send_alert(:id => :need_bucks)
+    end
+  end
+
+  def before_change_birthdate
+    if changes[:birthdate]
+      # update age
+      self.age = (Date.today - birthdate).to_i/365.242199.to_i
     end
   end
 
