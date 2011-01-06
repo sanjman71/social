@@ -58,9 +58,9 @@
         = link_to("What is Outlately?", '#', :id => 'what-is-outlately')
 
     #main.wrapper.container
-      .span-23.prepend-1.mat
-        = yield :mat
       = yield
+      -# dialogs
+      = render(:partial => 'shared/dialog_whatis_outlately')
 
     #footer.wrapper
       %span &copy; 2011 Outlately

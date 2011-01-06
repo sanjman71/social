@@ -48,6 +48,14 @@ $.fn.init_match_pictures = function() {
 }
 */
 
+$.fn.init_user_dialogs = function() {
+  $("#dialog-profile-meetup").dialog({height: 300, width: 500, modal: true, autoOpen: false});
+  $("#profile-meetup").click(function() {
+    $("#dialog-profile-meetup").dialog('open');
+    return false;
+  })
+}
+
 $.fn.init_tooltips = function() {
   $("a#badges_tip").tooltip({effect: 'fade', predelay: 100, fadeOutSpeed: 100, position: "bottom right",
                              offset: [0,0]});
@@ -62,7 +70,7 @@ $.fn.init_growls = function() {
 }
 
 $(document).ready(function() {
-
+  $(document).init_user_dialogs();
   $(document).init_tooltips();
   $(document).init_checkin_map();
   $(document).init_growls();

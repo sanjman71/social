@@ -11,11 +11,11 @@
 - if current_user != @user
   #page-header
     #profile-header
-      = image_tag(@user.try(:primary_photo_url), :alt => 'profile-avatar')
+      = image_tag(@user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
       %h3= @user.handle
       %h4= @user.city.try(:name)
     %ul#profile-nav
-      %li= link_to("Meet Up", '#')
+      %li= link_to("Meet Up", '#', :id => 'profile-meetup')
 
 #content.clearfix
   -##profile-photos
@@ -42,4 +42,5 @@
 
     %ul#profile-checked-in-at
       = render(:partial => 'checkins', :locals => {:checkins => @checkins})
-  
+
+= render(:partial => 'users/dialog_profile_meetup', :locals => {:user => @user})
