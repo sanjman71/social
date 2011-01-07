@@ -18,7 +18,7 @@ class SettingsController < ApplicationController
     else
       flash[:error]  = "There was an error updating your profile"
     end
-    redirect_back_to(settings_path)
+    redirect_back_to(root_path)
   end
 
   protected
