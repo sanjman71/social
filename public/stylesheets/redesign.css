@@ -492,7 +492,7 @@ a#get-more-points:hover {
   box-shadow:         0 2px 3px rgba(42,27,0,.5);
 }
 
-body.home #content {
+#content.home-content {
   height: 760px;
 }
 
@@ -938,6 +938,37 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags {
 
 ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:hover {
   background: rgba(0,0,0,.3);
+}
+
+#city-cloud {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+#city-cloud li {
+  float: left;
+  margin: 0 2px 2px 0;
+}
+
+#city-cloud li a {
+  background: rgba(0,0,0,.5);
+  height: 24px;
+  line-height: 25px;
+  float: left;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 0 10px;
+  -webkit-border-radius: 13px;
+  -moz-border-radius:    13px;
+  border-radius:         13px;
+  display: block;
+  text-decoration: none;
+}
+
+#city-cloud li a:hover {
+  background: rgba(0,0,0,.7);
 }
 
 /* Invitations Stuff */

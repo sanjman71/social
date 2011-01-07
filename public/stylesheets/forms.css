@@ -16,11 +16,7 @@ input[type="text"], input[type="password"], input[type="email"], textarea {
   float: left;
   clear: both;
 }
-label {
-  float: left;
-  clear: both;
-}
-input[type="submit"] {
+input[type="submit"], label, select {
   clear: both;
   float: left;
 }
