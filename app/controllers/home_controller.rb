@@ -19,7 +19,7 @@ class HomeController < ApplicationController
                                         :group => :user)
     @streams      = streams
     @my_cities    = cities
-    @pop_cities   = cities
+    @pop_cities   = popular_cities
 
     # add user city to my_cities list
     if current_user.city
@@ -83,6 +83,11 @@ class HomeController < ApplicationController
 
   def default_stream
     'everyone'
+  end
+
+  def popular_cities(options={})
+    limit = options[:limit] ? options[:limit].to_i : 10
+    City.where(:locations_count.gt => 10).order("locations_count desc").limit(limit)
   end
 
   def cities
