@@ -1,2 +1,4 @@
 #dialog-profile-meetup{'data-handle' => user.try(:handle), 'title' => "To: #{user.try(:handle)}"}
-  %h3 Todo: send a message here
+  %h3 Message:
+  = text_field_tag :messsage, '', :style => 'width: 400px; font-size: 1.3em;'
+  %h4= link_to 'Send', '#'
