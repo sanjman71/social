@@ -35,8 +35,8 @@
           - if user_signed_in?
             %li#nav-my-profile= link_to("My Profile", profile_path)
             %li#nav-plans= link_to("Plans", plans_path)
-            %li#nav-suggestions= link_to("Suggestions", suggestions_path)
-            %li#nav-invitations= link_to("+ Invitations", invite_path)
+            -#%li#nav-suggestions= link_to("Suggestions", suggestions_path)
+            %li#nav-invitations= link_to("+ Invite Friends", invite_path)
             %li#nav-settings= link_to("Settings", settings_path)
             %li#nav-sign-out= link_to("Sign Out", logout_path)
 
