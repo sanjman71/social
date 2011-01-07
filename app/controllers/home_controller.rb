@@ -18,11 +18,12 @@ class HomeController < ApplicationController
                                         :order => @order,
                                         :group => :user)
     @streams      = streams
-    @cities       = cities
+    @my_cities    = cities
+    @pop_cities   = cities
 
-    # add user city to list of cities
+    # add user city to my_cities list
     if current_user.city
-      @cities.push(current_user.city.name).uniq!
+      @my_cities.push(current_user.city.name).uniq!
     end
 
     @max_objects  = checkins_max_count

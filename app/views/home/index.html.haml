@@ -11,7 +11,11 @@
   - javascript 'stream'
 
 #page-header
-  %h2 Social Stream
+  %h2 #{@city.try(:name)} Social Stream
+  -##city-menu
+    -#- if @my_cities.present?
+      -#= render(:partial => 'home/cities', :locals => {:city_names => @my_cities.sort, :current_city => @city})
+
   %ul#social-stream-nav
     = render(:partial => 'stream_header', :locals => {:streams => @streams, :current_stream => @stream})
 
@@ -28,6 +32,8 @@
   .half-col.right
     #map.home
       -# map is here
+    #popular-cities
+      = render(:partial => 'city_cloud', :locals => {:cities => @pop_cities})
     #map-side-bar.hide
       = render(:partial => 'locations/locations_map', :locals => {:locations => @objects.collect(&:location)})
 

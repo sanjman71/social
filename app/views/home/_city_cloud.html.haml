@@ -1,0 +1,6 @@
+%h4 Popular cities
+- if cities.any?
+  %ul#city-cloud
+    - cities.each do |city|
+      - name = city.is_a?(String) ? city : city.try(:name)
+      %li= link_to name, home_city_path(:name => name.parameterize), :id => name.downcase.parameterize, :method => :put
