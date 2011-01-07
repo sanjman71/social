@@ -1,24 +1,22 @@
 - title('Tag Location')
 - javascript('locations')
 
-- content_for :mat do
-  .span-23.last.padding-bottom-10
-    %h2.bottom Tag - #{@location.name}
-    = link_to 'Back', locations_path, :class => 'admin'
+#page-header
+  %h2.bottom Tag - #{@location.name}
+  = link_to 'Back', locations_path, :class => 'admin'
 
-%hr.space
+#content.home-content.clearfix
+  .span-24.last
+    = display_flash(:all)
 
-.span-24.last
-  = display_flash(:all)
+  .span-24.last.location
+    = render(:partial => 'locations/location', :locals => {:location => @location})
 
-.span-24.last.location
-  = render(:partial => 'locations/location', :locals => {:location => @location})
-  
-%hr.space
+  %hr.space
 
-.span-24.last
-  %h3.prepend-1 Help make outlately better by tagging locations and earning spending cash!
-  = render(:partial => 'locations/location_add_tags', :locals => {:location => @location})
+  .span-24.last
+    %h3.prepend-1 Help make outlately better by tagging locations and earning points!
+    = render(:partial => 'locations/location_add_tags', :locals => {:location => @location})
 
 :javascript
   var growls = #{flash[:growls].blank? ? nil.to_json : flash[:growls].to_json};
