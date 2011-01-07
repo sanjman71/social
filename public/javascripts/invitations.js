@@ -79,8 +79,8 @@ $.fn.init_invite_autocomplete = function() {
   });
 
   function add_email(display, email) {
-    $("#to").append("<div id='email' style='margin-bottom: 5px;'>" +
-                    "<span id='display' style='font-weight: bold;'>" + display + "</span>" +
+    $("#invitees").append("<div class='email' style='margin-bottom: 5px;'>" +
+                    "<span id='display'>" + display + "</span>" +
                     "<span id='address' style='display: none;'>" + email + "</span>" +
                     "<a href='#' id='remove_invitee' class='admin' style='margin-left: 7px;'>Remove</a>" +
                     "</div>");
@@ -109,8 +109,8 @@ $.fn.init_invite_autocomplete = function() {
   }
 
   $("a#remove_invitee").live('click', function(event) {
-    $(this).parents("div#email").remove();
-    if ($("div#to div#email").length == 0) {
+    $(this).parents("div.email").remove();
+    if ($("div.to div.email").length == 0) {
       // no invitees, disable submit
       change_submit(false);
     }

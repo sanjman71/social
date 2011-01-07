@@ -7,6 +7,7 @@
     %link{:rel => "icon", :href =>"/favicon.ico", :type => "image/x-icon"}
     = stylesheet_link_tag 'blueprint/screen'
     = stylesheet_link_tag 'redesign'
+    = stylesheet_link_tag 'forms'
     = stylesheet_link_tag 'outlately'  # overrides redesign
     = stylesheet_link_tag 'growl'
     = stylesheet_link_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/black-tie/jquery-ui.css'
@@ -44,7 +45,7 @@
         #me
           = image_tag(current_user.try(:primary_photo_url), :size => '64x64', :alt => 'my avatar')
           %h2= current_user.try(:handle)
-          %h4= current_user.city.try(:name).to_s + " / " + current_user.age.to_s
+          %h4= current_user.city.try(:name).to_s + ", " + current_user.age.to_s
           -##city-menu
             -#- if @cities.present?
               -#= render(:partial => 'home/cities', :locals => {:city_names => @cities.sort, :current_city => @city})
@@ -64,8 +65,7 @@
 
     #footer.wrapper
       %span &copy; 2011 Outlately
-      %ul
-        %li= link_to 'Footer Link', '#'
+
 
     -# uservoice feedback
     = render :partial => 'layouts/uservoice'

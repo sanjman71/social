@@ -1,37 +1,34 @@
 - javascript('invitations')
 
 #page-header
-  .span-23.prepend-1.last
-    %h2 Invite Friends
+  %h2 Invite Friends
 
 #content.clearfix
-  .span.24.last
-    = display_flash(:all)
-    = display_alerts
+  = display_flash(:all)
+  = display_alerts
+  
+  .span-23#invite
+    .span-23.last#to
+      %label{:for => 'search_invitee_autocomplete'} To:
+    - if @to
+      -# user specific help text
+      %h4 Invite '#{@to.handle}' by typing in their email address below
+    - else
+      -# general help text
+      
+    #invitees
 
-  .span-23.prepend-1#invite{:style => 'margin-top: 10px;'}
-    .span-23#search
-      - if @to
-        -# user specific help text
-        %h4 Invite '#{@to.handle}' by typing in their email address below
-      - else
-        -# general help text
-        %h4 Add invitee(s) by email address
+      = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. user@gmail.com'
+      %span.hint#search_invitees_hint
 
-      = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. user@gmail.com', :style => 'width: 500px; font-size: 1.3em; padding: 0.25em 0.25em; margin: 0px;'
-      %span.hint#search_invitees_hint{:style => 'margin-left: 5px; font-size: 0.8em; color: #777;'}
-
-    .span-23.last#to{:style => 'margin-top: 20px;'}
-      %h4{:style => 'margin-bottom: 0.5em;'} To:
-
-    .span-23.last#send{:style => 'margin-top: 10px;'}
+    %div
       = form_for @invitation, :url => invite_path, :html => {:class => 'invite'} do |f|
-        %h4.bottom Subject:
-        = f.text_field :subject, :value => I18n.t("invite.subject", :name => current_user.handle), :style => 'width: 500px; font-size: 1.3em; padding: 0.25em 0.25em;'
-        %h4.bottom Body:
-        = f.text_area :body, :value => I18n.t("invite.body"), :style => 'width: 500px; height: 200px; font-size: 1.1em;'
+        %label{:for => 'invitation_subject'} Subject:
+        = f.text_field :subject, :value => I18n.t("invite.subject", :name => current_user.handle)
+        %label{:for => 'invitation_body'} Body:
+        = f.text_area :body, :value => I18n.t("invite.body")
         -# list of invitees email addresses
         = text_field_tag :invitees, '', :style => 'display: none;'
-        %p{:style => 'padding-top: 20px;'}
+        %p
           = f.submit "Send", :disabled => true
 

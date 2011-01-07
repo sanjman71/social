@@ -15,7 +15,7 @@
   %ul#social-stream-nav
     = render(:partial => 'stream_header', :locals => {:streams => @streams, :current_stream => @stream})
 
-#content.clearfix
+#content.home-content.clearfix
   .half-col
     %ul#social-stream
       - @objects.sort_by{ rand }.each do |object|
