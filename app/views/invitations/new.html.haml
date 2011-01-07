@@ -1,14 +1,13 @@
 - javascript('invitations')
 
 #page-header
-  .span-23.prepend-1.last
-    %h2 Invite Friends
+  %h2 Invite Friends
 
 #content.clearfix
   = display_flash(:all)
   = display_alerts
   
-  .span-23.prepend-1#invite
+  .span-23#invite
     .span-23.last#to
       %label{:for => 'search_invitee_autocomplete'} To:
     - if @to
