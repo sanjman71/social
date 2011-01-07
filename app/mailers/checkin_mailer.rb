@@ -7,7 +7,7 @@ class CheckinMailer < ActionMailer::Base
     @location = @checkin.location
     @email    = @user.email_address
     @points   = options[:points]
-    @body     = "That checkin got you #{@points} bucks."
+    @body     = "That checkin got you #{@points} points."
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] checkin_imported:location:#{@location.try(:name)}")
