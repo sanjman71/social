@@ -16,17 +16,21 @@
     - else
       -# general help text
       
-    #invitees
+    .span-23.last#invitees
 
       = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. user@gmail.com'
       %span.hint#search_invitees_hint
 
     %div
       = form_for @invitation, :url => invite_path, :html => {:class => 'invite'} do |f|
-        %label{:for => 'invitation_subject'} Subject:
-        = f.text_field :subject, :value => I18n.t("invite.subject", :name => current_user.handle)
-        %label{:for => 'invitation_body'} Body:
-        = f.text_area :body, :value => I18n.t("invite.body")
+        .span-23.last
+          %label{:for => 'invitation_subject'} Subject:
+        .span-23.last
+          = f.text_field :subject, :value => I18n.t("invite.subject", :name => current_user.handle)
+        .span-23.last
+          %label{:for => 'invitation_body'} Body:
+        .span-23.last
+          = f.text_area :body, :value => I18n.t("invite.body")
         -# list of invitees email addresses
         = text_field_tag :invitees, '', :style => 'display: none;'
         %p

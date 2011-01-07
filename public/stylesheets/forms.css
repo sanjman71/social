@@ -13,10 +13,10 @@ input[type="text"], input[type="password"], input[type="email"], textarea {
   padding: 7px;
   color: #363636;
   width: 400px;
-  float: left;
   clear: both;
 }
-input[type="submit"], label, select {
-  clear: both;
-  float: left;
+input[type="submit"], label, select { clear: both; }
+span.hint {
+  margin-left: 5px;
+  color: #bbbbbb;
 }
