@@ -68,7 +68,7 @@ $.fn.init_get_points = function() {
 }
 
 $.fn.init_shared_dialogs = function() {
-  $("#dialog-what-is-outlately").dialog({width: 500, height: 140, modal: true, autoOpen: false});
+  $("#dialog-what-is-outlately").dialog({width: 750, height: 550, modal: true, autoOpen: false});
   $("#what-is-outlately").click(function() {
     $("#dialog-what-is-outlately").dialog('open');
     return false;
