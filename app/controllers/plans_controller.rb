@@ -5,11 +5,14 @@ class PlansController < ApplicationController
 
   # GET /plans
   def index
-    @user     = current_user
-    @todos    = @user.locationships.todo_checkins.order("todo_at desc")
-    @expired  = @user.locationships.expired_todo_checkins.order("todo_expired_at desc")
+    @user       = current_user
+    @pcheckins  = @user.planned_checkins.active
+    @pexpired   = @user.planned_checkins.inactive
 
-    if @todos.any? and @user.primary_email_address.blank?
+    # @todos      = @user.locationships.todo_checkins.order("todo_at desc")
+    # @expired    = @user.locationships.expired_todo_checkins.order("todo_expired_at desc")
+
+    if @pcheckins.any? and @user.primary_email_address.blank?
       flash.now[:notice] = "Add an email address to your profile so we can notify you of checkins on your todo list"
     end
   end
@@ -21,23 +24,21 @@ class PlansController < ApplicationController
 
     begin
       # set user to current user
-      @user         = current_user
-      # find or create locationship
-      @locationship = @user.locationships.find_or_create_by_location_id(@location.id)
-      if @locationship.todo_checkins == 0 and @locationship.my_checkins == 0
-        # location is not on user checkin or todo list
-        @locationship.increment!(:todo_checkins)
+      @user = current_user
+      # create planned checkin
+      @pcheckin = @user.planned_checkins.create(:location => @location)
+      if @pcheckin.valid?
         # add flash message
         flash[:notice] = "We added #{@location.name} to your todo list"
         # add growl message
-        @message = I18n.t("todo.added", :days => Locationship.todo_days,
+        @message = I18n.t("todo.added", :days => PlannedCheckin.todo_days,
                                         :plus_points => Currency.for_completed_todo,
                                         :minus_points => Currency.for_expired_todo.abs)
         # add growl message
         @growls = [{:message => @message, :timeout => 2000}]
       end
       # set status
-      @status = 'ok'
+      @status   = 'ok'
     rescue Exception => e
       # @location already planned
       @status   = 'error'

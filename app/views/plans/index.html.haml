@@ -11,7 +11,7 @@
 
   .span-23.prepend-1#todo_header
     %h3
-      You have #{pluralize(@todos.size, "planned checkin")} on your list
+      You have #{pluralize(@pcheckins.size, "planned checkin")} on your list
       %span{:style => 'padding: 0 5px; font-size: 0.8em;'}= link_to 'Add More', '#', :id => 'show_search_places_autocomplete_form', :class => 'admin'
 
   .span-23.prepend-1.last.search_places_autocomplete_form.hide#todo_search
@@ -26,10 +26,10 @@
       = link_to 'Add', '#', :id => 'add_todo', 'data-url' => add_todo_location_path(:format => 'js'), 'data-disable-with' => 'adding ...', 'data-return-to' => request.fullpath
 
   .span-24.last#todos
-    - @todos.each do |locationship|
+    - @pcheckins.each do |pcheckin|
       .span-24.last.location.padding-bottom-10
-        = render(:partial => 'plans/todo_location', :locals => {:locationship => locationship})
+        = render(:partial => 'plans/todo_location', :locals => {:pcheckin => pcheckin})
 
-    - @expired.each do |locationship|
+    - @pexpired.each do |pcheckin|
       .span-24.last.location.padding-bottom-10
-        = render(:partial => 'plans/todo_location', :locals => {:locationship => locationship})
+        = render(:partial => 'plans/todo_location', :locals => {:pcheckin => pcheckin})

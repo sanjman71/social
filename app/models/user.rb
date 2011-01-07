@@ -41,6 +41,9 @@ class User < ActiveRecord::Base
   # has_many                  :checkin_locations, :through => :checkins   # use locationships instead
   has_many                  :checkin_logs
 
+  # planned checkins
+  has_many                  :planned_checkins
+
   # photos
   has_many                  :photos
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
@@ -485,15 +488,15 @@ class User < ActiveRecord::Base
     end
   end
 
-  def send_todo_checkin_reminders
+  def send_planned_checkin_reminders
     # check if user has an email address
     return 0 if email_addresses_count == 0
-    # look for todos planned between 4 and 5 days ago
-    reminders = locationships.todo_checkins.where(:todo_at.lt => 4.days.ago, :todo_at.gt => 5.days.ago)
-    reminders.each do |locationship|
-      CheckinMailer.delay.todo_reminder({:user_id => self.id, :location_id => locationship.location})
+    # look for planned checkins that expire in 2-3 days
+    pcheckins = planned_checkins.active.where(:expires_at.gt => 2.days.from_now, :expires_at.lt => 3.days.from_now)
+    pcheckins.each do |pcheckin|
+      CheckinMailer.delay.todo_reminder({:user_id => self.id, :location_id => pcheckin.location})
     end
-    reminders.size
+    pcheckins.size
   end
 
   def tableize

@@ -20,23 +20,24 @@ class PlansControllerTest < ActionController::TestCase
   end
 
   context "add" do
-    should "add location to todo list" do
+    setup do
       @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
+    end
+
+    should "add planned checkin" do
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
-      assert_equal 1, @user1.reload.locationships.count
-      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [1], @user1.reload.locationships.collect(&:todo_checkins)
-      assert @user1.reload.locationships.first.todo_at
+      # should add location to planned checkins list
+      assert_equal 1, @user1.reload.planned_checkins.count
+      assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
       # should add growl message
       assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'
       assert_equal "We added Starbucks to your todo list", flash[:notice]
     end
 
-    should "create location and add location to todo list" do
-      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
+    should "create location and add planned checkin" do
       sign_in @user1
       set_beta
       put :add, :location => {:name => "Intelligentsia Coffee",
@@ -45,50 +46,45 @@ class PlansControllerTest < ActionController::TestCase
                               :city_state => "Chicago:IL",
                               :lat => "41.877901218486535",
                               :lng => "-87.62948513031006"}
-      assert_equal 1, @user1.reload.locationships.count
       # should create location
       assert assigns(:location)
-      assert_equal [assigns(:location).id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [1], @user1.reload.locationships.collect(&:todo_checkins)
-      assert @user1.reload.locationships.first.todo_at
+      # should add location to planned checkins list
+      assert_equal 1, @user1.reload.planned_checkins.count
+      assert_equal ["Intelligentsia Coffee"], @user1.reload.planned_checkins.collect{ |pc| pc.location.name }
       # should add growl message
       assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'
       assert_equal "We added Intelligentsia Coffee to your todo list", flash[:notice]
     end
 
-    should "ignore if location already on todo list" do
-      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
-      @user1.locationships.create!(:location => @sbux, :todo_checkins => 1)
-      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [1], @user1.reload.locationships.collect(&:todo_checkins)
+    should "ignore if location already on planned list" do
+      @pcheckin1 = @user1.planned_checkins.create(:location => @sbux)
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
-      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [1], @user1.reload.locationships.collect(&:todo_checkins)
+      # should have same planned checkin
+      assert_equal [@pcheckin1], @user1.planned_checkins 
       # should not add growl message
       assert_nil assigns(:growls)
       assert_redirected_to '/'
       assert_nil flash[:notice]
     end
 
-    should "ignore if location already on checkin list" do
-      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
+    should "allow if location already on checkin list" do
       @user1.locationships.create!(:location => @sbux, :my_checkins => 1)
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
-      assert_equal [@sbux.id], @user1.reload.locationships.collect(&:location_id)
-      assert_equal [0], @user1.reload.locationships.collect(&:todo_checkins)
-      # should not add growl message
-      assert_nil assigns(:growls)
+      # should add location to planned checkins list
+      assert_equal 1, @user1.reload.planned_checkins.count
+      assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
+      # should add growl message
+      assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'
-      assert_nil flash[:notice]
+      assert_equal "We added Starbucks to your todo list", flash[:notice]
     end
 
     should "redirect to params['return_to]" do
-      @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id, :return_to => "/plans"

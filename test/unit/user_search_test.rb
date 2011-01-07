@@ -299,15 +299,16 @@ class UserSearchTest < ActiveSupport::TestCase
 
   context "search_all_todos filter" do
     setup do
-      # create todo(s)
-      @todo1 = @chicago_male1.locationships.create!(:location => @chicago_coffee, :todo_checkins => 1)
+      # create planned checkin
+      @pcheckin1 = @chicago_male1.planned_checkins.create!(:location => @chicago_coffee)
+      work_off_delayed_jobs
     end
 
     should "find 1 todos" do
       ThinkingSphinx::Test.run do
         @todos = @chicago_male1.search_all_todos
         assert_equal 1, @todos.size
-        assert_equal [@todo1], @todos.collect{ |o| o }
+        assert_equal [@pcheckin1], @todos.collect{ |o| o }
       end
     end
   end

@@ -17,7 +17,7 @@ class Checkins < Thor
     require File.expand_path('config/environment.rb')
     users = User.with_todos
     users.each do |user|
-      count = user.send_todo_checkin_reminders
+      count = user.send_planned_checkin_reminders
       if count > 0
         puts "#{Time.now}: [user:#{user.id}] #{user.handle} sending #{count} todo reminders"
       end

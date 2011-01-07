@@ -115,7 +115,7 @@ module Users::Search
 
   def search_todos(options={})
     add_geo_params(options)
-    options.update(:klass => Locationship) unless options[:klass]
+    options.update(:klass => PlannedCheckin) unless options[:klass]
     search(options)
   end
 
@@ -307,8 +307,8 @@ module Users::Search
         with.update(:gender => Array(options[:with_gender]))
       end
     when 'Location'
-    when 'Locationship'
-      # parse locationship specific options
+    when 'PlannedCheckin'
+      # parse planned checkin specific options
       if options[:with_todo_ids] && options[:with_todo_ids].any? # e.g. [1,3,5]
         with.update(:todo_ids => options[:with_todo_ids])
       end

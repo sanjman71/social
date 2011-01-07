@@ -19,14 +19,14 @@ module Users::Points
     self.save
   end
 
-  # add points for todo completed checkin
-  def add_points_for_todo_completed_checkin(points)
+  # add points for completed planned checkin
+  def add_points_for_completed_planned_checkin(points)
     self.points += points
     self.save
   end
 
-  # add points for todo expired checkin
-  def add_points_for_todo_expired_checkin(points)
+  # add points for expired planned checkin
+  def add_points_for_expired_planned_checkin(points)
     self.points += points
     self.save
   end

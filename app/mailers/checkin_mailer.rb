@@ -43,9 +43,8 @@ class CheckinMailer < ActionMailer::Base
     @user     = User.find_by_id(options[:user_id])
     @email    = @user.email_address
     @location = Location.find_by_id(options[:location_id])
-    @checkins = options[:checkins]
     @points   = options[:points]
-    @subject  = @checkins == 0 ? "Your planned checkin at #{@location.name} expired" : "You checked in at #{@location.name}, but not in time"
+    @subject  = "Your planned checkin at #{@location.name} expired"
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_expired:location:#{@location.try(:name)}")

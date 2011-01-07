@@ -1,13 +1,13 @@
-- location = locationship.location
+- location = pcheckin.location
 
 .span-8.prepend-1
   %span.name= location.name
   %br
   %span.street= location.street_city
 .span-12.last.planned_at
-  - if locationship.todo_expired?
+  - if pcheckin.expired?
     %strong Expired
   - else
-    Added: #{locationship.todo_at.try(:today?) ? 'Today' : locationship.todo_at.try(:to_s, :datetime_short)}
+    Added: #{pcheckin.planned_at.try(:today?) ? 'Today' : pcheckin.planned_at.try(:to_s, :datetime_short)}
     %br
-    %strong #{pluralize(locationship.todo_days_left, 'day')} left to check in here
+    %strong #{pluralize(pcheckin.days_left, 'day')} left to check in here
