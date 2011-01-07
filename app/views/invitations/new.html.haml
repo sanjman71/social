@@ -16,6 +16,8 @@
       %h4 Invite '#{@to.handle}' by typing in their email address below
     - else
       -# general help text
+      
+    #invitees
 
       = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. user@gmail.com'
       %span.hint#search_invitees_hint

@@ -939,3 +939,16 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags {
 ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:hover {
   background: rgba(0,0,0,.3);
 }
+
+/* Invitations Stuff */
+#invitees {
+  float: left;
+  clear: both;
+  margin: 0 0 15px 0;
+}
+
+#invitees .email {
+  font-style: italic;
+  font-family: Georgia, serif;
+  font-size: 12px;
+}
