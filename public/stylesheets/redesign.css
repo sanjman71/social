@@ -972,6 +972,61 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:ho
 }
 
 /* Invitations Stuff */
+
+#invite {
+  width: 450px;
+  float: left;
+}
+
+#invite-friends {
+  width: 450px;
+  float: right;
+}
+
+#invite-friends h3 {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+#invite-friends ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#invite-friends ul li {
+  height: 42px;
+  padding: 5px 5px 5px 42px;
+  position: relative;
+  margin: 0 0 7px 0;
+}
+
+#invite-friends ul li img {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+}
+
+#invite-friends ul li h4 {
+  font-size: 14px;
+  font-weight: bold;
+  float: left;
+  clear: both;
+  margin: 0;
+  padding: 0;
+}
+
+#invite-friends ul li h5 {
+  font-size: 11px;
+  font-style: italic;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+  font-family: Georgia, serif;
+  clear: both;
+  float: left;
+}
+
 #invitees {
   float: left;
   clear: both;
