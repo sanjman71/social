@@ -37,12 +37,3 @@ Feature: User's planned checkins
     When I open the email
     Then I should see "Your planned checkin expired.  That cost you 10 points" in the email body
   
-  Scenario: User should receive an email after checking in to an expired planned checkin
-    Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", planned_at: "#{5.days.ago}"
-    And 3 days have passed
-    And a checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
-    # user should receive 2 emails, 1 for checking in and 1 for the expired planned checkin
-    Then "chicago_guy@outlately.com" should receive 2 emails
-    And "chicago_guy@outlately.com" should receive an email with subject "You checked in at Chicago Starbucks, but not in time"
-    When I open the email with subject "You checked in at Chicago Starbucks, but not in time"
-    Then I should see "Your planned checkin expired.  That cost you 10 points" in the email body
