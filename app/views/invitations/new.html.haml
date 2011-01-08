@@ -35,7 +35,4 @@
             = f.submit "Send", :disabled => true
 
     .span-10.last#friends
-      - if @friends.any?
-        %strong Invite your facebook friends who checkin:
-        - @friends.each do |friend|
-          #friend= friend.handle
+      = render(:partial => 'friends', :locals => {:invitees => @finvitees, :members => @fmembers})
