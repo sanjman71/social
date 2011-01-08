@@ -11,7 +11,7 @@ Feature: Import user checkin
     And the delayed jobs are processed
     Then "sanjay@outlately.com" should receive an email with subject "You checked in at Starbucks"
     When I open the email
-    Then I should see "That checkin got you 10 bucks." in the email body
+    Then I should see "That checkin got you 10 points." in the email body
 
   Scenario: Member should not receive an email when a older checkin is imported
     Given a user exists with handle: "sanjay", member: "1"

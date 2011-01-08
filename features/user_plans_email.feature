@@ -6,46 +6,43 @@ Feature: User's planned checkins
     And a state: "IL" should exist with code: "IL"
     And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     Then a user "chicago_guy" should exist with handle: "chicago_guy"
+    And user "chicago_guy" has email "chicago_guy@outlately.com"
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     Then a location "Chicago Starbucks" should exist with name: "Chicago Starbucks"
     And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     Then a location "Chicago Lavazza" should exist with name: "Chicago Lavazza"
 
   Scenario: User should receive an email reminder a few days before a planned checkin expires
-    Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{5.days.ago+1.minute}", todo_expires_at: "#{5.days.ago+1.minute+7.days}"
-    And user "chicago_guy" has email "chicago_guy@outlately.com"
-    And checkin todo reminders are sent
+    Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", planned_at: "#{5.days.ago+1.minute}"
+    And planned checkin reminders are sent
     Then "chicago_guy@outlately.com" should receive an email with subject "Your planned checkin at Chicago Starbucks is about to expire"
     When I open the email
-    Then I should see "Time is running out to checkin at Chicago Starbucks. You get 50 bucks for doing it!" in the email body
+    Then I should see "Time is running out to checkin at Chicago Starbucks. You get 50 points for doing it!" in the email body
 
   Scenario: User should receive an email after completing a planned checkin
-    Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{3.days.ago}", todo_expires_at: "#{3.days.ago+7.days}"
-    And user "chicago_guy" has email "chicago_guy@outlately.com"
+    Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", planned_at: "#{3.days.ago}"
     And a checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
     And the delayed jobs are processed
     # user should receive 2 emails, 1 for checking in and 1 for completing the planned checkin
     Then "chicago_guy@outlately.com" should receive 2 emails
     And "chicago_guy@outlately.com" should receive an email with subject "Your planned checkin at Chicago Starbucks was completed!"
     When I open the email with subject "Your planned checkin at Chicago Starbucks was completed!"
-    Then I should see "You said you'd checkin at Chicago Starbucks and you did. That checkin got you 50 bucks." in the email body
+    Then I should see "You said you'd checkin at Chicago Starbucks and you did. That checkin got you 50 points." in the email body
 
   Scenario: User should receive an email after a planned checkin expires
-    Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{5.days.ago}", todo_expires_at: "#{5.days.ago+7.days}"
-    And user "chicago_guy" has email "chicago_guy@outlately.com"
+    Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", planned_at: "#{5.days.ago}"
     And 3 days have passed
-    And checkin todos are expired
+    And planned checkins are expired
     Then "chicago_guy@outlately.com" should receive an email with subject "Your planned checkin at Chicago Starbucks expired"
     When I open the email
-    Then I should see "Your planned checkin expired.  That cost you 10 bucks" in the email body
-
+    Then I should see "Your planned checkin expired.  That cost you 10 points" in the email body
+  
   Scenario: User should receive an email after checking in to an expired planned checkin
-    Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{5.days.ago}", todo_expires_at: "#{5.days.ago+7.days}"
-    And user "chicago_guy" has email "chicago_guy@outlately.com"
+    Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", planned_at: "#{5.days.ago}"
     And 3 days have passed
     And a checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
     # user should receive 2 emails, 1 for checking in and 1 for the expired planned checkin
     Then "chicago_guy@outlately.com" should receive 2 emails
     And "chicago_guy@outlately.com" should receive an email with subject "You checked in at Chicago Starbucks, but not in time"
     When I open the email with subject "You checked in at Chicago Starbucks, but not in time"
-    Then I should see "Your planned checkin expired.  That cost you 10 bucks" in the email body
+    Then I should see "Your planned checkin expired.  That cost you 10 points" in the email body

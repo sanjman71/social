@@ -9,9 +9,6 @@ class PlansController < ApplicationController
     @pcheckins  = @user.planned_checkins.active
     @pexpired   = @user.planned_checkins.inactive
 
-    # @todos      = @user.locationships.todo_checkins.order("todo_at desc")
-    # @expired    = @user.locationships.expired_todo_checkins.order("todo_expired_at desc")
-
     if @pcheckins.any? and @user.primary_email_address.blank?
       flash.now[:notice] = "Add an email address to your profile so we can notify you of checkins on your todo list"
     end

@@ -1,6 +1,6 @@
 Feature: User's planned checkins
-  As as user, I want to see my planned checkins and receive notifications for expiring and completed plans
-  
+  As as user, I want to see my planned checkins and receive notifications for expiring and completed planned checkins
+
   Background:
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
@@ -13,8 +13,8 @@ Feature: User's planned checkins
 
   @javascript
   Scenario: User should see their planned checkins, most recent first, and expired plans marked clearly
-    Given a locationship exists with user: user "chicago_guy", location: location "Chicago Starbucks", todo_checkins: "1", todo_at: "#{10.days.ago}", todo_expires_at: "#{10.days.ago+7.days}"
-    And a locationship exists with user: user "chicago_guy", location: location "Chicago Lavazza", todo_checkins: "1"
+    Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", planned_at: "#{10.days.ago}"
+    Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Lavazza"
     And I am logged in as "chicago_guy"
     When I go to chicago_guy's plans page
     Then I should see "Chicago Lavazza" within "div#todos div.location:first-child"

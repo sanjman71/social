@@ -110,7 +110,7 @@ $.fn.init_invite_autocomplete = function() {
 
   $("a#remove_invitee").live('click', function(event) {
     $(this).parents("div.email").remove();
-    if ($("div.to div.email").length == 0) {
+    if ($("div#invitees div.email").length == 0) {
       // no invitees, disable submit
       change_submit(false);
     }
@@ -152,7 +152,7 @@ $.fn.init_invite_autocomplete = function() {
 $.fn.init_invite_submit = function() {
   $("form#new_invitation").submit(function() {
     emails   = [];
-    invitees = $("div#to").find("span#address");
+    invitees = $("div#invitees").find("span#address");
     $.map(invitees, function(invitee) {
       email = $(invitee).text();
       emails.push(email);

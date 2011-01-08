@@ -13,7 +13,7 @@ Feature: User sends signup invitations
     Then I should see "Invite Friends"
     And I fill in "search_invitee_autocomplete" with "invitee@outlately.com"
     And I send return to "input#search_invitee_autocomplete"
-    Then I should see "invitee@outlately.com" within "div#to span#display"
+    Then I should see "invitee@outlately.com" within "div#invitees div.email"
     And I press "Send"
     Then I should see "Sent Invitation"
     And the delayed jobs are processed
@@ -26,15 +26,14 @@ Feature: User sends signup invitations
     Then I should be on the login page
 
   @javascript
-  Scenario: User sends an invite to an outlately member
+  Scenario: User tries to send an invite to an outlately member
     When I go to the invite page
     Then I should see "Invite Friends"
     And I fill in "search_invitee_autocomplete" with "chicago_guy@outlately.com"
     And I send return to "input#search_invitee_autocomplete"
-    Then I should see "chicago_guy@outlately.com" within "div#to span#display"
+    Then I should see "chicago_guy@outlately.com" within "div#invitees div.email"
     And I press "Send"
     Then I should see "There is already a member with email chicago_guy@outlately.com"
-
 
   # @javascript
   # Scenario: User sends an invite to an non-member user's email address

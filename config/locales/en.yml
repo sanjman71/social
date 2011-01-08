@@ -40,9 +40,9 @@ en:
     added: "If you go there within %{days} days +$%{plus_points}, otherwise -$%{minus_points}"
   currency:
     view_profile:
-      growl: "Thats %{points} bucks"
+      growl: "Thats %{points} points"
     add_bucks:
-      growl: "You just got %{points} bucks!"
+      growl: "You just got %{points} points!"
   alert:
     linked_account: "You're just a few checkins from being matched."
     need_checkins: "You are just a few checkins from being matched."

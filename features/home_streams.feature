@@ -66,7 +66,8 @@ Feature: Home Streams
     And I should see "chicago_friend1" within "ul#social-stream"
     And I should see "chicago_friend2" within "ul#social-stream"
     And I should not see "chicago_guy2" within "ul#social-stream"
-    And I should not see "Go Here" within "ul#social-stream"
+    And I should see "Go Here" within "ul#social-stream"
+    And I should see "Invite Him" within "ul#social-stream"
     And I should not see "Meet Him" within "ul#social-stream"
 
   # @javascript

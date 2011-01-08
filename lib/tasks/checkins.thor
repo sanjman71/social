@@ -11,26 +11,26 @@ class Checkins < Thor
     puts "#{Time.now}: completed"
   end
 
-  desc "send_todo_reminders", "send checkin todo reminders"
-  def send_todo_reminders
-    puts "#{Time.now}: checking todo reminders"
+  desc "send_planned_checkin_reminders", "send planned checkin reminders"
+  def send_planned_checkin_reminders
+    puts "#{Time.now}: checking planned checkins that are expiring soon"
     require File.expand_path('config/environment.rb')
-    users = User.with_todos
+    users = PlannedCheckin.select("distinct user_id, planned_checkins.*").collect(&:user)
     users.each do |user|
       count = user.send_planned_checkin_reminders
       if count > 0
-        puts "#{Time.now}: [user:#{user.id}] #{user.handle} sending #{count} todo reminders"
+        puts "#{Time.now}: [user:#{user.id}] #{user.handle} sending #{count} planned checkin reminder"
       end
     end
     puts "#{Time.now}: completed"
   end
 
-  desc "expire_todos", "expire past todo checkins"
-  def expire_todos
-    puts "#{Time.now}: expiring todos"
+  desc "expire_planned_checkins", "check for expired planned checkins"
+  def expire_planned_checkins
+    puts "#{Time.now}: expiring planned checkins"
     require File.expand_path('config/environment.rb')
-    expired = Locationship.expire_todos
-    puts "#{Time.now}: expired #{expired} todos"
+    expired = PlannedCheckin.expire_all
+    puts "#{Time.now}: expired #{expired} planned checkins"
   end
 
   desc "stats", "checkin stats over numbers over days, weeks"

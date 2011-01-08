@@ -11,14 +11,14 @@ Given /^user "([^"]*)" checked in to "([^"]*)"(?: when "([^"]*)")?$/ do |handle,
   locship.increment!(:my_checkins)
 end
 
-Given /^checkin todo reminders are sent$/ do
-  User.with_todos.each do |user|
-    user.send_todo_checkin_reminders
+Given /^planned checkin reminders are sent$/ do
+  User.all.each do |user|
+    user.send_planned_checkin_reminders
   end
 end
 
-Given /^checkin todos are expired$/ do
-  Locationship.expire_todos
+Given /^planned checkins are expired$/ do
+  PlannedCheckin.expire_all
 end
 
 

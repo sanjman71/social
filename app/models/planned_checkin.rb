@@ -22,6 +22,7 @@ class PlannedCheckin < ActiveRecord::Base
 
   scope         :active, where(:active => 1)
   scope         :inactive, where(:active => 0)
+  scope         :not_expired, lambda { where(:expires_at.gt => Time.zone.now) }
   scope         :expired, lambda { where(:expires_at.lt => Time.zone.now) }
 
   define_index do

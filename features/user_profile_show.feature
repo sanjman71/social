@@ -20,4 +20,4 @@ Feature: User Profile
     And I am logged in as "chicago_guy"
     When I go to chicago_gal's profile page
     Then I should see "0" within "div#my-points div#screen"
-    And I should see "You are out of bucks"
+    And I should see "You are out of points"

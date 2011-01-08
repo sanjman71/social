@@ -42,13 +42,13 @@ every 1.hour do
 end
 
 every 1.day, :at => '9:00 am' do
-  # send todo reminders
-  command "cd /usr/apps/outlately/current && thor checkins:send_todo_reminders >> /usr/apps/outlately/shared/log/checkin_todo_reminders.log"
+  # send planned checkin reminders
+  command "cd /usr/apps/outlately/current && thor checkins:send_planned_checkin_reminders >> /usr/apps/outlately/shared/log/checkin_todo_reminders.log"
 end
 
 every 1.hour do
-  # expire todos
-  command "cd /usr/apps/outlately/current && thor checkins:expire_todos >> /usr/apps/outlately/shared/log/checkin_todo_expired.log"
+  # expire planned checkins
+  command "cd /usr/apps/outlately/current && thor checkins:expire_planned_checkins >> /usr/apps/outlately/shared/log/checkin_todo_expired.log"
 end
 
 every 1.day, :at => '7:00 am' do
