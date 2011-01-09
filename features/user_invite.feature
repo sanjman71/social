@@ -11,11 +11,9 @@ Feature: User sends signup invitations
   Scenario: User sends an invite to a new user's email address and the user accepts the invitation
     When I go to the invite page
     Then I should see "Invite Friends"
-    And I fill in "search_invitee_autocomplete" with "invitee@outlately.com"
-    And I send return to "input#search_invitee_autocomplete"
-    Then I should see "invitee@outlately.com" within "div#invitees div.email"
+    And I fill in "invitees" with "invitee@outlately.com"
     And I press "Send"
-    Then I should see "Sent Invitation"
+    Then I should see "Sent Invitation."
     And the delayed jobs are processed
     And I go to the logout page
 
@@ -29,36 +27,6 @@ Feature: User sends signup invitations
   Scenario: User tries to send an invite to an outlately member
     When I go to the invite page
     Then I should see "Invite Friends"
-    And I fill in "search_invitee_autocomplete" with "chicago_guy@outlately.com"
-    And I send return to "input#search_invitee_autocomplete"
-    Then I should see "chicago_guy@outlately.com" within "div#invitees div.email"
+    And I fill in "invitees" with "chicago_guy@outlately.com"
     And I press "Send"
-    Then I should see "There is already a member with email chicago_guy@outlately.com"
-
-  # @javascript
-  # Scenario: User sends an invite to an non-member user's email address
-  #   When I go to the invite page
-  #   Then I should see "Invite Friends"
-  #   And I fill in "search_invitee_autocomplete" with "chicago_guy"
-  #   And I wait for "3" seconds
-  #   And I select the option containing "chicago_guy <chicago_guy@outlately.com>" in the autocomplete list
-  #   Then I should see "chicago_guy <chicago_guy@outlately.com>" within "div#to span#display"
-  #   And I press "Send"
-  #   Then I should see "Sent Invitation"
-  #   And the delayed jobs are processed
-  #   Then "chicago_guy@outlately.com" should receive an email with subject "Outlately Invitation!"
-
-  # @javascript
-  # Scenario: User sends an invite to an invited user's email address
-  #   Given user "chicago_guy" invited "friendly@gmail.com"
-  #   And the delayed jobs are deleted
-  #   When I go to the invite page
-  #   Then I should see "Invite Friends"
-  #   And I fill in "search_invitee_autocomplete" with "friend"
-  #   And I wait for "3" seconds
-  #   And I select the option containing "friendly@gmail.com" in the autocomplete list
-  #   Then I should see "friendly@gmail.com" within "div#to span#display"
-  #   And I press "Send"
-  #   Then I should see "Sent Invitation"
-  #   And the delayed jobs are processed
-  #   Then "friendly@gmail.com" should receive an email with subject "Outlately Invitation!"
+    Then I should see "No Invitations Sent. There is already a member with email chicago_guy@outlately.com"
