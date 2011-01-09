@@ -68,7 +68,7 @@ ul#nav {
   float: right;
   margin: 15px 0;
   padding: 5px;
-  background: rgba(0,0,0,.2);
+  background: #282415;
   list-style-type: none;
   -webkit-box-shadow:    0 1px 0 rgba(255,255,255,.1), inset 0 1px 3px rgba(0,0,0,.44);
   -moz-box-shadow:       0 1px 0 rgba(255,255,255,.1), inset 0 1px 3px rgba(0,0,0,.44);
@@ -154,10 +154,9 @@ body.plans ul#nav li#nav-plans a {
 
 #me h4 {
   margin: 0;
-  color: #fff;
-  font-family: Georgia, serif;
-  font-style: italic;
+  color: #372e21;
   font-size: 16px;
+  font-weight: bold;
 }
 
 #my-points {
@@ -339,13 +338,13 @@ a#what-is-outlately {
   -webkit-box-shadow:    0 0 10px rgba(0,0,0,.5), inset 0 1px 0 #73d2f4;
   -moz-box-shadow:       0 0 10px rgba(0,0,0,.5), inset 0 1px 0 #73d2f4;
   box-shadow:            0 0 10px rgba(0,0,0,.5), inset 0 1px 0 #73d2f4;
-  background-color: #0d779d;
+  *background-color: #0d779d url(/images/what-is-outlately.png) 12px 22px no-repeat;
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#12a6dc), color-stop(50%,#0f87b2), color-stop(51%,#0d779d), color-stop(100%,#08475e));
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -moz-linear-gradient(top,                                  #12a6dc 0%,            #0f87b2 50%,              #0d779d 51%,             #08475e 100%);
 }
 
 a#what-is-outlately:hover {
-  background-color: #1499c9;
+  *background-color: #1499c9 url(/images/what-is-outlately.png) 12px 22px no-repeat;
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3ec3f4), color-stop(50%,#0f87b2), color-stop(51%,#0d779d), color-stop(100%,#08475e));
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -moz-linear-gradient(top,                                  #3ec3f4 0%,            #0f87b2 50%,              #0d779d 51%,             #08475e 100%);
 }
@@ -357,7 +356,7 @@ a#get-more-points {
   -moz-border-radius:    10px;
   border-radius:         10px;
   color: #fff;
-  background: rgba(0,0,0,.4);
+  background: #823f0d;
   padding: 0 10px;
   text-decoration: none;
   display: block;
@@ -366,7 +365,7 @@ a#get-more-points {
 }
 
 a#get-more-points:hover {
-  background: rgba(0,0,0,.55);
+  background: #5c2b06;
 }
 
 #main {
@@ -485,7 +484,7 @@ a#get-more-points:hover {
   -moz-border-radius-bottomright: 5px;
   border-radius-bottomleft: 5px;
   border-radius-bottomright: 5px;
-  background: rgba(255,255,255,.9);
+  background: #fff0e6;
   padding: 10px;
   -webkit-box-shadow: 0 2px 3px rgba(42,27,0,.5);
   -moz-box-shadow:    0 2px 3px rgba(42,27,0,.5);
@@ -629,7 +628,7 @@ ul#social-stream {
 
 #footer span {
   float: left;
-  color: rgba(255,255,255,.5);
+  color: #ffb76f;
 }
 
 #footer ul {
@@ -644,7 +643,7 @@ ul#social-stream {
 }
 
 #footer ul li a {
-  color: rgba(255,255,255,.5);
+  color: #ffb76f;
   text-decoration: none;
 }
 
@@ -885,6 +884,7 @@ ul#profile-checked-in-at li div {
   min-height: 27px;
   padding: 5px 5px 2px 5px;
   margin: 0 0 0 10px;
+  *background-color: #dedede;
   background: rgba(0,0,0,.1);
   -webkit-border-radius: 3px;
   -moz-border-radius:    3px;
@@ -895,7 +895,7 @@ ul#profile-checked-in-at li div {
 }
 
 ul#profile-checked-in-at li div a {
-  background: rgba(0,0,0,.5);
+  background: #777;
   height: 24px;
   line-height: 25px;
   float: left;
@@ -912,7 +912,7 @@ ul#profile-checked-in-at li div a {
 }
 
 ul#profile-checked-in-at li div a:hover {
-  background: rgba(0,0,0,.7);
+  background: #555;
 }
 
 ul#profile-checked-in-at li div.profile-checked-in-at-tags {
@@ -952,7 +952,7 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:ho
 }
 
 #city-cloud li a {
-  background: rgba(0,0,0,.5);
+  background: #777;
   height: 24px;
   line-height: 25px;
   float: left;
@@ -968,10 +968,66 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:ho
 }
 
 #city-cloud li a:hover {
-  background: rgba(0,0,0,.7);
+  background: #555;
 }
 
 /* Invitations Stuff */
+
+#invite {
+  width: 450px;
+  float: left;
+}
+
+#invite-friends {
+  width: 450px;
+  float: right;
+}
+
+#invite-friends h3 {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0;
+}
+
+#invite-friends ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#invite-friends ul li {
+  height: 42px;
+  padding: 5px 5px 5px 42px;
+  position: relative;
+  margin: 0 0 7px 0;
+}
+
+#invite-friends ul li img {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+}
+
+#invite-friends ul li h4 {
+  font-size: 14px;
+  font-weight: bold;
+  float: left;
+  clear: both;
+  margin: 0;
+  padding: 0;
+}
+
+#invite-friends ul li h5 {
+  font-size: 11px;
+  font-style: italic;
+  font-weight: normal;
+  margin: 0;
+  padding: 0;
+  font-family: Georgia, serif;
+  clear: both;
+  float: left;
+}
+
 #invitees {
   float: left;
   clear: both;

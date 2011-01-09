@@ -8,31 +8,39 @@
   = display_flash(:all)
   = display_alerts
   
-  .span-24.last
-    .span-14#invite
-      .span-14.last#to
-      - if @to
-        -# user specific help text
-        %h4 Invite '#{@to.handle}' by typing in their email address below
+  #invite-friends
+    %h3 Invite Your Friends Who Checkin
+    %ul
+      - @finvitees.each do |user|
+        %li
+          = image_tag(user.try(:primary_photo_url), :size => '32x32')
+          %h4= user.handle
+
+  #invite
+    - if @to
+      -# user specific help text
+      %h4 Invite '#{@to.handle}' by typing in their email address below
+    - else
+      -# general help text
+
+    .last#invitees
 
       %div
         = form_for @invitation, :url => invite_path, :html => {:class => 'invite'} do |f|
-          .span-14.last
+          .span-12.last
             %label{:for => 'invitees'} To:
-          .span-14.last.bottom
+          .span-12.last.bottom
             = text_area_tag :invitees, '', :id => 'invitees', :placeholder => 'e.g. user@gmail.com', :style => 'height: 30px;'
-          .span-14.last
+          .span-12.last
             %span.hint Lots of people to invite? Seperate multiple email addresses with commas.
-          .span-14.last
+          .span-12.last
             %label{:for => 'invitation_subject'} Subject:
-          .span-14.last
+          .span-12.last
             = f.text_field :subject, :value => I18n.t("invite.subject", :name => current_user.handle)
-          .span-14.last
+          .span-12.last
             %label{:for => 'invitation_body'} Body:
-          .span-14.last
+          .span-12.last
             = f.text_area :body, :value => I18n.t("invite.body")
-          %p
+          .span-12.last
             = f.submit "Send"
 
-    .span-10.last#friends
-      = render(:partial => 'friends', :locals => {:invitees => @finvitees, :members => @fmembers})
