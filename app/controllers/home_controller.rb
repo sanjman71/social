@@ -45,6 +45,7 @@ class HomeController < ApplicationController
     head(:ok)
   end
 
+  # PUT /stream/:name
   # PUT /stream/daters
   def stream
     # change the user's current stream
@@ -52,11 +53,22 @@ class HomeController < ApplicationController
     redirect_to root_path and return
   end
 
+  # PUT /city/:name
   # PUT /city/chicago
   def city
     # change the user's current city
     session[:current_city] = params[:name]
     redirect_to root_path and return
+  end
+
+  # GET /about
+  def about
+    if params[:dialog]
+      render :layout => false
+    else
+      # normal render with layout
+      render :layout => true
+    end
   end
 
   # GET /unauthorized

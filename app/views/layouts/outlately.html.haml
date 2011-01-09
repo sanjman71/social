@@ -11,6 +11,7 @@
     = stylesheet_link_tag 'outlately'  # overrides redesign
     = stylesheet_link_tag 'growl'
     = stylesheet_link_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/black-tie/jquery-ui.css'
+    = stylesheet_link_tag "/fancybox/jquery.fancybox-1.3.4.css"
     <!--[if lt IE 8]>
     <link rel="stylesheet" href="blueprint/ie.css" type="text/css" media="screen, projection">
     <![endif]-->
@@ -21,6 +22,7 @@
     = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'
     = javascript_include_tag 'rails' # jquery-ujs implementation, supports jquery 1.4.4
     = javascript_include_tag 'jquery.growl'
+    = javascript_include_tag 'jquery.fancybox-1.3.4.pack.js'
     = javascript_include_tag 'hash'
     = javascript_include_tag 'application'
     = yield :javascript
@@ -35,7 +37,6 @@
           - if user_signed_in?
             %li#nav-my-profile= link_to("My Profile", profile_path)
             %li#nav-plans= link_to("Plans", plans_path)
-            -#%li#nav-suggestions= link_to("Suggestions", suggestions_path)
             %li#nav-invitations= link_to("+ Invite Friends", invite_path)
             %li#nav-settings= link_to("Settings", settings_path)
             %li#nav-sign-out= link_to("Sign Out", logout_path)
@@ -49,16 +50,16 @@
           #my-points
             #points
               #points-top
-                = link_to("?", '#', :id => "points-info")
+                = link_to("?", "#dialog-points-info", :id => "points-info")
+                %div.hide
+                  #dialog-points-info= I18n.t("about.points")
                 #screen= current_user.try(:points).to_i
                 %span Points
             = link_to("Get More Points", '#', :id => 'get-more-points', 'data-url' => add_bucks_user_path(current_user, 100), 'data-method' => 'put')
-        = link_to("What is Outlately?", '#', :id => 'what-is-outlately')
+        = link_to("What is Outlately?", about_path(:dialog => 'dialog'), :id => 'what-is-outlately')
 
     #main.wrapper.container
       = yield
-      -# dialogs
-      = render(:partial => 'shared/dialog_whatis_outlately')
 
     #footer.wrapper
       %span &copy; 2011 Outlately

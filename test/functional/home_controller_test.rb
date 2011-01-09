@@ -6,6 +6,8 @@ class HomeControllerTest < ActionController::TestCase
   context "routes" do
     should route(:put, '/stream/daters').to(:controller => 'home', :action => 'stream', :name => 'daters')
     should route(:put, '/city/chicago').to(:controller => 'home', :action => 'city', :name => 'chicago')
+    should route(:get, '/about').to(:controller => 'home', :action => 'about')
+    should route(:get, '/about:dialog').to(:controller => 'home', :action => 'about', :dialog => ":dialog")
   end
 
   def setup
