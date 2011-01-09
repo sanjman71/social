@@ -33,17 +33,17 @@ class InvitationsController < ApplicationController
     end
     case @emails.size - @ignored.size
     when 0
-      flash[:notice] = "No Invitations Sent"
+      flash[:notice] = "No Invitations Sent."
     when 1
-      flash[:notice] = "Sent Invitation"
+      flash[:notice] = "Sent Invitation."
     else
-      flash[:notice] = "Sent #{@emails.size} Invitations"
+      flash[:notice] = "Sent #{@emails.size} Invitations."
     end
     if @ignored.any?
       if @ignored.size == 1
-        flash[:notice] += "<br />There is already a member with email #{@ignored.join(', ')}"
+        flash[:notice] += " There is already a member with email #{@ignored.join(', ')}"
       else
-        flash[:notice] += "<br />There are already members with emails #{@ignored.join(', ')}"
+        flash[:notice] += " There are already members with emails #{@ignored.join(', ')}"
       end
     end
     @redirect_path = invite_path

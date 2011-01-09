@@ -152,25 +152,48 @@ $.fn.init_invite_autocomplete = function() {
 $.fn.init_invite_submit = function() {
   $("form#new_invitation").submit(function() {
     emails   = [];
-    invitees = $("div#invitees").find("span#address");
-    $.map(invitees, function(invitee) {
-      email = $(invitee).text();
-      emails.push(email);
+    
+    // filter invitees for valid emails
+    invitee_field = $("textarea#invitees");
+    invitees      = $(invitee_field).val().split(',');
+    $.map(invitees, function(email) {
+      if (validate_email_address(email)) {
+        emails.push(email);
+      }
     })
 
     if (emails.length == 0) {
-      alert("Please select at least one invitee");
+      alert("Please add a valid email address");
       return false;
     }
 
-    // set invitees
-    $(this).find("#invitees").val(emails.join(','));
+    // reset invitees field with validated email addresses
+    $(invitee_field).val(emails.join(','));
 
     return true;
   })
 }
 
+$.fn.init_invite_autoresize = function() {
+  $('textarea#invitees').autoResize({
+      // On resize:
+      onResize : function() {
+          $(this).css({opacity:0.8});
+      },
+      // After resize:
+      animateCallback : function() {
+          $(this).css({opacity:1});
+      },
+      // Quite slow animation:
+      animateDuration : 300,
+      // More extra space:
+      extraSpace : 20,
+      limit: 200
+  });
+}
+
 $(document).ready(function() {
-  $(document).init_invite_autocomplete();
+  // $(document).init_invite_autocomplete();
+  $(document).init_invite_autoresize();
   $(document).init_invite_submit();
 })

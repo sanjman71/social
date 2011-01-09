@@ -1,4 +1,5 @@
 - javascript('invitations')
+- javascript('jquery.autoresize.min')
 
 #page-header
   %h2 Invite Friends
@@ -10,17 +11,18 @@
   .span-24.last
     .span-14#invite
       .span-14.last#to
-        %label{:for => 'search_invitee_autocomplete'} To:
       - if @to
         -# user specific help text
         %h4 Invite '#{@to.handle}' by typing in their email address below
 
-      .span-14.last#invitees
-        = text_field_tag :invitee, '', :id => 'search_invitee_autocomplete',  'data-search-url' => invitee_search_path(:format => 'json'), 'data-submit-text' => 'Add', 'data-submit-url' => '', 'data-waiting' => 'adding ...', 'data-return-to' => request.fullpath, :placeholder => 'e.g. user@gmail.com'
-        %span.hint#search_invitees_hint
-
       %div
         = form_for @invitation, :url => invite_path, :html => {:class => 'invite'} do |f|
+          .span-14.last
+            %label{:for => 'invitees'} To:
+          .span-14.last.bottom
+            = text_area_tag :invitees, '', :id => 'invitees', :placeholder => 'e.g. user@gmail.com', :style => 'height: 30px;'
+          .span-14.last
+            %span.hint Lots of people to invite? Seperate multiple email addresses with commas.
           .span-14.last
             %label{:for => 'invitation_subject'} Subject:
           .span-14.last
@@ -29,10 +31,8 @@
             %label{:for => 'invitation_body'} Body:
           .span-14.last
             = f.text_area :body, :value => I18n.t("invite.body")
-          -# list of invitees email addresses
-          = text_field_tag :invitees, '', :style => 'display: none;'
           %p
-            = f.submit "Send", :disabled => true
+            = f.submit "Send"
 
     .span-10.last#friends
       = render(:partial => 'friends', :locals => {:invitees => @finvitees, :members => @fmembers})
