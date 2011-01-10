@@ -1,6 +1,7 @@
 - title('Profile')
 - stylesheet('map')
 - javascript ('users')
+- javascript('jquery.autoresize.min')
 
 - if @checkins.try(:any?)
   - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
@@ -8,14 +9,14 @@
   - javascript 'jquery.metadata'
   - javascript 'jquery.jmapping.min'
 
-- if current_user != @user
+- if @meetup
   #page-header
     #profile-header
       = image_tag(@user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
       %h3= @user.handle
       %h4= @user.city.try(:name)
     %ul#profile-nav
-      %li= link_to("Meet Up", '#', :id => 'profile-meetup')
+      %li= link_to("Meet Up", '#dialog-profile-meetup', :id => 'profile-meetup')
 
 #content.clearfix
   -##profile-photos
@@ -23,15 +24,14 @@
   .half-col
     %h4
       My Social DNA
-      = link_to("What is this?", '#')
+      = link_to("What is this?", '#dialog-whatis-social-dna', :id => 'whatis-social-dna')
     %ul#profile-social-dna
       = render(:partial => 'badges', :locals => {:user => @user, :badges => @badges})
 
   .half-col.right
     %h4 Where I've Been
     #map.user_profile
-      -# map is here
-      -#= image_tag("/images/temp-map.jpg")
+      -# map here
     #map-side-bar.hide
       = render(:partial => 'locations/locations_map', :locals => {:locations => @locations, :city_id => @city_id})
 
@@ -44,3 +44,4 @@
       = render(:partial => 'checkins', :locals => {:checkins => @checkins})
 
 = render(:partial => 'users/dialog_profile_meetup', :locals => {:user => @user})
+= render(:partial => 'users/dialog_whatis_social_dna')

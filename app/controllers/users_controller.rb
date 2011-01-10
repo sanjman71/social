@@ -60,6 +60,9 @@ class UsersController < ApplicationController
     # find user badges
     @badges     = @user.badges.order("badges.name asc")
 
+    # show meetup button
+    @meetup     = true if (@viewer != @user) or params[:meetup]
+
     if @viewer == @user
       # deprecated: show matching user profiles
       # @matches = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)

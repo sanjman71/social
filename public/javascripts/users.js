@@ -49,18 +49,80 @@ $.fn.init_match_pictures = function() {
 */
 
 $.fn.init_user_dialogs = function() {
-  $("#dialog-profile-meetup").dialog({height: 300, width: 500, modal: true, autoOpen: false});
-  $("#profile-meetup").click(function() {
-    $("#dialog-profile-meetup").dialog('open');
-    return false;
-  })
+  $("a#profile-meetup").fancybox();
+  $("a#whatis-social-dna").fancybox();
 }
 
+$.fn.init_user_message_autoresize = function() {
+  $('textarea#message_body').autoResize({
+      // On resize:
+      onResize : function() {
+        $(this).css({opacity:0.8});
+      },
+      // After resize:
+      animateCallback : function() {
+        $(this).css({opacity:1});
+      },
+      // Quite slow animation:
+      animateDuration : 300,
+      // Extra space in pixels:
+      extraSpace : 10,
+      limit: 200
+  });
+}
+
+$.fn.init_user_message_counter = function() {
+  function textCounting(field, limit) {
+    if (field.value.length > limit) {
+      // over the limit, truncate field
+      field.value = field.value.substring(0, limit);
+    } else {
+      // update counter
+      $(field).siblings("#message_count").text(limit-field.value.length);
+    }
+  }
+
+  // test character counter
+  $('textarea#message_body').keyup(function() {
+    textCounting(this, 140);
+  });
+}
+
+$.fn.init_user_message_submit = function() {
+  $("form#new_message").submit(function() {
+    body = $(this).find("#message_body").val();
+    url  = $(this).attr('data-url');
+
+    if (body == '') {
+      alert("Please enter a message");
+      return false;
+    }
+
+    // disable submit
+    $(this).find("#message_send").attr('disabled', 'disabled');
+    $(this).find("#message_send").val('Sending ...');
+
+    $.post(url, $(this).serialize(), function(data) {
+      // close dialog
+      $.fancybox.close();
+      // reset dialog
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
+    }, 'json');
+
+    return false;
+  });
+}
+
+/*
 $.fn.init_tooltips = function() {
   $("a#badges_tip").tooltip({effect: 'fade', predelay: 100, fadeOutSpeed: 100, position: "bottom right",
                              offset: [0,0]});
   $("a#badges_tip").click(function() { return false; })
 }
+*/
 
 $.fn.init_growls = function() {
   try {
@@ -70,8 +132,11 @@ $.fn.init_growls = function() {
 }
 
 $(document).ready(function() {
+  // $(document).init_tooltips();
   $(document).init_user_dialogs();
-  $(document).init_tooltips();
+  $(document).init_user_message_autoresize();
+  $(document).init_user_message_counter();
+  $(document).init_user_message_submit();
   $(document).init_checkin_map();
   $(document).init_growls();
 })

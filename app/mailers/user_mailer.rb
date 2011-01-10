@@ -11,6 +11,17 @@ class UserMailer < ActionMailer::Base
     @sender     = @invitation.sender
     @subject    = @invitation.subject || "Outlately Invitation!"
     @message    = @invitation.body
+
+    mail(:to => @email, :subject => @subject)
+  end
+  
+  def user_send_message(options)
+    @sender   = User.find(options[:sender_id])
+    @to       = User.find(options[:to_id])
+    @email    = @to.primary_email_address.address
+    @text     = options[:body]
+    @subject  = "#{@sender.handle} sent you a message"
+
     mail(:to => @email, :subject => @subject)
   end
 end

@@ -77,6 +77,9 @@ Social::Application.routes.draw do
   match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_todo_location
   match 'plans', :to => 'plans#index', :via => [:get]
 
+  # messages routes
+  resources :messages, :only => [:create]
+
   # voting routes
   match 'vote/users/:user_id/badge/:badge_id/:vote', :to => 'voting#create', :via => [:put],
     :as => :vote_user_badge

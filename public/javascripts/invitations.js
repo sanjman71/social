@@ -178,16 +178,16 @@ $.fn.init_invite_autoresize = function() {
   $('textarea#invitees').autoResize({
       // On resize:
       onResize : function() {
-          $(this).css({opacity:0.8});
+        $(this).css({opacity:0.8});
       },
       // After resize:
       animateCallback : function() {
-          $(this).css({opacity:1});
+        $(this).css({opacity:1});
       },
       // Quite slow animation:
       animateDuration : 300,
-      // More extra space:
-      extraSpace : 20,
+      // Extra space in pixels:
+      extraSpace : 10,
       limit: 200
   });
 }
