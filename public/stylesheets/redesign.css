@@ -232,11 +232,11 @@ a#points-info {
 }
 
 #city-menu {
-  clear: both;
   float: left;
   text-decoration: none;
-  display: block;
+  display: inline-block;
   position: relative;
+  margin: 15px 0 0 5px;
   height: 30px;
   width: 116px;
   line-height: 30px;

@@ -11,10 +11,10 @@
   - javascript 'stream'
 
 #page-header
-  %h2 #{@city.try(:name)} Social Stream
-  -#city-menu
-    -#- if @my_cities.present?
-      -#= render(:partial => 'home/cities', :locals => {:city_names => @my_cities.sort, :current_city => @city})
+  %h2 Social Stream
+  #city-menu
+    - if @my_cities.present?
+      = render(:partial => 'home/cities', :locals => {:city_names => @my_cities.sort, :current_city => @city})
 
   %ul#social-stream-nav
     = render(:partial => 'stream_header', :locals => {:streams => @streams, :current_stream => @stream})
