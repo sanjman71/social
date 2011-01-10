@@ -66,6 +66,7 @@ h1 a {
 ul#nav {
   height: 20px;
   float: right;
+  display: block;
   margin: 15px 0;
   padding: 5px;
   background: #282415;
@@ -166,6 +167,7 @@ body.plans ul#nav li#nav-plans a {
 }
 
 #points {
+  float: right;
   -webkit-border-radius: 7px;
   -moz-border-radius:    7px;
   border-radius:         7px;
@@ -338,15 +340,15 @@ a#what-is-outlately {
   -webkit-box-shadow:    0 0 10px rgba(0,0,0,.5), inset 0 1px 0 #73d2f4;
   -moz-box-shadow:       0 0 10px rgba(0,0,0,.5), inset 0 1px 0 #73d2f4;
   box-shadow:            0 0 10px rgba(0,0,0,.5), inset 0 1px 0 #73d2f4;
-  *background-color: #0d779d url(/images/what-is-outlately.png) 12px 22px no-repeat;
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#12a6dc), color-stop(50%,#0f87b2), color-stop(51%,#0d779d), color-stop(100%,#08475e));
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -moz-linear-gradient(top,                                  #12a6dc 0%,            #0f87b2 50%,              #0d779d 51%,             #08475e 100%);
+  *background: #0d779d url(/images/what-is-outlately.png) 12px 22px no-repeat;
 }
 
 a#what-is-outlately:hover {
-  *background-color: #1499c9 url(/images/what-is-outlately.png) 12px 22px no-repeat;
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3ec3f4), color-stop(50%,#0f87b2), color-stop(51%,#0d779d), color-stop(100%,#08475e));
   background: url(/images/what-is-outlately.png) 12px 22px no-repeat, -moz-linear-gradient(top,                                  #3ec3f4 0%,            #0f87b2 50%,              #0d779d 51%,             #08475e 100%);
+  *background: #1499c9 url(/images/what-is-outlately.png) 12px 22px no-repeat;
 }
 
 a#get-more-points {
@@ -362,6 +364,7 @@ a#get-more-points {
   display: block;
   font-size: 11px;
   float: right;
+  clear: both;
 }
 
 a#get-more-points:hover {
@@ -791,9 +794,9 @@ ul#profile-social-dna li {
   border-radius:         5px;
   height: 50px;
   padding: 0 10px 0 30px;
-  background-color: #2d271d;
   background: url(/images/li-dna-icon.png) 9px 12px no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#45392a), color-stop(100%,#1c1913));
   background: url(/images/li-dna-icon.png) 9px 12px no-repeat, -moz-linear-gradient(top,                                  #45392a 0%,             #1c1913 100%);
+  *background: #2d271d url(/images/li-dna-icon.png) 9px 12px no-repeat;
 }
 
 ul#profile-social-dna li h5 {
@@ -850,9 +853,10 @@ ul#profile-checked-in-at li {
   -moz-border-radius:    5px;
   border-radius:         5px;
   padding: 5px 10px;
-  background-color: #f2f2f2;
+  background-color: #fff;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fff), color-stop(100%,#f2f2f2));
   background: -moz-linear-gradient(top,                                  #fff 0%,             #f2f2f2 100%);
+  *border: 1px solid #aaa;
 }
 
 ul#profile-checked-in-at li h4 {
@@ -996,7 +1000,7 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:ho
 }
 
 #invite-friends ul li {
-  height: 42px;
+  height: 32px;
   padding: 5px 5px 5px 42px;
   position: relative;
   margin: 0 0 7px 0;
