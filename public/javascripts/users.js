@@ -90,8 +90,9 @@ $.fn.init_user_message_counter = function() {
 
 $.fn.init_user_message_submit = function() {
   $("form#new_message").submit(function() {
-    body = $(this).find("#message_body").val();
-    url  = $(this).attr('data-url');
+    form  = $(this);
+    body  = $(form).find("#message_body").val();
+    url   = $(form).attr('data-url');
 
     if (body == '') {
       alert("Please enter a message");
@@ -99,13 +100,14 @@ $.fn.init_user_message_submit = function() {
     }
 
     // disable submit
-    $(this).find("#message_send").attr('disabled', 'disabled');
-    $(this).find("#message_send").val('Sending ...');
+    $(form).find("#message_send_submit").attr('disabled', 'disabled');
 
-    $.post(url, $(this).serialize(), function(data) {
+    $.post(url, $(form).serialize(), function(data) {
       // close dialog
       $.fancybox.close();
       // reset dialog
+      $(form).find("#message_send_submit").attr('disabled', '');
+      $(form).find("#message_body").val('').trigger('keyup');
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);

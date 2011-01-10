@@ -9,4 +9,4 @@
       = hidden_field_tag 'message[to]', user.try(:handle)
       %br
       %span#message_count 140
-      %span#message_send= submit_tag 'Send'
+      %span#message_send= submit_tag 'Send', :id => 'message_send_submit'
