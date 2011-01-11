@@ -49,7 +49,7 @@ $.fn.init_match_pictures = function() {
 */
 
 $.fn.init_user_dialogs = function() {
-  $("a#profile-meetup").fancybox();
+  $("a#profile-meetup").fancybox({autoDimensions: false, height: 200, width: 500});
   $("a#whatis-social-dna").fancybox();
 }
 
