@@ -45,17 +45,19 @@ class UsersController < ApplicationController
   def show
     # @user, @viewer initialized in before filter
 
-    # find user checkins and locations, most recent checkins first
-    @checkins   = @user.checkins.order("checkin_at desc").includes(:location)
-    @locations  = @checkins.collect(&:location)
+    self.class.benchmark("*** Benchmarking #{@user.handle} profile data") do
+      # find user checkins and locations, most recent checkins first
+      @checkins   = @user.checkins.order("checkin_at desc").includes(:location)
+      @locations  = @checkins.collect(&:location)
 
-    # sort checkin locations by city (city.id => {name, count})
-    @geo_cloud  = @locations.inject(ActiveSupport::OrderedHash.new) do |hash, location|
-      hash[location.city_id] ||= {:count => 0, :name => location.city.try(:name)}
-      hash[location.city_id][:count] +=1
-      hash
-    end.sort_by { |k, v| -1 * v[:count] }
-    @city_id    = @geo_cloud.any? ? @geo_cloud.first[0] : nil
+      # sort checkin locations by city (city.id => {name, count})
+      @geo_cloud  = @locations.inject(ActiveSupport::OrderedHash.new) do |hash, location|
+        hash[location.city_id] ||= {:count => 0, :name => location.city.try(:name)}
+        hash[location.city_id][:count] +=1
+        hash
+      end.sort_by { |k, v| -1 * v[:count] }
+      @city_id    = @geo_cloud.any? ? @geo_cloud.first[0] : nil
+    end # benchmark
 
     # find user badges
     @badges     = @user.badges.order("badges.name asc")
