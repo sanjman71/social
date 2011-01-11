@@ -90,6 +90,7 @@ en:
     whatis: "Go check in at your favorite places, and then check out your Social DNA. Outlately automatically creates your profile based on the places you like."
     tip: "You are what you do. Build your Social DNA by checking in through Facebook or Foursquare. A Jetsetter? Check in at an airport. A Caffeine Junkie? Check in at a Coffee Shop."
   badge:
+    create_your_social_dna: "Check in to places in order to build your profile"
     adventurous_pallette: "Around the world in twenty bites"
     booze_hound: "Less talking, more drinking"
     caffeine_junkie: "Mainlines espresso"

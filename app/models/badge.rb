@@ -9,6 +9,11 @@ class Badge < ActiveRecord::Base
     name.to_s.downcase.gsub(' ', '_')
   end
 
+  def self.default
+    # find default badge
+    badge = self.find_or_create_by_name("Create your Social DNA", :regex => 'x')
+  end
+
   # reverse map a string to matching badges
   def self.reverse_map(s)
     Badge.where(:regex.matches % "%#{s}%")

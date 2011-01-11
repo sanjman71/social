@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
   end
 
   # checkins
-  has_many                  :checkins, :after_add => :after_add_checkin
+  has_many                  :checkins, :after_add => :event_checkin_added
   # has_many                  :checkin_locations, :through => :checkins   # use locationships instead
   has_many                  :checkin_logs
 
@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
   has_many                  :user_suggestions
   has_many                  :suggestions, :through => :user_suggestions
   has_many                  :alerts
-  has_many                  :badgings
+  has_many                  :badgings, :after_add => :event_badging_added
   has_many                  :badges, :through => :badgings
   has_many                  :badging_votes
 
@@ -91,8 +91,7 @@ class User < ActiveRecord::Base
   before_save               :before_save_callback
   after_create              :manage_user_roles
   after_create              :send_signup_email
-  after_save                :after_add_facebook_id
-  after_save                :after_change_points
+  after_save                :event_user_saved
   before_save               :before_change_birthdate
 
   attr_accessor             :matchby, :matchvalue
@@ -559,6 +558,23 @@ class User < ActiveRecord::Base
     return if phone_number.new_record?
   end
 
+  def before_change_birthdate
+    if changes[:birthdate]
+      # update age
+      self.age = (Date.today - birthdate).to_i/365.242199.to_i
+    end
+  end
+
+  def event_user_saved
+    if badgings.count == 0
+      # add default badge
+      badgings.create(:badge => Badge.default)
+    end
+    # delegate to other callbacks
+    after_add_facebook_id
+    after_change_points
+  end
+
   # after_save callback to check for a facebook id
   def after_add_facebook_id
     if fbid = changes['facebook_id'].try(:[], 1)
@@ -569,12 +585,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  # user added a checkin
-  def after_add_checkin(checkin)
-    # add points for checkin
-    add_points(Currency.points_for_checkin(self, checkin))
-  end
-
+  # after_save callback to handle point changes
   def after_change_points
     if changes[:points] and changes[:points][0] > 0 and changes[:points][1] <= 0
       # points went from positive to negative
@@ -582,14 +593,21 @@ class User < ActiveRecord::Base
     end
   end
 
-  def before_change_birthdate
-    if changes[:birthdate]
-      # update age
-      self.age = (Date.today - birthdate).to_i/365.242199.to_i
+  # checkin added
+  def event_checkin_added(checkin)
+    # add points for checkin
+    add_points(Currency.points_for_checkin(self, checkin))
+  end
+
+  # badging added
+  def event_badging_added(badging)
+    if badgings.count > 3 and badgings.where(:badge_id => Badge.default.try(:id)).any?
+      # remove default badge
+      badges.delete(Badge.default)
     end
   end
 
-  # user added an oauth object
+  # oauth added
   def event_oauth_added(oauth)
     update_attribute(:member, true) if !member?
   end

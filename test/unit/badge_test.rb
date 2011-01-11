@@ -42,36 +42,47 @@ class BadgeTest < ActiveSupport::TestCase
                                      :city => @boston)
   end
 
-  should "not create user badgings without matching badges" do
+  should "not add without matching tags" do
+    # create badge
+    @badge   = Badge.create(:regex => "cheese|pizza", :name => 'Caffeine Junkie')
     # create chicago locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-    # should not add badges without badges in the database
-    @chicago_male1.async_add_badges
-    assert_equal [], @chicago_male1.badges.collect(&:name)
-    # create badge
-    @badge = Badge.create(:regex => "cheese|pizza", :name => 'Caffeine Junkie')
-    # should not add badges with no matching badges in the database
+    # should not add any badges
     assert_equal 0, @chicago_male1.async_add_badges.size
-    assert_equal [], @chicago_male1.badges_list
   end
 
-  should "add user badges from matching checkin location tags" do
+  should "add based on matching checkin location tags" do
     # create chicago checkin locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     # create badge
     @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
-    # should add badge
+    # should add matching badge
     assert_equal 1, @chicago_male1.async_add_badges.size
-    assert_equal ['Caffeine Junkie'], @chicago_male1.badges_list
+    assert_equal ['Create your Social DNA', 'Caffeine Junkie'], @chicago_male1.badges_list
   end
 
-  should "not add user badges from matching friend location tags" do
+  should "not add based on matching friend location tags" do
     # create chicago friend locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :friend_checkins => 1)
     # create badge
     @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
     # should not add badge
     assert_equal 0, @chicago_male1.async_add_badges.size
+  end
+
+  should "remove default badge after 3 badges earned" do
+    # user starts with default badge
+    assert_equal 1, @chicago_male1.reload.badges.count
+    assert_equal ['Create your Social DNA'], @chicago_male1.badges_list
+    # create badges
+    @badge1 = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+    @badge2 = Badge.create(:regex => "tea", :name => 'Tea Addict')
+    @badge3 = Badge.create(:regex => "bagels", :name => 'Bagels, Bagels')
+    @chicago_male1.badges.push(@badge1)
+    @chicago_male1.badges.push(@badge2)
+    @chicago_male1.badges.push(@badge3)
+    # should remove default badge
+    assert_equal 3, @chicago_male1.reload.badges.count
   end
 
   should "reverse map tags to matching badges" do
