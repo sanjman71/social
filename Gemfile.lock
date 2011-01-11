@@ -144,6 +144,8 @@ GEM
       thor (~> 0.14.4)
     json (1.4.6)
     json_pure (1.4.6)
+    juggernaut (2.0.0)
+      redis
     launchy (0.3.7)
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
@@ -349,6 +351,7 @@ DEPENDENCIES
   high_voltage
   httparty (>= 0.6.1)
   jquery-rails (>= 0.2.6)
+  juggernaut
   launchy
   less (>= 1.2.21)
   linecache19
