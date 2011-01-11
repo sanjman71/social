@@ -94,6 +94,8 @@ Social::Application.routes.draw do
   match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
   match 'city/:name', :to => "home#city", :via => [:put], :as => :home_city
 
+  match 'realtime', :to => "realtime#index"
+
   # pages routes
   resources :pages, :controller => 'pages', :only => :show
 
