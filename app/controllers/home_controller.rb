@@ -5,21 +5,23 @@ class HomeController < ApplicationController
 
   # GET /
   def index
-    # find checkins and/or todos
-    @user         = current_user
-    @stream       = current_stream
-    @city         = current_city || current_user
-    @method       = "search_#{@stream}_checkins"
-    @order        = [:sort_closer_locations, :sort_checkins_past_week]
-    @radius       = 100
-    @objects      = @user.send(@method, :limit => checkins_start_count,
-                                        :geo_origin => [@city.lat.try(:radians), @city.lng.try(:radians)],
-                                        :geo_distance => 0.0..@radius.miles.meters.value,
-                                        :order => @order,
-                                        :group => :user)
-    @streams      = streams
-    @my_cities    = cities
-    @pop_cities   = popular_cities
+    self.class.benchmark("*** benchmark [user:#{current_user.id}] #{current_user.handle} home stream data") do
+      # find checkins and/or todos
+      @user         = current_user
+      @stream       = current_stream
+      @city         = current_city || current_user
+      @method       = "search_#{@stream}_checkins"
+      @order        = [:sort_closer_locations, :sort_checkins_past_week]
+      @radius       = 100
+      @objects      = @user.send(@method, :limit => checkins_start_count,
+                                          :geo_origin => [@city.lat.try(:radians), @city.lng.try(:radians)],
+                                          :geo_distance => 0.0..@radius.miles.meters.value,
+                                          :order => @order,
+                                          :group => :user)
+      @streams      = streams
+      @my_cities    = cities
+      @pop_cities   = popular_cities
+    end
 
     # add user city to my_cities list
     if current_user.city
