@@ -30,10 +30,13 @@
           = render(:partial => 'home/todos', :locals => {:objects => [object]})
 
   .half-col.right
+    #popular-cities.clearfix
+      = render(:partial => 'city_cloud', :locals => {:cities => @pop_cities})
+      
+    %h4= @city.name
     #map.home
       -# map is here
-    #popular-cities
-      = render(:partial => 'city_cloud', :locals => {:cities => @pop_cities})
+
     #map-side-bar.hide
       = render(:partial => 'locations/locations_map', :locals => {:locations => @objects.collect(&:location)})
 

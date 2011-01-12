@@ -1039,3 +1039,7 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:ho
   font-family: Georgia, serif;
   font-size: 12px;
 }
+
+#popular-cities {
+  margin-bottom: 10px;
+}
