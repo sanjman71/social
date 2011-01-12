@@ -101,10 +101,6 @@ ul#nav li a {
   text-decoration: none;
 }
 
-ul#nav li a:active {
-  line-height: 22px;
-}
-
 ul#nav li a:hover {
   background: rgba(255,255,255,.1);
 }
