@@ -31,42 +31,43 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :city, :allow_destroy => true, :reject_if => :all_blank
 
   # oauths
-  has_many                  :oauths, :after_add => :event_oauth_added
+  has_many                  :oauths, :after_add => :event_oauth_added, :dependent => :destroy
   Oauth.providers.each do |s|
     has_one                 "#{s}_oauth".to_sym, :class_name => 'Oauth', :conditions => {:provider => s}
   end
 
   # checkins
-  has_many                  :checkins, :after_add => :event_checkin_added
+  has_many                  :checkins, :after_add => :event_checkin_added, :dependent => :destroy
   # has_many                  :checkin_locations, :through => :checkins   # use locationships instead
   has_many                  :checkin_logs
 
   # planned checkins
-  has_many                  :planned_checkins
+  has_many                  :planned_checkins, :dependent => :destroy
 
   # photos
-  has_many                  :photos
+  has_many                  :photos, :dependent => :destroy
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
   has_one                   :primary_photo, :class_name => 'Photo', :order => 'photos.priority asc'
   Oauth.providers.each do |s|
     has_one                 "#{s}_photo", :class_name => 'Photo', :conditions => {:source => s}
   end
 
-  has_many                  :user_suggestions
+  has_many                  :user_suggestions, :dependent => :destroy
   has_many                  :suggestions, :through => :user_suggestions
-  has_many                  :alerts
-  has_many                  :badgings, :after_add => :event_badging_added
+  has_many                  :alerts, :dependent => :destroy
+  has_many                  :badgings, :after_add => :event_badging_added, :dependent => :destroy
   has_many                  :badges, :through => :badgings
-  has_many                  :badging_votes
+  has_many                  :badging_votes, :dependent => :destroy
 
   # friends
-  has_many                  :friendships
+  has_many                  :friendships, :dependent => :destroy
   has_many                  :friends, :through => :friendships
-  has_many                  :inverse_friendships, :class_name => "Friendship", :foreign_key => "friend_id"
+  has_many                  :inverse_friendships, :class_name => "Friendship", :foreign_key => "friend_id",
+                            :dependent => :destroy
   has_many                  :inverse_friends, :through => :inverse_friendships, :source => :user
 
   # locationships
-  has_many                  :locationships
+  has_many                  :locationships, :dependent => :destroy
   has_many                  :locations, :through => :locationships
   has_many                  :checkin_locations, :through => :locationships, :source => :location,
                             :conditions => ["my_checkins > 0"]
@@ -78,7 +79,7 @@ class User < ActiveRecord::Base
                             :conditions => ["my_checkins > 0 OR todo_checkins > 0"]
 
   # invitations
-  has_many                  :invitations, :foreign_key => :sender_id
+  has_many                  :invitations, :foreign_key => :sender_id, :dependent => :destroy
 
   # availability
   has_one                   :availability
