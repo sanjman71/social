@@ -60,10 +60,10 @@ class UsersController < ApplicationController
     end # benchmark
 
     # find user badges
-    @badges     = @user.badges.order("badges.name asc")
+    @badges = @user.badges.order("badges.name asc")
 
-    # show meetup button
-    @meetup     = true if (@viewer != @user) or params[:meetup]
+    # always show meetup button
+    @meetup = true
 
     if @viewer == @user
       # deprecated: show matching user profiles
