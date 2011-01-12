@@ -1,3 +1,6 @@
-= @message
-%p
-Click #{link_to 'here', root_url(:token => @invitation.token)} to signup.
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", 'http-equiv' => "Content-Type"}
+  %body
+    %p= @message
+    %p Click #{link_to 'here', root_url(:token => @invitation.token)} to signup.
