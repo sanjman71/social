@@ -45,7 +45,7 @@ class UsersController < ApplicationController
   def show
     # @user, @viewer initialized in before filter
 
-    self.class.benchmark("*** Benchmarking #{@user.handle} profile data") do
+    self.class.benchmark("*** benchmark [user:#{@user.id}] #{@user.handle} profile data") do
       # find user checkins and locations, most recent checkins first
       @checkins   = @user.checkins.order("checkin_at desc").includes(:location)
       @locations  = @checkins.collect(&:location)
