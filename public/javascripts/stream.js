@@ -18,7 +18,7 @@ $.fn.init_stream_map = function() {
   }
 }
 
-$.fn.init_stream_objects = function() {
+$.fn.init_plan_checkin = function() {
   /*
   $(".stream .location, .stream .match, .stream .checkin").live('mouseover mouseout', function(event) {
     if (event.type == 'mouseover') {
@@ -160,7 +160,7 @@ $.fn.init_stream_timer = function() {
 }
 
 $(document).ready(function() {
+  $(document).init_plan_checkin();
   $(document).init_stream_map();
-  $(document).init_stream_objects();
   $(document).init_stream_timer();
 })
