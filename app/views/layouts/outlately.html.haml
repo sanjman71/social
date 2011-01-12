@@ -29,6 +29,9 @@
     = yield :head
 
   %body{:class => controller.controller_name}
+    -# show query reviewer if enabled in dev environment
+    - if Rails.env == 'development' and respond_to?(:query_review_output)
+      = query_review_output
     #header
       .wrapper
         %h1= link_to("Outlately", '#')
