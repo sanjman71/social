@@ -27,6 +27,7 @@ gem 'less',                   '>= 1.2.21'
 gem 'meta_where',             '>= 0.9.6'
 gem 'oa-oauth',               :require => "omniauth/oauth"
 gem 'omniauth',               '>= 0.1.6'
+gem 'RedCloth',               '>= 4.2.3'
 gem 'resque',                 '>= 1.10.0'
 gem 'simple_form',            '>= 1.2.2'
 gem "SyslogLogger",           ">= 1.4.0"

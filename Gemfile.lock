@@ -23,6 +23,7 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
+    RedCloth (4.2.3)
     SyslogLogger (1.4.0)
       hoe (>= 1.2.0)
     aasm (2.2.0)
@@ -327,6 +328,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  RedCloth (>= 4.2.3)
   SyslogLogger (>= 1.4.0)
   aasm (>= 2.2.0)
   acts-as-taggable-on (>= 2.0.6)
