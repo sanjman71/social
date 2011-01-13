@@ -6,12 +6,16 @@ en:
   invite:
     subject: "%{name} invited you to Outlately!"
     body:
-      "Outlately is a community for those who like meeting people and checking out new places.
-      \n\nFor those of you looking to meet new people and check out what places are hot, the Outlately stream shows guys and girls who are out and about.
+      "Outlately is a community for those who like *meeting people* and *checking out new places*.
+
+      For those of you looking to meet new people and check out what places are hot,the
+      *Everyone stream shows guys and girls who are out and about.*
       Check out what is going on your city, or if you are heading to another city instantly find out what places the people you like are going to.
       Birds of a feather flock together ...
-      \n\nWant to see what your crew is up to?
-      Go to the Friends stream to see where your Facebook friends are and where you should be going right now. Just check in and check out Outlately!"
+
+      *Want to see what your crew is up to?*
+      Go to the Friends stream to see where your Facebook friends are and where you should be going right now.
+      *Just check in and check out Outlately!*"
   home:
     outlately:
       tooltip: "Check-in through Facebook or Foursquare to build your Social DNA and get matched with people who have your same interests."
