@@ -21,8 +21,8 @@ en:
       tooltip: "Check-in through Facebook or Foursquare to build your Social DNA and get matched with people who have your same interests."
     stream:
       title: Social Stream
-      plan_location: "Go Here"
-      meet_user: "Meet %{name}"
+      plan_location: "Plan To Go Here"
+      meet_user: "See %{name} profile"
       invite_user: "Invite %{name}"
       name:
         guys: Men
@@ -60,6 +60,8 @@ en:
       geo_filter: 'Local'
       location: 'Common Thread'
       default: 'Freakie'
+    profile:
+      message: 'Message'
   suggestion:
     error:
       flash: "Whoops, that's not allowed"

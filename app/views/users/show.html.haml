@@ -16,7 +16,7 @@
       %h3= @user.handle
       %h4= @user.city.try(:name)
     %ul#profile-nav
-      %li= link_to("Meet Up", '#dialog-profile-meetup', :id => 'profile-meetup')
+      %li= link_to(I18n.t("user.profile.message"), '#dialog-profile-meetup', :id => 'profile-meetup')
 
 #content.clearfix
   -##profile-photos

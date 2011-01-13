@@ -292,7 +292,7 @@ class User < ActiveRecord::Base
   end
 
   def possessive_pronoun
-    male? ? 'him' : 'her'
+    male? ? 'his' : 'her'
   end
 
   # handle orientation as string, e.g. 'bisexual, 'gay', 'straight'
