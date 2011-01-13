@@ -1,11 +1,7 @@
 %html
   %head
     %meta{'http-equiv' => 'Content-Type', :content => "text/html; charset=utf-8"}
-    %style{'type' => "text/css"}
-      :plain
-        p {
-          color: #777;
-        }
   %body
-    %p= RedCloth.new(@message).to_html
-    %p Click #{link_to 'here', root_url(:token => @invitation.token)} to signup.
+    %p{:style => 'color: #777;'}= raw RedCloth.new(@message).to_html
+    %br
+    Click #{link_to 'here', root_url(:token => @invitation.token)} to signup.
