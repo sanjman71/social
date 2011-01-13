@@ -11,7 +11,7 @@ class Badge < ActiveRecord::Base
 
   def self.default
     # find default badge
-    badge = self.find_or_create_by_name("Create your Social DNA", :regex => 'x')
+    @@default ||= self.find_or_create_by_name("Create your Social DNA", :regex => 'x')
   end
 
   # reverse map a string to matching badges
