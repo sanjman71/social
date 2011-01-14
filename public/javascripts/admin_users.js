@@ -5,7 +5,7 @@ $(document).ready(function() {
     xAxis: { categories: ['Members', 'Non-Members'] },
     yAxis: {
       min: 0,
-      title: { text: "Gender Breakdown" }
+      title: { text: "Gender Breakdown", tickInterval: 1 }
     },
     series: [{name: 'Males', data: [mem_males, non_males]},
              {name: 'Females', data: [mem_females, non_females]}

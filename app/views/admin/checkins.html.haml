@@ -1,4 +1,5 @@
 - javascript("highcharts")
+- javascript('admin_charts')
 - javascript('admin_checkins')
 - stylesheet('admin')
 
@@ -7,9 +8,12 @@
     = render(:partial => 'admin_links')
 
 #content.home-content.clearfix
-  #checkins{:style => 'width: 900px; height: 300px;'}
+  #checkins{:style => 'width: 900px; height: 750px;'}
 
 :javascript
-  var dstart    = #{@dstart.to_datetime.to_i * 1000};
-  var checkins  = #{@checkins};
-  var todos     = #{@todos};
+  var dstart        = #{@dstart.to_datetime.to_i * 1000};
+  var non_checkins  = #{@non_checkins};
+  var mem_checkins  = #{@mem_checkins};
+  var gal_checkins  = #{@gal_checkins};
+  var guy_checkins  = #{@guy_checkins};
+  var todos         = #{@todos};
