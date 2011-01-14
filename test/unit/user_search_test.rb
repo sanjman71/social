@@ -280,6 +280,36 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
+  context "sort checkins by gender" do
+    setup do
+      @chi_checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 1.day.ago))
+      @chi_checkin2 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                               :location => @chicago_sbux,
+                                                                               :checkin_at => 1.day.ago))
+      @chi_checkin3 = @chicago_male2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 1.day.ago))
+    end
+
+    should "rank female checkins higher than male checkins" do
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_females])
+        assert_equal 3, @checkins.size
+        assert_equal [@chi_checkin2, @chi_checkin1, @chi_checkin3], @checkins.collect{ |o| o }
+      end
+    end
+
+    should "rank male checkins higher than female checkins" do
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_males])
+        assert_equal 3, @checkins.size
+        assert_equal [@chi_checkin1, @chi_checkin3, @chi_checkin2], @checkins.collect{ |o| o }
+      end
+    end
+  end
+
   # context "search_now_checkins filter" do
   #   setup do
   #     setup_checkins

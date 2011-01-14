@@ -142,9 +142,9 @@ $.fn.init_stream_timer = function() {
     stream = stream_picks[random];
 
     if (stream == 'checkins') {
-      url = geo_checkins_path+"?limit=1&order=default&max_user_set=3&without_ids="+stream_checkin_ids.join(',');
+      url = geo_checkins_path+"?limit=1&sort_females=1&max_user_set=3&without_ids="+stream_checkin_ids.join(',');
     } else if (stream == 'todos') {
-      url = geo_todos_path+"?limit=1&order=default&max_user_set=3&without_ids="+stream_todo_ids.join(',');
+      url = geo_todos_path+"?limit=1&sort_females=1&max_user_set=3&without_ids="+stream_todo_ids.join(',');
     }
 
     // set current stream

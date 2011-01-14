@@ -12,7 +12,6 @@ module Users::Search
   end
 
   alias :search_everyone_checkins :search_all_checkins
-  alias :search_outlately_checkins :search_all_checkins
 
   def search_my_checkins(options={})
     # include my checkins
@@ -361,6 +360,8 @@ module Users::Search
             send(order.to_s)
           when :sort_other_checkins
             send(order.to_s)
+          when :sort_females, :sort_males
+            send(order.to_s)
           when /^sort_checkins_/
             send(order.to_s)
           when :sort_random
@@ -510,6 +511,16 @@ module Users::Search
     dtime4    = 7.days.ago.utc.to_i
     sort_expr = "IF(checkin_at > #{dtime1}, 10.0, IF(checkin_at > #{dtime2}, 9.0,
                  IF(checkin_at > #{dtime3}, 7.0, IF(checkin_at > #{dtime4}, 5.0, 1.0))))"
+    [sort_expr]
+  end
+
+  def sort_females(options={})
+    sort_expr = "IF(gender = 1, 5.0, 1.0)"
+    [sort_expr]
+  end
+
+  def sort_males(options={})
+    sort_expr = "IF(gender = 2, 5.0, 1.0)"
     [sort_expr]
   end
 
