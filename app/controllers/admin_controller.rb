@@ -10,7 +10,7 @@ class AdminController < ApplicationController
 
   # GET /admin/checkins
   def checkins
-    @dstart     = 1.month.ago.to_date
+    @dstart     = 3.months.ago.to_date
     @drange     = Range.new(@dstart, Date.today)
     # find checkins per day
     @checkins   = Checkin.where(:checkin_at.gte => @dstart).count(:group => "DATE(checkin_at)")
@@ -31,10 +31,8 @@ class AdminController < ApplicationController
 
   # GET /admin/users
   def users
-    # @members          = User.member.count
     @mem_females      = User.member.where(:gender => 1).count
     @mem_males        = User.member.where(:gender => 2).count
-    # @non_members      = User.non_member.count
     @non_females      = User.non_member.where(:gender => 1).count
     @non_males        = User.non_member.where(:gender => 2).count
   end
