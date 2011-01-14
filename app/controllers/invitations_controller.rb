@@ -9,8 +9,8 @@ class InvitationsController < ApplicationController
       @to = User.find_by_id($1)
     end
     @invitation = current_user.invitations.new
-    # find friends with checkins
-    @friends    = (current_user.friends + current_user.inverse_friends).select{ |u| u.checkins_count > 0 }.sort_by{ |u| -1 * u.checkins_count }
+    # sort friends, female first
+    @friends    = (current_user.friends + current_user.inverse_friends).select{ |u| u.checkins_count > 0 }.sort_by{ |u| u.female? ? -1 : 0 }
     # partition into friends that are members and not
     @fmembers, @finvitees = @friends.partition{ |f| f.member? }
   end
