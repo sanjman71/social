@@ -1,0 +1,14 @@
+- javascript("highcharts")
+- javascript('admin_invites')
+
+#page-header{:style => 'background: #fff;'}
+  .span-24.last
+    = render(:partial => 'admin_links')
+
+#content.home-content.clearfix
+  #invitations{:style => 'width: 900px; height: 500px;'}
+
+
+:javascript
+  var dtime1  = #{@dtime1};
+  var invites = #{@invites};

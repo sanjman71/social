@@ -1,0 +1,15 @@
+- javascript("highcharts")
+- javascript('admin_checkins')
+
+#page-header{:style => 'background: #fff;'}
+  .span-24.last
+    = render(:partial => 'admin_links')
+
+#content.home-content.clearfix
+  #checkins{:style => 'width: 900px; height: 500px;'}
+
+
+:javascript
+  var dstart    = #{@dstart.to_datetime.to_i * 1000};
+  var checkins  = #{@checkins};
+  var todos     = #{@todos};
