@@ -1,13 +1,13 @@
 - javascript("highcharts")
 - javascript('admin_checkins')
+- stylesheet('admin')
 
-#page-header{:style => 'background: #fff;'}
+#page-header
   .span-24.last
     = render(:partial => 'admin_links')
 
 #content.home-content.clearfix
-  #checkins{:style => 'width: 900px; height: 500px;'}
-
+  #checkins{:style => 'width: 900px; height: 300px;'}
 
 :javascript
   var dstart    = #{@dstart.to_datetime.to_i * 1000};

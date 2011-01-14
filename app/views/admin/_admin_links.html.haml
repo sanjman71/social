@@ -1,5 +1,6 @@
 #admin_links
   %h2 Admin
   %h4{:style => 'float: left; margin-left: 10px; margin-top: 20px;'}
-    = link_to 'Invites', invites_admin_index_path
-    = link_to 'Checkins', checkins_admin_index_path
+    = link_to 'Checkins', checkins_admin_index_path, :class => params['action'] == 'checkins' ? ['current'] : []
+    = link_to 'Invites', invites_admin_index_path, :class => params['action'] == 'invites' ? ['current'] : []
+    = link_to 'Users', users_admin_index_path, :class => params['action'] == 'users' ? ['current'] : []

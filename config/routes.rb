@@ -97,8 +97,9 @@ Social::Application.routes.draw do
   match 'realtime', :to => "realtime#index"
 
   resources :admin, :only => [:index] do
-    get :invites, :on => :collection
     get :checkins, :on => :collection
+    get :invites, :on => :collection
+    get :users, :on => :collection
   end
 
   # pages routes

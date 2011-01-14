@@ -111,6 +111,7 @@ class User < ActiveRecord::Base
   # END acts_as_state_machine
 
   scope                     :member, where(:member => 1)
+  scope                     :non_member, where(:member => 0)
   scope                     :with_oauths, joins(:oauths).where("oauths.id is not null").select("distinct users.id")
   scope                     :with_emails, where(:email_addresses_count.gt => 0)
   scope                     :no_emails, where(:email_addresses_count => 0)
