@@ -59,6 +59,8 @@ group :development, :test do
   gem 'ruby-debug19'
   gem 'shoulda', :require => nil
   gem 'single_test'
+  # attempt to speed up cucumber tests
+  gem 'thin'
   gem 'timecop', '>= 0.3.5'
 end
 
