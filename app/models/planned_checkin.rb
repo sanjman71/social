@@ -54,6 +54,15 @@ class PlannedCheckin < ActiveRecord::Base
     days_float.ceil
   end
 
+  def going
+    if going_at.present?
+      days = (going_at.to_f - Time.zone.now.to_f) / 86400
+      I18n.t("plans.going", :count => days.round)
+    else
+      I18n.t("plans.going_soon")
+    end
+  end
+
   def expired?
     (expires_at < Time.zone.now)
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110106040430) do
+ActiveRecord::Schema.define(:version => 20110114230757) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -377,6 +377,7 @@ ActiveRecord::Schema.define(:version => 20110106040430) do
     t.datetime "completed_at"
     t.integer  "active",       :default => 0
     t.boolean  "delta",        :default => false
+    t.datetime "going_at"
   end
 
   add_index "planned_checkins", ["expires_at"], :name => "index_planned_checkins_on_expires_at"

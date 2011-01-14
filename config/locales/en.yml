@@ -41,7 +41,10 @@ en:
       "See who is out and about! Below shows you who is checking in and where they are checking in at.
        See where your friends are! Meet new people who go the same places you go!"
   todo:
-    added: "If you go there within %{days} days +$%{plus_points}, otherwise -$%{minus_points}"
+    added: "If you go there within %{days} days +%{plus_points}, otherwise -%{minus_points}"
+  plans:
+    going: "Plans on going in %{count} days"
+    going_soon: "Plans on going soon"
   currency:
     view_profile:
       growl: "Thats %{points} points"

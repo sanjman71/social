@@ -31,6 +31,18 @@ class PlannedCheckinTest < ActiveSupport::TestCase
       assert_equal 1, @locship.todo_checkins
     end
 
+    should "set default going_at" do
+      @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux)
+      assert_nil @pcheckin.going_at
+      assert_equal "Plans on going soon", @pcheckin.going
+    end
+
+    should "set going_at to 3 days" do
+      @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux, :going_at => 3.days.from_now)
+      assert @pcheckin.going_at
+      assert_equal "Plans on going in 3 days", @pcheckin.going
+    end
+
     should "not allow if there is an active planned checkin" do
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
@@ -109,7 +121,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
       end
     end
     
-    should "resove as expired when a user checks in to a planned location after it expires" do
+    should "resolve as expired when a user checks in to a planned location after it expires" do
       @pcheckin1  = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       Timecop.travel(Time.now+7.days+1.minute) do
