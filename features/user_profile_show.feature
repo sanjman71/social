@@ -13,13 +13,13 @@ Feature: User Profile
     Then I should see "90" within "div#my-points div#screen"
 
   @javascript
-  Scenario: Visit a user profile and send a 'meetup' message
+  Scenario: Visit a user profile and send a message
     Given I am logged in as "chicago_guy"
     And user "chicago_gal" has email "chicago_gal@outlately.com"
     When I go to chicago_gal's profile page
-    Then I should see "Meet Up"
+    Then I should see "Message"
 
-    And I follow "Meet Up"
+    And I follow "Message"
     And I fill in "message_body" with "Hey there"
     And I press "Send"
     And I wait for "3" seconds

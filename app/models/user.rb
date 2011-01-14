@@ -291,6 +291,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def pronoun
+    male? ? 'him' : 'her'
+  end
+
   def possessive_pronoun
     male? ? 'his' : 'her'
   end

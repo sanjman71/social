@@ -22,7 +22,7 @@ en:
     stream:
       title: Social Stream
       plan_location: "Plan To Go Here"
-      meet_user: "See %{name} profile"
+      meet_user: "See %{name} Profile"
       invite_user: "Invite %{name}"
       name:
         guys: Men
