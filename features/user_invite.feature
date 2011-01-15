@@ -2,8 +2,7 @@ Feature: User sends signup invitations
   As a user I want to send invitations to others to signup.
   
   Background:
-    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", member: "1"
-    Then a user "chicago_guy" should exist with handle: "chicago_guy"
+    Given a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", member: "1"
     And user "chicago_guy" has email "chicago_guy@outlately.com"
     And I am logged in as "chicago_guy"
 
