@@ -10,20 +10,26 @@ class AdminController < ApplicationController
 
   # GET /admin/checkins
   def checkins
-    @dstart         = 3.months.ago.to_date
-    @drange         = Range.new(@dstart, Date.today)
+    @dstart             = 3.months.ago.to_date
+    @drange             = Range.new(@dstart, Date.today)
     # find member/non-member checkins per day
-    @non_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:member => 0}).count(:group => "DATE(checkin_at)")
-    @non_checkins   = @drange.map { |date| @non_checkins[date.to_s].to_i }
-    @mem_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:member => 1}).count(:group => "DATE(checkin_at)")
-    @mem_checkins   = @drange.map { |date| @mem_checkins[date.to_s].to_i }
+    @non_checkins       = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:member => 0}).count(:group => "DATE(checkin_at)")
+    @non_checkins       = @drange.map { |date| @non_checkins[date.to_s].to_i }
+    @mem_checkins       = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:member => 1}).count(:group => "DATE(checkin_at)")
+    @mem_checkins       = @drange.map { |date| @mem_checkins[date.to_s].to_i }
     # find memeber checkins per day
     # @checkins   = @drange.map { |date| @checkins[date.to_s].to_i }
-    # find male, female checkins per day
-    @gal_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:gender => 1, :member => 1}).count(:group => "DATE(checkin_at)")
-    @gal_checkins   = @drange.map { |date| @gal_checkins[date.to_s].to_i }
-    @guy_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:gender => 2, :member => 1}).count(:group => "DATE(checkin_at)")
-    @guy_checkins   = @drange.map { |date| @guy_checkins[date.to_s].to_i }
+    # find member/non-member male/female checkins per day
+    @mem_gal_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:gender => 1, :member => 1}).count(:group => "DATE(checkin_at)")
+    @mem_gal_checkins   = @drange.map { |date| @mem_gal_checkins[date.to_s].to_i }
+    @mem_guy_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:gender => 2, :member => 1}).count(:group => "DATE(checkin_at)")
+    @mem_guy_checkins   = @drange.map { |date| @mem_guy_checkins[date.to_s].to_i }
+
+    @non_gal_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:gender => 1, :member => 0}).count(:group => "DATE(checkin_at)")
+    @non_gal_checkins   = @drange.map { |date| @non_gal_checkins[date.to_s].to_i }
+    @non_guy_checkins   = Checkin.joins(:user).where(:checkin_at.gte => @dstart, :user => {:gender => 2, :member => 0}).count(:group => "DATE(checkin_at)")
+    @non_guy_checkins   = @drange.map { |date| @non_guy_checkins[date.to_s].to_i }
+
     # find planned checkins per day
     @todos          = PlannedCheckin.where(:planned_at.gte => @dstart).count(:group => "DATE(planned_at)")
     @todos          = @drange.map { |date| @todos[date.to_s].to_i }

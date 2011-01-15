@@ -11,9 +11,11 @@
   #checkins{:style => 'width: 900px; height: 750px;'}
 
 :javascript
-  var dstart        = #{@dstart.to_datetime.to_i * 1000};
-  var non_checkins  = #{@non_checkins};
-  var mem_checkins  = #{@mem_checkins};
-  var gal_checkins  = #{@gal_checkins};
-  var guy_checkins  = #{@guy_checkins};
-  var todos         = #{@todos};
+  var dstart            = #{@dstart.to_datetime.to_i * 1000};
+  var non_checkins      = #{@non_checkins};
+  var mem_checkins      = #{@mem_checkins};
+  var mem_gal_checkins  = #{@mem_gal_checkins};
+  var mem_guy_checkins  = #{@mem_guy_checkins};
+  var non_gal_checkins  = #{@non_gal_checkins};
+  var non_guy_checkins  = #{@non_guy_checkins};
+  var todos             = #{@todos};
