@@ -5,13 +5,19 @@ module Users::Search
   #
 
   def search_all_checkins(options={})
-    # include members only
-    options.update(:with_member => 1) unless options[:with_member]
+    # include members and non-members
     # include my checkins and friend checkins
     search_checkins(options)
   end
 
   alias :search_everyone_checkins :search_all_checkins
+
+  def search_member_checkins(options={})
+    # members only
+    options.update(:with_member => 1) unless options[:with_member]
+    # include my checkins and friend checkins
+    search_checkins(options)
+  end
 
   def search_my_checkins(options={})
     # include my checkins
