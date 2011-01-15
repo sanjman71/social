@@ -64,6 +64,7 @@ class HomeController < ApplicationController
   end
 
   # GET /about
+  # GET /about?dialog=1
   def about
     if params[:dialog]
       render :layout => false

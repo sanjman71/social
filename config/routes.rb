@@ -84,7 +84,7 @@ Social::Application.routes.draw do
   match 'vote/users/:user_id/badge/:badge_id/:vote', :to => 'voting#create', :via => [:put],
     :as => :vote_user_badge
 
-  match 'about(:dialog)', :to => 'home#about', :as => :about
+  match 'about', :to => 'home#about', :as => :about
 
   # unauthorized
   match 'unauthorized', :to => 'home#unauthorized'
