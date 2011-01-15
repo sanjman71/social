@@ -2,7 +2,7 @@ Feature: Home Streams
   As a user I want to see streams of user checkin activity on the home page
 
   @javascript
-  Scenario: User should see all member checkins in the default Everyone stream
+  Scenario: User should see all member and non-member checkins in the default Everyone stream
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
     And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
