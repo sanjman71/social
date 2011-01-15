@@ -577,18 +577,7 @@ class User < ActiveRecord::Base
       badgings.create(:badge => Badge.default)
     end
     # delegate to other callbacks
-    after_add_facebook_id
     after_change_points
-  end
-
-  # after_save callback to check for a facebook id
-  def after_add_facebook_id
-    if fbid = changes['facebook_id'].try(:[], 1)
-      # check admin users
-      if ADMIN_FACEBOOK_IDS.include?(fbid)
-        self.grant_role('admin')
-      end
-    end
   end
 
   # after_save callback to handle point changes
