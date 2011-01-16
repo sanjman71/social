@@ -112,8 +112,13 @@ class LocationsController < ApplicationController
   def search
     @provider = params[:provider]
     @query    = params[:q]
-    @lat      = params[:lat] ? params[:lat].to_f : current_user.try(:lat).to_f
-    @lng      = params[:lng] ? params[:lng].to_f : current_user.try(:lng).to_f
+    # check query for 'something near city,zip' format
+    if match = @query.match(/(.*)(near)(.*)/)
+      @query  = match[1].strip
+      @geoloc = Locality.geocode(match[3].to_s.strip) rescue nil
+    end
+    @lat      = params[:lat] ? params[:lat].to_f : (@geoloc ? @geoloc.lat : current_user.try(:lat).to_f)
+    @lng      = params[:lng] ? params[:lng].to_f : (@geoloc ? @geoloc.lng : current_user.try(:lng).to_f)
 
     begin
       case @provider
@@ -146,6 +151,8 @@ class LocationsController < ApplicationController
                        'state' => '', 'country' => @geoloc.country.to_s]
           @hash = Hash['status' => 'ok', 'count' => 1, 'locations' => [@loc]]
         end
+      else
+        raise Exception, "invalid provider: #{@provider}"
       end
     rescue Exception => e
       @hash = Hash['status' => 'error', 'message' => e.message, 'count' => 0, 'locations' => []]

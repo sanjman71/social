@@ -77,6 +77,36 @@ class LocationsControllerTest < ActionController::TestCase
     end
   end
 
+  context "search query with optional near" do
+    should "geocode 'pizza' to search around user location" do
+      set_beta
+      sign_in @user1
+      get :search, :provider => 'nobody', :q => 'pizza', :format => 'json'
+      assert_equal 'pizza', assigns[:query]
+      assert assigns[:geoloc].nil?
+    end
+
+    should "geocode 'pizza near chicago' to search around chicago" do
+      set_beta
+      sign_in @user1
+      get :search, :provider => 'nobody', :q => 'pizza near chicago', :format => 'json'
+      assert_equal 'pizza', assigns[:query]
+      assert assigns[:geoloc]
+      assert assigns[:geoloc].lat
+      assert assigns[:geoloc].lng
+    end
+
+    should "geocode 'pizza near 60610' to search around 60610" do
+      set_beta
+      sign_in @user1
+      get :search, :provider => 'nobody', :q => 'pizza near 60610', :format => 'json'
+      assert_equal 'pizza', assigns[:query]
+      assert assigns[:geoloc]
+      assert assigns[:geoloc].lat
+      assert assigns[:geoloc].lng
+    end
+  end
+
   context "search google" do
     should "geocode chicago street to geocoded object" do
       set_beta
