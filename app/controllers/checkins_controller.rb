@@ -29,7 +29,7 @@ class CheckinsController < ApplicationController
     @filter   = params[:checkins] # 'checkins', 'todos'
     @method   = "search_#{@search}_#{@filter}"
     @limit    = params[:limit] ? params[:limit].to_i : 2**30
-    @options  = Hash[:without_user_ids => @without_user_ids.to_a.sort, :order => @order, :limit => @limit]
+    @options  = Hash[:without_user_ids => @without_user_ids.to_a.sort, :limit => @limit]
     @sort     = params.keys.select{ |k| k.to_s.match(/^sort/) }.map(&:to_sym)
 
     case @filter
@@ -41,6 +41,9 @@ class CheckinsController < ApplicationController
       @options.update(:without_todo_ids => @without_ids)
       @order  = [:sort_closer_locations, {:sort_unweight_users => @unweight_user_ids.to_a.sort}] + @sort
     end
+
+    # add sort oder
+    @options[:order] = @order
 
     case
     when params[:geo]
