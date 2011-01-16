@@ -59,7 +59,7 @@
                 #screen= current_user.try(:points).to_i
                 %span Points
             = link_to("Get More Points", '#', :id => 'get-more-points', 'data-url' => add_bucks_user_path(current_user, 100), 'data-method' => 'put')
-        = link_to("What is Outlately?", about_path(:dialog => 'dialog'), :id => 'what-is-outlately')
+        = link_to("What is Outlately?", about_path(:dialog => '1'), :id => 'what-is-outlately')
 
     #main.wrapper.container
       = yield
