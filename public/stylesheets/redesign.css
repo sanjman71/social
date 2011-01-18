@@ -293,7 +293,7 @@ a#points-info {
 
 #city-menu ul li {
   border-bottom: 1px solid #ddd;
-  display: inline-block;
+  display: block;
 }
 
 #city-menu ul li:last-child {
