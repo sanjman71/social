@@ -43,7 +43,30 @@ class BadgeTest < ActiveSupport::TestCase
                                      :city => @boston)
   end
 
-  should "not add without matching tags" do
+  should "add tag_ids when badge is created" do
+    @badge  = Badge.create(:regex => "coffee|tea", :name => 'Caffeine Junkie')
+    @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
+    assert_equal [@coffee.id], @badge.tag_ids.split(",").map(&:to_i)
+  end
+
+  should "add tag_ids when badge is updated" do
+    @badge  = Badge.create(:regex => "-", :name => 'Caffeine Junkie')
+    @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
+    assert_equal [], @badge.tag_ids.split(",")
+    @badge.regex = "coffee|tea"
+    @badge.save
+    assert_equal [@coffee.id], @badge.reload.tag_ids.split(",").map(&:to_i)
+  end
+
+  should "find badge when searching by tag id" do
+    @badge  = Badge.create(:regex => "coffee|tea", :name => 'Caffeine Junkie')
+    @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
+    @badges = Badge.search(@coffee.id)
+    # @badges = Badge.find(:all, :conditions => ["find_in_set(?,tag_ids)", @coffee.id])
+    assert_equal [@badge], @badges
+  end
+
+  should "not add badge without matching tags" do
     # create badge
     @badge   = Badge.create(:regex => "cheese|pizza", :name => 'Caffeine Junkie')
     # create chicago locationship
@@ -52,7 +75,7 @@ class BadgeTest < ActiveSupport::TestCase
     assert_equal 0, @chicago_male1.async_add_badges.size
   end
 
-  should "add based on matching checkin location tags" do
+  should "add badge based on matching checkin location tags" do
     # create chicago checkin locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     # create badge
@@ -62,7 +85,7 @@ class BadgeTest < ActiveSupport::TestCase
     assert_equal ['Create your Social DNA', 'Caffeine Junkie'], @chicago_male1.badges_list
   end
 
-  should "not add based on matching friend location tags" do
+  should "not add badge based on matching friend location tags" do
     # create chicago friend locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :friend_checkins => 1)
     # create badge

@@ -11,15 +11,16 @@ Social::Application.routes.draw do
   end
 
   # checkin routes
-  match 'users/:user_id/:checkins/:geo/:radius(/:search)', :to => 'checkins#index',
+  match 'users/:user_id/:checkins/:geo/:radius(/:search)', :to => 'checkins#search',
     :constraints => {:checkins => /checkins|todos/, :geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/,
                      :radius => /radius:\d+/},
     :as => :geo_checkins
-  match 'users/:user_id/:checkins/:city/:radius(/:search)', :to => 'checkins#index',
+  match 'users/:user_id/:checkins/:city/:radius(/:search)', :to => 'checkins#search',
     :constraints => {:checkins => /checkins|todos/, :city => /city:[a-z-]+/, :radius => /radius:\d+/},
     :as => :city_checkins
-  match 'users/:user_id/:checkins(/:search)', :to => "checkins#index",
+  match 'users/:user_id/:checkins(/:search)', :to => "checkins#search",
     :constraints => {:checkins => /checkins|todos/}, :as => :checkins
+  match 'checkins', :to => 'checkins#index'
 
   match 'sightings', :to => "sightings#index"
   match 'accounts', :to => "accounts#index"
@@ -27,7 +28,6 @@ Social::Application.routes.draw do
   match 'growls', :to => "growls#index"
 
   # user routes
-
   match 'users/:geo(/:radius)', :to => 'users#index',
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_users
   match 'users/:city(/:radius)', :to => 'users#index',
@@ -55,6 +55,15 @@ Social::Application.routes.draw do
     put :tag, :on => :member
   end
 
+  # plans
+  match 'plans/add(/:location_id)', :to => 'plans#add', :via => [:put], :as => :add_todo_location
+  match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_todo_location
+  match 'plans', :to => 'plans#index', :via => [:get]
+
+  # shouts
+  resources :shouts, :only => [:index]
+  match 'shouts/add(/:location_id)', :to => 'shouts#add', :via => [:put], :as => :add_shout
+
   # suggestion routes
   match 'suggestions/:id/relocate(/:location_id)', :to => 'suggestions#relocate',
     :as => :relocate_suggestion, :via => [:post, :put]
@@ -72,11 +81,6 @@ Social::Application.routes.draw do
   # friends routes
   resources :friends, :only => [:index]
   
-  # plans routes
-  match 'plans/add(/:location_id)', :to => 'plans#add', :via => [:put], :as => :add_todo_location
-  match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_todo_location
-  match 'plans', :to => 'plans#index', :via => [:get]
-
   # messages routes
   resources :messages, :only => [:create]
 
@@ -99,6 +103,7 @@ Social::Application.routes.draw do
   resources :admin, :only => [:index] do
     get :checkins, :on => :collection
     get :invites, :on => :collection
+    get :tags, :on => :collection
     get :users, :on => :collection
   end
 

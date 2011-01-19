@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110114230757) do
+ActiveRecord::Schema.define(:version => 20110119032045) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -36,11 +36,13 @@ ActiveRecord::Schema.define(:version => 20110114230757) do
   add_index "availabilities", ["user_id"], :name => "index_availabilities_on_user_id"
 
   create_table "badges", :force => true do |t|
-    t.string "regex", :limit => 200, :null => false
-    t.string "name",  :limit => 50,  :null => false
+    t.string "regex",   :limit => 200, :null => false
+    t.string "name",    :limit => 50,  :null => false
+    t.string "tag_ids"
   end
 
   add_index "badges", ["name"], :name => "index_badges_on_name"
+  add_index "badges", ["tag_ids"], :name => "index_badges_on_tag_ids"
 
   create_table "badges_privileges", :force => true do |t|
     t.string   "name",         :limit => 50
@@ -385,6 +387,19 @@ ActiveRecord::Schema.define(:version => 20110114230757) do
   add_index "planned_checkins", ["location_id"], :name => "index_planned_checkins_on_location_id"
   add_index "planned_checkins", ["user_id", "active"], :name => "index_planned_checkins_on_user_id_and_active"
   add_index "planned_checkins", ["user_id"], :name => "index_planned_checkins_on_user_id"
+
+  create_table "shouts", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "location_id"
+    t.string   "text"
+    t.datetime "expires_at"
+    t.boolean  "delta",       :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "shouts", ["location_id"], :name => "index_shouts_on_location_id"
+  add_index "shouts", ["user_id"], :name => "index_shouts_on_user_id"
 
   create_table "states", :force => true do |t|
     t.string  "name",            :limit => 30
