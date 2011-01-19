@@ -115,9 +115,6 @@ Social::Application.routes.draw do
   match 'invite', :to => "invitations#create", :via => [:post]
   match 'invitees/search', :to => "invitations#search", :as => :invitee_search, :via => [:get]
 
-  # twitter
-  match 'twitter', :to => 'twitter#index'
-
   # jobs routes
   match 'jobs', :to => 'jobs#index', :as => :jobs
   match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
