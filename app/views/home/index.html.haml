@@ -1,6 +1,5 @@
 - title('Home')
 - stylesheet('map')
-- javascript('home')
 
 - if user_signed_in? and @objects.try(:any?)
   - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
