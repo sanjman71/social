@@ -44,6 +44,15 @@ class AdminController < ApplicationController
     @invites  = @data.map{ |date, count| count }
   end
 
+  # GET /admin/tags
+  def tags
+    # tag histogram
+    @tag_histogram  = Location.tag_counts_on(:tags).order("count desc").limit(@limit || 20)
+    @tag_names      = @tag_histogram.collect(&:name)
+    @tag_counts     = @tag_histogram.collect(&:count)
+    @badge_counts   = @tag_histogram.collect{ |tag| Badge.search(tag.id).size }
+  end
+
   # GET /admin/users
   def users
     @mem_females      = User.member.where(:gender => 1).count
