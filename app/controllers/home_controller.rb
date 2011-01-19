@@ -11,7 +11,7 @@ class HomeController < ApplicationController
       @stream       = current_stream
       @city         = current_city || current_user
       @method       = "search_#{@stream}_data_streams"
-      @order        = [:sort_closer_locations, :sort_timestamp_at, :sort_males]
+      @order        = [:sort_closer_locations, :sort_timestamp_at, :sort_females]
       # @method       = "search_#{@stream}_checkins"
       # @order        = [:sort_closer_locations, :sort_checkins_past_week, :sort_females]
       @radius       = 100
