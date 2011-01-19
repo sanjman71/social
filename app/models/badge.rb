@@ -2,7 +2,7 @@ class Badge < ActiveRecord::Base
   validates   :name,  :presence => true, :uniqueness => true
   validates   :regex, :presence => true
 
-  has_many    :badgings
+  has_many    :badgings, :dependent => :destroy
   has_many    :users, :through => :badgings
 
   before_save :event_reset_tag_ids
@@ -11,14 +11,14 @@ class Badge < ActiveRecord::Base
     name.to_s.downcase.gsub(' ', '_')
   end
 
-  def self.default
-    # find default badge
-    @@default ||= self.find_or_create_by_name("Create your Social DNA", :regex => 'x')
+  # minimum number of badges under which users get the default badge
+  def self.default_min
+    3
   end
 
-  # reverse map a string to matching badges
-  def self.reverse_map(s)
-    Badge.where(:regex.matches % "%#{s}%")
+  def self.default
+    # build default badge
+    @@default ||= Badge.new(:name => "Create your Social DNA")
   end
 
   # search for badges with the specified tag ids

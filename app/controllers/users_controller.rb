@@ -31,8 +31,10 @@ class UsersController < ApplicationController
                       :geo_distance => 0.0..@radius.miles.meters.value)
       @users        = current_user.search_users(@options)
     else
-      @users        = User.order("users.member desc, users.id asc")
+      @pagination   = {:page => params[:page] ? params[:page].to_i : 1, :per_page => 20}
+      @users        = User.order("users.member desc, users.id asc").paginate(@pagination)
       @members      = User.where(:member => 1).count
+      @non_members  = User.where(:member => 0).count
     end
 
     respond_to do |format|
@@ -59,8 +61,9 @@ class UsersController < ApplicationController
       @city_id    = @geo_cloud.any? ? @geo_cloud.first[0] : nil
     end # benchmark
 
-    # find user badges
+    # find user badges; add default badge if necessary
     @badges = @user.badges.order("badges.name asc")
+    @badges += [Badge.default] if @badges.size < Badge.default_min
 
     # always show meetup button
     @meetup = true

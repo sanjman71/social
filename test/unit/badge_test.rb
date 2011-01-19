@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class BadgeTest < ActiveSupport::TestCase
-  fixtures :badges
+  # fixtures :badges
 
   def setup
     @us               = Factory(:us)
@@ -82,7 +82,7 @@ class BadgeTest < ActiveSupport::TestCase
     @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
     # should add matching badge
     assert_equal 1, @chicago_male1.async_add_badges.size
-    assert_equal ['Create your Social DNA', 'Caffeine Junkie'], @chicago_male1.badges_list
+    assert_equal ['Caffeine Junkie'], @chicago_male1.badges_list
   end
 
   should "not add badge based on matching friend location tags" do
@@ -94,27 +94,4 @@ class BadgeTest < ActiveSupport::TestCase
     assert_equal 0, @chicago_male1.async_add_badges.size
   end
 
-  should "remove default badge after 3 badges earned" do
-    # user starts with default badge
-    assert_equal 1, @chicago_male1.reload.badges.count
-    assert_equal ['Create your Social DNA'], @chicago_male1.badges_list
-    # create badges
-    @badge1 = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
-    @badge2 = Badge.create(:regex => "tea", :name => 'Tea Addict')
-    @badge3 = Badge.create(:regex => "bagels", :name => 'Bagels, Bagels')
-    @chicago_male1.badges.push(@badge1)
-    @chicago_male1.badges.push(@badge2)
-    @chicago_male1.badges.push(@badge3)
-    # should remove default badge
-    assert_equal 3, @chicago_male1.reload.badges.count
-  end
-
-  should "reverse map tags to matching badges" do
-    # create badges
-    @badge1 = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
-    @badge2 = Badge.create(:regex => "coffee|tea", :name => 'Tea Addict')
-    assert_equal [@badge1, @badge2], Badge.reverse_map('coffee')
-    assert_equal [@badge2], Badge.reverse_map('tea')
-    assert_equal [], Badge.reverse_map('tea shop')
-  end
 end
