@@ -14,18 +14,32 @@
     %span.latlng== #{location.lat}, #{location.lng}
     %br
 
-.span-9.last
+.span-5.last
   - tag_list = location.tag_list
   - if tag_list.any? or tag_link
     - if tag_list.any?
       %span.tags= location.tag_list.join(', ')
+    - else
+      No Tags
+    %br
     - if tag_link
       %span.add_tags= link_to 'Add Tags', tag_location_path(location)
+      %br
     %br
-  - if has_role?('admin')
+  - if false #has_role?('admin')
     - location.location_sources.each do |ls|
       %span.sources= ls.source_type + ":" + ls.source_id
       %br
+
+.span-8.last
+  - badges = location.tag_ids.map { |tag_id| Badge.search(tag_id).collect(&:name) }.flatten
+  - if badges.any?
+    %span.badges= badges.join(", ")
+  - else
+    No Badges
+  %br
+  - if true
+    %span.add_badges= link_to 'Add Badges', '#'
 
 - if false
   .span-7.last.tags

@@ -1,4 +1,4 @@
-- visible = 'show' unless local_assigns[:visible]
+- visible = 'visible' unless local_assigns[:visible]
 
 - objects.each do |checkin|
   - user      = checkin.user
@@ -8,6 +8,6 @@
     %h4
       = user.handle
       %small= checkin_time_ago(checkin.checkin_at)
-    %h3= location.name
+    %h3= truncate(location.name, :length => 33)
     %div#actions
       = render(:partial => 'home/actions', :locals => {:user => user, :location => location})

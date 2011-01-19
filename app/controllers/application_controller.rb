@@ -73,6 +73,16 @@ class ApplicationController < ActionController::Base
     50
   end
 
+  def find_location
+    if params[:location_id]
+      @location = Location.find(params[:location_id])
+    elsif params[:location]
+      @location = Location.find_or_create_by_source(params[:location])
+    else
+      raise Exception, "missing location"
+    end
+  end
+
   # check that user has signed up for the beta or has an invite
   def check_beta
     # check params 'token'

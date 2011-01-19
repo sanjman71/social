@@ -2,6 +2,7 @@ var stream_picks        = ['checkins', 'todos'];
 var stream_current      = '';
 var stream_checkin_ids  = [];
 var stream_todo_ids     = [];
+var stream_shout_ids    = [];
 var stream_timer_id     = 0;
 var stream_updating     = false;
 
@@ -62,40 +63,65 @@ $.fn.init_stream_timer = function() {
 
   if ($("#social-stream li").length > 0) {
     // initialize stream objects
-    trackObjects();
+    trackNotCountedObjects();
     // start interval timer
+    startTimer();
+  }
+
+  function startTimer() {
     stream_timer_id = setInterval(addObjects, 5000);
     // console.log("stream timer id: " + stream_timer_id);
   }
+  
+  function stopTimer() {
+    // console.log("cancelling interval timer");
+    clearInterval(stream_timer_id);
+  }
 
-  // track un-counted objects
-  function trackObjects() {
+  // track not-counted visible objects
+  function trackNotCountedObjects() {
     tracked = 0
-    $("#social-stream li.checkin.not-counted").each(function() {
+    $("#social-stream li.checkin.visible.not-counted").each(function() {
       id = $(this).attr('data-id');
       stream_checkin_ids.push(id);
       $(this).removeClass('not-counted').addClass('counted');
       tracked += 1;
     })
-    $("#social-stream li.todo.not-counted").each(function() {
+    $("#social-stream li.todo.visible.not-counted").each(function() {
       id = $(this).attr('data-id');
       stream_todo_ids.push(id);
+      $(this).removeClass('not-counted').addClass('counted');
+      tracked += 1;
+    })
+    $("#social-stream li.shout.visible.not-counted").each(function() {
+      id = $(this).attr('data-id');
+      stream_shout_ids.push(id);
       $(this).removeClass('not-counted').addClass('counted');
       tracked += 1;
     })
     return tracked;
   }
 
-  function countTotalObjects() {
-    return stream_checkin_ids.length + stream_todo_ids.length;
+  function numTotalCountedObjects() {
+    return stream_checkin_ids.length + stream_todo_ids.length + stream_shout_ids.length;
   }
 
-  function countVisibleObjects() {
-    return $("#social-stream li:visible").length;
+  function numCountedVisibleObjects() {
+    return $("#social-stream li.counted").filter(":visible").length;
   }
 
-  function hideVisibleObjects(count) {
-    $("#social-stream li:visible:last").slideUp(2000);
+  function numNotCountedHiddenObjects() {
+    return $("#social-stream li.not-counted.hide").length;
+  }
+
+  function showNotCountedHiddenObject() {
+    // show the last not counted hidden object with slidedown effect
+    $("#social-stream li.not-counted.hide:last").slideDown(2000).addClass('visible').removeClass('hide');
+  }
+
+  function hideCountedVisibleObject() {
+    // hide the last visible counted object
+    $("#social-stream li.counted:visible:last").hide(1000);
   }
 
   // add unique objects
@@ -108,32 +134,56 @@ $.fn.init_stream_timer = function() {
     // set updating flag
     stream_updating = true;
 
+    // console.log("not-counted hidden: " + numNotCountedHiddenObjects());
+    // console.log("counted visible: " + numCountedVisibleObjects());
+    // console.log("counted total: " + numTotalCountedObjects());
+    
+    if (numNotCountedHiddenObjects() > 0) {
+      // show a hidden not counted object
+      showNotCountedHiddenObject();
+      tracked = trackNotCountedObjects();
+    } else {
+      // no more objects, stop timer
+      // console.log("stopping timer");
+      stopTimer();
+    }
+
+    // check visible object count
+    if (numCountedVisibleObjects() > max_visible) {
+      // hide the last counted visible object
+      hideCountedVisibleObject();
+    }
+
+    stream_updating = false;
+    return;
+
+    /*
     // pick the next stream url
     url = pickStream();
 
     $.getScript(url, function() {
       // track the un-counted objects
-      tracked = trackObjects();
+      tracked = trackNotCountedObjects();
 
       // remove the stream if there were no results
       if (tracked == 0) { removeStream(stream_current); }
 
       // check visible object count
-      if (countVisibleObjects() > max_visible) {
-        // hide the last visible object
-        hideVisibleObjects(1);
+      if (numCountedVisibleObjects() > max_visible) {
+        // hide the last counted visible object
+        hideCountedVisibleObject();
       }
 
       // reset updating flag
       stream_updating = false;
 
       // check total object count
-      if (countTotalObjects() >= max_objects) {
+      if (numTotalCountedObjects() >= max_objects) {
         // cancel timer
-        // console.log("cancelling interval timer");
-        clearInterval(stream_timer_id);
+        stopTimer();
       }
     });
+    */
   }
 
   function pickStream() {

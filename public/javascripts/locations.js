@@ -46,6 +46,8 @@ $.fn.init_search_foursquare = function() {
   }
 }
 
+// deprecated
+/*
 $.fn.init_live_search_places = function() {
   url     = $(this).attr('data-url');
   lat     = $(this).attr('data-lat');
@@ -69,6 +71,7 @@ $.fn.init_live_search_places = function() {
     minLength : 3,
   });
 }
+*/
 
 $.fn.init_add_location_tags = function() {
   var add_tags        = [];
@@ -155,8 +158,8 @@ $.fn.init_more_locations = function() {
 }
 
 $(document).ready(function() {
-  $(document).init_live_search_places();
-  //$(document).init_search_foursquare();
+  // $(document).init_live_search_places();
+  // $(document).init_search_foursquare();
   $(document).init_add_location_tags();
   $(document).init_more_locations();
   $(document).init_change_city();

@@ -1,13 +1,13 @@
 - visible = 'visible' unless local_assigns[:visible]
 
-- objects.each do |todo|
-  - user      = todo.user
-  - location  = todo.location
-  %li.todo{'data-id' => todo.id, 'data-location-id' => location.id, :class => [visible, 'not-counted']}
+- objects.each do |shout|
+  - user      = shout.user
+  - location  = shout.location
+  %li.shout{'data-id' => shout.id, 'data-location-id' => location.id, :class => [visible, 'not-counted']}
     = image_tag(user.primary_photo_url, :size => '50x50', :alt => 'social stream avatar')
     %h4
       = user.handle
-      %small plans on going soon
+      %small= truncate(shout.text, :length => 30)
     %h3= truncate(location.name, :length => 35)
     %div#actions
       = render(:partial => 'home/actions', :locals => {:user => user, :location => location})

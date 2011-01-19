@@ -1,9 +1,53 @@
+require File.expand_path('config/environment.rb')
+
 class Checkins < Thor
 
+  desc "list", "list recent checkins"
+  method_options :limit => 100
+  def list
+    limit     = options[:limit].to_i
+    puts "#{Time.now}: listing #{limit} recent checkins"
+    checkins  = Checkin.limit(limit).order("checkin_at desc")
+
+    checkins.each do |checkin|
+      puts "checkin: at #{checkin.location.name}:#{checkin.location.city.try(:name)}, by #{checkin.user.handle}:#{checkin.user.id}"
+    end
+  end
+
+  desc "near_handle", "search checkins around 'handle', with optional sort options: females, males"
+  method_options :handle => nil
+  method_options :sort => nil
+  method_options :radius => nil
+  def near_handle
+    handle  = options[:handle]
+    radius  = options[:radius] ? options[:radius].to_i : 100
+
+    if handle.blank?
+      puts "missing handle"
+      return
+    end
+
+    user      = User.find_by_handle!(handle)
+    city      = user.city
+    puts "*** searching #{radius} miles around #{city.try(:name)}"
+    params    = {:geo_origin => [city.lat.try(:radians), city.lng.try(:radians)],
+                 :geo_distance => 0.0..radius.miles.meters.value}
+    if options[:sort]
+      # add sort options
+      params.merge!(:order => [:sort_females]) if options[:sort] == 'females'
+      params.merge!(:order => [:sort_males]) if options[:sort] == 'males'
+    end
+    puts "*** params: #{params.inspect}"
+    checkins  = user.search_all_checkins(params)
+
+    checkins.each do |checkin|
+      puts "[checkin] at #{checkin.location.name}:#{checkin.location.city.try(:name)}, by #{checkin.user.handle}:#{checkin.user.gender_name}"
+    end
+  end
+  
   desc "poll", "poll for recent user checkins"
   def poll
     puts "#{Time.now}: polling user checkins"
-    require File.expand_path('config/environment.rb')
     users = Checkin.event_poll_checkins
     users.each do |user|
       puts "#{Time.now}: [user:#{user.id}] #{user.handle} polling checkins"
@@ -14,7 +58,6 @@ class Checkins < Thor
   desc "send_planned_checkin_reminders", "send planned checkin reminders"
   def send_planned_checkin_reminders
     puts "#{Time.now}: checking planned checkins that are expiring soon"
-    require File.expand_path('config/environment.rb')
     users = PlannedCheckin.select("distinct user_id, planned_checkins.*").collect(&:user)
     users.each do |user|
       count = user.send_planned_checkin_reminders
@@ -28,7 +71,6 @@ class Checkins < Thor
   desc "expire_planned_checkins", "check for expired planned checkins"
   def expire_planned_checkins
     puts "#{Time.now}: expiring planned checkins"
-    require File.expand_path('config/environment.rb')
     expired = PlannedCheckin.expire_all
     puts "#{Time.now}: expired #{expired} planned checkins"
   end
@@ -37,7 +79,6 @@ class Checkins < Thor
   method_options :sendto => nil
   method_options :filename => nil
   def stats
-    require File.expand_path('config/environment.rb')
     require 'csv'
     puts "#{Time.now}: building queries ..."
     sendto    = options[:sendto].split(',') rescue []

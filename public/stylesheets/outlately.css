@@ -74,9 +74,78 @@ div#todo_search a#add_todo {
   text-align: center;
 }
 div#todo_search span#help { color: #555555; }
+div#todos .admin_checkin { padding: 10px 0px; }
+div#todos .admin_checkin.odd { background: #ffffff; }
 div#todos .location { margin-bottom: 10px; }
 div#todos .location .name {
-  color: #111111;
+  color: #0000ff;
   font-weight: bold;
 }
-div#todos .location .street { color: #999999; }
+div#todos .location .street { color: #333333; }
+div#todos .location .latlng { color: #999999; }
+div#todos .location .tags {
+  color: #333333;
+  font-weight: bold;
+}
+div#todos .location .add_tags a {
+  color: #0000ff;
+  font-size: 0.8em;
+}
+div#todos .location .badges {
+  color: #333333;
+  font-weight: bold;
+}
+div#todos .location .add_badges a {
+  color: #0000ff;
+  font-size: 0.8em;
+}
+div#locations .admin_checkin { padding: 10px 0px; }
+div#locations .admin_checkin.odd { background: #ffffff; }
+div#locations .location { margin-bottom: 10px; }
+div#locations .location .name {
+  color: #0000ff;
+  font-weight: bold;
+}
+div#locations .location .street { color: #333333; }
+div#locations .location .latlng { color: #999999; }
+div#locations .location .tags {
+  color: #333333;
+  font-weight: bold;
+}
+div#locations .location .add_tags a {
+  color: #0000ff;
+  font-size: 0.8em;
+}
+div#locations .location .badges {
+  color: #333333;
+  font-weight: bold;
+}
+div#locations .location .add_badges a {
+  color: #0000ff;
+  font-size: 0.8em;
+}
+div#admin_checkins .admin_checkin { padding: 10px 0px; }
+div#admin_checkins .admin_checkin.odd { background: #ffffff; }
+div#admin_checkins .location { margin-bottom: 10px; }
+div#admin_checkins .location .name {
+  color: #0000ff;
+  font-weight: bold;
+}
+div#admin_checkins .location .street { color: #333333; }
+div#admin_checkins .location .latlng { color: #999999; }
+div#admin_checkins .location .tags {
+  color: #333333;
+  font-weight: bold;
+}
+div#admin_checkins .location .add_tags a {
+  color: #0000ff;
+  font-size: 0.8em;
+}
+div#admin_checkins .location .badges {
+  color: #333333;
+  font-weight: bold;
+}
+div#admin_checkins .location .add_badges a {
+  color: #0000ff;
+  font-size: 0.8em;
+}

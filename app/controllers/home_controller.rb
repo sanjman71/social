@@ -10,8 +10,10 @@ class HomeController < ApplicationController
       @user         = current_user
       @stream       = current_stream
       @city         = current_city || current_user
-      @method       = "search_#{@stream}_checkins"
-      @order        = [:sort_closer_locations, :sort_checkins_past_week, :sort_females]
+      @method       = "search_#{@stream}_data_streams"
+      @order        = [:sort_closer_locations, :sort_timestamp_at, :sort_males]
+      # @method       = "search_#{@stream}_checkins"
+      # @order        = [:sort_closer_locations, :sort_checkins_past_week, :sort_females]
       @radius       = 100
       @objects      = @user.send(@method, :limit => checkins_start_count,
                                           :geo_origin => [@city.lat.try(:radians), @city.lng.try(:radians)],
@@ -28,10 +30,11 @@ class HomeController < ApplicationController
       @my_cities.push(current_user.city.name).uniq!
     end
 
-    @max_objects  = checkins_max_count
-    @max_visible  = 10
+    @max_objects    = checkins_max_count
+    @min_visible    = 3
+    @max_visible    = 10
 
-    logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@city.try(:name) || @city.try(:handle)}:#{@city.try(:lat)}:#{@city.try(:lng)}, stream:#{@stream}")
+    Rails.logger.info("[user:#{@user.id}] #{@user.handle} geo:#{@city.try(:name) || @city.try(:handle)}:#{@city.try(:lat)}:#{@city.try(:lng)}, stream:#{@stream}")
 
     if params[:v].present?
       render(:action => 'index0', :layout => 'application')
@@ -81,7 +84,7 @@ class HomeController < ApplicationController
   protected
   
   def checkins_start_count
-    3
+    20
   end
 
   def checkins_max_count

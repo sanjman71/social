@@ -108,6 +108,7 @@ ul#nav li a:hover {
 body.home ul#nav li#nav-home a,
 body.users ul#nav li#nav-my-profile a,
 body.settings ul#nav li#nav-settings a,
+body.shouts ul#nav li#nav-shouts a,
 body.suggestions ul#nav li#nav-suggestions a,
 body.friends ul#nav li#nav-friends a,
 body.plans ul#nav li#nav-plans a {

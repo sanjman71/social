@@ -1,0 +1,29 @@
+- title('Shouts')
+- javascript('shouts', 'location_search')
+
+#page-header
+  .span-23.prepend-1.last
+    %h2 Shouts
+
+#content.clearfix
+  .span.24.last
+    = display_flash(:all)
+
+  .span-23.prepend-1#shout_header
+    %h3
+      You have #{pluralize(@shouts.size, "shout")}
+      %span{:style => 'padding: 0 5px; font-size: 0.8em;'}= link_to 'Add More', '#', :id => 'show_search_places_autocomplete_form'
+
+  .span-23.prepend-1.last.search_places_autocomplete_form.hide#shout_search
+    .span-23.last
+      %span#help Use the search box below to find places and add shouts.
+      %span{:style => 'padding: 0 5px; font-size: 0.9em;'}= link_to 'Nevermind', '#', :id => 'hide_search_places_autocomplete_form', :class => 'admin'
+    .span-23.last
+      = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), :placeholder => 'e.g. starbucks'
+      %span#hint{:style => 'margin-left: 5px;'}
+      #place.hide
+    .span-23.last
+      = text_area_tag :text, '', :style => 'height: 30px;', :placeholder => 'e.g. espresso is the best'
+    .span-23.last
+      = link_to 'Add', '#', :id => 'add_shout', 'data-url' => add_shout_path(:format => 'js'), 'data-disable-with' => 'adding ...', 'data-return-to' => request.fullpath
+  

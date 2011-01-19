@@ -23,19 +23,17 @@ class PlansController < ApplicationController
       # set user to current user
       @user = current_user
       # create planned checkin
-      @pcheckin = @user.planned_checkins.create(:location => @location)
-      if @pcheckin.valid?
-        # add flash message
-        flash[:notice] = "We added #{@location.name} to your todo list"
-        # add growl message
-        @message = I18n.t("todo.added", :days => PlannedCheckin.todo_days,
-                                        :plus_points => Currency.for_completed_todo,
-                                        :minus_points => Currency.for_expired_todo.abs)
-        # add growl message
-        @growls = [{:message => @message, :timeout => 2000}]
-      end
+      @pcheckin = @user.planned_checkins.create!(:location => @location)
+      # add flash message
+      flash[:notice] = "We added #{@location.name} to your todo list"
+      # add growl message
+      @message = I18n.t("todo.added", :days => PlannedCheckin.todo_days,
+                                      :plus_points => Currency.for_completed_todo,
+                                      :minus_points => Currency.for_expired_todo.abs)
+      # add growl message
+      @growls = [{:message => @message, :timeout => 2000}]
       # set status
-      @status   = 'ok'
+      @status = 'ok'
     rescue Exception => e
       # @location already planned
       @status   = 'error'
@@ -66,18 +64,6 @@ class PlansController < ApplicationController
   
     respond_with(@location) do |format|
       format.html { redirect_back_to(root_path) and return }
-    end
-  end
-
-  protected
-
-  def find_location
-    if params[:location_id]
-      @location = Location.find(params[:location_id])
-    elsif params[:location]
-      @location = Location.find_or_create_by_source(params[:location])
-    else
-      raise Exception, "missing location"
     end
   end
 

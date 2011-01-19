@@ -1,33 +1,15 @@
-- title('Checkins')
+#page-header
+  .span-23.prepend-1.last
+    %h2 Checkins
 
-- content_for :mat do
-  %h2 Checkins
-  %h4 #{user_display_name(@user, current_user, 'Me')}
-
-%hr.space
-
-.span-23.prepend-1.last
-  - checkin_title = "#{@search.capitalize} #{@filter.capitalize}"
-  - checkin_title += (@city and @radius) ? ", #{@radius} miles around #{@city.name.titleize}" : ', Anywhere'
-  %h4
-    %span#checkin_title= checkin_title
-    %span#checkin_count returned #{pluralize(@objects.size, @filter)}
-  %h4
-    City:
-    - radius = @radius || 50
-    - ['Boston', 'Chicago', 'New York', 'San Francisco'].each do |s|
-      %span{:style => 'padding-right: 3px;'}= link_to s, url_for(:city => "city:#{s.parameterize}", :radius => "radius:#{radius}", :search => @search)
-    Radius:
-    - city = @city.try(:name) || 'chicago'
-    - [5, 10, 25, 50, 100, 250, 1000, 2000].each do |x|
-      %span{:style => 'padding-right: 3px;'}= link_to "#{x}", url_for(:city => "city:#{city.parameterize}", :radius => "radius:#{x}", :search => @search)
-    Stream:
-    - ['all', 'daters', 'friends', 'my', 'others'].each do |s|
-      %span{:style => 'padding-right: 3px;'}= link_to s.titleize, url_for(:search => s)
-
-.span-23.prepend-1.last#checkins
-  - @objects.sort_by{|c| -1 * c.checkin_at.to_i}.each do |checkin|
-    = render(:partial => 'home/checkins', :locals => {:checkins => [checkin]})
-    / .span-23.last.padding-bottom-5
-    /   .span-7= checkin.location.try(:name)
-    /   .span-16.last= checkin.checkin_at.to_s(:datetime)
+.clearfix
+  .span-24.last#admin_checkins
+    - @checkins.each do |checkin|
+      - user      = checkin.user
+      - location  = checkin.location
+      .span-24.last.admin_checkin{:class => cycle('even', 'odd')}
+        .span-23.prepend-1.last.user
+          #{user.handle} @ #{checkin.checkin_at.to_s(:datetime_dow)}
+        .span-24.last.location
+          = render(:partial => 'locations/location',
+                   :locals => {:location => location, :tag_link => true, :edit_link => true})

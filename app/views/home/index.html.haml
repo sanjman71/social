@@ -22,12 +22,17 @@
 #content.home-content.clearfix
   .half-col
     %ul#social-stream
-      - @objects.sort_by{ rand }.each do |object|
-        - case object.class.to_s.downcase
+      -# mark the first index that is visible
+      - min_index = @objects.length - @min_visible
+      - @objects.reverse_each.each_with_index do |object, i|
+        - visible = (i >= min_index) ? 'visible' : 'hide'
+        - case object.class.to_s.underscore
         - when 'checkin'
-          = render(:partial => 'home/checkins', :locals => {:objects => [object]})
-        - when 'locationship'
-          = render(:partial => 'home/todos', :locals => {:objects => [object]})
+          = render(:partial => 'home/checkins', :locals => {:objects => [object], :visible => visible})
+        - when 'planned_checkin'
+          = render(:partial => 'home/todos', :locals => {:objects => [object], :visible => visible})
+        - when 'shout'
+          = render(:partial => 'home/shouts', :locals => {:objects => [object], :visible => visible})
 
   .half-col.right
     #popular-cities.clearfix

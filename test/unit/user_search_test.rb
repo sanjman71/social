@@ -55,7 +55,7 @@ class UserSearchTest < ActiveSupport::TestCase
   end
 
   def teardown
-    [Checkin, CheckinLog, Location, Country, State, City, User].each { |o| o.delete_all }
+    [Checkin, PlannedCheckin, Shout, CheckinLog, Location, Country, State, City, User].each { |o| o.delete_all }
   end
 
   def setup_checkins(checkin_at = nil)
@@ -81,6 +81,33 @@ class UserSearchTest < ActiveSupport::TestCase
     @chicago_male2.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     @newyork_female1.locationships.create!(:location => @newyork_sbux, :my_checkins => 1)
     @chicago_male1.locationships.create!(:location => @chicago_pizza, :my_checkins => 1)
+  end
+
+  context "search_everyone_data_streams" do
+    should "find checkins, todos, shouts by local females only" do
+      # create checkins, todos, shouts
+      setup_checkins
+      @chi_todo1  = @chicago_female1.planned_checkins.create!(:location => @chicago_coffee)
+      @chi_shout1 = @chicago_female1.shouts.create!(:location => @chicago_coffee, :text => "shout!")
+      ThinkingSphinx::Test.run do
+        @objects = @chicago_male1.search_everyone_data_streams(:miles => 50, :with_gender => 1)
+        assert_equal 3, @objects.size
+        assert_equal [], ["PlannedCheckin:#{@chi_todo1.id}", "Checkin:#{@chi_checkin2.id}", "Shout:#{@chi_shout1.id}"] - @objects.collect{ |o| "#{o.class.to_s}:#{o.id}"}
+      end
+    end
+
+    should "find checkins, todos, shouts by local females only, excluding specified objects" do
+      # create checkins, todos, shouts
+      setup_checkins
+      @chi_todo1  = @chicago_female1.planned_checkins.create!(:location => @chicago_coffee)
+      @chi_shout1 = @chicago_female1.shouts.create!(:location => @chicago_coffee, :text => "shout!")
+      ThinkingSphinx::Test.run do
+        @objects = @chicago_male1.search_everyone_data_streams(:miles => 50, :with_gender => 1,
+                                                               :without_checkin_ids => [@chi_checkin2.id])
+        assert_equal 2, @objects.size
+        assert_equal [], ["PlannedCheckin:#{@chi_todo1.id}", "Shout:#{@chi_shout1.id}"] - @objects.collect{ |o| "#{o.class.to_s}:#{o.id}"}
+      end
+    end
   end
 
   context "search_all_checkins filter" do
@@ -259,7 +286,7 @@ class UserSearchTest < ActiveSupport::TestCase
                                                                              :location => @chicago_sbux,
                                                                              :checkin_at => 3.hours.ago))
       ThinkingSphinx::Test.run do
-        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_checkins_past_day])
+        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_timestamp_at])
         assert_equal 2, @checkins.size
         assert_equal [@chi_checkin2, @chi_checkin1], @checkins.collect{ |o| o }
       end
@@ -273,7 +300,7 @@ class UserSearchTest < ActiveSupport::TestCase
                                                                              :location => @chicago_sbux,
                                                                              :checkin_at => 3.days.ago))
       ThinkingSphinx::Test.run do
-        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_checkins_past_week])
+        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_timestamp_at])
         assert_equal 2, @checkins.size
         assert_equal [@chi_checkin2, @chi_checkin1], @checkins.collect{ |o| o }
       end
@@ -330,15 +357,15 @@ class UserSearchTest < ActiveSupport::TestCase
   context "search_all_todos filter" do
     setup do
       # create planned checkin
-      @pcheckin1 = @chicago_male1.planned_checkins.create!(:location => @chicago_coffee)
+      @chi_todo1 = @chicago_male1.planned_checkins.create!(:location => @chicago_coffee)
       work_off_delayed_jobs
     end
 
-    should "find 1 todos" do
+    should "find 1 todo" do
       ThinkingSphinx::Test.run do
         @todos = @chicago_male1.search_all_todos
         assert_equal 1, @todos.size
-        assert_equal [@pcheckin1], @todos.collect{ |o| o }
+        assert_equal [@chi_todo1], @todos.collect{ |o| o }
       end
     end
   end

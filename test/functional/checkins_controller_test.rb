@@ -4,20 +4,21 @@ class CheckinsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   context "routes" do
+    should route(:get, '/checkins').to(:controller => 'checkins', :action => 'index')
     should route(:get, '/users/1/checkins').
-      to(:controller => 'checkins', :action => 'index', :checkins => 'checkins', :user_id => '1')
+      to(:controller => 'checkins', :action => 'search', :checkins => 'checkins', :user_id => '1')
     should route(:get, '/users/1/todos').
-      to(:controller => 'checkins', :action => 'index', :checkins => 'todos', :user_id => '1')
+      to(:controller => 'checkins', :action => 'search', :checkins => 'todos', :user_id => '1')
     should route(:get, '/users/1/checkins/friends').
-      to(:controller => 'checkins', :action => 'index', :checkins => 'checkins', :search => 'friends', :user_id => '1')
+      to(:controller => 'checkins', :action => 'search', :checkins => 'checkins', :search => 'friends', :user_id => '1')
     should route(:get, "/users/1/checkins/geo:1.23..-77.89/radius:50").
-      to(:controller => 'checkins', :action => 'index', :checkins => 'checkins', :geo => 'geo:1.23..-77.89',
+      to(:controller => 'checkins', :action => 'search', :checkins => 'checkins', :geo => 'geo:1.23..-77.89',
          :radius => 'radius:50', :user_id => '1')
     should route(:get, "/users/1/checkins/city:chicago/radius:50").
-      to(:controller => 'checkins', :action => 'index', :checkins => 'checkins', :city => 'city:chicago',
+      to(:controller => 'checkins', :action => 'search', :checkins => 'checkins', :city => 'city:chicago',
          :radius => 'radius:50', :user_id => '1')
     should route(:get, "/users/1/checkins/geo:1.23..-77.89/radius:50/all").
-      to(:controller => 'checkins', :action => 'index', :checkins => 'checkins', :geo => 'geo:1.23..-77.89',
+      to(:controller => 'checkins', :action => 'search', :checkins => 'checkins', :geo => 'geo:1.23..-77.89',
          :radius => 'radius:50', :search => 'all', :user_id => '1')
   end
 
@@ -37,7 +38,7 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search all checkins anywhere" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :search => 'all'
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :search => 'all'
       assert_equal 'all', assigns(:search)
       assert_equal 'search_all_checkins', assigns(:method)
       assert_equal @chicago1, assigns(:user)
@@ -47,7 +48,7 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search all checkins within city" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
           :radius => "radius:50", :search => 'all'
       assert_equal 'all', assigns(:search)
       assert_equal 'search_all_checkins', assigns(:method)
@@ -58,7 +59,7 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search all todos within city" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :checkins => 'todos', :city => "city:chicago", :radius => "radius:50",
+      get :search, :user_id => @chicago1.id, :checkins => 'todos', :city => "city:chicago", :radius => "radius:50",
           :search => 'all'
       assert_equal 'all', assigns(:search)
       assert_equal 'search_all_todos', assigns(:method)
@@ -69,7 +70,7 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search dater checkins within city" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
           :radius => "radius:50", :search => 'daters'
       assert_equal 'daters', assigns(:search)
       assert_equal 'search_daters_checkins', assigns(:method)
@@ -80,7 +81,7 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search my checkins" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
           :radius => "radius:50", :search => 'my'
       assert_equal 'my', assigns(:search)
       assert_equal 'search_my_checkins', assigns(:method)
@@ -91,7 +92,7 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search other checkins" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
           :radius => "radius:50", :search => 'others'
       assert_equal 'others', assigns(:search)
       assert_equal 'search_others_checkins', assigns(:method)
@@ -101,7 +102,7 @@ class CheckinsControllerTest < ActionController::TestCase
     should "search friend checkins" do
       sign_in @chicago1
       set_beta
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :city => "city:chicago",
           :radius => "radius:50", :search => 'friends'
       assert_equal 'friends', assigns(:search)
       assert_equal 'search_friends_checkins', assigns(:method)
@@ -118,7 +119,7 @@ class CheckinsControllerTest < ActionController::TestCase
       sign_in @chicago1
       set_beta
       @checkin_ids = [@checkin1.id, @checkin2.id].join(',')
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :search => 'all',
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :search => 'all',
           :without_ids => @checkin_ids
       assert_equal Hash[@chicago2.id => [@chicago2.id, @chicago2.id]], assigns(:grouped_user_ids)
       assert_equal [@chicago2.id], assigns(:unweight_user_ids).to_a
@@ -135,7 +136,7 @@ class CheckinsControllerTest < ActionController::TestCase
       sign_in @chicago1
       set_beta
       @checkin_ids = [@checkin1.id, @checkin2.id, @checkin3.id].join(',')
-      get :index, :user_id => @chicago1.id, :checkins => 'checkins', :search => 'all',
+      get :search, :user_id => @chicago1.id, :checkins => 'checkins', :search => 'all',
           :without_ids => @checkin_ids, :max_user_set => 3
       assert_equal Hash[@chicago2.id => [@chicago2.id, @chicago2.id, @chicago2.id]], assigns(:grouped_user_ids)
       assert_equal [], assigns(:unweight_user_ids).to_a

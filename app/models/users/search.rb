@@ -1,6 +1,50 @@
 module Users::Search
 
   #
+  # search search_data_streams
+  #
+
+  def search_everyone_data_streams(options={})
+    # include members and non-members
+    search_data_streams(options)
+  end
+
+  def search_ladies_data_streams(options={})
+    # filter checkins by females
+    options.update(:with_gender => [1]) unless options[:with_gender]
+    # exclude checkins by me and my friends
+    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
+    # include members only
+    options.update(:with_member => 1) unless options[:with_member]
+    search_data_streams(options)
+  end
+
+  def search_men_data_streams(options={})
+    # filter checkins by males
+    options.update(:with_gender => [2]) unless options[:with_gender]
+    # exclude checkins by me and my friends
+    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
+    # include members only
+    options.update(:with_member => 1) unless options[:with_member]
+    search_data_streams(options)
+  end
+
+  def search_friends_data_streams(options={})
+    # include only friend checkins
+    unless options[:with_user_ids]
+      return [] if friend_ids.blank?
+      options.update(:with_user_ids => friend_ids)
+    end
+    search_data_streams(options)
+  end
+
+  def search_data_streams(options={})
+    add_geo_params(options)
+    options.update(:klass => [Checkin, PlannedCheckin, Shout]) unless options[:klass]
+    search(options)
+  end
+
+  #
   # search checkins
   #
 
@@ -261,16 +305,25 @@ module Users::Search
   def search(options={})
     klass       = options[:klass]
     raise Exception, 'missing klass' if klass.blank?
+    if klass.is_a?(Array)
+      # use ThinkingSphinx for a multi-model search with classes param
+      classes   = klass
+      klass     = ThinkingSphinx
+    end
     page        = options[:page] ? options[:page].to_i : 1
     per_page    = options[:limit] ? options[:limit] : 20
     method      = :search
     query       = options[:query] ? options[:query] : nil
-    with        = Hash[]
-    without     = Hash[]
-    conditions  = Hash[]
-    geo         = Hash[]
+    with        = {}
+    without     = {}
+    conditions  = {}
+    geo         = {}
+    geo_attrs   = {:latitude_attr=>"lat", :longitude_attr=>"lng"}
 
     # parse klass agnostic options
+    if options[:with_gender] # e.g. 1, [1]
+      with.update(:gender => Array(options[:with_gender]))
+    end
     if options[:with_location_ids] && options[:with_location_ids].any? # e.g. [1,3,5]
       with.update(:location_ids => options[:with_location_ids])
     end
@@ -296,37 +349,26 @@ module Users::Search
       without.update(:user_ids => options[:without_user_ids])
     end
 
-    case klass.to_s
-    when 'Checkin'
-      # parse checkin specific options
-      if options[:with_checkin_at] # e.g. 1290826420..1290829246 (timestamp converted to int)
-        with.update(:checkin_at => options[:with_checkin_at])
-      end
-      if options[:with_checkin_ids] && options[:with_checkin_ids].any? # e.g. [1,3,5]
-        with.update(:checkin_ids => options[:with_checkin_ids])
-      end
-      if options[:without_checkin_ids] && options[:without_checkin_ids].any? # e.g. [1,3,5]
-        without.update(:checkin_ids => options[:without_checkin_ids])
-      end
-      if options[:with_gender] # e.g. 1, [1]
-        with.update(:gender => Array(options[:with_gender]))
-      end
-    when 'Location'
-    when 'PlannedCheckin'
-      # parse planned checkin specific options
-      if options[:with_todo_ids] && options[:with_todo_ids].any? # e.g. [1,3,5]
-        with.update(:todo_ids => options[:with_todo_ids])
-      end
-      if options[:without_todo_ids] && options[:without_todo_ids].any? # e.g. [1,3,5]
-        without.update(:todo_ids => options[:without_todo_ids])
-      end
-    when 'User'
-      # parse user specific options
-      if options[:with_gender] # e.g. 1, [1]
-        with.update(:gender => Array(options[:with_gender]))
-      end
+    # checkins
+    if options[:with_checkin_at] # e.g. 1290826420..1290829246 (timestamp converted to int)
+      with.update(:checkin_at => options[:with_checkin_at])
+    end
+    if options[:with_checkin_ids] && options[:with_checkin_ids].any? # e.g. [1,3,5]
+      with.update(:checkin_ids => options[:with_checkin_ids])
+    end
+    if options[:without_checkin_ids] && options[:without_checkin_ids].any? # e.g. [1,3,5]
+      without.update(:checkin_ids => options[:without_checkin_ids])
     end
 
+    # todos
+    if options[:with_todo_ids] && options[:with_todo_ids].any? # e.g. [1,3,5]
+      with.update(:todo_ids => options[:with_todo_ids])
+    end
+    if options[:without_todo_ids] && options[:without_todo_ids].any? # e.g. [1,3,5]
+      without.update(:todo_ids => options[:without_todo_ids])
+    end
+
+    # geo
     if options[:geo_origin] and options[:geo_distance]
       geo[:geo]         = options[:geo_origin]    # e.g. [lat, lng] (in radians)
       with['@geodist']  = options[:geo_distance]  # e.g. 0.0..5000.0 (in meters, must be floats)
@@ -368,7 +410,9 @@ module Users::Search
             send(order.to_s)
           when :sort_females, :sort_males
             send(order.to_s)
-          when /^sort_checkins_/
+          when /^sort.*_at$/
+            send(order.to_s)
+          when :sort_checkins_past_day
             send(order.to_s)
           when :sort_random
             ["@random"]
@@ -394,7 +438,7 @@ module Users::Search
     end
 
     # check grouping(s)
-    group = Hash[]
+    group = {}
     if options[:group]
       case options[:group].to_s
       when 'user'
@@ -404,9 +448,17 @@ module Users::Search
       end
     end
 
-    args    = Hash[:without => without, :with => with, :conditions => conditions, :match_mode => :extended,
-                   :sort_mode => sort_mode, :order => sort_order,
+    args    = Hash[:without => without, :with => with, :conditions => conditions,
+                   :match_mode => :extended, :sort_mode => sort_mode, :order => sort_order,
                    :page => page, :per_page => per_page].update(geo).update(group)
+    if geo.present?
+      # specify lat,lng attributes required for multi-model search
+      args.merge!(geo_attrs)
+    end
+    if klass == ThinkingSphinx
+      # add classes for multi-model search
+      args[:classes] = classes
+    end
     objects = klass.send(method, query, args)
     begin
       objects.results # query sphinx and populate results
@@ -510,13 +562,24 @@ module Users::Search
   end
 
   # sort checkins by utc timestamp, rank last week's checkins higher than older checkins
-  def sort_checkins_past_week(options={})
+  # def sort_checkins_past_week(options={})
+  #   dtime1    = 1.day.ago.utc.to_i
+  #   dtime2    = 2.days.ago.utc.to_i
+  #   dtime3    = 5.days.ago.utc.to_i
+  #   dtime4    = 7.days.ago.utc.to_i
+  #   sort_expr = "IF(checkin_at > #{dtime1}, 10.0, IF(checkin_at > #{dtime2}, 9.0,
+  #                IF(checkin_at > #{dtime3}, 7.0, IF(checkin_at > #{dtime4}, 5.0, 1.0))))"
+  #   [sort_expr]
+  # end
+
+  # sort objects by utc timestamp_at, most recent first
+  def sort_timestamp_at(options={})
     dtime1    = 1.day.ago.utc.to_i
-    dtime2    = 2.days.ago.utc.to_i
-    dtime3    = 5.days.ago.utc.to_i
-    dtime4    = 7.days.ago.utc.to_i
-    sort_expr = "IF(checkin_at > #{dtime1}, 10.0, IF(checkin_at > #{dtime2}, 9.0,
-                 IF(checkin_at > #{dtime3}, 7.0, IF(checkin_at > #{dtime4}, 5.0, 1.0))))"
+    dtime2    = 7.days.ago.utc.to_i
+    dtime3    = 14.days.ago.utc.to_i
+    dtime4    = 30.days.ago.utc.to_i
+    sort_expr = "IF(timestamp_at > #{dtime1}, 10.0, IF(timestamp_at > #{dtime2}, 9.0,
+                 IF(timestamp_at > #{dtime3}, 7.0, IF(timestamp_at > #{dtime4}, 5.0, 1.0))))"
     [sort_expr]
   end
 

@@ -27,6 +27,9 @@ class PlannedCheckin < ActiveRecord::Base
 
   define_index do
     has :id, :as => :todo_ids
+    zero = "0"
+    has zero, :as => :checkin_ids, :type => :integer
+    has zero, :as => :shout_ids, :type => :integer
     # user
     has user(:id), :as => :user_ids
     indexes user(:handle), :as => :handle
@@ -36,7 +39,6 @@ class PlannedCheckin < ActiveRecord::Base
     # location
     has location(:id), :as => :location_ids
     # location tags
-    # indexes location.tags(:name), :as => :tags
     has location.tags(:id), :as => :tag_ids
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float

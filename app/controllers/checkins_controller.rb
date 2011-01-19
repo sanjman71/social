@@ -1,14 +1,27 @@
 class CheckinsController < ApplicationController
-  before_filter       :authenticate_user!, :only => [:index]
-  before_filter       :find_user, :only => [:index]
+  before_filter       :authenticate_user!, :only => [:index, :search]
+  before_filter       :find_user, :only => [:search]
   skip_before_filter  :check_beta, :only => :poll
   respond_to          :html, :json, :js
+
+  privilege_required  'admin', :only => [:index]
+
+  def page_size
+    20
+  end
+
+  # GET /checkins
+  def index
+    @page     = params[:page] ? params[:page].to_i : 1
+    @limit    = params[:limit] ? params[:limit].to_i : page_size
+    @checkins = Checkin.order("checkin_at desc").paginate(:page => @page, :per_page => @limit)
+  end
 
   # GET /users/1/checkins|todos
   # GET /users/1/checkins|todos/geo:1.23..-23.89/radius:10?limit=5&without_ids=1,5,3&max_user_set=3
   # GET /users/1/checkins|todos/city:chicago?limit=5&without_ids=1,5,3
   # GET /users/1/checkins|todos/all|friends|guys|gals|my|others
-  def index
+  def search
     # parse general parameters
     @max_user_set         = params[:max_user_set] ? params[:max_user_set].to_i : 5
     @without_ids          = params[:without_ids] ? params[:without_ids].split(',').map(&:to_i).uniq.sort : nil
@@ -28,7 +41,7 @@ class CheckinsController < ApplicationController
     @search   = params[:search] ? params[:search].to_s : 'all'
     @filter   = params[:checkins] # 'checkins', 'todos'
     @method   = "search_#{@search}_#{@filter}"
-    @limit    = params[:limit] ? params[:limit].to_i : 2**30
+    @limit    = params[:limit] ? params[:limit].to_i : 100
     @options  = Hash[:without_user_ids => @without_user_ids.to_a.sort, :limit => @limit]
     @sort     = params.keys.select{ |k| k.to_s.match(/^sort/) }.map(&:to_sym)
 

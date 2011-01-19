@@ -19,6 +19,9 @@ class Checkin < ActiveRecord::Base
 
   define_index do
     has :id, :as => :checkin_ids
+    zero = "0"
+    has zero, :as => :todo_ids, :type => :integer
+    has zero, :as => :shout_ids, :type => :integer
     has :checkin_at, :as => :checkin_at
     has :checkin_at, :as => :timestamp_at
     # checkin user
@@ -30,7 +33,6 @@ class Checkin < ActiveRecord::Base
     # checkin location
     has location(:id), :as => :location_ids
     # checkin location tags
-    # indexes location.tags(:name), :as => :tags
     has location.tags(:id), :as => :tag_ids
     # convert degrees to radians for sphinx
     has 'RADIANS(locations.lat)', :as => :lat,  :type => :float

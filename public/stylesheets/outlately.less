@@ -135,17 +135,53 @@ div#todo_search {
   }
 }
 
-div#todos {
+div#todos, div#locations, div#admin_checkins {
+  .admin_checkin {
+    padding: 10px 0px;
+  }
+
+  .admin_checkin.odd {
+    background: #fff;
+  }
+  
+  .admin_checkin.even {
+  
+  }
+
   .location {
     margin-bottom: 10px;
 
     .name {
-      color: #111;
+      color: #00f;
       font-weight: bold;
     }
 
     .street {
+      color: #333;
+    }
+    
+    .latlng {
       color: #999;
+    }
+    
+    .tags {
+      color: #333;
+      font-weight: bold;
+    }
+    
+    .add_tags a {
+      color: #00f;
+      font-size: 0.8em;
+    }
+
+    .badges {
+      color: #333;
+      font-weight: bold;
+    }
+
+    .add_badges a {
+      color: #00f;
+      font-size: 0.8em;
     }
   }
 }

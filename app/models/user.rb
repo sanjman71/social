@@ -44,6 +44,9 @@ class User < ActiveRecord::Base
   # planned checkins
   has_many                  :planned_checkins, :dependent => :destroy
 
+  # shouts
+  has_many                  :shouts, :dependent => :destroy
+
   # photos
   has_many                  :photos, :dependent => :destroy
   accepts_nested_attributes_for :photos, :allow_destroy => true, :reject_if => :all_blank
@@ -572,10 +575,6 @@ class User < ActiveRecord::Base
   end
 
   def event_user_saved
-    if badgings.count == 0
-      # add default badge
-      badgings.create(:badge => Badge.default)
-    end
     # delegate to other callbacks
     after_change_points
   end
@@ -596,10 +595,6 @@ class User < ActiveRecord::Base
 
   # badging added
   def event_badging_added(badging)
-    if badgings.count > 3 and badgings.where(:badge_id => Badge.default.try(:id)).any?
-      # remove default badge
-      badges.delete(Badge.default)
-    end
   end
 
   # oauth added

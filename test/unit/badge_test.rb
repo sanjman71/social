@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class BadgeTest < ActiveSupport::TestCase
-  # fixtures :badges
 
   def setup
     @us               = Factory(:us)

@@ -1,22 +1,26 @@
 - title('Users')
 
-.span-23.prepend-1.mat
-  %h2== Users
-  - if @members.present?
-    %h4
-      = [pluralize(@users.size, 'user'), pluralize(@members, 'member')].join(', ')
+#page-header
+  .span-23.prepend-1.last
+    %h2 Users
 
-%hr.space
+#content.clearfix
+  .span.24.last
+    = display_flash(:all)
+  .span-23.prepend-1.last
+    - if @members.present? and @non_members.present?
+      %h4
+        = [pluralize(@members, 'member'), pluralize(@non_members, 'non-members')].join(', ')
 
-.span-24.last#users
-  - @users.each do |user|
-    .span-24.last#user.padding-bottom-10
-      .span-5.prepend-1#name
-        %h4.bottom= link_to user.handle, user_path(user), :class => 'admin'
-        %span{:style => 'font-size: 0.9em; color: #777;'}= user.member? ? "Member" : "User"
-      .span-3#checkins
-        = pluralize(user.checkins_count, 'checkin')
-      .span-5#points
-        = I18n.t("points", :points => user.points)
-      .span-10.last
-        = pluralize(user.checkin_logs.error.count, 'error')
+  .span-24.last#users
+    - @users.each do |user|
+      .span-24.last#user{:style => 'margin-top: 10px;'}
+        .span-5.prepend-1#name
+          %h4.bottom= link_to user.handle, user_path(user), :class => 'admin'
+          %span{:style => 'font-size: 0.9em; color: #777;'}= user.member? ? "Member" : "User"
+        .span-3
+          = pluralize(user.checkins_count, 'checkin')
+        .span-5
+          = pluralize(user.points, 'point')
+        .span-10.last
+          = pluralize(user.checkin_logs.error.count, 'error')
