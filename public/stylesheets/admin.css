@@ -1,4 +1,6 @@
+body { background: #ffffff; }
 body.admin #page-header { background: #ffffff; }
+#admin-content { background: #ffffff; }
 #admin_links a {
   margin-left: 5px;
   color: #0000ff;

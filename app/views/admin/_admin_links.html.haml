@@ -1,7 +1,11 @@
 #admin_links
-  %h2 Admin
-  %h4{:style => 'float: left; margin-left: 10px; margin-top: 20px;'}
-    = link_to 'Checkins', checkins_admin_index_path, :class => params['action'] == 'checkins' ? ['current'] : []
-    = link_to 'Invites', invites_admin_index_path, :class => params['action'] == 'invites' ? ['current'] : []
-    = link_to 'Tags', tags_admin_index_path, :class => params['action'] == 'tags' ? ['current'] : []
-    = link_to 'Users', users_admin_index_path, :class => params['action'] == 'users' ? ['current'] : []
+  .span-24.last
+    %h2 Admin
+  -#%h4{:style => 'float: left; margin-left: 10px; margin-top: 20px;'}
+  .span-24.last
+    %h4
+      = link_to 'Checkins Chart', admin_checkins_chart_path, :class => params['action'] == 'checkins' ? ['current'] : []
+      = link_to 'Invites Chart', admin_invites_chart_path, :class => params['action'] == 'invites' ? ['current'] : []
+      = link_to 'Tags Chart', admin_tags_chart_path, :class => params['action'] == 'tags' ? ['current'] : []
+      = link_to 'Users Chart', admin_users_chart_path, :class => params['action'] == 'users' ? ['current'] : []
+      = link_to 'Badges', admin_badges_path, :class => params['action'] == 'users' ? ['current'] : []

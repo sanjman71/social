@@ -1,0 +1,29 @@
+- stylesheet('admin')
+- javascript('badges')
+
+#page-header
+  .span-24.last
+    = render(:partial => 'admin/admin_links')
+
+#admin-content.clearfix
+  .span.24.last
+    = display_flash(:all)
+
+  .span-24.last#add_badge{:style => 'margin-bottom: 20px;'}
+    = link_to 'Add Badge', new_badge_path
+
+  .span-24.last#badges
+    - @badges.each do |badge|
+      .span-23.prepend-1.last#badge{:style => 'padding: 10px 0px; border-bottom: 2px #999 solid;'}
+        .span-8
+          #name
+            #{badge.name} (#{badge.badgings.count})
+            %span{:style => 'margin-left: 3px;'}= link_to '+', '#', :id => 'show_search_tags'
+        .span-15.last
+          #tags{:style => 'font-weight: normal;'}= badge.tag_names.join(', ')
+          %span#add_tags{:style => 'font-weight: bold; color: #333;'} &nbsp;
+          %span#apply_tags{:style => 'display: none; margin-left: 5px;'}= link_to 'Apply', '#', "data-url" => add_tags_badge_path(badge)
+        .span-24.last#search_tags{:style => 'display:none;'}
+          = text_field_tag :search, '', :id => 'search_tags_autocomplete',  'data-search-url' => tag_search_badges_path(:format => 'json'), :placeholder => 'e.g. food', :style => 'width: 150px;'
+          %span#hint{:style => 'margin-left: 5px; color: #777;'}
+

@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(:version => 20110119032045) do
   add_index "availabilities", ["user_id"], :name => "index_availabilities_on_user_id"
 
   create_table "badges", :force => true do |t|
-    t.string "regex",   :limit => 200, :null => false
+    t.string "regex",   :limit => 200
     t.string "name",    :limit => 50,  :null => false
     t.string "tag_ids"
   end

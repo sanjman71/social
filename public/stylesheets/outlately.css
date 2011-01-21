@@ -5,6 +5,10 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
   text-align: right;
   margin: 15px 10px;
 }
+.simple_form label.error {
+  float: none;
+  color: #0000ff;
+}
 .simple_form select {
   margin: 15px 0px;
   font-size: 1.2em;
@@ -149,3 +153,50 @@ div#admin_checkins .location .add_badges a {
   color: #0000ff;
   font-size: 0.8em;
 }
+div#add_badge a {
+  height: 20px;
+  width: 60px;
+  line-height: 20px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #ffffff;
+  background-color: #ff6f00;
+  padding: 0 10px;
+  text-decoration: none;
+  display: block;
+  font-size: 11px;
+  text-align: center;
+}
+div#badge a { color: #0000ff; }
+div#badge span#apply_tags a {
+  height: 20px;
+  width: 50px;
+  line-height: 20px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #ffffff;
+  background-color: #ff6f00;
+  padding: 0 10px;
+  text-decoration: none;
+  display: inline;
+  font-size: 11px;
+  text-align: center;
+}
+div#badge #name a {
+  height: 15px;
+  width: 15px;
+  line-height: 20px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #ffffff;
+  background-color: #333333;
+  padding: 0 5px;
+  text-decoration: none;
+  display: inline;
+  font-size: 11px;
+  text-align: center;
+}
+div#badge span#help { color: #555555; }

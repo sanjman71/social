@@ -1,0 +1,16 @@
+- stylesheet('admin')
+- javascript('badges')
+
+#page-header
+  .span-24.last
+    = render(:partial => 'admin/admin_links')
+    %h2 New Badge
+
+#admin-content.clearfix
+  .span-23.prepend-1
+    %h4 Create the badge first, then enter tags.
+
+  .span-24.last#new_badge
+    = simple_form_for(@badge) do |f|
+      = f.input :name, :class => 'required'
+      = f.submit 'Create', :style => 'margin-left: 50px; font-size: 1.5em;'

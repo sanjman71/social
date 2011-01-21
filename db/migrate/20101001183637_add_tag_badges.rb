@@ -1,7 +1,7 @@
 class AddTagBadges < ActiveRecord::Migration
   def self.up
     create_table :badges do |t|
-      t.string  :regex, :limit => 200, :null => false
+      t.string  :regex, :limit => 200
       t.string  :name,  :limit => 50, :null => false
     end
 

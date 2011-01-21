@@ -13,6 +13,12 @@ Given /^a user "([^"]*)" who is a "([^"]*)" "([^"]*)"$/ do |handle, orientation,
                                        :gender => gender, :password => 'secret', :password_confirmation => 'secret')
 end
 
+# add user admin role
+Given /^user "([^"]*)" is an admin$/ do |handle|
+  user = User.find_by_handle!(handle)
+  user.grant_role('admin')
+end
+
 # add user email address
 Given /^user "([^"]*)" has email "([^"]*)"$/ do |handle, email|
   user = User.find_by_handle!(handle)

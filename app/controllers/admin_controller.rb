@@ -1,5 +1,6 @@
 class AdminController < ApplicationController
   before_filter :authenticate_user!
+  layout        'admin'
 
   privilege_required 'admin'
 
@@ -8,8 +9,8 @@ class AdminController < ApplicationController
     
   end
 
-  # GET /admin/checkins
-  def checkins
+  # GET /admin/checkins_chart
+  def checkins_chart
     @dstart             = 3.months.ago.to_date
     @drange             = Range.new(@dstart, Date.today)
     # find member/non-member checkins per day
@@ -35,8 +36,8 @@ class AdminController < ApplicationController
     @todos          = @drange.map { |date| @todos[date.to_s].to_i }
   end
 
-  # GET /admin/invites
-  def invites
+  # GET /admin/invites_chart
+  def invites_chart
     @data     = Invitation.count(:group => "DATE(sent_at)", :order => "sent_at asc")
     # parse first date, convert to msec
     @dtime1   = DateTime.parse(@data.first[0]).to_i * 1000
@@ -44,8 +45,8 @@ class AdminController < ApplicationController
     @invites  = @data.map{ |date, count| count }
   end
 
-  # GET /admin/tags
-  def tags
+  # GET /admin/tags_chart
+  def tags_chart
     # tag histogram
     @tag_histogram  = Location.tag_counts_on(:tags).order("count desc").limit(@limit || 20)
     @tag_names      = @tag_histogram.collect(&:name)
@@ -53,8 +54,8 @@ class AdminController < ApplicationController
     @badge_counts   = @tag_histogram.collect{ |tag| Badge.search(tag.id).size }
   end
 
-  # GET /admin/users
-  def users
+  # GET /admin/users_chart
+  def users_chart
     @mem_females      = User.member.where(:gender => 1).count
     @mem_males        = User.member.where(:gender => 2).count
     @non_females      = User.non_member.where(:gender => 1).count

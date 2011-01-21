@@ -100,11 +100,14 @@ Social::Application.routes.draw do
 
   match 'realtime', :to => "realtime#index"
 
-  resources :admin, :only => [:index] do
-    get :checkins, :on => :collection
-    get :invites, :on => :collection
-    get :tags, :on => :collection
-    get :users, :on => :collection
+  # admin routes
+  scope 'admin' do
+    match '', :to => 'admin#index', :as => :admin
+    match 'checkins_chart', :to => 'admin#checkins_chart', :as => :admin_checkins_chart
+    match 'invites_chart', :to => 'admin#invites_chart', :as => :admin_invites_chart
+    match 'tags_chart', :to => 'admin#tags_chart', :as => :admin_tags_chart
+    match 'users_chart', :to => 'admin#users_chart', :as => :admin_users_chart
+    match 'badges', :to => 'badges#index', :as => :admin_badges
   end
 
   # pages routes
@@ -114,6 +117,12 @@ Social::Application.routes.draw do
   match 'invite', :to => "invitations#new", :as => :invite, :via => [:get]
   match 'invite', :to => "invitations#create", :via => [:post]
   match 'invitees/search', :to => "invitations#search", :as => :invitee_search, :via => [:get]
+
+  # badges
+  resources :badges do
+    get :tag_search, :on => :collection
+    put :add_tags, :on => :member
+  end
 
   # jobs routes
   match 'jobs', :to => 'jobs#index', :as => :jobs
