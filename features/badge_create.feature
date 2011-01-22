@@ -9,6 +9,7 @@ Feature: Create badges
     And user "chicago_guy" is an admin
     And a location "Chicago Starbucks" exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And location "Chicago Starbucks" is tagged with "coffee, snickers"
+    And user "chicago_guy" checked in to "Chicago Starbucks"
     And I am logged in as "chicago_guy"
     And I go to path "/admin/badges"
 
@@ -19,7 +20,7 @@ Feature: Create badges
     And I press "Create"
 
     Then I should see "Created badge 'Candy Crazy'"
-  
+
     # add badge tags
     And I follow "+"
     And I fill in "search_tags_autocomplete" with "snickers"
@@ -28,5 +29,7 @@ Feature: Create badges
     And I follow "Apply"
     And the delayed jobs are processed
 
-    Then I should see "Candy Crazy" within "div#badge"
+    # reload the page
+    And I go to path "/admin/badges"
+    Then I should see "Candy Crazy (1)" within "div#badge"
     And I should see "snickers" within "div#badge"

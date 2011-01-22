@@ -61,6 +61,7 @@ class Badge < ActiveRecord::Base
   end
 
   def async_badge_discovery
+    # add any missing badges to members
     User.member.each do |user|
       user.async_add_badges
     end

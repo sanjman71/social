@@ -44,11 +44,11 @@ class BadgesController < ApplicationController
     @add_tags = params[:add_tags].split(',')
     @badge.add_tags(@add_tags)
     flash[:notice] = "Added tags"
+    @goto     = badges_path
 
     respond_to do |format|
-      path = badges_path
-      format.js { render(:update) { |page| page.redirect_to(path) } }
-      format.html { redirect_to(path) and return }
+      format.js { render(:update) { |page| page.redirect_to(@goto) } }
+      format.html { redirect_to(@goto) and return }
     end
   end
 
