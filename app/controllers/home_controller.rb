@@ -12,8 +12,6 @@ class HomeController < ApplicationController
       @city         = current_city || current_user
       @method       = "search_#{@stream}_data_streams"
       @order        = [:sort_closer_locations, :sort_timestamp_at, :sort_females]
-      # @method       = "search_#{@stream}_checkins"
-      # @order        = [:sort_closer_locations, :sort_checkins_past_week, :sort_females]
       @radius       = 100
       @objects      = @user.send(@method, :limit => checkins_start_count,
                                           :geo_origin => [@city.lat.try(:radians), @city.lng.try(:radians)],

@@ -5,21 +5,9 @@ var stream_todo_ids     = [];
 var stream_shout_ids    = [];
 var stream_timer_id     = 0;
 var stream_updating     = false;
+var stream_paused       = false;
 
-$.fn.init_stream_map = function() {
-  // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
-  if (stream_map) {
-    $('#map').jMapping({
-      category_icon_options: {
-        'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
-        'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
-        'default': {primaryColor: '#465AE0', height: '32', width: '32'}
-      }
-    });
-  }
-}
-
-$.fn.init_plan_checkin = function() {
+$.fn.init_stream_todos = function() {
   /*
   $(".stream .location, .stream .match, .stream .checkin").live('mouseover mouseout', function(event) {
     if (event.type == 'mouseover') {
@@ -33,7 +21,85 @@ $.fn.init_plan_checkin = function() {
   })
   */
 
+  $("a#pick_todo_date").live('click', function() {
+    modal = $(this).closest("li").find("div.planning-modal");
+
+    if ($(this).hasClass('added')) {
+      return false;
+    }
+
+    if (!modal.is(':visible')) {
+      // dim button, show dialog, pause timer
+      $(this).css('opacity', 0.5);
+      modal.show();
+      pauseTimer();
+    } else {
+      // un-dim button, hide dialog, restart timer
+      $(this).css('opacity', 1.0);
+      modal.hide();
+      unpauseTimer();
+    }
+
+    // start/stop timer
+
+    return false;
+  })
+
+  $("input[name='todo_date']").change(function() {
+    // date was selected
+
+    // enable submit
+    $(this).closest('li').find("input#add_todo").attr('disabled', '');
+    return true;
+  })
+
+  $("input#add_todo").live('click', function() {
+    input   = $(this);
+    url     = $(this).attr('data-url');
+    modal   = $(this).closest("li").find("div.planning-modal");
+    abutton = $(this).closest("li").find("a#pick_todo_date");
+
+    if (input.hasClass('added')) {
+      // already added
+      return false;
+    }
+
+    // find selected date
+    date = $(this).closest('li').find("input:checked").val();
+
+    // update interface, disable button
+    input.val("Adding ...").addClass('disabled').attr('disabled', '');
+
+    $.put(url, {expires: date}, function(data) {
+      // update interface
+      input.val("Added").addClass('added');
+      // close dialog
+      modal.hide();
+      // change link/button opacity
+      abutton.css('opacity', 0.5).addClass('added');
+      // restart timer
+      unpauseTimer();
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
+    }, 'json');
+
+    return false;
+  })
+
+  function pauseTimer() {
+    // console.log("pausing interval timer");
+    stream_paused = true;
+  }
+
+  function unpauseTimer() {
+    // console.log("unpausing interval timer");
+    stream_paused = false;
+  }
+
   // add checkin to todo list
+  /*
   $("a#plan_checkin").live('click', function() {
     link  = $(this);
     path  = $(this).attr('data-path');
@@ -42,7 +108,7 @@ $.fn.init_plan_checkin = function() {
       // already added
       return false;
     }
-
+    
     // update interface
     $(link).text("Adding ...").addClass('disabled');
   
@@ -57,25 +123,39 @@ $.fn.init_plan_checkin = function() {
 
     return false;
   })
+  */
+}
+
+$.fn.init_stream_map = function() {
+  // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
+  if (stream_map) {
+    $('#map').jMapping({
+      category_icon_options: {
+        'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
+        'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
+        'default': {primaryColor: '#465AE0', height: '32', width: '32'}
+      }
+    });
+  }
 }
 
 $.fn.init_stream_timer = function() {
+
+  function startTimer() {
+    stream_timer_id = setInterval(addObjects, 5000);
+    // console.log("stream timer id: " + stream_timer_id);
+  }
+
+  function stopTimer() {
+    // console.log("cancelling interval timer");
+    clearInterval(stream_timer_id);
+  }
 
   if ($("#social-stream li").length > 0) {
     // initialize stream objects
     trackNotCountedObjects();
     // start interval timer
     startTimer();
-  }
-
-  function startTimer() {
-    stream_timer_id = setInterval(addObjects, 5000);
-    // console.log("stream timer id: " + stream_timer_id);
-  }
-  
-  function stopTimer() {
-    // console.log("cancelling interval timer");
-    clearInterval(stream_timer_id);
   }
 
   // track not-counted visible objects
@@ -131,6 +211,13 @@ $.fn.init_stream_timer = function() {
       // console.log("stream is updating");
       return;
     }
+
+    if (stream_paused) {
+      // skip if stream is paused
+      // console.log("stream paused");
+      return;
+    }
+
     // set updating flag
     stream_updating = true;
 
@@ -155,7 +242,6 @@ $.fn.init_stream_timer = function() {
     }
 
     stream_updating = false;
-    return;
 
     /*
     // pick the next stream url
@@ -210,7 +296,7 @@ $.fn.init_stream_timer = function() {
 }
 
 $(document).ready(function() {
-  $(document).init_plan_checkin();
+  $(document).init_stream_todos();
   $(document).init_stream_map();
   $(document).init_stream_timer();
 })

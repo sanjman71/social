@@ -24,13 +24,28 @@ class PlansControllerTest < ActionController::TestCase
       @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
     end
 
-    should "add planned checkin" do
+    should "add planned checkin with default expires_at" do
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
+      # should add location to planned checkins list, with default expires_at
+      assert_equal 1, @user1.reload.planned_checkins.count
+      assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
+      assert_equal [7], @user1.reload.planned_checkins.collect{ |o| o.days_left }
+      # should add growl message
+      assert_equal 1, assigns(:growls).size
+      assert_redirected_to '/'
+      assert_equal "We added Starbucks to your todo list", flash[:notice]
+    end
+
+    should "add planned checkin with expires_at tomorrow" do
+      sign_in @user1
+      set_beta
+      put :add, :location_id => @sbux.id, :expires => 'tomorrow'
       # should add location to planned checkins list
       assert_equal 1, @user1.reload.planned_checkins.count
       assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
+      assert_equal [Date.today+1.day], @user1.reload.planned_checkins.collect{ |o| o.expires_at.to_date }
       # should add growl message
       assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'

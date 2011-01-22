@@ -1,0 +1,10 @@
+.planning-modal.hide
+  %h4 When do you plan to go here?
+  %label
+    %input{:type => "radio", :name => 'todo_date', :value => 'today'} Today
+  %label
+    %input{:type => "radio", :name => 'todo_date', :value => 'tomorrow'} Tomorrow
+  -#%label
+    -#%input{:type => "radio", :name => 'todo_date'} A Later Date
+  -##delete-me-datepicker-placeholder.hide Datepicker here. hidden unless "A Later Date" is selected
+  %input#add_todo{:type => "submit", :value => "Make Plan", :disabled => 'disabled', "data-url" => add_todo_location_path(location.id)}

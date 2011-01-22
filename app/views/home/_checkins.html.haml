@@ -4,6 +4,7 @@
   - user      = checkin.user
   - location  = checkin.location
   %li.checkin{'data-id' => checkin.id, 'data-location-id' => location.id, :class => [visible, 'not-counted']}
+    = render(:partial => 'home/todo_pick_date', :locals => {:location => location})
     = image_tag(user.primary_photo_url, :size => '50x50', :alt => 'social stream avatar')
     %h4
       = user.handle
