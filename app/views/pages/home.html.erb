@@ -10,6 +10,14 @@
   <div class="half-col">
     <ul id="social-stream">
       <li>
+        <div class="planning-modal">
+          <h4>When do you plan to go here?</h4>
+          <label><input type="radio" />Today</label>
+          <label><input type="radio" />Tomorrow</label>
+          <label><input type="radio" />A Later Date</label>
+          <div id="delete-me-datepicker-placeholder">Datepicker here. hidden unless "A Later Date" is selected</div>
+          <input type="submit" value="Make Plan" />
+        </div>
         <%= image_tag("/images/temp-avatar2.jpg", :alt => 'social stream avatar') %>
         <h4>kbell20 <small>14 minutes ago</small></h4>
         <h3>Liberty Hotel</h3>
