@@ -195,8 +195,10 @@ Devise.setup do |config|
 
   config.omniauth :facebook, FACEBOOK_KEY, FACEBOOK_SECRET,
                   :scope => 'offline_access,email,user_checkins,friends_checkins,user_about_me,friends_about_me,
-                             user_birthday,friends_birthday,user_location,friends_location,user_photos,
-                             friends_photos'
+                             user_birthday,friends_birthday,user_location,friends_location,
+                             user_photos,friends_photos,user_education_history,friends_work_history,
+                             user_work_history,friends_work_history,
+                             user_relationship_details,friends_relationship_details'
   config.omniauth :foursquare, FOURSQUARE_KEY, FOURSQUARE_SECRET
   config.omniauth :twitter, TWITTER_KEY, TWITTER_SECRET
   config.omniauth :github, GITHUB_KEY, GITHUB_SECRET
