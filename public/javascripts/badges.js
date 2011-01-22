@@ -70,10 +70,8 @@ $(document).ready(function() {
   $("form#new_badge").validate({});
 
   $("a#show_search_tags").click(function() {
-    // close all search tags
-    $(document).find("#search_tags").hide();
     // show selected search tags
-    $(this).closest("#badge").find("#search_tags").show();
+    $(this).closest("#badge").find("#search_tags").toggle();
     return false;
   })
 

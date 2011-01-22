@@ -16,7 +16,7 @@
 
   .span-24.last#badges
     - @badges.each do |badge|
-      .span-23.prepend-1.last#badge{:style => 'padding: 10px 0px; border-bottom: 2px #999 solid;'}
+      .span-23.prepend-1.last#badge{:class => cycle('even', 'odd')}
         .span-8
           #name
             #{badge.name} (#{badge.badgings.count})

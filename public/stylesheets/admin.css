@@ -1,6 +1,12 @@
 body { background: #ffffff; }
 body.admin #page-header { background: #ffffff; }
 #admin-content { background: #ffffff; }
+#admin-content #badge {
+  padding: 10px 5px;
+  border-bottom: 1px #cccccc solid;
+}
+#admin-content #badge.even { background: #efefef; }
+#admin-content #badge.odd { background: #ffffff; }
 #admin_links a {
   margin-left: 5px;
   color: #0000ff;
