@@ -1,5 +1,12 @@
--# always allowed to add location to todo list
-= link_to(I18n.t("home.stream.plan_location"), '#', :id => 'pick_todo_date', "data-path" => add_todo_location_path(location.id))
+- plan = local_assigns[:plan] || :plan
+
+-# todos are always allowed
+- plan_text = (plan == :plan) ? I18n.t("home.stream.plan_todo") : I18n.t("home.stream.join_todo")
+- plan_link = (plan == :plan) ? add_todo_location_path(location.id) : join_todo_path(object.id)
+- plan_id   = (plan == :plan) ? 'pick_todo_date' : 'join_todo'
+
+= link_to(plan_text, '#', :id => plan_id, "data-url" => plan_link)
+
 - if (user != current_user)
   - if user.member?
     -# can meet members

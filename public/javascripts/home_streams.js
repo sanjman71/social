@@ -40,8 +40,6 @@ $.fn.init_stream_todos = function() {
       unpauseTimer();
     }
 
-    // start/stop timer
-
     return false;
   })
 
@@ -70,7 +68,7 @@ $.fn.init_stream_todos = function() {
     // update interface, disable button
     input.val("Adding ...").addClass('disabled').attr('disabled', '');
 
-    $.put(url, {expires: date}, function(data) {
+    $.put(url, {going: date}, function(data) {
       // update interface
       input.val("Added").addClass('added');
       // close dialog
@@ -98,23 +96,27 @@ $.fn.init_stream_todos = function() {
     stream_paused = false;
   }
 
-  // add checkin to todo list
-  /*
-  $("a#plan_checkin").live('click', function() {
+  // join an existing plan
+  $("a#join_todo").live('click', function() {
     link  = $(this);
-    path  = $(this).attr('data-path');
+    path  = $(this).attr('data-url');
 
-    if ($(this).hasClass('disabled')) {
+    if ($(this).hasClass('added')) {
       // already added
       return false;
     }
     
+    // pause timer
+    pauseTimer();
+    
     // update interface
-    $(link).text("Adding ...").addClass('disabled');
+    link.text("Adding ...");
   
     $.put(path, {}, function(data) {
       // update interface
-      $(link).text("Added");
+      link.text("Added").css('opacity', 0.5).addClass('added');
+      // restart timer
+      unpauseTimer();
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);
@@ -123,7 +125,6 @@ $.fn.init_stream_todos = function() {
 
     return false;
   })
-  */
 }
 
 $.fn.init_stream_map = function() {

@@ -21,7 +21,8 @@ en:
       tooltip: "Check-in through Facebook or Foursquare to build your Social DNA and get matched with people who have your same interests."
     stream:
       title: Social Stream
-      plan_location: "Plan To Go Here"
+      plan_todo: "Plan To Go Here"
+      join_todo: "Join Me"
       meet_user: "See %{name} Profile"
       invite_user: "Invite %{name}"
       name:
@@ -43,7 +44,10 @@ en:
   todo:
     added: "If you go there within %{days} days +%{plus_points}, otherwise -%{minus_points}"
   plans:
-    going: "Plans on going in %{count} days"
+    going:
+      zero: "Plans on going today"
+      one: "Plans on going in 1 day"
+      other: "Plans on going in %{count} days"
     going_soon: "Plans on going soon"
   currency:
     view_profile:

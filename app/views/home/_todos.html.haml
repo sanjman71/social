@@ -8,7 +8,7 @@
     = image_tag(user.primary_photo_url, :size => '50x50', :alt => 'social stream avatar')
     %h4
       = user.handle
-      %small plans on going soon
+      %small= todo.going.downcase
     %h3= truncate(location.name, :length => 35)
     %div#actions
-      = render(:partial => 'home/actions', :locals => {:user => user, :location => location})
+      = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => todo, :plan => :join})

@@ -11,4 +11,4 @@
       %small= truncate(shout.text, :length => 30)
     %h3= truncate(location.name, :length => 35)
     %div#actions
-      = render(:partial => 'home/actions', :locals => {:user => user, :location => location})
+      = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => shout})

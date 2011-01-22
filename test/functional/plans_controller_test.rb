@@ -6,6 +6,7 @@ class PlansControllerTest < ActionController::TestCase
   context "routes" do
     should route(:put, 'plans/add').to(:controller => 'plans', :action => 'add')
     should route(:put, 'plans/add/1').to(:controller => 'plans', :action => 'add', :location_id => '1')
+    should route(:put, 'plans/join/1').to(:controller => 'plans', :action => 'join', :plan_id => '1')
     should route(:put, 'plans/remove/1').to(:controller => 'plans', :action => 'remove', :location_id => '1')
   end
 
@@ -19,33 +20,57 @@ class PlansControllerTest < ActionController::TestCase
     @sbux         = Location.create!(:name => 'Starbucks', :city => @chicago, :country => @us)
   end
 
+  context "join" do
+    setup do
+      @user1    = Factory.create(:user, :handle => 'User1', :city => @chicago)
+      @user2    = Factory.create(:user, :handle => 'User2', :city => @chicago)
+      @going_at = Time.zone.now.end_of_day + 1.day
+      @todo1    = @user1.planned_checkins.create!(:location => @sbux, :going_at => @going_at)
+    end
+
+    should "add planned checkin and send email to original planner" do
+      sign_in @user2
+      set_beta
+      put :join, :plan_id => @todo1.id, :going => 'tomorrow'
+      # should add location to planned checkins list, with original going_at
+      assert_equal 1, @user1.reload.planned_checkins.count
+      assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
+      assert_equal [@going_at.to_i], @user1.reload.planned_checkins.collect{ |o| o.going_at.to_i }
+      # should add growl message
+      assert_equal 1, assigns(:growls).size
+      # should redirect and set flash
+      assert_redirected_to '/'
+      assert_equal "We added Starbucks to your todo list", flash[:notice]
+    end
+  end
+
   context "add" do
     setup do
       @user1 = Factory.create(:user, :handle => 'User1', :city => @chicago)
     end
 
-    should "add planned checkin with default expires_at" do
+    should "add planned checkin with default going_at" do
       sign_in @user1
       set_beta
       put :add, :location_id => @sbux.id
-      # should add location to planned checkins list, with default expires_at
+      # should add location to planned checkins list, with default going_at
       assert_equal 1, @user1.reload.planned_checkins.count
       assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
-      assert_equal [7], @user1.reload.planned_checkins.collect{ |o| o.days_left }
+      assert_equal [nil], @user1.reload.planned_checkins.collect{ |o| o.going_at }
       # should add growl message
       assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'
       assert_equal "We added Starbucks to your todo list", flash[:notice]
     end
 
-    should "add planned checkin with expires_at tomorrow" do
+    should "add planned checkin with going_at tomorrow" do
       sign_in @user1
       set_beta
-      put :add, :location_id => @sbux.id, :expires => 'tomorrow'
+      put :add, :location_id => @sbux.id, :going => 'tomorrow'
       # should add location to planned checkins list
       assert_equal 1, @user1.reload.planned_checkins.count
       assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
-      assert_equal [Date.today+1.day], @user1.reload.planned_checkins.collect{ |o| o.expires_at.to_date }
+      assert_equal [Date.today+1.day], @user1.reload.planned_checkins.collect{ |o| o.going_at.to_date }
       # should add growl message
       assert_equal 1, assigns(:growls).size
       assert_redirected_to '/'

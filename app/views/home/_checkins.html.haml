@@ -11,4 +11,4 @@
       %small= checkin_time_ago(checkin.checkin_at)
     %h3= truncate(location.name, :length => 33)
     %div#actions
-      = render(:partial => 'home/actions', :locals => {:user => user, :location => location})
+      = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => checkin})

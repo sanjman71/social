@@ -1,7 +1,7 @@
 class PlansController < ApplicationController
   before_filter :authenticate_user!
   before_filter :find_location, :only => [:add]
-  before_filter :find_expires, :only => [:add]
+  before_filter :find_going, :only => [:add]
   respond_to    :html, :json
 
   # GET /plans
@@ -15,16 +15,25 @@ class PlansController < ApplicationController
     end
   end
 
+  # PUT /plans/join/5
+  def join
+    @join_todo  = PlannedCheckin.find(params[:plan_id])
+    @location   = @join_todo.location
+    @going_at   = @join_todo.going_at
+  
+    add
+  end
+
   # PUT /plans/add
   # PUT /plans/add/1
   def add
-    # @location, @expires_at initialized in before filter
+    # @location, @going_at initialized in before filter
 
     begin
       # set user to current user
       @user = current_user
       # create planned checkin
-      @pcheckin = @user.planned_checkins.create!(:location => @location, :expires_at => @expires_at)
+      @pcheckin = @user.planned_checkins.create!(:location => @location, :going_at => @going_at)
       # add flash message
       flash[:notice] = "We added #{@location.name} to your todo list"
       # add growl message
@@ -35,6 +44,10 @@ class PlansController < ApplicationController
       @growls = [{:message => @message, :timeout => 2000}]
       # set status
       @status = 'ok'
+
+      if @join_todo
+        CheckinMailer.delay.todo_joined({:orig_todo => @join_todo.id, :new_todo => @pcheckin.id})
+      end
     rescue Exception => e
       # @location already planned
       @status   = 'error'
@@ -70,16 +83,14 @@ class PlansController < ApplicationController
 
   protected
 
-  def find_expires
-    # @expires_at = params[:expires]
-    # return @expires_at unless @expires_at.present?
-    case params[:expires]
+  def find_going
+    case params[:going]
     when blank?
-      @expires_at = nil
+      @going_at = nil
     when /^[a-z]+$/
-      @expires_at = Chronic.parse(params[:expires]).end_of_day
+      @going_at = Chronic.parse(params[:going]).end_of_day
     when /\d+/
-      @expires_at = Chronic(parse(params[:expire])).end_of_day
+      @going_at = Chronic(parse(params[:going])).end_of_day
     end
   end
 

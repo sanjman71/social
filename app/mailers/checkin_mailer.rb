@@ -52,6 +52,21 @@ class CheckinMailer < ActionMailer::Base
     end
   end
 
+  def todo_joined(options)
+    @orig_todo  = PlannedCheckin.find_by_id(options[:orig_todo])
+    @orig_user  = @orig_todo.user
+    @new_todo   = PlannedCheckin.find_by_id(options[:new_todo])
+    @new_user   = @new_todo.user
+    # send email to 'original' user
+    @email      = @orig_user.email_address
+    @subject    = "Outlately: #{@new_user.handle} is planning on joining you ..."
+
+    unless @email.blank?
+      AppLogger.log("[email:#{@orig_user.id}:#{@email}] todo_joined:#{@new_todo.id}:user:#{@new_todo.user.id}:location:#{@new_todo.location.try(:name)}")
+      mail(:to => @email, :subject => @subject)
+    end
+  end
+
   def checkin_stats(options)
     @emails     = options[:emails].join(', ')
     @file       = File.read(options[:file])
