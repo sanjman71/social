@@ -109,6 +109,7 @@ Social::Application.routes.draw do
     match 'tags_chart', :to => 'admin#tags_chart', :as => :admin_tags_chart
     match 'users_chart', :to => 'admin#users_chart', :as => :admin_users_chart
     match 'badges', :to => 'badges#index', :as => :admin_badges
+    match 'checkins', :to => 'checkins#index', :as => :admin_checkins
   end
 
   # pages routes

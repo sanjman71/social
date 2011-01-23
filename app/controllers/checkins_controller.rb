@@ -11,10 +11,13 @@ class CheckinsController < ApplicationController
   end
 
   # GET /checkins
+  # GET /admin/checkins
+  # GET /admin/checkins?limit=10&page=0
   def index
     @page     = params[:page] ? params[:page].to_i : 1
     @limit    = params[:limit] ? params[:limit].to_i : page_size
     @checkins = Checkin.order("checkin_at desc").paginate(:page => @page, :per_page => @limit)
+    render(:action => 'index', :layout => 'admin')
   end
 
   # GET /users/1/checkins|todos
