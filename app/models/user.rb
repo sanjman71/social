@@ -442,6 +442,8 @@ class User < ActiveRecord::Base
     tag_names   = checkin_locations.collect(&:tags).flatten.collect(&:name)
     return [] if tag_names.blank?
     new_badges  = Badge.all.inject([]) do |array, badge|
+      # skip if no regex
+      next if badge.regex.blank?
       matches = tag_names.grep(Regexp.new(badge.regex))
       if !matches.blank?
         # add badge
