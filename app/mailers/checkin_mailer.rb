@@ -11,7 +11,7 @@ class CheckinMailer < ActionMailer::Base
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] checkin_imported:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "You checked in at #{@location.try(:name)}", :body => @body)
+      mail(:to => @email, :subject => "Outlately: You checked in at #{@location.try(:name)}", :body => @body)
     end
   end
 
@@ -59,7 +59,16 @@ class CheckinMailer < ActionMailer::Base
     @new_user   = @new_todo.user
     # send email to 'original' user
     @email      = @orig_user.email_address
-    @subject    = "Outlately: #{@new_user.handle} is planning on joining you ..."
+    @subject    = "Outlately: #{@new_user.handle} is planning on joining you..."
+
+    case @new_todo.going_days_left
+    when 0
+      @going = 'today'
+    when 1
+      @going = 'tomorrow'
+    else
+      @going = 'soon'
+    end
 
     unless @email.blank?
       AppLogger.log("[email:#{@orig_user.id}:#{@email}] todo_joined:#{@new_todo.id}:user:#{@new_todo.user.id}:location:#{@new_todo.location.try(:name)}")

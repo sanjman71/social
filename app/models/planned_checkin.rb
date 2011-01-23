@@ -51,7 +51,7 @@ class PlannedCheckin < ActiveRecord::Base
   end
 
   # days left to complete checkin at this location
-  def days_left
+  def expires_days_left
     return 0 if !active
     days_float = (expires_at.to_f - Time.zone.now.to_f) / 86400
     days_float.ceil
@@ -64,6 +64,13 @@ class PlannedCheckin < ActiveRecord::Base
     else
       I18n.t("plans.going_soon")
     end
+  end
+
+  # days left before planned visit
+  def going_days_left
+    return nil if going_at.blank?
+    days = (going_at.to_f - Time.zone.now.to_f) / 86400
+    days.round
   end
 
   def expired?

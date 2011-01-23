@@ -20,4 +20,7 @@ Feature: Join in on a planned checkin
 
     And I follow "Join Me"
     Then I should see "If you go there within 7 days"
-    And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy is planning on joining you ..."
+    And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy is planning on joining you..."
+    And "chicago_gal@outlately.com" opens the email
+    Then I should see "chicago_guy is also going to 'Chicago Starbucks' tomorrow." in the email body
+    

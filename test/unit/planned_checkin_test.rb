@@ -21,7 +21,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     should "set expires_at to be in 7 days" do
       @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux)
       assert @pcheckin.expires_at
-      assert_equal 7, @pcheckin.days_left
+      assert_equal 7, @pcheckin.expires_days_left
     end
 
     should "set locationship todo_checkins to 1" do
@@ -35,12 +35,14 @@ class PlannedCheckinTest < ActiveSupport::TestCase
       @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux)
       assert_nil @pcheckin.going_at
       assert_equal "Plans on going soon", @pcheckin.going
+      assert_equal nil, @pcheckin.going_days_left
     end
 
     should "set going_at to 3 days" do
       @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux, :going_at => 3.days.from_now)
       assert @pcheckin.going_at
       assert_equal "Plans on going in 3 days", @pcheckin.going
+      assert_equal 3, @pcheckin.going_days_left
     end
 
     should "not allow if there is an active planned checkin" do

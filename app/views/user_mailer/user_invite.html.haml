@@ -1,7 +1,5 @@
-%html
-  %head
-    %meta{'http-equiv' => 'Content-Type', :content => "text/html; charset=utf-8"}
-  %body
-    = raw RedCloth.new(@message).to_html
-    %br
-    Click #{link_to 'here', root_url(:token => @invitation.token)} to signup.
+= raw RedCloth.new(@message).to_html
+%br
+Click #{link_to 'here', root_url(:token => @invitation.token)} to signup.
+
+= render(:partial => 'footer')

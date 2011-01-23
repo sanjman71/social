@@ -10,4 +10,4 @@
   - else
     Added: #{pcheckin.planned_at.try(:today?) ? 'Today' : pcheckin.planned_at.try(:to_s, :datetime_short)}
     %br
-    %strong #{pluralize(pcheckin.days_left, 'day')} left to check in here
+    %strong #{pluralize(pcheckin.expires_days_left, 'day')} left to check in here

@@ -1,6 +1,6 @@
 Feature: User Profile
   As a user
-  I want to see user profiles and be able to interact with them
+  I want to see other user profiles
 
   Background:
     Given a city: "Chicago" should exist with name: "Chicago"
@@ -19,24 +19,4 @@ Feature: User Profile
     Given I am logged in as "chicago_guy"
     When I go to chicago_gal's profile page
     Then I should see "90" within "div#my-points div#screen"
-
-  @javascript
-  Scenario: A user visits another user's profile and sends a message
-    Given I am logged in as "chicago_guy"
-    And user "chicago_gal" has email "chicago_gal@outlately.com"
-    When I go to chicago_gal's profile page
-    Then I should see "Message"
-
-    And I follow "Message"
-    And I fill in "message_body" with "Hey there"
-    And I press "Send"
-    And I wait for "3" seconds
-    Then I should see "Sent message!"
-
-    And the delayed jobs are processed
-    Then "chicago_gal@outlately.com" should receive an email with subject "chicago_guy sent you a message"
-    And I open the email
-    Then I should see "Hey there" in the email body
-    And I follow "here" in the email
-    Then I should be on chicago_guy's profile page
     
