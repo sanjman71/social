@@ -53,6 +53,16 @@ class HomeControllerTest < ActionController::TestCase
         assert_equal 'friends', assigns(:stream)
         assert_equal 'friends', session[:current_stream]
       end
+
+      should "default to 'search_everyone_data_streams' method if current stream is invalid" do
+        set_beta
+        sign_in @user
+        session[:current_stream] = 'bogus'
+        get :index
+        assert_equal 'bogus', assigns(:stream)
+        assert_equal 'bogus', session[:current_stream]
+        assert_equal 'search_everyone_data_streams', assigns(:method)
+      end
     end
 
     context "current_city" do

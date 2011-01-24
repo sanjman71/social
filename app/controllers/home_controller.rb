@@ -6,11 +6,13 @@ class HomeController < ApplicationController
   # GET /
   def index
     self.class.benchmark("*** benchmark [user:#{current_user.id}] #{current_user.handle} home stream data") do
-      # find checkins and/or todos
+      # find data streams
       @user         = current_user
       @stream       = current_stream
       @city         = current_city || current_user
       @method       = "search_#{@stream}_data_streams"
+      # validate method
+      @method       = @user.respond_to?(@method) ? @method : "search_everyone_data_streams"
       @order        = [:sort_closer_locations, :sort_timestamp_at, :sort_females]
       @radius       = 100
       @objects      = @user.send(@method, :limit => checkins_start_count,
