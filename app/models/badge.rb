@@ -1,6 +1,6 @@
 class Badge < ActiveRecord::Base
   validates   :name,  :presence => true, :uniqueness => true
-  # validates   :regex, :presence => true
+  validates   :tagline, :presence => true
 
   has_many    :badgings, :dependent => :destroy
   has_many    :users, :through => :badgings
@@ -33,7 +33,8 @@ class Badge < ActiveRecord::Base
 
   def self.default
     # build default badge
-    @@default ||= Badge.new(:name => "Create your Social DNA")
+    @@default ||= Badge.new(:name => "Create your Social DNA",
+                            :tagline => "Check in to places in order to build your profile")
   end
 
   # search for badges with the specified tag ids

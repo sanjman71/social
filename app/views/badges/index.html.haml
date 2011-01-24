@@ -20,7 +20,8 @@
         .span-8
           #name
             #{badge.name} (#{badge.badgings.count})
-            %span{:style => 'margin-left: 3px;'}= link_to '+', '#', :id => 'show_search_tags'
+            %span{:style => 'margin-left: 3px;'}= link_to 'Edit', edit_badge_path(badge)
+            %span{:style => 'margin-left: 5px;'}= link_to '+ Tags', '#', :id => 'show_search_tags'
         .span-15.last
           #tags{:style => 'font-weight: normal;'}= badge.tag_names.join(', ')
           %span#add_tags{:style => 'font-weight: bold; color: #333;'} &nbsp;

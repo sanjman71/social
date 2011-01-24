@@ -24,13 +24,13 @@ class BadgeTest < ActiveSupport::TestCase
   end
 
   should "add tag_ids when badge is created" do
-    @badge  = Badge.create(:regex => "coffee|tea", :name => 'Caffeine Junkie')
+    @badge  = Badge.create!(:regex => "coffee|tea", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
     assert_equal [@coffee.id], @badge.tag_ids.split(",").map(&:to_i)
   end
 
   should "add tag_ids when badge regex is updated" do
-    @badge  = Badge.create!(:name => 'Caffeine Junkie')
+    @badge  = Badge.create!(:name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
     assert_nil @badge.tag_ids
     @badge.regex = "coffee|tea"
@@ -39,7 +39,7 @@ class BadgeTest < ActiveSupport::TestCase
   end
 
   should "add tag_ids when tags are added using add_tags method" do
-    @badge  = Badge.create!(:name => 'Caffeine Junkie')
+    @badge  = Badge.create!(:name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
     assert_nil @badge.tag_ids
     @badge.add_tags('coffee,tea')
@@ -48,7 +48,7 @@ class BadgeTest < ActiveSupport::TestCase
   end
 
   should "find badge when searching by tag id" do
-    @badge  = Badge.create(:regex => "coffee|tea", :name => 'Caffeine Junkie')
+    @badge  = Badge.create!(:regex => "coffee|tea", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
     @badges = Badge.search(@coffee.id)
     assert_equal [@badge], @badges
@@ -56,7 +56,7 @@ class BadgeTest < ActiveSupport::TestCase
 
   should "not add badge without matching tags" do
     # create badge
-    @badge   = Badge.create(:regex => "cheese|pizza", :name => 'Caffeine Junkie')
+    @badge   = Badge.create!(:regex => "cheese|pizza", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     # create chicago locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     # should not add any badges
@@ -67,7 +67,7 @@ class BadgeTest < ActiveSupport::TestCase
     # create chicago checkin locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     # create badge
-    @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+    @badge = Badge.create!(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     # should add matching badge
     assert_equal 1, @chicago_male1.async_add_badges.size
     assert_equal ['Caffeine Junkie'], @chicago_male1.badges_list
@@ -77,7 +77,7 @@ class BadgeTest < ActiveSupport::TestCase
     # create chicago friend locationship
     @chicago_male1.locationships.create!(:location => @chicago_sbux, :friend_checkins => 1)
     # create badge
-    @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie')
+    @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     # should not add badge
     assert_equal 0, @chicago_male1.async_add_badges.size
   end

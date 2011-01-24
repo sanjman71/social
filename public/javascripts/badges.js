@@ -67,7 +67,8 @@ $.fn.init_search_tags_autocomplete = function() {
 $(document).ready(function() {
   $(document).init_search_tags_autocomplete();
 
-  $("form#new_badge").validate({});
+  // validate form
+  $("form.badge").validate({});
 
   $("a#show_search_tags").click(function() {
     // show selected search tags

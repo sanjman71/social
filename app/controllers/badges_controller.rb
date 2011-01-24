@@ -17,7 +17,22 @@ class BadgesController < ApplicationController
   # POST /badges
   def create
     @badge = Badge.create!(params[:badge])
-    redirect_to(badges_path, :notice => "Created badge '#{@badge.name}'")
+    redirect_to(admin_badges_path, :notice => "Created badge '#{@badge.name}'")
+  rescue Exception => e
+    render :action => 'new'
+  end
+
+  # GET /badges/1/edit
+  def edit
+    @badge = Badge.find(params[:id])
+    render(:action => 'new')
+  end
+
+  # PUT /badges/1
+  def update
+    @badge = Badge.find(params[:id])
+    @badge.update_attributes(params[:badge])
+    redirect_to(admin_badges_path, :notice => "Updated badge '#{@badge.name}'")
   rescue Exception => e
     render :action => 'new'
   end

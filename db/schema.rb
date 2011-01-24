@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110119032045) do
+ActiveRecord::Schema.define(:version => 20110124033811) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -36,9 +36,12 @@ ActiveRecord::Schema.define(:version => 20110119032045) do
   add_index "availabilities", ["user_id"], :name => "index_availabilities_on_user_id"
 
   create_table "badges", :force => true do |t|
-    t.string "regex",   :limit => 200
-    t.string "name",    :limit => 50,  :null => false
-    t.string "tag_ids"
+    t.string   "regex",      :limit => 200
+    t.string   "name",       :limit => 50,  :null => false
+    t.string   "tag_ids"
+    t.string   "tagline"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "badges", ["name"], :name => "index_badges_on_name"

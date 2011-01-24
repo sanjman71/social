@@ -17,6 +17,8 @@ class Checkin < ActiveRecord::Base
   scope         :facebook, where(:source_type => 'facebook')
   scope         :recent, :order => 'checkins.checkin_at desc'
 
+  scope         :member, joins(:user).where(:users => {:member => 1})
+
   define_index do
     has :id, :as => :checkin_ids
     zero = "0"
