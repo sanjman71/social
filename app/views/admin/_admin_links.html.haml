@@ -9,4 +9,4 @@
       = link_to 'Tags Chart', admin_tags_chart_path, :class => params['action'] == 'tags' ? ['current'] : []
       = link_to 'Users Chart', admin_users_chart_path, :class => params['action'] == 'users' ? ['current'] : []
       = link_to 'Badges', admin_badges_path, :class => params['action'] == 'users' ? ['current'] : []
-      = link_to 'Checkins', admin_checkins_path(:limit => 100, :page => 1), :class => params['action'] == 'checkins' ? ['current'] : []
+      = link_to 'Checkins', admin_checkins_path(:member => 1, :limit => 100, :page => 1), :class => params['action'] == 'checkins' ? ['current'] : []

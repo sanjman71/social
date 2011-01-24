@@ -12,12 +12,21 @@ class CheckinsController < ApplicationController
 
   # GET /checkins
   # GET /admin/checkins
-  # GET /admin/checkins?limit=10&page=0
+  # GET /admin/checkins?limit=10&page=0&member=1
   def index
     @page     = params[:page] ? params[:page].to_i : 1
     @limit    = params[:limit] ? params[:limit].to_i : page_size
-    @checkins = Checkin.order("checkin_at desc").paginate(:page => @page, :per_page => @limit)
-    render(:action => 'index', :layout => 'admin')
+    @member   = params[:member].to_i == 1
+    
+    if @member
+      @checkins = Checkin.member.order("checkin_at desc").paginate(:page => @page, :per_page => @limit)
+    else
+      @checkins = Checkin.order("checkin_at desc").paginate(:page => @page, :per_page => @limit)
+    end
+
+    respond_to do |format|
+      format.html { render(:action => 'index', :layout => 'admin') }
+    end
   end
 
   # GET /users/1/checkins|todos
