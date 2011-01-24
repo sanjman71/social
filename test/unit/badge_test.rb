@@ -56,30 +56,21 @@ class BadgeTest < ActiveSupport::TestCase
 
   should "not add badge without matching tags" do
     # create badge
-    @badge   = Badge.create!(:regex => "cheese|pizza", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
-    # create chicago locationship
-    @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+    @badge = Badge.create!(:regex => "cheese|pizza", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
+    # create chicago checkin
+    @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @chicago_sbux))
     # should not add any badges
     assert_equal 0, @chicago_male1.async_add_badges.size
   end
 
   should "add badge based on matching checkin location tags" do
-    # create chicago checkin locationship
-    @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+    # create chicago checkin
+    @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @chicago_sbux))
     # create badge
     @badge = Badge.create!(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     # should add matching badge
     assert_equal 1, @chicago_male1.async_add_badges.size
-    assert_equal ['Caffeine Junkie'], @chicago_male1.badges_list
-  end
-
-  should "not add badge based on matching friend location tags" do
-    # create chicago friend locationship
-    @chicago_male1.locationships.create!(:location => @chicago_sbux, :friend_checkins => 1)
-    # create badge
-    @badge = Badge.create(:regex => "coffee|coffee shop", :name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
-    # should not add badge
-    assert_equal 0, @chicago_male1.async_add_badges.size
+    assert_equal ['Caffeine Junkie'], @chicago_male1.reload.badges_list
   end
 
 end

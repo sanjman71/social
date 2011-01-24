@@ -94,7 +94,6 @@ class User < ActiveRecord::Base
 
   before_save               :before_save_callback
   after_create              :manage_user_roles
-  after_create              :send_signup_email
   after_save                :event_user_saved
   before_save               :before_change_birthdate
 
@@ -439,18 +438,16 @@ class User < ActiveRecord::Base
   # add user badges based on checkin location tags
   # note: usually called asynchronously
   def async_add_badges
-    tag_names   = checkin_locations.collect(&:tags).flatten.collect(&:name)
-    return [] if tag_names.blank?
-    new_badges  = Badge.all.inject([]) do |array, badge|
-      # skip if no regex
-      next if badge.regex.blank?
-      matches = tag_names.grep(Regexp.new(badge.regex))
-      if !matches.blank?
-        # add badge
-        badgings.create(:badge => badge)
-        array.push(badge)
-      end
-      array
+    tag_ids       = checkins.joins(:location).includes(:location => :tags).collect{|o| o.location.tags}.flatten.collect(&:id).uniq
+    # tag_ids       = checkins.includes(:location).collect(&:location).collect(&:tags).flatten.collect(&:id).uniq
+    # tag_ids       = checkin_locations.collect(&:tags).flatten.collect(&:id).uniq
+    return [] if tag_ids.blank?
+    match_badges  = Badge.search(tag_ids)
+    # find new badges
+    new_badges    = match_badges - badges
+    new_badges.each do |badge|
+      # add new badge
+      badgings.create(:badge => badge)
     end
     new_badges
   end
@@ -548,11 +545,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  # send email after a user signup using delayed job
-  def send_signup_email
-    UserMailer.delay.user_signup(self)
-  end
-
   def after_add_email_address(email_address)
     return if email_address.new_record?
   end
@@ -579,6 +571,7 @@ class User < ActiveRecord::Base
   def event_user_saved
     # delegate to other callbacks
     after_change_points
+    after_member_signup
   end
 
   # after_save callback to handle point changes
@@ -586,6 +579,13 @@ class User < ActiveRecord::Base
     if changes[:points] and changes[:points][0] > 0 and changes[:points][1] <= 0
       # points went from positive to negative
       send_alert(:id => :need_bucks)
+    end
+  end
+
+  # send email after a user signup using delayed job
+  def after_member_signup
+    if changes[:member] and changes[:member][1] == true
+      UserMailer.delay.user_signup(self.id)
     end
   end
 
@@ -597,6 +597,7 @@ class User < ActiveRecord::Base
 
   # badging added
   def event_badging_added(badging)
+    UserMailer.delay.user_badge_added(:badging_id => badging.id)
   end
 
   # oauth added

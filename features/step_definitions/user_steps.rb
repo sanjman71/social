@@ -32,7 +32,6 @@ Given /^user "([^"]*)" has oauth "([^"]*)"$/ do |handle, provider|
   oauth = user.oauths.create(:provider => provider, :access_token => "111222333")
 end
 
-
 # add user friend
 Given /^"([^"]*)" is friends with "([^"]*)"$/ do |handle1, handle2|
   user    = User.find_by_handle!(handle1)
@@ -58,3 +57,11 @@ Given /^user "([^"]*)" invited "([^"]*)"$/ do |handle, email|
   user = User.find_by_handle!(handle)
   user.invitations.create!(:recipient_email => email)
 end
+
+# add any missing user badges
+Given /^user badge discovery is run$/ do
+  User.all.each do |user|
+    user.async_add_badges
+  end
+end
+
