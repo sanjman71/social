@@ -7,11 +7,10 @@ class CheckinMailer < ActionMailer::Base
     @location = @checkin.location
     @email    = @user.email_address
     @points   = options[:points]
-    @body     = "That checkin got you #{@points} points."
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] checkin_imported:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "Outlately: You checked in at #{@location.try(:name)}", :body => @body)
+      mail(:to => @email, :subject => "Outlately: You checked in at #{@location.try(:name)}")
     end
   end
 
