@@ -26,6 +26,17 @@ class Badge < ActiveRecord::Base
     self.save
   end
 
+  # remove tags using the specified string or array tag list
+  def remove_tags(tag_list)
+    if tag_list.is_a?(String)
+      tag_list = tag_list.split(',').map(&:strip)
+    end
+    # remove tag_list from existing tag_names
+    tag_list_new  = tag_names - tag_list
+    self.regex    = tag_list_new.sort.join("|")
+    self.save
+  end
+
   # minimum number of badges under which users get the default badge
   def self.default_min
     3

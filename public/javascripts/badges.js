@@ -78,7 +78,7 @@ $(document).ready(function() {
   $("#apply_tags a").click(function() {
     url   = $(this).attr('data-url');
     tags  = $(this).closest("#badge").find("#add_tags").text();
-    $.put(url, {add_tags:tags}, null, "script");
+    $.put(url, {tags:tags}, null, "script");
     return false;
   })
 })

@@ -56,10 +56,24 @@ class BadgesController < ApplicationController
   # PUT /badges/1/add_tags
   def add_tags
     @badge    = Badge.find(params[:id])
-    @add_tags = params[:add_tags].split(',')
+    @add_tags = params[:tags].split(',')
     @badge.add_tags(@add_tags)
     flash[:notice] = "Added tags"
     @goto     = badges_path
+
+    respond_to do |format|
+      format.js { render(:update) { |page| page.redirect_to(@goto) } }
+      format.html { redirect_to(@goto) and return }
+    end
+  end
+
+  # PUT /badges/1/remove_tags
+  def remove_tags
+    @badge        = Badge.find(params[:id])
+    @remove_tags  = params[:tags].split(',')
+    @badge.remove_tags(@remove_tags)
+    flash[:notice] = "Removed tags '#{@remove_tags.join(",")}'"
+    @goto         = redirect_back_path(badges_path)
 
     respond_to do |format|
       format.js { render(:update) { |page| page.redirect_to(@goto) } }

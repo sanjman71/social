@@ -23,7 +23,10 @@
             %span{:style => 'margin-left: 3px;'}= link_to 'Edit', edit_badge_path(badge)
             %span{:style => 'margin-left: 5px;'}= link_to '+ Tags', '#', :id => 'show_search_tags'
         .span-15.last
-          #tags{:style => 'font-weight: normal;'}= badge.tag_names.join(', ')
+          #tags{:style => 'font-weight: normal;'}
+            - badge.tag_names.each do |tag_name|
+              = tag_name
+              = link_to 'x', remove_tags_badge_path(badge, :tags => tag_name, :return_to => request.fullpath), :method => :put, :id => 'remove_tag_name', :style => 'margin-right: 5px; color: #f00;'
           %span#add_tags{:style => 'font-weight: bold; color: #333;'} &nbsp;
           %span#apply_tags{:style => 'display: none; margin-left: 5px;'}= link_to 'Apply', '#', "data-url" => add_tags_badge_path(badge)
         .span-24.last#search_tags{:style => 'display:none;'}

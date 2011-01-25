@@ -3,8 +3,7 @@
   #add_tags_form.add_tag_form
     = text_field_tag 'tag_name', '', :placeholder => 'tag name', :style => 'font-size: 2.0em;', :id => 'tag_name', 'data-search-url' => tag_search_badges_path(:format => 'json')
     %span#hint{:style => 'margin-left: 5px; color: #777;'}
-    -#%span{:style => 'padding-left: 5px;'}= link_to 'Add', '#', :id => 'add_tag', :class => 'admin'
   %span#add_tag_list
   %br
-  %span= link_to "All done", '#', :id => 'submit_tags', :method => :put, 'data-return-to' => request.request_uri, :class => 'admin', 'data-url' => tag_location_path(location, :format => 'js'), 'data-disable-with' => 'Adding tags ...'
+  %span= link_to "All done", '#', :id => 'submit_tags', :method => :put, 'data-return-to' => request.request_uri, 'data-url' => tag_location_path(location, :format => 'js'), 'data-disable-with' => 'Adding tags ...'
   

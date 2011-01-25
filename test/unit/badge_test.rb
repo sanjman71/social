@@ -38,13 +38,23 @@ class BadgeTest < ActiveSupport::TestCase
     assert_equal [@coffee.id], @badge.reload.tag_ids.split(",").map(&:to_i)
   end
 
-  should "add tag_ids when tags are added using add_tags method" do
+  should "add tag_ids and update regex when tags are added using add_tags method" do
     @badge  = Badge.create!(:name => 'Caffeine Junkie', :tagline => 'Mainlines espresso')
     @coffee = ActsAsTaggableOn::Tag.find_by_name('coffee')
     assert_nil @badge.tag_ids
     @badge.add_tags('coffee,tea')
     @badge.save
+    assert_equal "coffee|tea", @badge.reload.regex
     assert_equal [@coffee.id], @badge.reload.tag_ids.split(",").map(&:to_i)
+  end
+
+  should "remove tag_ids and update regex when tags are removed using remove_tags method" do
+    @badge  = Badge.create!(:name => 'Caffeine Junkie', :tagline => 'Mainlines espresso',
+                            :regex => "coffee|coffee shop")
+    @badge.remove_tags('coffee,tea')
+    @badge.save
+    assert_equal "coffee shop", @badge.reload.regex
+    assert_equal [], @badge.reload.tag_ids.split(",").map(&:to_i)
   end
 
   should "find badge when searching by tag id" do

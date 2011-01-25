@@ -124,6 +124,7 @@ Social::Application.routes.draw do
   resources :badges do
     get :tag_search, :on => :collection
     put :add_tags, :on => :member
+    put :remove_tags, :on => :member
   end
 
   # jobs routes
