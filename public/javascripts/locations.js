@@ -46,38 +46,84 @@ $.fn.init_search_foursquare = function() {
   }
 }
 
-// deprecated
-/*
-$.fn.init_live_search_places = function() {
-  url     = $(this).attr('data-url');
-  lat     = $(this).attr('data-lat');
-  lng     = $(this).attr('data-lng');
-  
-  $("input#live_search_places").autocomplete(
-    {source : function(request, response) {
-              $.ajax({url: url, dataType: "json", data : {q: request.term},
-                      success: function(data) {
-                        count   = data.count;
-                        places  = data.locations;
-                        response($.map(places, function(place) {
-                          return {
-                                          label: place.name + ", " + place.address + ", " + place.city,
-                                          value: place.name
-                          }
-                        }));
-                      }
-                    });
-              },
-    minLength : 3,
-  });
-}
-*/
-
 $.fn.init_add_location_tags = function() {
   var add_tags        = [];
   var tag_name_field  = $("input#tag_name");
   var add_tags_field  = $("#add_tag_list");
 
+  var search_url      = $(tag_name_field).attr('data-search-url');
+  var searching       = false;
+
+  $(tag_name_field).autocomplete({
+    minLength : 3,
+    delay : 500,
+    source : function(request, response) {
+      $.ajax({url: search_url, dataType: "json", data : {q: request.term},
+              success: function(data) {
+                count = data.count;
+                tags  = data.tags;
+                response($.map(tags, function(tag) {
+                  return { label: tag,   // list value
+                           value: tag,   // selected value
+                         }
+                }));
+                // reset searching flag
+                searching = false;
+              }
+      });
+    },
+    search : function(event, ui) {
+      // ignore search if already searching
+      if (searching) { return false; }
+      // set searching flag
+      searching = true;
+      // set hint
+      set_hint('searching...');
+      return true;
+    },
+    open: function(event, ui) {
+      // reset hint
+      set_hint('');
+    },
+    close : function(event, ui) {
+      // reset hint
+      set_hint('');
+    },
+    select: function(event, ui) {
+      // add selected tag
+      add_tag(ui.item.value);
+      // clear input field
+      tag_name_field.val('');
+      return false;
+    },
+  });
+
+  function close_autocomplete() {
+    tag_name_field.autocomplete('close');
+  }
+
+  function set_hint(s) {
+    tag_name_field.siblings('#hint').text(s);
+  }
+
+  $(tag_name_field).bind('keyup', function(e) {
+    // get tag name
+    tag_name = tag_name_field.val();
+
+    if(e.keyCode==13){
+      // enter pressed
+      // add tag
+      add_tag(tag_name);
+      // close autocomplete
+      close_autocomplete();
+      set_hint('');
+      // clear input field
+      tag_name_field.val('');
+      return false;
+    }
+  });
+
+  /*
   $("a#add_tag").click(function() {
     // add tag to list
     new_tag_name = $(tag_name_field).val();
@@ -90,6 +136,7 @@ $.fn.init_add_location_tags = function() {
     $(tag_name_field).val('');
     return false;
   })
+  */
 
   $("a.remove_tag").live('click', function() {
     remove_tag_name = $(this).attr('data-tag-name');
@@ -122,11 +169,19 @@ $.fn.init_add_location_tags = function() {
     return false;
   })
 
+  function add_tag(tag_name) {
+    if (tag_name != '' && $.inArray(tag_name, add_tags) == -1) {
+      add_tags.push(tag_name);
+      // update display tag list
+      show_tags(add_tags, add_tags_field)
+    }
+  }
+
   function show_tags(tag_array, field) {
     tag_array_mapped = tag_array.map(function(tag_name, index, array) {
       return tag_name + " " + "<a href='#' class='remove_tag' data-tag-name='" + tag_name + "'>x</a>";
     });
-    $(field).html(tag_array_mapped.join(', '));
+    field.html(tag_array_mapped.join(', '));
   }
 }
 

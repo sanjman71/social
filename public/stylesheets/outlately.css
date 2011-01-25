@@ -185,3 +185,15 @@ div#badge span#apply_tags a {
   text-align: center;
 }
 div#badge span#help { color: #555555; }
+div#tags #add_tag_list {
+  font-size: 1.5em;
+  color: #333333;
+}
+div#tags #add_tag_list a {
+  font-size: 0.9em;
+  color: #ff0000;
+}
+div#tags a#submit_tags {
+  margin-top: 20px;
+  color: #0000ff;
+}

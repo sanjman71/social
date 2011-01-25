@@ -18,7 +18,7 @@
   - tag_list = location.tag_list
   - if tag_list.any? or tag_link
     - if tag_list.any?
-      %span.tags= location.tag_list.join(', ')
+      %span.tags= location.tag_list.sort.join(', ')
     - else
       No Tags
     %br

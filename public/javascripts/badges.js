@@ -1,7 +1,6 @@
 $.fn.init_search_tags_autocomplete = function() {
   var search_field  = $("input#search_tags_autocomplete");
   var search_url    = $(search_field).attr('data-search-url');
-  // var source_name   = 'foursquare';
   var searching     = false;
 
   $(search_field).autocomplete({
