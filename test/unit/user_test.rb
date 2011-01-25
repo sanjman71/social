@@ -350,6 +350,28 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
+    context "common friends" do
+      should "find 0 common friends" do
+        @user1    = User.create!(:name => "User 1", :handle => 'user1')
+        @user2    = User.create!(:name => "User 2", :handle => 'user2')
+        assert_equal [], User.common_friends(@user1, @user2)
+      end
+
+      should "find 1 common friend" do
+        @user1    = User.create!(:name => "User 1", :handle => 'user1')
+        @user2    = User.create!(:name => "User 2", :handle => 'user2')
+        @friend1  = User.create!(:name => "Friend 1", :handle => 'friend1')
+        @friend2  = User.create!(:name => "Friend 2", :handle => 'friend2')
+        @friend3  = User.create!(:name => "Friend 3", :handle => 'friend3')
+        @user1.friendships.create!(:friend => @friend1)
+        @user2.friendships.create!(:friend => @friend2)
+        # friend 3 is common
+        @user1.friendships.create!(:friend => @friend3)
+        @user2.friendships.create!(:friend => @friend3)
+        assert_equal [@friend3], User.common_friends(@user1, @user2)
+      end
+    end
+
     # context "with phone required" do
     #   context "but missing" do
     #     setup do
