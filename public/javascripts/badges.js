@@ -44,6 +44,7 @@ $.fn.init_search_tags_autocomplete = function() {
       show_apply_button($(this).closest("#badge").find("#apply_tags"));
       // clear field
       clear_field($(this));
+      return false;
     },
   });
 

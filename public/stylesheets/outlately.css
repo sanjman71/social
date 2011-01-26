@@ -169,21 +169,7 @@ div#add_badge a {
   text-align: center;
 }
 div#badge a { color: #0000ff; }
-div#badge span#apply_tags a {
-  height: 20px;
-  width: 50px;
-  line-height: 20px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  color: #ffffff;
-  background-color: #ff6f00;
-  padding: 0 10px;
-  text-decoration: none;
-  display: inline;
-  font-size: 11px;
-  text-align: center;
-}
+div#badge span#apply_tags a { color: #0000ff; }
 div#badge span#help { color: #555555; }
 div#tags #add_tag_list {
   font-size: 1.5em;
