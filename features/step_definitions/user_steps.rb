@@ -58,6 +58,13 @@ Given /^user "([^"]*)" invited "([^"]*)"$/ do |handle, email|
   user.invitations.create!(:recipient_email => email)
 end
 
+Given /^user "([^"]*)" poked "([^"]*)" to invite "([^"]*)"$/ do |poker_handle, friend_handle, invitee_handle|
+  poker   = User.find_by_handle!(poker_handle)
+  invitee = User.find_by_handle!(invitee_handle)
+  friend  = User.find_by_handle!(friend_handle)
+  poke    = InvitePoke.find_or_create(invitee, poker)
+end
+
 # add any missing user badges
 Given /^user badge discovery is run$/ do
   User.all.each do |user|

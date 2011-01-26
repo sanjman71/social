@@ -3,6 +3,7 @@ Cucumber::ThinkingSphinx::ExternalWorld.new
 
 require 'email_spec'
 require 'email_spec/cucumber'
+require 'webmock/cucumber'
 
 module LocalityWorld
   def init_states_and_cities
@@ -18,7 +19,10 @@ end
 
 World(LocalityWorld)
 
+Devise::OmniAuth.test_mode!
+
 Before do
+  WebMock.allow_net_connect!
   Timecop.return
   ThinkingSphinx::Test.index
   Badges::Init.add_roles_and_privileges
@@ -27,4 +31,6 @@ end
 
 After do
   Timecop.return
+  Devise::OmniAuth.unshort_circuit_authorizers!
+  Devise::OmniAuth.reset_stubs!(:facebook)
 end

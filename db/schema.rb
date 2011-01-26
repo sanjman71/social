@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110124150410) do
+ActiveRecord::Schema.define(:version => 20110126044709) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -230,6 +230,14 @@ ActiveRecord::Schema.define(:version => 20110124150410) do
 
   add_index "invitations", ["token"], :name => "index_invitations_on_token"
 
+  create_table "invite_pokes", :force => true do |t|
+    t.integer  "invitee_id"
+    t.integer  "friend_id"
+    t.integer  "poker_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "location_neighborhoods", :force => true do |t|
     t.integer "location_id"
     t.integer "neighborhood_id"
@@ -388,6 +396,7 @@ ActiveRecord::Schema.define(:version => 20110124150410) do
   end
 
   add_index "planned_checkins", ["expires_at"], :name => "index_planned_checkins_on_expires_at"
+  add_index "planned_checkins", ["going_at"], :name => "index_planned_checkins_on_going_at"
   add_index "planned_checkins", ["location_id", "active"], :name => "index_planned_checkins_on_location_id_and_active"
   add_index "planned_checkins", ["location_id"], :name => "index_planned_checkins_on_location_id"
   add_index "planned_checkins", ["user_id", "active"], :name => "index_planned_checkins_on_user_id_and_active"

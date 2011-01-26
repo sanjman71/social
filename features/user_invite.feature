@@ -1,13 +1,15 @@
 Feature: User sends signup invitations
-  As a user I want to send invitations to others to signup.
+  In order to increase traffic and adoption,
+  As a user
+  I want to send invitations to others to signup and receive notifications when do sign up.
   
   Background:
     Given a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", member: "1"
     And user "chicago_guy" has email "chicago_guy@outlately.com"
     And I am logged in as "chicago_guy"
 
-  @javascript
-  Scenario: User sends an invite to a new user's email address and the user accepts the invitation
+  @javascript @invitations
+  Scenario: User sends an invite and the user accepts the invitation
     When I go to the invite page
     Then I should see "Invite Friends"
     And I fill in "invitees" with "invitee@outlately.com"
@@ -16,14 +18,57 @@ Feature: User sends signup invitations
     And the delayed jobs are processed
     And I go to the logout page
 
-    Then "invitee@outlately.com" should receive an email with subject "chicago_guy invited you to Outlately!"
+    Then "invitee@outlately.com" should receive an email with subject "Outlately: chicago_guy invited you to Outlately!"
     And I open the email
     Then I should see "Outlately is a community" in the email body
     And I follow "here" in the email
     Then I should be on the login page
 
-  @javascript
-  Scenario: User tries to send an invite to an outlately member
+    # user facebook signup
+    And facebook authorizes me as "invitee"
+    And the delayed jobs are processed
+    Then I should be on the settings page
+
+    And "chicago_guy@outlately.com" should receive an email with subject "Outlately: Your invitation was accepted!"
+    And I open the email with subject "Outlately: Your invitation was accepted!"
+    Then I should see "You invited invitee and they signed up." in the email body
+
+  @javascript @invitations
+  Scenario: User sends an invite because they were poked and the user accepts the invitation
+    Given a user "chicago_hottie" exists with handle: "chicago_hottie", gender: "Female", orientation: "Straight", member: "0", points: "0", facebook_id: "88888"
+    And user "chicago_hottie" has email "chicago_hottie@outlately.com"
+    And "chicago_guy" is friends with "chicago_hottie"
+    And a user "chicago_guy1" exists with handle: "chicago_guy1", gender: "Male", orientation: "Straight", member: "1", points: "0"
+    And user "chicago_guy1" has email "chicago_guy1@outlately.com"
+    And a user "chicago_guy2" exists with handle: "chicago_guy2", gender: "Male", orientation: "Straight", member: "1", points: "0"
+    And user "chicago_guy2" has email "chicago_guy2@outlately.com"
+    And user "chicago_guy1" poked "chicago_guy" to invite "chicago_hottie"
+    And user "chicago_guy2" poked "chicago_guy" to invite "chicago_hottie"
+
+    When I go to the invite page
+    And I fill in "invitees" with "chicago_hottie@outlately.com"
+    And I press "Send"
+    Then I should see "Sent Invitation."
+    And the delayed jobs are processed
+    And I go to the logout page
+
+    Then "chicago_hottie@outlately.com" should receive an email with subject "Outlately: chicago_guy invited you to Outlately!"
+    And I open the email
+    Then I should see "Outlately is a community" in the email body
+    And I follow "here" in the email
+    Then I should be on the login page
+
+    # user facebook signup
+    And facebook authorizes me as "chicago_hottie"
+    And the delayed jobs are processed
+    Then I should be on the settings page
+
+    And "chicago_guy@outlately.com" should receive an email with subject "Outlately: Your invitation was accepted!"
+    And "chicago_guy1@outlately.com" should receive an email with subject "Outlately: You might be interested in this user signup..."
+    And "chicago_guy2@outlately.com" should receive an email with subject "Outlately: You might be interested in this user signup..."
+
+  @javascript @invitations
+  Scenario: User tries to invite an existing soutlately member
     When I go to the invite page
     Then I should see "Invite Friends"
     And I fill in "invitees" with "chicago_guy@outlately.com"

@@ -4,7 +4,7 @@
 en:
   points: "Spending Cash : $%{points}"
   invite:
-    subject: "%{name} invited you to Outlately!"
+    subject: "Outlately: %{name} invited you to Outlately!"
     body:
       "Outlately is a community for those who like *meeting people* and *checking out new places*.
       \n

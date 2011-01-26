@@ -10,7 +10,7 @@
 - if (user != current_user)
   - if user.member?
     -# can meet members
-    = link_to(I18n.t("home.stream.meet_user", :name => user.possessive_pronoun.titleize), user_path(user))
+    = link_to(I18n.t("home.stream.meet_user", :name => user.possessive_pronoun.titleize), user_path(user), :id => 'meet_user')
   - else
     -# invite others
-    = link_to(I18n.t("home.stream.invite_user", :name => user.pronoun.titleize), invite_path(:to => "user:#{user.id}"))
+    = link_to(I18n.t("home.stream.invite_user", :name => user.pronoun.titleize), invite_path(:to => "user:#{user.id}"), :id => 'invite_user', "data-poker-id" => current_user.try(:id), "data-invitee-id" => user.id, "data-url" => invite_poke_path(:invitee_id => user.id, :format => 'json'))

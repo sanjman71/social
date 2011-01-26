@@ -7,19 +7,44 @@ var stream_timer_id     = 0;
 var stream_updating     = false;
 var stream_paused       = false;
 
-$.fn.init_stream_todos = function() {
-  /*
-  $(".stream .location, .stream .match, .stream .checkin").live('mouseover mouseout', function(event) {
-    if (event.type == 'mouseover') {
-      $(this).addClass('hover');
-      // always show checkin links
-      // $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").show();
-    } else {
-      $(this).removeClass('hover');
-      // $(this).find("#plan_location_wrapper,#user_toggle,#checkin_action_wrapper").hide();
-    }
+function pauseTimer() {
+  // console.log("pausing interval timer");
+  stream_paused = true;
+}
+
+function unpauseTimer() {
+  // console.log("unpausing interval timer");
+  stream_paused = false;
+}
+
+$.fn.init_stream_invites = function() {
+  $("a#invite_user").live('click', function() {
+    invitee_id  = $(this).attr('data-invitee-id');
+    url         = $(this).attr('data-url');
+
+    pauseTimer();
+    $(this).css('opacity', 0.5);
+
+    $.put(url, {invitee_id: invitee_id}, function(data) {
+      // restart timer
+      unpauseTimer();
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
+      if (data['poke_id']) {
+        // user's friend will be poked
+      }
+      if (data['goto']) {
+        window.location = data['goto'];
+      }
+    }, 'json');
+
+    return false;
   })
-  */
+}
+
+$.fn.init_stream_todos = function() {
 
   $("a#pick_todo_date").live('click', function() {
     modal = $(this).closest("li").find("div.planning-modal");
@@ -85,16 +110,6 @@ $.fn.init_stream_todos = function() {
 
     return false;
   })
-
-  function pauseTimer() {
-    // console.log("pausing interval timer");
-    stream_paused = true;
-  }
-
-  function unpauseTimer() {
-    // console.log("unpausing interval timer");
-    stream_paused = false;
-  }
 
   // join an existing plan
   $("a#join_todo").live('click', function() {
@@ -197,7 +212,7 @@ $.fn.init_stream_timer = function() {
 
   function showNotCountedHiddenObject() {
     // show the last not counted hidden object with slidedown effect
-    $("#social-stream li.not-counted.hide:last").slideDown(2000).addClass('visible').removeClass('hide');
+    $("#social-stream li.not-counted.hide:last").slideDown(2000).addClass('visible').removeClass('hide').css('display', 'visible');
   }
 
   function hideCountedVisibleObject() {
@@ -298,6 +313,7 @@ $.fn.init_stream_timer = function() {
 
 $(document).ready(function() {
   $(document).init_stream_todos();
+  $(document).init_stream_invites();
   $(document).init_stream_map();
   $(document).init_stream_timer();
 })

@@ -3,11 +3,11 @@ class Invitation < ActiveRecord::Base
   validates       :sender_id,     :presence => true
 
   before_create   :generate_invitation_token
-  after_create    :send_async!
+  after_create    :send_email
 
   attr_accessor   :list
 
-  def send_async!
+  def send_email
     UserMailer.delay.user_invite(:invitation_id => self.id)
   end
 

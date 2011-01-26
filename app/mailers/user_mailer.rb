@@ -1,9 +1,21 @@
 class UserMailer < ActionMailer::Base
   default :from => "outlately@jarna.com"
   
-  def user_signup(user_id)
-    @user = User.find(user_id)
+  def user_signup(options)
+    @user = User.find(options[:user_id])
     mail(:to => 'sanjay@jarna.com', :subject => "Outlately: member signup #{@user.handle}:#{@user.id}")
+  end
+
+  # send email to poked user's friend that somebody wants them signing up
+  def user_invite_poke(options)
+    @invite_poke  = InvitePoke.find(options[:invite_poke_id])
+    @friend       = @invite_poke.friend
+    @email        = @friend.email_address
+    @invitee      = @invite_poke.invitee
+    @poker        = @invite_poke.poker
+    @subject      = "Outlately: Somebody wants your friend #{@invitee.handle} to sign up..."
+
+    mail(:to => @email, :subject => @subject)
   end
 
   def user_invite(options)
@@ -15,7 +27,28 @@ class UserMailer < ActionMailer::Base
 
     mail(:to => @email, :subject => @subject)
   end
-  
+
+  def user_invite_accepted(options)
+    @user       = User.find(options[:user_id])
+    @invite     = Invitation.find_by_token(@user.invitation_token)
+    @inviter    = @invite.try(:sender)
+    @email      = @inviter.try(:email_address)
+    @points     = options[:points]
+    @subject    = "Outlately: Your invitation was accepted!"
+
+    mail(:to => @email, :subject => @subject)
+  end
+
+  def user_signup_to_poker(options)
+    @poke     = InvitePoke.find(options[:poke_id])
+    @poker    = @poke.poker
+    @invitee  = @poke.invitee
+    @email    = @poker.email_address
+    @subject  = "Outlately: You might be interested in this user signup..."
+
+    mail(:to => @email, :subject => @subject)
+  end
+
   def user_send_message(options)
     @sender   = User.find(options[:sender_id])
     @to       = User.find(options[:to_id])

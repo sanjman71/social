@@ -119,6 +119,7 @@ Social::Application.routes.draw do
   match 'invite', :to => "invitations#new", :as => :invite, :via => [:get]
   match 'invite', :to => "invitations#create", :via => [:post]
   match 'invitees/search', :to => "invitations#search", :as => :invitee_search, :via => [:get]
+  match 'invite/poke', :to => "invitations#poke", :as => :invite_poke, :via => [:put]
 
   # badges
   resources :badges do

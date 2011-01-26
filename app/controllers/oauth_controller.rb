@@ -79,6 +79,12 @@ class OauthController < Devise::OmniauthCallbacksController
     # set user's oauth token, and create user if necessary
     @user         = User.send(@method, @credentials, @user_data, current_user)
 
+    if session[:invitation_token] and @user.present?
+      # set user invitation token to mark user as signing up from an invite
+      @user.update_attribute(:invitation_token, session[:invitation_token])
+      session.delete(:invitation_token)
+    end
+
     if !user_signed_in?
       flash[:notice] = "Welcome back #{@user.handle}"
     else

@@ -1,4 +1,8 @@
 class Currency
+
+  def self.for_accepting_invite
+    100
+  end
   
   def self.for_viewing_profile
     10

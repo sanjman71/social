@@ -46,8 +46,10 @@ class InvitationsController < ApplicationController
         flash[:notice] += " There are already members with emails #{@ignored.join(', ')}"
       end
     end
-    @redirect_path = invite_path
-    redirect_to @redirect_path
+
+    respond_to do |format|
+      format.html { redirect_to(invite_path) }
+    end
   end
 
   # GET /invitees/search?q=user@widget.com
@@ -81,6 +83,35 @@ class InvitationsController < ApplicationController
       end
       format.html do
         # render :text => @hash.to_json
+      end
+    end
+  end
+
+  # GET /invite/poke?invitee_id=5
+  def poke
+    @poker    = current_user
+    @invitee  = User.find(params[:invitee_id])
+
+    # check if invitee is a friend of the current user
+    @friend_ids = @poker.friendships.select(:friend_id).collect(&:friend_id) +
+                  @poker.inverse_friendships.select(:user_id).collect(&:user_id)
+
+    if @friend_ids.include?(@invitee.id)
+      # invitee is a friend, send user to invite page
+      @goto     = invite_path(:to => "user:#{@invitee_id}")
+      @hash     = {'status' => 'ok', 'goto' => @goto}
+    else
+      # invitee is not a friend, find member friend and create invite poke
+      @poke     = InvitePoke.find_or_create(@invitee, @poker)
+      @growls   = [{:message => "Thanks, we'll ask them to join the site.", :timeout => 5000}]
+      @hash     = {'status' => 'ok', 'poke_id' => @poke.id, 'growls' => @growls}
+    end
+  rescue Exception => e
+    @hash = {'status' => 'error', 'message' => e.message}
+  ensure
+    respond_to do |format|
+      format.json do
+        render :json => @hash.to_json
       end
     end
   end

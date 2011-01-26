@@ -85,8 +85,10 @@ class ApplicationController < ActionController::Base
 
   # check that user has signed up for the beta or has an invite
   def check_beta
-    # check params 'token'
-    if params[:token] && Invitation.find_by_token(params[:token])
+    # check params 'invitation_token'
+    if params[:invitation_token] && Invitation.find_by_token(params[:invitation_token])
+      # set session 'invitation_token'
+      session[:invitation_token] = params[:invitation_token]
       # set session 'beta' key
       session[:beta] = 1
     end

@@ -580,6 +580,7 @@ class User < ActiveRecord::Base
     # delegate to other callbacks
     after_change_points
     after_member_signup
+    after_invite_token_assigned
   end
 
   # after_save callback to handle point changes
@@ -590,10 +591,23 @@ class User < ActiveRecord::Base
     end
   end
 
-  # send email after a user signup using delayed job
+  # send email after member signup
   def after_member_signup
     if changes[:member] and changes[:member][1] == true
-      UserMailer.delay.user_signup(self.id)
+      # send email to all users who poked a friend to invite user
+      pokes = InvitePoke.where(:invitee_id => self.id)
+      pokes.each do |poke|
+        UserMailer.delay.user_signup_to_poker(:poke_id => poke.id)
+      end
+      # send email to admin user re: new member signup
+      UserMailer.delay.user_signup(:user_id => self.id)
+    end
+  end
+
+  # send email to inviter when an invitee signs up
+  def after_invite_token_assigned
+    if changes[:invitation_token] and changes[:invitation_token][1].present?
+      UserMailer.delay.user_invite_accepted(:user_id => self.id, :points => Currency.for_accepting_invite)
     end
   end
 
