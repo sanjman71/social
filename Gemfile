@@ -62,7 +62,8 @@ group :development, :test do
   gem 'single_test'
   # attempt to speed up cucumber tests
   gem 'thin'
-  gem 'timecop', '>= 0.3.5'
+  gem 'timecop',                '>= 0.3.5'
+  gem 'webmock',                '>= 1.6.1'
 end
 
 platforms :ruby_19 do
