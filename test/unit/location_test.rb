@@ -13,6 +13,7 @@ class LocationTest < ActiveSupport::TestCase
   should have_many :location_sources
 
   def setup
+    WebMock.allow_net_connect!
     @us           = Factory(:us)
     @canada       = Factory(:canada)
     @il           = Factory(:il, :country => @us)

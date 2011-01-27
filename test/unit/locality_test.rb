@@ -3,6 +3,7 @@ require 'test_helper'
 class LocalityTest < ActiveSupport::TestCase
   
   def setup
+    WebMock.allow_net_connect!
     @us = Factory(:us)
   end
 

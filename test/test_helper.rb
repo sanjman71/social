@@ -8,6 +8,8 @@ require 'factories'
 require 'thinking_sphinx/test'
 require 'timecop'
 require 'fast_context'
+require 'database_cleaner'
+require 'webmock/test_unit'
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
@@ -15,6 +17,8 @@ class ActiveSupport::TestCase
   # Note: You'll currently still have to declare fixtures explicitly in integration tests
   # -- they do not yet inherit this setting
   # fixtures :all
+
+  DatabaseCleaner.strategy = :truncation
 
   def set_beta
     session[:beta] = 1
