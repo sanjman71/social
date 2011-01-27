@@ -53,4 +53,20 @@ class FacebookClient
     options.merge!(:access_token => @token, :type => 'checkin')
     self.class.get("https://graph.facebook.com/search", :query => options)
   end
+
+  # get list of events
+  # - limit, offset
+  # - until, since
+  def events(options={})
+    options.merge!(:access_token => @token)
+    self.class.get("https://graph.facebook.com/me/events", :query => options)
+  end
+
+  # get list of events
+  # - limit, offset
+  # - until, since
+  def feed(options={})
+    options.merge!(:access_token => @token)
+    self.class.get("https://graph.facebook.com/me/feed", :query => options)
+  end
 end
