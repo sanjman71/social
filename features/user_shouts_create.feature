@@ -1,10 +1,12 @@
 Feature: Add shouts
-  As a user I want to add shouts to locations
+  In order to encourage activity and stickiness
+  As a user
+  I want to be able to comment on locations
 
   @javascript
   Scenario: User adds a shout by looking up a place
     Given a city: "Chicago" should exist with name: "Chicago"
-    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", points: "0"
+    And a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", points: "0"
     And sphinx is indexed
     And I am logged in as "chicago_guy"
     And I go to the shouts page

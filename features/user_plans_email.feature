@@ -1,5 +1,7 @@
 Feature: User's planned checkins
-  As as user, I want to see receive emails for expiring, completed and expired plans
+  In order to keep users engaged and coming back to the site
+  As a user
+  I want to receive emails for expiring, completed and expired plans
 
   Background:
     Given a city: "Chicago" should exist with name: "Chicago"
