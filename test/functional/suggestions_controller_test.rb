@@ -24,9 +24,8 @@ class SuggestionsControllerTest < ActionController::TestCase
   def setup
     @user1 = Factory.create(:user, :handle => 'User1', :member => 1)
     @user2 = Factory.create(:user, :handle => "User2", :member => 1)
-    @us    = Factory(:us)
-    @loc1  = Location.create!(:name => "The Coffee House", :country => @us)
-    @loc2  = Location.create!(:name => "Starbucks", :country => @us)
+    @loc1  = Location.create!(:name => "The Coffee House", :country => countries(:us))
+    @loc2  = Location.create!(:name => "Starbucks", :country => countries(:us))
     # create suggestion
     @options    = Hash[:party1_attributes => {:user => @user1}, :party2_attributes => {:user => @user2},
                        :location => @loc1, :when => 'next week']

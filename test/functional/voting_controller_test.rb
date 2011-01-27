@@ -11,7 +11,7 @@ class VotingControllerTest < ActionController::TestCase
   def setup
     @user     = Factory.create(:user)
     @voter    = Factory.create(:user)
-    @badge    = Badge.create!(:name => "Shopaholic", :regex => "shopping") 
+    @badge    = Badge.create!(:name => "Shopaholic", :regex => "shopping", :tagline => "Shopping Nut")
     # add user badge
     @badging  = @user.badges.push(@badge)
   end

@@ -23,14 +23,9 @@ class CheckinsControllerTest < ActionController::TestCase
   end
 
   def setup
-    @us         = Factory(:us)
-    @il         = Factory(:il, :country => @us)
-    @ny         = Factory(:ny, :country => @us)
-    @ma         = Factory(:ma, :country => @us)
-    @chicago    = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.8781136, :lng => -87.6297982)
-    @newyork    = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
-    @boston     = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
-    # users
+    @chicago    = cities(:chicago)
+    @boston     = cities(:boston)
+    @newyork    = cities(:new_york)
     @chicago1   = Factory.create(:user, :handle => 'chicago1', :city => @chicago)
   end
 

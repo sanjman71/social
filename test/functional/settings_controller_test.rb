@@ -9,15 +9,10 @@ class SettingsControllerTest < ActionController::TestCase
   end
 
   def setup
-    @us         = Factory(:us)
-    @ca         = Factory(:canada)
-    @il         = Factory(:il, :country => @us)
-    @ny         = Factory(:ny, :country => @us)
-    @ma         = Factory(:ma, :country => @us)
-    @on         = Factory(:ontario, :country => @ca)
-    @chicago    = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.8781136, :lng => -87.6297982)
-    @newyork    = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
-    @boston     = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
+    WebMock.allow_net_connect!
+    @chicago    = cities(:chicago)
+    @newyork    = cities(:new_york)
+    @boston     = cities(:boston)
   end
 
   context "edit" do

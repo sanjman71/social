@@ -22,16 +22,12 @@ class UsersControllerTest < ActionController::TestCase
 
   def setup
     ThinkingSphinx::Test.init
-    cleanup
-    @us         = Factory(:us)
-    @ca         = Factory(:canada)
-    @il         = Factory(:il, :country => @us)
-    @ny         = Factory(:ny, :country => @us)
-    @ma         = Factory(:ma, :country => @us)
-    @on         = Factory(:ontario, :country => @ca)
-    @chicago    = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.8781136, :lng => -87.6297982)
-    @newyork    = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
-    @boston     = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
+    @il         = states(:il)
+    @chicago    = cities(:chicago)
+    # use these coordinates for distance calcs below
+    @chicago.update_attributes(:lat => 41.8781136, :lng => -87.6297982)
+    @newyork    = cities(:new_york)
+    @boston     = cities(:boston)
   end
 
   def teardown
@@ -39,7 +35,7 @@ class UsersControllerTest < ActionController::TestCase
   end
 
   def cleanup
-    [Country, State, City, Location, Badge, User].each { |klass| klass.delete_all }
+    DatabaseCleaner.clean
   end
 
   context "index" do
@@ -52,7 +48,6 @@ class UsersControllerTest < ActionController::TestCase
     context "city" do
       should "find 1 user within default radius of city" do
         ThinkingSphinx::Test.run do
-          ThinkingSphinx::Test.index
           sleep(0.25)
           sign_in @chicago1
           set_beta
@@ -96,7 +91,7 @@ class UsersControllerTest < ActionController::TestCase
       # create user with a badge
       @user1    = Factory.create(:user, :handle => 'User1', :city => @chicago)
       @voter    = Factory.create(:user, :handle => "Voter", :city => @chicago)
-      @badge    = Badge.create!(:name => "Shopaholic", :regex => "shopping")
+      @badge    = Badge.create!(:name => "Shopaholic", :regex => "shopping", :tagline => "Shopping")
       @badging  = @user1.badges.push(@badge)
     end
 

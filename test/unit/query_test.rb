@@ -1,15 +1,18 @@
 require 'test_helper'
 
 class QueryTest < ActiveSupport::TestCase
-  
+
+  def setup
+    @us         = countries(:us)
+    @il         = states(:il)
+    @chicago    = cities(:chicago)
+  end
+
   context "search with" do
     setup do
-      @us         = Factory.create(:us)
-      @il         = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-      @chicago    = Factory(:city, :name => "Chicago", :state => @il)
       @attributes = Query.attributes(@il, @chicago, nil)
     end
-    
+
     should "have hash attributes with :state_id" do
       assert_equal Hash[:state_id => @il.id, :city_id => @chicago.id], @attributes
     end
@@ -177,8 +180,6 @@ class QueryTest < ActiveSupport::TestCase
   context "search locality attributes" do
     context "with country and state" do
       setup do
-        @us         = Factory.create(:us)
-        @il         = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
         @attributes = Query.attributes(@us, @il)
       end
     
@@ -189,10 +190,7 @@ class QueryTest < ActiveSupport::TestCase
 
     context "with country, state, city, neighborhood" do
       setup do
-        @us           = Factory.create(:us)
-        @il           = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @chicago      = Factory(:city, :name => "Chicago", :state => @il)
-        @river_north  = Factory(:neighborhood, :name => "River North", :city => @chicago)
+        @river_north  = neighborhoods(:river_north)
         @attributes   = Query.attributes(@us, @il, @chicago, @river_north)
       end
 
@@ -205,8 +203,6 @@ class QueryTest < ActiveSupport::TestCase
   context "search parse query" do
     context "with query 'coffee shop'" do
       setup do
-        @us     = Factory.create(:us)
-        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
         @hash = Query.build("coffee shop")
       end
       
@@ -218,9 +214,7 @@ class QueryTest < ActiveSupport::TestCase
 
     context "with query 'schuba's'" do
       setup do
-        @us     = Factory.create(:us)
-        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @hash   = Query.build("schuba's")
+        @hash = Query.build("schuba's")
       end
 
       should "have raw query with quote" do
@@ -234,9 +228,7 @@ class QueryTest < ActiveSupport::TestCase
 
     context "with query 'revive @ el ray'" do
       setup do
-        @us     = Factory.create(:us)
-        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @hash   = Query.build("revive @ el ray")
+        @hash = Query.build("revive @ el ray")
       end
 
       should "have raw query with @" do
@@ -250,9 +242,7 @@ class QueryTest < ActiveSupport::TestCase
 
     context "with query with quotes" do
       setup do
-        @us     = Factory.create(:us)
-        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @hash   = Query.build("'dominos pizza'")
+        @hash = Query.build("'dominos pizza'")
       end
 
       should "have raw query 'dominos pizza'" do
@@ -266,9 +256,7 @@ class QueryTest < ActiveSupport::TestCase
     
     context "with query 'anything'" do
       setup do
-        @us     = Factory.create(:us)
-        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @hash   = Query.build("anything")
+        @hash = Query.build("anything")
       end
       
       should "have empty query" do

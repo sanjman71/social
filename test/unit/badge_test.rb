@@ -3,16 +3,15 @@ require 'test_helper'
 class BadgeTest < ActiveSupport::TestCase
 
   def setup
-    @us               = Factory(:us)
-    @il               = Factory(:il, :country => @us)
-    @ny               = Factory(:ny, :country => @us)
-    @ma               = Factory(:ma, :country => @us)
-    @chicago          = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.850033, :lng => -87.6500523)
     # create locations
-    @chicago_sbux     = Location.create!(:name => "Chicago Starbucks", :country => @us, :city => @chicago)
-    @chicago_coffee   = Location.create!(:name => "Chicago Coffee", :country => @us, :city => @chicago)
-    @chicago_lous     = Location.create!(:name => "Chicago Lou Malnati's", :country => @us, :city => @chicago)
-    @chicago_pizza    = Location.create!(:name => "Chicago Pizza", :country => @us, :city => @chicago)
+    @chicago_sbux     = Location.create!(:name => "Chicago Starbucks", :country => countries(:us),
+                                         :city => cities(:chicago))
+    @chicago_coffee   = Location.create!(:name => "Chicago Coffee", :country => countries(:us),
+                                         :city => cities(:chicago))
+    @chicago_lous     = Location.create!(:name => "Chicago Lou Malnati's", :country => countries(:us),
+                                         :city => cities(:chicago))
+    @chicago_pizza    = Location.create!(:name => "Chicago Pizza", :country => countries(:us),
+                                         :city => cities(:chicago))
     # tag coffee places
     [@chicago_sbux, @chicago_coffee].each do |o|
       o.tag_list = ['cafe', 'coffee']
@@ -20,7 +19,7 @@ class BadgeTest < ActiveSupport::TestCase
     end
     # create users
     @chicago_male1    = User.create!(:name => "Chicago Male 1", :handle => 'chicago_male_1', :gender => 2,
-                                     :city => @chicago)
+                                     :city => cities(:chicago))
   end
 
   should "add tag_ids when badge is created" do

@@ -3,12 +3,11 @@ require 'test_helper'
 class CountryTest < ActiveSupport::TestCase
   should have_many :states
   should have_many :locations
-  
+
   context "country" do
     context "us" do
       setup do
-        @us = Country.create(:name => "United States", :code => "US")
-        assert @us.valid?
+        @us = countries(:us)
       end
       
       should "have to_s == United States, to_param == 'us'" do

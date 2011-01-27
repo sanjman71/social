@@ -3,8 +3,7 @@ require 'test_helper'
 class UserOauthTest < ActiveSupport::TestCase
 
   def setup
-    @us     = Factory(:us)
-    @il     = Factory(:il, :country => @us)
+    WebMock.allow_net_connect!
     @user1  = User.create!(:name => "User 1", :handle => 'user1')
   end
 

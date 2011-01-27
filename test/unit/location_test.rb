@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class LocationTest < ActiveSupport::TestCase
-
   should belong_to :country
   should belong_to :state
   should belong_to :city
@@ -14,19 +13,11 @@ class LocationTest < ActiveSupport::TestCase
 
   def setup
     WebMock.allow_net_connect!
-    @us           = Factory(:us)
-    @canada       = Factory(:canada)
-    @il           = Factory(:il, :country => @us)
-    @on           = Factory(:ontario, :country => @canada)
-    @chicago      = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
-    @toronto      = Factory(:toronto, :state => @on)
-    @zip          = Factory(:zipcode, :name => "60654", :state => @il)
-    @river_north  = Factory(:neighborhood, :name => "River North", :city => @chicago)
   end
 
   context "location to_param" do
     should "default to location id if name is blank" do
-      @location = Location.create(:name => "Home", :country => @us)
+      @location = Location.create!(:name => "Home", :country => countries(:us))
       assert_equal @location.id.to_s, @location.to_param
     end
   end
@@ -57,71 +48,68 @@ class LocationTest < ActiveSupport::TestCase
 
   should "create with default country" do
     @location = Location.create!
-    assert_equal @us, @location.country
+    assert_equal countries(:us), @location.country
   end
 
   fast_context "location with country" do
     setup do
-      @location = Location.create!(:country => @us)
-      @us.reload
+      @location = Location.create!(:country => countries(:us))
+      @us       = countries(:us)
+      @canada   = countries(:canada)
     end
     
     should "have us as locality, increment us.locations_count" do
       assert_equal [@us], @location.localities
-      assert_equal 1, @us.locations_count
+      assert_equal 1, @us.reload.locations_count
     end
 
     should "have refer_to? == false" do
-      assert_equal false, @location.refer_to?
+      assert_false @location.refer_to?
     end
     
     context "change country" do
       setup do
-        @location.country = @canada
+        @location.country = countries(:canada)
         @location.save
-        @us.reload
-        @canada.reload
       end
     
       should "decrement us.locations_count, increment canada.locations_count" do
-        assert_equal 0, @us.locations_count
-        assert_equal 1, @canada.locations_count
+        assert_equal 0, @us.reload.locations_count
+        assert_equal 1, @canada.reload.locations_count
       end
     end
   end
   
   fast_context "location with state" do
     setup do
-      @location = Location.create(:name => "Home", :state => @il, :country => @us)
-      assert @location.valid?
-      @il.reload
+      @il       = states(:il)
+      @us       = countries(:us)
+      @location = Location.create!(:name => "Home", :state => @il, :country => @us)
     end
     
     should "inherit state's country, increment illinois locations_count" do
       assert_equal @location.country, @il.country
-      assert_equal 1, @il.locations_count
+      assert_equal 1, @il.reload.locations_count
     end
     
     fast_context "change state" do
       setup do
-        @location.state = @on
+        @canada   = countries(:canada)
+        @ontario  = states(:ontario)
+        @location.state   = @ontario
         @location.country = @canada
         @location.save
-        @on.reload
-        @il.reload
-        @us.reload
-        @canada.reload
       end
       
       should "change country to new state's country" do
-        assert_equal @on.country, @location.country
+        assert_equal @ontario.country, @location.country
       end
       
       should "decrement il,locations_count + us.locations_count, increment on.locations_count + canana.locations_count" do
         assert_equal 0, @il.locations_count
         assert_equal 0, @us.locations_count
-        assert_equal 1, @on.locations_count
-        assert_equal 1, @canada.locations_count
+        assert_equal 1, @ontario.reload.locations_count
+        assert_equal 1, @canada.reload.locations_count
       end
     end
     
@@ -140,16 +128,15 @@ class LocationTest < ActiveSupport::TestCase
   
   fast_context "location with a pre-defined city" do
     setup do
-      @location = Location.create(:name => "Home", :city => @chicago, :country => @us)
-      assert @location.valid?
-      @location.reload
-      @chicago.reload
-      @us.reload
+      @chicago  = cities(:chicago)
+      @il       = states(:il)
+      @us       = countries(:us)
+      @location = Location.create!(:name => "Home", :city => @chicago, :country => @us)
     end
     
     should "increment chicago.locations_count, us.locations_count, set chicago.locations" do
-      assert_equal 1, @chicago.locations_count
-      assert_equal 1, @us.locations_count
+      assert_equal 1, @chicago.reload.locations_count
+      assert_equal 1, @us.reload.locations_count
       assert_equal [@location], @chicago.locations
     end
 
@@ -157,39 +144,36 @@ class LocationTest < ActiveSupport::TestCase
       setup do
         @location.city = nil
         @location.save
-        @chicago.reload
       end
 
       should "decrement chicago.locations_count, change chicago.locations" do
-        assert_equal 0, @chicago.locations_count
+        assert_equal 0, @chicago.reload.locations_count
         assert_equal [], @chicago.locations
       end
     end
     
     fast_context "change city" do
       setup do
+        @toronto  = cities(:toronto)
+        @ontario  = states(:ontario)
+        @canada   = countries(:canada)
         @location.city = @toronto
-        @location.state = @on
+        @location.state = @ontario
         @location.country = @canada
         @location.save
-        @chicago.reload
-        @us.reload
-        @toronto.reload
-        @on.reload
-        @canada.reload
       end
 
       should "remove chicago locations, set toronto.locations, change location state, country, change counters" do
-        assert_equal [], @chicago.locations
-        assert_equal [@location], @toronto.locations
+        assert_equal [], @chicago.reload.locations
+        assert_equal [@location], @toronto.reload.locations
         assert_equal @toronto.state, @location.state
         assert_equal @toronto.state.country, @location.country
         assert_equal 0, @chicago.locations_count
-        assert_equal 0, @il.locations_count
-        assert_equal 0, @us.locations_count
-        assert_equal 1, @toronto.locations_count
-        assert_equal 1, @on.locations_count
-        assert_equal 1, @canada.locations_count
+        assert_equal 0, @il.reload.locations_count
+        assert_equal 0, @us.reload.locations_count
+        assert_equal 1, @toronto.reload.locations_count
+        assert_equal 1, @ontario.reload.locations_count
+        assert_equal 1, @canada.reload.locations_count
       end
       
       # TODO: We should check the neighborhoods on a location when we change the location's city etc.
@@ -201,15 +185,14 @@ class LocationTest < ActiveSupport::TestCase
 
   fast_context "location with a zipcode" do
     setup do
-      @location = Location.create(:name => "Home", :zipcode => @zip, :country => @us)
-      assert @location.valid?
-      @zip.reload
-      @il.reload
-      @us.reload
+      @il       = states(:il)
+      @us       = countries(:us)
+      @zip      = zipcodes(:z60654)
+      @location = Location.create!(:name => "Home", :zipcode => @zip, :country => @us)
     end
     
     should "increment zip locations_count" do
-      assert_equal 1, @zip.locations_count
+      assert_equal 1, @zip.reload.locations_count
     end
 
     should "set zip locations to [@location]" do
@@ -217,48 +200,46 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "increment us locations_count" do
-      assert_equal 1, @us.locations_count
+      assert_equal 1, @us.reload.locations_count
     end
     
     fast_context "remove zipcode" do
       setup do
         @location.zipcode = nil
         @location.save
-        @zip.reload
       end
 
       should "decrement zip locations_count" do
-        assert_equal 0, @zip.locations_count
+        assert_equal 0, @zip.reload.locations_count
       end
 
       should "remove zip locations" do
-        assert_equal [], @zip.locations
+        assert_equal [], @zip.reload.locations
       end
     end
     
     fast_context "change zip" do
       setup do
-        @zip2 = Factory(:zipcode, :name => "60610", :state => @il)
+        @zip2 = zipcodes(:z60610)
         @location.zipcode = @zip2
         @location.save
-        @zip2.reload
-        @zip.reload
       end
 
       should "set 60654 locations to []" do
-        assert_equal [], @zip.locations
+        assert_equal [], @zip.reload.locations
       end
       
       should "set 60610 locations to [@location]" do
-        assert_equal [@location], @zip2.locations
+        assert_equal [@location], @zip2.reload.locations
       end
     end
   end
   
   fast_context "location with a neighborhood" do
     setup do
-      @location = Location.create(:name => "Home", :country => @us)
-      assert @location.valid?
+      @us           = countries(:us)
+      @river_north  = neighborhoods(:river_north)
+      @location     = Location.create!(:name => "Home", :country => @us)
       @location.neighborhoods.push(@river_north)
       @location.reload
       @location.reload
@@ -380,8 +361,8 @@ class LocationTest < ActiveSupport::TestCase
                     :lat => "41.877901218486535",
                     :lng => "-87.62948513031006")
       assert_equal "53 W. Jackson Blvd.", @location.street_address
-      assert_equal @il, @location.state
-      assert_equal @chicago, @location.city
+      assert_equal states(:il), @location.state
+      assert_equal cities(:chicago), @location.city
       assert_equal 41.877901218486535, @location.lat
       assert_equal -87.62948513031006, @location.lng
       assert_equal ['foursquare'], @location.location_sources.collect(&:source_type)
@@ -399,12 +380,14 @@ class LocationTest < ActiveSupport::TestCase
 
   context "reverse geocode" do
     should "ignore if location is not geocoded" do
+      Delayed::Job.delete_all
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel")
       assert_equal 0, match_delayed_jobs(/reverse_geocode/)
       assert_false @location.reverse_geocode
     end
 
     should "ignore if location has a street addresss" do
+      Delayed::Job.delete_all
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :street_address => "200 W Grand Ave")
       assert_equal 0, match_delayed_jobs(/reverse_geocode/)
@@ -412,14 +395,16 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "ignore if location has a city" do
+      Delayed::Job.delete_all
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
-                                   :city => @chicago)
+                                   :city => cities(:chicago))
       assert_equal 0, match_delayed_jobs(/reverse_geocode/)
       assert_false @location.reverse_geocode
     end
 
     should "fill in street, city, state, zipcode, country for a san diego location" do
-      @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
+      Delayed::Job.delete_all
+      # @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => countries(:us))
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :lat => 32.707664, :lng => -117.159876)
       assert_equal 1, match_delayed_jobs(/reverse_geocode/)
@@ -431,7 +416,8 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "fill in street, city, state, country for a lake tahoe location" do
-      @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => @us)
+      Delayed::Job.delete_all
+      # @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => countries(:us))
       @location = Location.create!(:name => "Gar Woods",
                                    :lat => 39.22543, :lng => -120.083609)
       assert_equal 1, match_delayed_jobs(/reverse_geocode/)
@@ -442,6 +428,7 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "fill in street, city, state, country for a toronto location" do
+      Delayed::Job.delete_all
       @location = Location.create!(:name => "Blowfish Restaurant & Saki bar",
                                    :lat => 43.6439338, :lng => -79.4025813)
       assert_equal 1, match_delayed_jobs(/reverse_geocode/)
@@ -453,6 +440,7 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "create country and fill in street, city for a hereford (london) location" do
+      Delayed::Job.delete_all
       @location = Location.create!(:name => "Left Bank",
                                    :lat => 52.0528303, :lng => -2.7188012)
       assert_equal 1, match_delayed_jobs(/reverse_geocode/)
@@ -487,8 +475,9 @@ class LocationTest < ActiveSupport::TestCase
   context "location timezone" do
     context "where location timezone is set" do
       setup do
-        @timezone  = Factory(:timezone, :name => "America/New_York")
-        @location  = Location.create(:country => @us, :state => @illinois, :city => @chicago, :timezone => @timezone)
+        @timezone  = timezones(:est)
+        @location  = Location.create(:country => countries(:us), :state => states(:il), :city => cities(:chicago),
+                                     :timezone => @timezone)
       end
 
       should "use location's timezone" do
@@ -498,17 +487,20 @@ class LocationTest < ActiveSupport::TestCase
 
     context "where location timezone is empty" do
       setup do
-        @location  = Location.create(:country => @us, :state => @illinois, :city => @chicago)
+        @chicago = cities(:chicago)
+        @chicago.timezone = timezones(:cst)
+        @chicago.save
+        @location = Location.create(:country => countries(:us), :state => states(:il), :city => @chicago)
       end
 
       should "use city's timezone" do
         assert_equal @chicago.timezone, @location.timezone
       end
     end
-    
+
     context "where location city is empty" do
       setup do
-        @location  = Location.create(:country => @us, :state => @illinois)
+        @location  = Location.create(:country => countries(:us), :state => states(:il))
       end
 
       should "have no timezone" do
@@ -527,21 +519,21 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "be 10 for location with 2 user checkins" do
-      @location = Location.create(:country => @us, :state => @illinois)
+      @location = Location.create(:country => countries(:us), :state => states(:il))
       @user1.locationships.create(:location => @location, :my_checkins => 1)
       @user2.locationships.create(:location => @location, :my_checkins => 1)
       assert_equal 10, @location.hotness
     end
 
     should "be 4 for location with 2 todo checkins" do
-      @location = Location.create(:country => @us, :state => @illinois)
+      @location = Location.create(:country => countries(:us), :state => states(:il))
       @user1.locationships.create(:location => @location, :todo_checkins => 1)
       @user2.locationships.create(:location => @location, :todo_checkins => 1)
       assert_equal 4, @location.hotness
     end
 
     should "be 19 for location with 3 user checkins and 2 todo checkins" do
-      @location = Location.create(:name => "Location 1", :country => @us, :state => @illinois)
+      @location = Location.create(:name => "Location 1", :country => countries(:us), :state => states(:il))
       @user1.locationships.create(:location => @location, :my_checkins => 1)
       @user2.locationships.create(:location => @location, :my_checkins => 1)
       @user3.locationships.create(:location => @location, :my_checkins => 1)

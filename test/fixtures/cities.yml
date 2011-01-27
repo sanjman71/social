@@ -1,0 +1,25 @@
+boston:
+  name: Boston
+  state: ma
+  country: us
+  lat: 42.3584308
+  lng: -71.0597732
+
+chicago:
+  name: Chicago
+  state: il
+  country: us
+  lat: 41.850033
+  lng: -87.6500523
+
+new_york:
+  name: New York
+  state: ny
+  country: us
+  lat: 40.7143528
+  lng: -74.0059731
+
+toronto:
+  name: Toronto
+  state: ontario
+  country: ca

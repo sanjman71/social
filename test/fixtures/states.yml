@@ -1,0 +1,24 @@
+ca:
+  name: California
+  code: CA
+  country: us
+
+il:
+  name: Illinois
+  code: IL
+  country: us
+
+ma:
+  name: Massachusetts
+  code: MA
+  country: us
+
+ny:
+  name: New York
+  code: NY
+  country: us
+  
+ontario:
+  name: Ontario
+  code: ON
+  country: canada

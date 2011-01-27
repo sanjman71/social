@@ -6,13 +6,9 @@ class UserSearchTest < ActiveSupport::TestCase
   self.use_transactional_fixtures = false
 
   def setup
-    @us               = Factory(:us)
-    @il               = Factory(:il, :country => @us)
-    @ny               = Factory(:ny, :country => @us)
-    @ma               = Factory(:ma, :country => @us)
-    @chicago          = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.850033, :lng => -87.6500523)
-    @newyork          = Factory(:city, :name => 'New York', :state => @ny, :lat => 40.7143528, :lng => -74.0059731)
-    @boston           = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
+    @chicago          = cities(:chicago)
+    @newyork          = cities(:new_york)
+    @boston           = cities(:boston)
     # create locations
     @chicago_sbux     = Location.create!(:name => "Chicago Starbucks", :country => @us, :city => @chicago,
                                          :lat => 41.89248300, :lng => -87.6281306000)
@@ -55,7 +51,7 @@ class UserSearchTest < ActiveSupport::TestCase
   end
 
   def teardown
-    [Checkin, PlannedCheckin, Shout, CheckinLog, Location, Country, State, City, User].each { |o| o.delete_all }
+    DatabaseCleaner.clean
   end
 
   def setup_checkins(checkin_at = nil)

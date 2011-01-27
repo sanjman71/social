@@ -1,15 +1,14 @@
 require 'test_helper'
 
 class LocationImportTest < ActiveSupport::TestCase
-
   # turn off transactional fixtures here so we can test sphinx
   self.use_transactional_fixtures = false
 
   def setup
     ThinkingSphinx::Test.init
     # create country and state, no cities
-    @us = Country.us || Factory(:us)
-    @il = Factory(:il, :country => @us)
+    @us = countries(:us)
+    @il = states(:il)
   end
 
   def teardown

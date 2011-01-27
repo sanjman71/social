@@ -5,9 +5,8 @@ class SuggestionTest < ActiveSupport::TestCase
   def setup
     @user1 = User.create!(:name => "User 1", :handle => 'user1', :member => 1)
     @user2 = User.create!(:name => "User 2", :handle => 'user2', :member => 1)
-    @us    = Factory(:us)
-    @loc1  = Location.create!(:name => "Home", :country => @us)
-    @loc2  = Location.create!(:name => "Away", :country => @us)
+    @loc1  = Location.create!(:name => "Home", :country => countries(:us))
+    @loc2  = Location.create!(:name => "Away", :country => countries(:us))
   end
 
   context "create" do

@@ -1,14 +1,10 @@
 require 'test_helper'
 
 class PlannedCheckinTest < ActiveSupport::TestCase
-
   def setup
-    @us       = Factory(:us)
-    @il       = Factory(:il, :country => @us)
-    @chicago  = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
     @user     = Factory(:user)
     @user.email_addresses.create!(:address => 'user@outlately.com')
-    @chi_sbux = Location.create!(:name => "Chicago Starbucks", :country => @us, :city => @chicago)
+    @chi_sbux = Location.create!(:name => "Chicago Starbucks", :country => countries(:us), :city => cities(:chicago))
   end
 
   context "create" do
@@ -25,6 +21,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
 
     should "set locationship todo_checkins to 1" do
+      Delayed::Job.delete_all
       @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       @locship  = @user.locationships.find_by_location_id(@chi_sbux.id)
@@ -46,6 +43,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
 
     should "not allow if there is an active planned checkin" do
+      Delayed::Job.delete_all
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       Timecop.travel(Time.now+3.days) do
@@ -59,6 +57,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
 
     should "allow if there are no active planned checkins" do
+      Delayed::Job.delete_all
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       Timecop.travel(Time.now+7.days+1.minute) do
@@ -74,6 +73,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
 
   context "planned checkin expired" do
     should "reset locationship todo_checkins to 0 after expiry" do
+      Delayed::Job.delete_all
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       Timecop.travel(Time.now+7.days+1.minute) do
@@ -87,6 +87,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
 
   context "planned checkin reminders" do
     should "send reminder email 2 days before planned checkin expires" do
+      Delayed::Job.delete_all
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       Timecop.travel(Time.now+1.day) do
@@ -103,6 +104,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
 
   context "planned checkin resolution" do
     should "resolve as completed when a user checks in to a planned location before it expires" do
+      Delayed::Job.delete_all
       @pcheckin1  = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       Timecop.travel(Time.now+1.day) do
@@ -124,6 +126,7 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
     
     should "resolve as expired when a user checks in to a planned location after it expires" do
+      Delayed::Job.delete_all
       @pcheckin1  = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs
       Timecop.travel(Time.now+7.days+1.minute) do

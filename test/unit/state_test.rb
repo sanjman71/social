@@ -5,15 +5,10 @@ class StateTest < ActiveSupport::TestCase
   should have_many :cities
   should have_many :locations
   
-  def setup
-    @us = Factory(:us)
-  end
-  
   context "state" do
     context "illinos" do
       setup do
-        @il = State.create(:name => "Illinois", :code => "IL", :country => @us)
-        assert @il.valid?
+        @il = states(:il)
       end
       
       should "have to_s method return Illinois" do

@@ -11,13 +11,8 @@ class PlansControllerTest < ActionController::TestCase
   end
 
   def setup
-    @us           = Factory(:us)
-    @canada       = Factory(:canada)
-    @il           = Factory(:il, :country => @us)
-    @on           = Factory(:ontario, :country => @canada)
-    @chicago      = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
-    @toronto      = Factory(:toronto, :state => @on)
-    @sbux         = Location.create!(:name => 'Starbucks', :city => @chicago, :country => @us)
+    @chicago      = cities(:chicago)
+    @sbux         = Location.create!(:name => 'Starbucks', :city => @chicago, :country => countries(:us))
   end
 
   context "join" do

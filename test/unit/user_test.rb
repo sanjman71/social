@@ -286,9 +286,7 @@ class UserTest < ActiveSupport::TestCase
 
     context "city" do
       setup do
-        @us       = Factory(:us)
-        @il       = Factory(:il, :country => @us)
-        @chicago  = Factory(:chicago, :state => @il)
+        @chicago  = cities(:chicago)
       end
 
       should "set city to 'chicago'" do

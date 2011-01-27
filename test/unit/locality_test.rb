@@ -1,10 +1,11 @@
 require 'test_helper'
 
 class LocalityTest < ActiveSupport::TestCase
-  
+  fixtures :all
+
   def setup
     WebMock.allow_net_connect!
-    @us = Factory(:us)
+    @us = countries(:us)
   end
 
   context "geocode country" do
@@ -32,7 +33,7 @@ class LocalityTest < ActiveSupport::TestCase
   context "geocode state" do
     context "illinois" do
       setup do
-        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
+        @il     = states(:il)
         @object = Locality.resolve("illinois")
       end
 
@@ -67,8 +68,7 @@ class LocalityTest < ActiveSupport::TestCase
   context "geocode us city" do
     context "chicago, precision default" do
       setup do
-        @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @chicago  = Factory(:city, :name => "Chicago", :state => @il)
+        @chicago  = cities(:chicago)
         @object   = Locality.resolve("chicago")
       end
 
@@ -91,8 +91,7 @@ class LocalityTest < ActiveSupport::TestCase
     
     context "street address, precision city" do
       setup do
-        @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @chicago  = Factory(:city, :name => "Chicago", :state => @il)
+        @chicago  = cities(:chicago)
         @object   = Locality.resolve("200 w grand, chicago", :precision => :city)
       end
       
@@ -103,7 +102,6 @@ class LocalityTest < ActiveSupport::TestCase
 
     context "street address, precision city, create city" do
       setup do
-        @il     = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
         @object = Locality.resolve("200 w grand, chicago", :precision => :city, :create => true)
       end
       
@@ -130,7 +128,7 @@ class LocalityTest < ActiveSupport::TestCase
   context "check city" do
     context "mis-spelled city la grange pk" do
       setup do
-        @il         = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
+        @il         = states(:il)
         @la_grange  = Factory(:city, :name => "La Grange Park", :state => @il)
         @object     = Locality.check(@il, 'city', "La Grange Pk")
       end
@@ -142,8 +140,8 @@ class LocalityTest < ActiveSupport::TestCase
     
     context "wrong city in state" do
       setup do
-        @il         = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @ca         = Factory(:state, :name => "California", :code => "CA", :country => @us)
+        @il         = states(:il)
+        @ca         = states(:ca)
         @chicago    = Factory(:city, :name => "Chicago", :state => @ca)
         @exception  = assert_raise(LocalityError) { Locality.check(@ca, 'city', "Chicago") }
       end
@@ -157,8 +155,7 @@ class LocalityTest < ActiveSupport::TestCase
   context "geocode zip" do
     context "60654" do
       setup do
-        @il       = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-        @zip      = Factory(:zipcode, :name => "60654", :state => @il)
+        @zip      = zipcodes(:z60654)
         @object   = Locality.resolve("60654")
       end
 
@@ -182,11 +179,11 @@ class LocalityTest < ActiveSupport::TestCase
   
   context "find city, state code" do
     setup do
-      @il           = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-      @chicago      = Factory(:city, :name => "Chicago", :state => @il)
+      @il           = states(:il)
+      @chicago      = cities(:chicago)
       @heights      = Factory(:city, :name => "Chicago Heights", :state => @il)
-      @z60610       = Factory(:zipcode, :name => "60610", :state => @il)
-      @river_north  = Factory(:neighborhood, :name => "River North", :city => @chicago)
+      @z60610       = zipcodes(:z60610)
+      @river_north  = neighborhoods(:river_north)
     end
     
     context "when its well-formed" do

@@ -6,17 +6,11 @@ class CityTest < ActiveSupport::TestCase
   should belong_to :timezone
   should have_many :neighborhoods
   should have_many :locations
-  
-  def setup
-    @us   = Factory(:us)
-    @il   = Factory(:state, :name => "Illinois", :code => "IL", :country => @us)
-    @ny   = Factory(:state, :name => "New York", :code => "NY", :country => @us)
-  end
-  
+
   context "city with state" do
     context "chicago" do
       setup do
-        @chicago = City.create!(:name => "Chicago", :state => @il)
+        @chicago = cities(:chicago)
       end
       
       should "have to_param method return chicago" do
@@ -34,7 +28,7 @@ class CityTest < ActiveSupport::TestCase
 
     context "new york" do
       setup do
-        @new_york = City.create!(:name => "New York", :state => @ny)
+        @new_york = cities(:new_york)
       end
 
       should "have to_param method return new-york" do

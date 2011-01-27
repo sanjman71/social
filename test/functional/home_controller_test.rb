@@ -10,11 +10,8 @@ class HomeControllerTest < ActionController::TestCase
   end
 
   def setup
-    @us       = Factory(:us)
-    @il       = Factory(:il, :country => @us)
-    @ma       = Factory(:ma, :country => @us)
-    @chicago  = Factory(:city, :name => 'Chicago', :state => @il, :lat => 41.850033, :lng => -87.6500523)
-    @boston   = Factory(:city, :name => 'Boston', :state => @ma, :lat => 42.3584308, :lng => -71.0597732)
+    @chicago  = cities(:chicago)
+    @boston   = cities(:boston)
     @user     = Factory(:user, :city => @chicago)
   end
 
@@ -32,7 +29,7 @@ class HomeControllerTest < ActionController::TestCase
 
     should "redirect invited users to login" do
       @invitation = @user.invitations.create!(:recipient_email => 'invitee@outlately.com')
-      get :index, :token => @invitation.reload.token
+      get :index, :invitation_token => @invitation.reload.token
       assert_redirected_to "/login"
     end
 

@@ -1,0 +1,10 @@
+us:
+  name: United States
+  code: US
+  locations_count: 0
+
+canada:
+  name: Canada
+  code: CA
+  locations_count: 0
+  

@@ -7,14 +7,12 @@ class CheckinTest < ActiveSupport::TestCase
 
   def setup
     ThinkingSphinx::Test.init
-    @us       = Factory(:us)
-    @il       = Factory(:il, :country => @us)
-    @chicago  = Factory(:chicago, :state => @il, :timezone => Factory(:timezone_chicago))
+    @chicago  = cities(:chicago)
     @user     = Factory(:user)
   end
 
   def teardown
-    [Checkin, CheckinLog, Location, Locationship, Country, State, City, User, Delayed::Job].each { |o| o.delete_all }
+    DatabaseCleaner.clean
   end
 
   context "checkin points" do
