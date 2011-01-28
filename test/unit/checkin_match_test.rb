@@ -27,6 +27,8 @@ class CheckinMatchTest < ActiveSupport::TestCase
                                        :city => @chicago)
     @chicago_female2  = Factory.create(:user, :handle => 'chicago_female_2', :gender => 1, :member => 0,
                                        :city => @chicago)
+    @chicago_female3  = Factory.create(:user, :handle => 'chicago_female_3', :gender => 1, :member => 0,
+                                       :city => @chicago)
     # tag coffee locations
     [@chicago_sbux, @chicago_coffee, @chicago_lavazza].each do |o|
       o.tag_list = ['cafe', 'coffee']
@@ -35,64 +37,50 @@ class CheckinMatchTest < ActiveSupport::TestCase
   end
 
   def teardown
+    ThinkingSphinx::Test.stop
     DatabaseCleaner.clean
   end
 
-  context "match strategy exact" do
+  fast_context "match strategies" do
     setup do
-      # create checkins at same place
       @chi_checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
                                                                              :location => @chicago_sbux))
+      # checkins at same place, members and non-members
       @chi_checkin2 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
                                                                                :location => @chicago_sbux))
       @chi_checkin3 = @chicago_male2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
                                                                              :location => @chicago_sbux))
-    end
-
-    should "find 1 dater match" do
-      ThinkingSphinx::Test.run do
-        @matches = @chi_checkin1.match_exact
-        assert_equal 1, ([@chi_checkin2.id].to_set & @matches.collect(&:id).to_set).size
-      end
-    end
-
-    should "find 2 dater matches, and include non-members" do
-      # create non-member checkin
       @chi_checkin4 = @chicago_female2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
                                                                                :location => @chicago_sbux))
-      ThinkingSphinx::Test.run do
-        @matches = @chi_checkin1.match_exact
-        assert_equal 2, ([@chi_checkin2.id, @chi_checkin4.id].to_set & @matches.collect(&:id).to_set).size
-      end
-    end
-  end
-
-  context "match strategy similar" do
-    setup do
-      # create checkins at similar places
-      @chi_checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
-                                                                             :location => @chicago_sbux))
-      @chi_checkin2 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+      # checkins at similar places, members and non-members
+      @chi_checkin5 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
                                                                                :location => @chicago_coffee))
-      @chi_checkin3 = @chicago_male2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+      @chi_checkin6 = @chicago_male2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
                                                                              :location => @chicago_coffee))
-    end
-
-    should "find 1 dater match" do
-      ThinkingSphinx::Test.run do
-        @matches = @chi_checkin1.match_similar
-        assert_equal 1, ([@chi_checkin2.id].to_set & @matches.collect(&:id).to_set).size
-      end
-    end
-
-    should "find 2 dater matches, and include non-members" do
-      # create non-member checkin at similar location
-      @chi_checkin4 = @chicago_female2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+      @chi_checkin7 = @chicago_female2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
                                                                                :location => @chicago_lavazza))
-      ThinkingSphinx::Test.run do
-        @matches = @chi_checkin1.match_similar
-        assert_equal 2, ([@chi_checkin2.id, @chi_checkin4.id].to_set & @matches.collect(&:id).to_set).size
-      end
+      @chi_checkin8 = @chicago_female3.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                               :location => @chicago_lavazza))
+      ThinkingSphinx::Test.start
+    end
+
+    should "find 2 exact matches, members and non-members" do
+      @matches = @chi_checkin1.match_exact
+      assert_equal 2, ([@chi_checkin2.id, @chi_checkin4.id].to_set & @matches.collect(&:id).to_set).size
+    end
+
+    should "find 2 similar matches, members and non-members" do
+      @matches = @chi_checkin1.match_similar
+      assert_equal 2, ([@chi_checkin5.id, @chi_checkin7.id].to_set & @matches.collect(&:id).to_set).size
+    end
+
+    should "find 3 matches strategies, 2 exact and 1 similar, with no repeat checkins or users" do
+      @matches = @chi_checkin1.match_strategies([:exact, :similar, :nearby], :limit => 3)
+      # 2 exact matches
+      assert_equal 2, ([@chi_checkin2.id, @chi_checkin4.id].to_set & @matches.collect(&:id).to_set).size
+      # 1 similar match, no repeat users
+      assert_equal 1, ([@chi_checkin8.id].to_set & @matches.collect(&:id).to_set).size
     end
   end
+
 end

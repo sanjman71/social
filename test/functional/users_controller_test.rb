@@ -18,6 +18,8 @@ class UsersControllerTest < ActionController::TestCase
       to(:controller => 'users', :action => 'become', :id => '1')
     should route(:put, "/users/1/bucks/100").
       to(:controller => 'users', :action => 'bucks', :id => '1', :points => 100)
+    should route(:get, "/users/1/via/email").
+      to(:controller => 'users', :action => 'via', :id => '1', :source => 'email')
   end
 
   def setup

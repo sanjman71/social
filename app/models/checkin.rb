@@ -19,6 +19,8 @@ class Checkin < ActiveRecord::Base
 
   scope         :member, joins(:user).where(:users => {:member => 1})
 
+  include Checkins::Match
+
   define_index do
     has :id, :as => :checkin_ids
     zero = "0"
@@ -55,9 +57,30 @@ class Checkin < ActiveRecord::Base
     # update locationships
     self.delay.async_update_locationships
     if recent_checkin? && user.member? && user.email_addresses_count?
+      # send email notifying user that their checkin was imported
+      async_checkin_imported_email
+      if enabled(:send_checkin_matches)
+        # send checkin matches email
+        async_checkin_matches_email
+      end
+    end
+  end
+
+  # notify user that checkin was imported
+  def async_checkin_imported_email
+    CheckinMailer.delay.checkin_imported({:checkin_id => self.id,
+                                          :points => Currency.points_for_checkin(user, self)})
+  end
+
+  # notify user of matching checkins based on this recent checkin
+  def async_checkin_matches_email
+    # find matching checkins
+    matches = match_strategies([:exact, :similar, :nearby], :limit => 3)
+    # log data
+    self.class.log("[user:#{user.id}] #{user.handle} matched checkin:#{self.id} with #{matches.size} matches")
+    if matches.any?
       # send email
-      CheckinMailer.delay.checkin_imported({:checkin_id => self.id,
-                                            :points => Currency.points_for_checkin(user, self)})
+      UserMailer.delay.user_matching_checkins(:user_id => user.id, :checkin_ids => [matches.collect(&:id)])
     end
   end
 

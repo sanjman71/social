@@ -1,0 +1,8 @@
+#checkins
+  - @checkins.each do |checkin|
+    - user      = checkin.user
+    - location  = checkin.location
+    .checkin
+      #{link_to(user.handle, user_via_url(user.id, 'email'))} checked in at #{location.name}
+    %br
+  

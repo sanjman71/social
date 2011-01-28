@@ -14,8 +14,6 @@ module Users::Search
     options.update(:with_gender => [1]) unless options[:with_gender]
     # exclude checkins by me and my friends
     options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
-    # include members only
-    options.update(:with_member => 1) unless options[:with_member]
     search_data_streams(options)
   end
 
@@ -24,8 +22,6 @@ module Users::Search
     options.update(:with_gender => [2]) unless options[:with_gender]
     # exclude checkins by me and my friends
     options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
-    # include members only
-    options.update(:with_member => 1) unless options[:with_member]
     search_data_streams(options)
   end
 
@@ -103,8 +99,6 @@ module Users::Search
   def search_daters_checkins(options={})
     # exclude checkins by me and my friends
     options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
-    # include members only
-    options.update(:with_member => 1) unless options[:with_member]
     # filter checkins by my gender orientation
     options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     search_checkins(options)

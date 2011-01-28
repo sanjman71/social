@@ -2,7 +2,7 @@ require File.expand_path('config/environment.rb')
 
 class Checkins < Thor
 
-  desc "list", "list recent checkins"
+  desc "list", "list recent checkins across all users"
   method_options :limit => 100
   def list
     limit     = options[:limit].to_i
@@ -14,7 +14,35 @@ class Checkins < Thor
     end
   end
 
-  desc "near_handle", "search checkins around 'handle', with optional sort options: females, males"
+  desc "matches", "find checkin matches for user --handle"
+  method_options :handle => nil
+  method_options :limit => 100
+  def matches
+    handle  = options[:handle]
+    limit   = options[:limit].to_i
+
+    if handle.blank?
+      puts "missing handle"
+      return
+    end
+
+    user      = User.find_by_handle!(handle)
+    checkins  = user.checkins.limit(limit).order("checkin_at desc")
+
+    puts "*** user: #{user.handle} checkin matches"
+    checkins.each do |checkin|
+      puts "*** checkin: at #{checkin.location.name}:#{checkin.location.city.try(:name)}, by #{checkin.user.handle}:#{checkin.user.id}"
+      matches = checkin.match_strategies([:exact, :similar, :nearby], :limit => 3)
+      if matches.blank?
+        puts "xxx no matches"
+      end
+      matches.each do |match|
+        puts "*** match: at #{match.location.name}:#{match.location.city.try(:name)}, by #{match.user.handle}:#{match.user.id}"
+      end
+    end
+  end
+
+  desc "near_handle", "search checkins around --handle, with optional --sort options: females, males"
   method_options :handle => nil
   method_options :sort => nil
   method_options :radius => nil
