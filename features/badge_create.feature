@@ -17,6 +17,7 @@ Feature: Create badges
     Then I should see "Add Badge"
     And I follow "Add Badge"
     And I fill in "Name" with "Candy Crazy"
+    And I fill in "Tagline" with "Candy-licious"
     And I press "Create"
 
     Then I should see "Created badge 'Candy Crazy'"
