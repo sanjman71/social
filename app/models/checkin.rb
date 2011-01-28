@@ -80,7 +80,7 @@ class Checkin < ActiveRecord::Base
     self.class.log("[user:#{user.id}] #{user.handle} matched checkin:#{self.id} with #{matches.size} matches")
     if matches.any?
       # send email
-      UserMailer.delay(:priority => 3).user_matching_checkins(:user_id => user.id, :checkin_ids => [matches.collect(&:id)])
+      UserMailer.delay.user_matching_checkins(:user_id => user.id, :checkin_ids => [matches.collect(&:id)])
     end
     matches.size
   end
@@ -110,9 +110,11 @@ class Checkin < ActiveRecord::Base
     if source == 'facebook'
       # import checkins for friends without facebook oauths
       user.friends.select{ |o| o.facebook_oauth.nil? }.each do |friend|
+        # priority 0 is highest and default; import checkins at a lower priority
         log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
-        FacebookCheckin.delay.async_import_checkins({:user_id => friend.id, :since => :last, :limit => 250,
-                                                     :oauth_id => user.facebook_oauth.try(:id)})
+        FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => friend.id, :since => :last,
+                                                                     :limit => 250,
+                                                                     :oauth_id => user.facebook_oauth.try(:id)})
       end
     end
   end
@@ -128,9 +130,13 @@ class Checkin < ActiveRecord::Base
         # use delayed job to import these checkins
         case log.source
         when 'facebook'
-          FacebookCheckin.delay.async_import_checkins({:user_id => user.id, :since => :last, :limit => 250})
+          # priority 0 is highest and default; import checkins at a lower priority
+          FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :since => :last,
+                                                                       :limit => 250})
         when 'foursquare'
-          FoursquareCheckin.delay.async_import_checkins({:user_id => user.id, :sinceid => :last, :limit => 250})
+          # priority 0 is highest and default; import checkins at a lower priority
+          FoursquareCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :sinceid => :last,
+                                                                         :limit => 250})
         end
       end
     end
