@@ -80,8 +80,9 @@ class Checkin < ActiveRecord::Base
     self.class.log("[user:#{user.id}] #{user.handle} matched checkin:#{self.id} with #{matches.size} matches")
     if matches.any?
       # send email
-      UserMailer.delay.user_matching_checkins(:user_id => user.id, :checkin_ids => [matches.collect(&:id)])
+      UserMailer.delay(:priority => 3).user_matching_checkins(:user_id => user.id, :checkin_ids => [matches.collect(&:id)])
     end
+    matches.size
   end
 
   # user checkins were imported
@@ -91,7 +92,7 @@ class Checkin < ActiveRecord::Base
     # trigger friend checkins
     trigger_event_friend_checkins(user, source)
 
-    if user.reload.suggestionable?
+    if enabled(:user_suggestions) and user.reload.suggestionable?
       # cap the number of suggestions until this is fixed
       if user.suggestions.count < UserSuggestion.max_suggestions
         # create suggestions
