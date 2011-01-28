@@ -69,6 +69,7 @@ en:
       default: 'Freakie'
     profile:
       message: 'Message'
+      invite: "Invite %{name}"
   suggestion:
     error:
       flash: "Whoops, that's not allowed"

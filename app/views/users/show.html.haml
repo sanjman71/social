@@ -16,7 +16,10 @@
       %h3= @user.handle
       %h4= @user.city.try(:name)
     %ul#profile-nav
-      %li= link_to(I18n.t("user.profile.message"), '#dialog-profile-meetup', :id => 'profile-meetup')
+      - if @user.member?
+        %li= link_to(I18n.t("user.profile.message"), '#dialog-profile-meetup', :id => 'profile-meetup')
+      - else
+        %li= link_to(I18n.t("user.profile.invite", :name => @user.pronoun.titleize), '#', :id => 'profile-invite')
 
 #content.clearfix
   -##profile-photos
