@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:become, :bucks, :show]
+  before_filter :find_user, :only => [:become, :bucks, :show, :via]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -41,6 +41,17 @@ class UsersController < ApplicationController
       format.html
       format.js
     end
+  end
+
+  # GET /users/1/via/:source
+  # GET /users/1/via/email
+  def via
+    # @user initialized in before filter
+
+    # set google tracker
+    flash[:tracker] = track_page("/users/#{@user.id}/via/#{params[:source]}")
+    # redirect
+    redirect_to(user_path(@user))
   end
 
   # GET /users/1

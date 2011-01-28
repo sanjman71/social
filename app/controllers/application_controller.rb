@@ -1,10 +1,12 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :check_beta
+  before_filter :init_google_analytics
 
   include Growl
+  include GoogleTracker
 
-  helper_method :growls, :has_role?
+  helper_method :growls, :has_role?, :ga_tracker, :ga_commerce, :ga_events
 
   # default layout
   layout 'outlately'
@@ -80,6 +82,21 @@ class ApplicationController < ActionController::Base
       @location = Location.find_or_create_by_source(params[:location])
     else
       raise Exception, "missing location"
+    end
+  end
+
+  def init_google_analytics
+    if flash[:tracker]
+      self.ga_tracker.concat(flash[:tracker])
+      flash.delete(:tracker)
+    end
+    if flash[:commerce]
+      self.ga_commerce.concat(flash[:commerce])
+      flash.delete(:commerce)
+    end
+    if flash[:events]
+      self.ga_events.concat(flash[:events])
+      flash.delete(:events)
     end
   end
 
