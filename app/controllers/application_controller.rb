@@ -87,15 +87,15 @@ class ApplicationController < ActionController::Base
 
   def init_google_analytics
     if flash[:tracker]
-      self.ga_tracker.concat(flash[:tracker])
+      ga_tracker.concat(flash[:tracker])
       flash.delete(:tracker)
     end
     if flash[:commerce]
-      self.ga_commerce.concat(flash[:commerce])
+      ga_commerce.concat(flash[:commerce])
       flash.delete(:commerce)
     end
     if flash[:events]
-      self.ga_events.concat(flash[:events])
+      ga_events.concat(flash[:events])
       flash.delete(:events)
     end
   end

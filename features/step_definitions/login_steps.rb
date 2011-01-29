@@ -1,8 +1,6 @@
 # oauth (default) login
 Given /^I am logged in as "([^"]*)"$/ do |handle|
-  And %{I go to beta page}
-  And %{I fill in "code" with "applepie"}
-  And %{I press "Continue"}
+  And %{I enter the beta password}
 
   # oauth login
   # And %{I go to #{handle}'s outlately oauth page}
@@ -11,15 +9,19 @@ end
 
 # password login
 Given /^I am password logged in as "([^"]*)"$/ do |handle|
-  And %{I go to beta page}
-  And %{I fill in "code" with "applepie"}
-  And %{I press "Continue"}
+  And %{I enter the beta password}
 
   # user, password login
   And %{I go to login password page}
   And %{I fill in "user_handle" with "#{handle}"}
   And %{I fill in "user_password" with "secret"}
   And %{I press "Sign in"}
+end
+
+Given /^I enter the beta password$/ do
+  And %{I go to beta page}
+  And %{I fill in "code" with "applepie"}
+  And %{I press "Continue"}
 end
 
 ACCESS_TOKEN = {
@@ -43,12 +45,13 @@ Then /^outlately authorizes me as "([^"]*)"$/ do |handle|
   visit '/users/auth/outlately/callback?handle=' + handle
 end
 
-Then /^facebook authorizes me as "([^"]*)"$/ do |handle|
+Then /^I login with facebook as "([^"]*)"$/ do |handle|
   # map handle to user, if one exists
   user = User.find_by_handle(handle)
   # set facebook oauth data
   FACEBOOK_INFO[:link] = "http://facebok.com/#{handle}"
   if user
+    # link handle to authenticating facebook user
     FACEBOOK_INFO[:id] = user.facebook_id
   end
   Devise::OmniAuth.short_circuit_authorizers!

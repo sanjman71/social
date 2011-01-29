@@ -25,7 +25,7 @@ Feature: User sends signup invitations
     Then I should be on the login page
 
     # user facebook signup
-    And facebook authorizes me as "invitee"
+    And I login with facebook as "invitee"
     And the delayed jobs are processed
     Then I should be on the settings page
 
@@ -59,7 +59,7 @@ Feature: User sends signup invitations
     Then I should be on the login page
 
     # user facebook signup
-    And facebook authorizes me as "chicago_hottie"
+    And I login with facebook as "chicago_hottie"
     And the delayed jobs are processed
     Then I should be on the settings page
 

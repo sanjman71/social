@@ -85,6 +85,12 @@ class OauthController < Devise::OmniauthCallbacksController
       session.delete(:invitation_token)
     end
 
+    if @user.sign_in_count == 0
+      # user's first time signing in; track signup and redirect to settings page
+      flash[:tracker] = track_page("/signup/completed")
+      @goto_path      = settings_path
+    end
+
     if !user_signed_in?
       flash[:notice] = "Welcome back #{@user.handle}"
     else
@@ -94,11 +100,11 @@ class OauthController < Devise::OmniauthCallbacksController
     sign_in(@user)
     # note: if we were going to use warden to login, we might use it like this
     # resource = warden.authenticate!(:simple, :scope => :user)
-    redirect_to(root_path) and return
+    redirect_to(@goto_path || root_path) and return
   rescue Exception => e
     logger.debug("oauth #{service} callback error: #{e.message}" )
     flash[:error] = "Oauth error: #{e.message}"
-    redirect_to(@redirect_path || root_path) and return
+    redirect_to(@goto_path || root_path) and return
   end
   
 end
