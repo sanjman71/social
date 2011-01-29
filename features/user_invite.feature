@@ -9,7 +9,7 @@ Feature: User sends signup invitations
     And I am logged in as "chicago_guy"
 
   @javascript @invitations
-  Scenario: User sends an invite and the user accepts the invitation
+  Scenario: User sends an invite and the invitation is accepted
     When I go to the invite page
     Then I should see "Invite Friends"
     And I fill in "invitees" with "invitee@outlately.com"
@@ -29,13 +29,15 @@ Feature: User sends signup invitations
     And I login with facebook as "invitee"
     And the delayed jobs are processed
     Then I should be on the settings page
+    And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
+    And I should see "_gaq.push(['_trackPageview', '/signup/invited'])"
 
     And "chicago_guy@outlately.com" should receive an email with subject "Outlately: Your invitation was accepted!"
     And I open the email with subject "Outlately: Your invitation was accepted!"
     Then I should see "You invited invitee and they signed up." in the email body
 
   @javascript @invitations
-  Scenario: User sends an invite because they were poked and the user accepts the invitation
+  Scenario: User sends an invite because they were poked and the invitation is accepted
     Given a user "chicago_hottie" exists with handle: "chicago_hottie", gender: "Female", orientation: "Straight", member: "0", points: "0", facebook_id: "88888"
     And user "chicago_hottie" has email "chicago_hottie@outlately.com"
     And "chicago_guy" is friends with "chicago_hottie"
@@ -64,6 +66,8 @@ Feature: User sends signup invitations
     And I login with facebook as "chicago_hottie"
     And the delayed jobs are processed
     Then I should be on the settings page
+    And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
+    And I should see "_gaq.push(['_trackPageview', '/signup/invited'])"
 
     And "chicago_guy@outlately.com" should receive an email with subject "Outlately: Your invitation was accepted!"
     And "chicago_guy1@outlately.com" should receive an email with subject "Outlately: You might be interested in this user signup..."

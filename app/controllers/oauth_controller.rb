@@ -83,6 +83,8 @@ class OauthController < Devise::OmniauthCallbacksController
       # set user invitation token to mark user as signing up from an invite
       @user.update_attribute(:invitation_token, session[:invitation_token])
       session.delete(:invitation_token)
+      # track invited signup
+      flash[:tracker] = track_page("/signup/invited")
     end
 
     if @user.sign_in_count == 0
