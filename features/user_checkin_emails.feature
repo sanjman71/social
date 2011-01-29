@@ -1,6 +1,7 @@
 Feature: Import user checkin
   As a user I want to receive notifications when I check in using facebook or foursquare
 
+  @checkin @email
   Scenario: Member should receive an email after a recent checkin is imported
     Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
     And user "sanjay" has email "sanjay@outlately.com"
@@ -9,9 +10,9 @@ Feature: Import user checkin
     And the delayed jobs are processed
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: You checked in at Starbucks"
     When I open the email
-    Then I should see "That checkin got you 10 points." in the email body
+    Then I should see "Good work. That checkin got you 10 points." in the email body
 
-  @checkin
+  @checkin @email
   Scenario: Member should receive an email after a recent checkin with other user checkins
     Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male"
     And user "sanjay" has email "sanjay@outlately.com"
