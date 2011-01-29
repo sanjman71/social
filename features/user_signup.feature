@@ -27,5 +27,6 @@ Feature: User Signup
     And I login with facebook as "facebook_guy"
     Then I should be on the home page
     And I should not see "_gaq.push(['_trackPageview', '/signup/completed'])"
+    And I should not see "_gaq.push(['_trackPageview', '/signup/invited'])"
 
     
