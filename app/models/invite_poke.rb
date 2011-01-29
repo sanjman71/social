@@ -16,9 +16,9 @@ class InvitePoke < ActiveRecord::Base
       friend  = friends.sort_by(&:id).first
     end
 
-    # check if there was a recent poke
-    recent_poke = self.where(:invitee_id => invitee.id, :poker_id => poker.id, :created_at.gt => 10.minutes.ago).first
-    return recent_poke if recent_poke.present?
+    # check for any past pokes
+    past_poke = self.where(:invitee_id => invitee.id, :poker_id => poker.id).first
+    return past_poke if past_poke.present?
 
     # create new poke
     self.create(:invitee => invitee, :poker => poker, :friend => friend)

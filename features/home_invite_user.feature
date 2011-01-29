@@ -3,8 +3,7 @@ Feature: Invite users by poking their friends
   As a user
   I want to ask members to invite their friends that I think are interesting
 
-  @javascript
-  Scenario: See a user in the stream and ask another member to invite them
+  Background:
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
     # create users
@@ -23,9 +22,11 @@ Feature: Invite users by poking their friends
     And user "chicago_friend1" checked in to "Chicago Starbucks"
     # add friends
     And "chicago_friend1" is friends with "chicago_guy1"
-    And I am logged in as "chicago_guy2"
-    And sphinx is indexed
 
+  @javascript
+  Scenario: Clicking 'Invite Him' in a user stream sends a poke message to their friend
+    Given I am logged in as "chicago_guy2"
+    And sphinx is indexed
     When I go to the home page
     Then I should see "Everyone" within "ul#social-stream-nav li.active"
     And I should see "chicago_guy1" within "ul#social-stream"
@@ -38,3 +39,17 @@ Feature: Invite users by poking their friends
     Then I should see "chicago_guy2 wants chicago_friend1 to join Outlately.  Since you're friends with chicago_friend1," in the email body
     And I follow "invite" in the email
     Then I should be on the invite page
+
+  @javascript
+  Scenario: Clicking 'Invite Him' on an already poked user should not send another message
+    Given I am logged in as "chicago_guy2"
+    And sphinx is indexed
+    # chicago_guy2 already poked chicago_friend1
+    And user "chicago_guy2" poked "chicago_guy1" to invite "chicago_friend1"
+    # clicking invite shouldn't send another email
+    When 3 days have passed
+    And the delayed jobs are deleted
+    And I go to the home page
+    And I follow "Invite Him"
+    And the delayed jobs are processed
+    Then "chicago_guy1@outlately.com" should receive no emails
