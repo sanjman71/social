@@ -16,6 +16,7 @@ Social::Application.configure do
 
   # Use :smtp for sending real mail, :test for ignoring mail
   config.action_mailer.delivery_method = :test
+  config.action_mailer.default_url_options = { :host => 'outlate.ly' }
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
