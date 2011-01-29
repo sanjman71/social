@@ -11,6 +11,10 @@ class Invitation < ActiveRecord::Base
     UserMailer.delay.user_invite(:invitation_id => self.id)
   end
 
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
+  end
+
   protected
 
   def generate_invitation_token

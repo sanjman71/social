@@ -17,6 +17,7 @@ class InvitationsController < ApplicationController
 
   # POST /invite
   def create
+    @sender   = current_user
     @subject  = params[:invitation][:subject]
     @body     = params[:invitation][:body]
     @emails   = (params.delete(:invitees).try(:split, ',') || []).map(&:strip)
@@ -37,9 +38,11 @@ class InvitationsController < ApplicationController
     when 1
       flash[:notice]  = "Sent Invitation."
       flash[:tracker] = track_event('Invite', 'Message')
+      Invitation.log("[user:#{@sender.id}] #{@sender.handle} invited #{@emails.join(',')}")
     else
       flash[:notice]  = "Sent #{@emails.size} Invitations."
       flash[:tracker] = track_event('Invite', 'Message')
+      Invitation.log("[user:#{@sender.id}] #{@sender.handle} invited #{@emails.join(',')}")
     end
     if @ignored.any?
       if @ignored.size == 1

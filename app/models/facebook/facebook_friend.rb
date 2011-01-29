@@ -12,7 +12,7 @@ class FacebookFriend
       return nil if oauth.blank?
       # initialize facebook client
       facebook  = FacebookClient.new(oauth.access_token)
-      friends   = facebook.friends['data']
+      friends   = facebook.friends['data'] || []
       log("[user:#{user.id}] #{user.handle} importing facebook friends with checkins")
       friends.each do |friend_hash|
         # check friend limit
