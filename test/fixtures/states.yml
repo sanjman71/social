@@ -17,8 +17,8 @@ ny:
   name: New York
   code: NY
   country: us
-  
-ontario:
+
+on:
   name: Ontario
-  code: ON
+  code: "ON"
   country: canada

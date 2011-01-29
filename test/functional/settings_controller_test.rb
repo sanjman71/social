@@ -11,7 +11,6 @@ class SettingsControllerTest < ActionController::TestCase
   def setup
     WebMock.allow_net_connect!
     @chicago    = cities(:chicago)
-    @newyork    = cities(:new_york)
     @boston     = cities(:boston)
   end
 
