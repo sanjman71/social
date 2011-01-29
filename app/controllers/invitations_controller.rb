@@ -33,11 +33,13 @@ class InvitationsController < ApplicationController
     end
     case @emails.size - @ignored.size
     when 0
-      flash[:notice] = "No Invitations Sent."
+      flash[:notice]  = "No Invitations Sent."
     when 1
-      flash[:notice] = "Sent Invitation."
+      flash[:notice]  = "Sent Invitation."
+      flash[:tracker] = track_event('Invite', 'Message')
     else
-      flash[:notice] = "Sent #{@emails.size} Invitations."
+      flash[:notice]  = "Sent #{@emails.size} Invitations."
+      flash[:tracker] = track_event('Invite', 'Message')
     end
     if @ignored.any?
       if @ignored.size == 1

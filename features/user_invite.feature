@@ -15,6 +15,7 @@ Feature: User sends signup invitations
     And I fill in "invitees" with "invitee@outlately.com"
     And I press "Send"
     Then I should see "Sent Invitation."
+    And I should see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"
     And the delayed jobs are processed
     And I go to the logout page
 
@@ -49,6 +50,7 @@ Feature: User sends signup invitations
     And I fill in "invitees" with "chicago_hottie@outlately.com"
     And I press "Send"
     Then I should see "Sent Invitation."
+    And I should see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"
     And the delayed jobs are processed
     And I go to the logout page
 
@@ -68,9 +70,10 @@ Feature: User sends signup invitations
     And "chicago_guy2@outlately.com" should receive an email with subject "Outlately: You might be interested in this user signup..."
 
   @javascript @invitations
-  Scenario: User tries to invite an existing soutlately member
+  Scenario: User tries to invite an existing outlately member
     When I go to the invite page
     Then I should see "Invite Friends"
     And I fill in "invitees" with "chicago_guy@outlately.com"
     And I press "Send"
     Then I should see "No Invitations Sent. There is already a member with email chicago_guy@outlately.com"
+    And I should not see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"

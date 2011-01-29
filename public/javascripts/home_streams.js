@@ -7,6 +7,13 @@ var stream_timer_id     = 0;
 var stream_updating     = false;
 var stream_paused       = false;
 
+// track google analytics event
+function track_event(category, action) {
+  try {
+    _gaq.push(['_trackEvent', category, action]);
+  } catch(e) {}
+}
+
 function pauseTimer() {
   // console.log("pausing interval timer");
   stream_paused = true;
@@ -34,6 +41,8 @@ $.fn.init_stream_invites = function() {
       }
       if (data['poke_id']) {
         // user's friend will be poked
+        // track invite poke event
+        track_event('Invite', 'Poke');
       }
       if (data['goto']) {
         window.location = data['goto'];

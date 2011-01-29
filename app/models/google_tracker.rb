@@ -14,22 +14,23 @@ module GoogleTracker
     @ga_events ||= []
   end
 
-  def add_event(category, action, options={})
-    ga_events.push("_gaq.push(['_trackEvent', '#{category.to_s.titleize}', '#{action}']);")
-    ga_events
-  end
-
-  # track page view
+  # track page views
   
   def track_page(url)
     ga_tracker.push("_gaq.push(['_trackPageview', '#{url}']);")
     ga_tracker
   end
 
-  # login events
+  # track events
 
-  def track_login_event(user, options={})
-    add_event(:login, user.id)
+  def track_event(category, action)
+    ga_events.push("_gaq.push(['_trackEvent', '#{category}', '#{action}']);")
+    ga_events
+  end
+
+  def add_event(category, action, options={})
+    ga_events.push("_gaq.push(['_trackEvent', '#{category.to_s.titleize}', '#{action}']);")
+    ga_events
   end
 
 end

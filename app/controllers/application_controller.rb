@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :check_beta
-  before_filter :init_google_analytics
+  before_filter :init_google_tracker
 
   include Growl
   include GoogleTracker
@@ -85,7 +85,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def init_google_analytics
+  def init_google_tracker
     if flash[:tracker]
       ga_tracker.concat(flash[:tracker])
       flash.delete(:tracker)
