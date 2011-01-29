@@ -22,6 +22,7 @@ class GrowlsControllerTest < ActionController::TestCase
     should "return flash growl message when flash[:growls] has stuff" do
       # set flash growl message
       @growl = [{:message => 'growl message'}]
+      ActionDispatch::Flash::FlashHash.any_instance.stubs(:[]).returns(nil)
       ActionDispatch::Flash::FlashHash.any_instance.stubs(:[]).with(:growls).returns(@growl)
       sign_in @user1
       set_beta
