@@ -1,14 +1,17 @@
-We thought you'd like to know who else is out and about around you.
+Thanks for checking in. Here's who else is out and about around you.
 %br
 %br
-#checkins
+
+%table{:style => "width: 600px;", :cellpadding => "10"}
   - @checkins.each do |checkin|
     - user      = checkin.user
     - location  = checkin.location
-    .checkin{:style => 'padding-bottom: 30px; width: 600px; margin-right: 0;'}
-      .picture{:style => 'width: 75px;'}
+    %tr
+      %td{:style => 'width: 75px;'}
         = image_tag(user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
-      .details{:style => 'width: 500px; margin-right: 0;'}
-        #{link_to(user.handle, user_via_url(user.id, 'email'))} checked in at #{location.name}
+      %td{:style => 'width: 500px;'}
+        = link_to(user.handle, user_via_url(user.id, 'email'))
+        %br{:style => 'margin: 3px 0;'}
+        = location.name
 
 = render(:partial => 'footer')
