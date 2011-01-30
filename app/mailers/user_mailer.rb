@@ -29,7 +29,7 @@ class UserMailer < ActionMailer::Base
   end
 
   def user_invite(options)
-    @invitation = Invitation.find(options[:invitation_id])
+    @invitation = Invitation.find(options['invitation_id'])
     @email      = @invitation.recipient_email
     @sender     = @invitation.sender
     @subject    = @invitation.subject || "Outlately Invitation!"

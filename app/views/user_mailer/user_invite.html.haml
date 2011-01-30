@@ -1,4 +1,4 @@
-= raw RedCloth.new(@message).to_html
+= raw RedCloth.new(@message.to_s).to_html
 %br
 Click #{link_to 'here', root_url(:invitation_token => @invitation.token)} to signup.
 
