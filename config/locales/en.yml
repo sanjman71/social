@@ -24,7 +24,7 @@ en:
       plan_todo: "Plan To Go Here"
       join_todo: "Join Me"
       meet_user: "See %{name} Profile"
-      invite_user: "Invite %{name}"
+      invite_user: "Want %{name} To Join"
       name:
         guys: Men
         gals: Ladies
