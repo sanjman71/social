@@ -25,7 +25,7 @@ class InvitePoke < ActiveRecord::Base
   end
 
   def send_email
-    UserMailer.delay.user_invite_poke(:invite_poke_id => self.id)
+    Resque.enqueue(UserMailerWorker, :user_invite_poke, 'invite_poke_id' => self.id)
   end
   
 end

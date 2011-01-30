@@ -23,7 +23,7 @@ Feature: Invite users by poking their friends
     # add friends
     And "chicago_friend1" is friends with "chicago_guy1"
 
-  @javascript
+  @javascript @invite @email
   Scenario: Clicking 'Invite Him' in a user stream sends a poke message to their friend
     Given I am logged in as "chicago_guy2"
     And sphinx is indexed
@@ -33,14 +33,14 @@ Feature: Invite users by poking their friends
     And I should see "chicago_friend1" within "ul#social-stream"
 
     When I follow "Invite Him"
-    And the delayed jobs are processed
-    Then "chicago_guy1@outlately.com" should receive an email with subject "Outlately: Somebody wants your friend chicago_friend1 to sign up..."
-    And I open the email with subject "Outlately: Somebody wants your friend chicago_friend1 to sign up..."
+    # And the delayed jobs are processed
+    Then "chicago_guy1@outlately.com" should receive an email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
+    And I open the email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
     Then I should see "chicago_guy2 wants chicago_friend1 to join Outlately.  Since you're friends with chicago_friend1," in the email body
     And I follow "invite" in the email
     Then I should be on the invite page
 
-  @javascript
+  @javascript @invite @email
   Scenario: Clicking 'Invite Him' on an already poked user should not send another message
     Given I am logged in as "chicago_guy2"
     And sphinx is indexed
@@ -49,6 +49,7 @@ Feature: Invite users by poking their friends
     # clicking invite shouldn't send another email
     When 3 days have passed
     And the delayed jobs are deleted
+    And a clear email queue
     And I go to the home page
     And I follow "Invite Him"
     And the delayed jobs are processed

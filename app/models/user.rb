@@ -597,17 +597,18 @@ class User < ActiveRecord::Base
       # send email to all users who poked a friend to invite user
       pokes = InvitePoke.where(:invitee_id => self.id)
       pokes.each do |poke|
-        UserMailer.delay.user_signup_to_poker(:poke_id => poke.id)
+        Resque.enqueue(UserMailerWorker, :user_signup_to_poker, 'poke_id' => poke.id)
       end
-      # send email to admin user re: new member signup
-      UserMailer.delay.user_signup(:user_id => self.id)
+      # send email to admins user re: new member signup
+      Resque.enqueue(UserMailerWorker, :user_signup, 'user_id' => self.id)
     end
   end
 
   # send email to inviter when an invitee signs up
   def after_invite_token_assigned
     if changes[:invitation_token] and changes[:invitation_token][1].present?
-      UserMailer.delay.user_invite_accepted(:user_id => self.id, :points => Currency.for_accepting_invite)
+      Resque.enqueue(UserMailerWorker, :user_invite_accepted,
+                     'user_id' => self.id, 'points' => Currency.for_accepting_invite)
     end
   end
 

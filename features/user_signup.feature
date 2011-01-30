@@ -5,15 +5,21 @@ Feature: User Signup
   Background:
     Given a city: "Chicago" should exist with name: "Chicago"
 
-  @signup
+  @signup @goal
   Scenario: New user signup should complete the signup goal
     Given I enter the beta password
     And I login with facebook as "facebook_guy"
     Then I should be on the settings page
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
-    And I go to the logout page
 
-  @signup
+  @signup @email
+  Scenario: New user signup should send emails to site admins
+    Given I enter the beta password
+    And I login with facebook as "facebook_guy"
+    Then "sanjay@jarna.com" should receive an email with subject "Outlately: member signup"
+    And "marchick@gmail.com" should receive an email with subject "Outlately: member signup"
+
+  @signup @goal
   Scenario: Non-member signup should complete the signup goal
     Given a user "facebook_guy" exists with handle: "facebook_guy", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago"
     And 7 days have passed

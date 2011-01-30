@@ -8,7 +8,7 @@ class Invitation < ActiveRecord::Base
   attr_accessor   :list
 
   def send_email
-    UserMailer.delay.user_invite(:invitation_id => self.id)
+    Resque.enqueue(UserMailerWorker, :user_invite, :invitation_id => self.id)
   end
 
   def self.log(s, level = :info)

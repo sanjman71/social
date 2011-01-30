@@ -8,7 +8,7 @@ Feature: User sends signup invitations
     And user "chicago_guy" has email "chicago_guy@outlately.com"
     And I am logged in as "chicago_guy"
 
-  @javascript @invitations
+  @javascript @invite @email
   Scenario: User sends an invite and the invitation is accepted
     When I go to the invite page
     Then I should see "Invite Friends"
@@ -36,7 +36,7 @@ Feature: User sends signup invitations
     And I open the email with subject "Outlately: Your invitation was accepted!"
     Then I should see "You invited invitee and they signed up." in the email body
 
-  @javascript @invitations
+  @javascript @invite @email
   Scenario: User sends an invite because they were poked and the invitation is accepted
     Given a user "chicago_hottie" exists with handle: "chicago_hottie", gender: "Female", orientation: "Straight", member: "0", points: "0", facebook_id: "88888"
     And user "chicago_hottie" has email "chicago_hottie@outlately.com"
@@ -57,7 +57,7 @@ Feature: User sends signup invitations
     And I go to the logout page
 
     Then "chicago_hottie@outlately.com" should receive an email with subject "Outlately: chicago_guy invited you to Outlately!"
-    And I open the email
+    And I open the email with subject "Outlately: chicago_guy invited you to Outlately!"
     Then I should see "Outlately is a community" in the email body
     And I follow "here" in the email
     Then I should be on the login page
