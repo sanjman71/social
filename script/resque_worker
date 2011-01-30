@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+arg = ARGV[0]
+
+case arg
+when 'start'
+  env = ENV["RAILS_ENV"] || "development"
+  cmd = "RAILS_ENV=#{env} QUEUE=critical VVERBOSE=1 nohup rake environment resque:work >> log/resque_worker.log &"
+  puts "*** starting resque worker"
+  system cmd
+  # write pid file 
+  system "ps -ef | grep -m 1 \"resque:work\" | awk '{print $2}' > tmp/pids/resque_worker.pid"
+when 'stop'
+  if File.exists?("tmp/pids/resque_worker.pid")
+    puts "*** stopping resque worker"
+    cmd = "kill -s QUIT `cat tmp/pids/resque_worker.pid` && rm -f tmp/pids/resque_worker.pid;"
+    system cmd
+  else
+    puts "*** resque worker not running"
+  end
+else
+  puts "[start|stop]"
+end
