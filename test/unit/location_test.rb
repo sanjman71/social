@@ -95,7 +95,7 @@ class LocationTest < ActiveSupport::TestCase
     fast_context "change state" do
       setup do
         @canada   = countries(:canada)
-        @ontario  = states(:on)
+        @ontario  = states(:ontario)
         @location.state   = @ontario
         @location.country = @canada
         @location.save
@@ -155,7 +155,7 @@ class LocationTest < ActiveSupport::TestCase
     fast_context "change city" do
       setup do
         @toronto  = cities(:toronto)
-        @ontario  = states(:on)
+        @ontario  = states(:ontario)
         @canada   = countries(:canada)
         @location.city = @toronto
         @location.state = @ontario
@@ -166,8 +166,8 @@ class LocationTest < ActiveSupport::TestCase
       should "remove chicago locations, set toronto.locations, change location state, country, change counters" do
         assert_equal [], @chicago.reload.locations
         assert_equal [@location], @toronto.reload.locations
-        assert_equal @toronto.state, @location.state
-        assert_equal @toronto.state.country, @location.country
+        assert_equal @toronto.state, @location.reload.state
+        assert_equal @toronto.state.country, @location.reload.country
         assert_equal 0, @chicago.locations_count
         assert_equal 0, @il.reload.locations_count
         assert_equal 0, @us.reload.locations_count

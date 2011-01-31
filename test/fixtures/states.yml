@@ -18,7 +18,8 @@ ny:
   code: NY
   country: us
 
-on:
+# on is a keyword, so use full name here
+ontario:
   name: Ontario
   code: "ON"
   country: canada
