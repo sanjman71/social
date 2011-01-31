@@ -25,9 +25,10 @@
     - @user.build_availability if @user.availability.blank?
 
     = simple_form_for(@user, :url => settings_path(:return_to => @show_handle_message ? root_path : nil)) do |f|
-      .span-24.last
+      -# handle can not be changed
+      -#.span-24.last
         -# handle
-        = f.input :handle, :hint => 'your name on the site'
+        -#= f.input :handle, :hint => 'your name on the site'
       -# gender and orientation
       .span-24.last
         = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name
