@@ -42,6 +42,11 @@ class HomeController < ApplicationController
     end
   end
 
+  # GET /welcome
+  def welcome
+    
+  end
+
   # GET /ping
   def ping
     # touch the database

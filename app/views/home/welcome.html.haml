@@ -1,0 +1,17 @@
+- title('Welcome')
+
+#page-header
+  %h2 Welcome To Outlately
+
+#content.home-content.clearfix
+  %h3 You are what you do.
+  %h3 Meet people who share your interests and like the same things you do, and have fun doing it.
+  %h3{:style => 'line-height: 1.5em;'}
+    Outlately uses your Facebook and Foursquare checkins to build your profile and help you connect with other people with similar interests.
+    %p
+    We take authenticity very seriously.  You login using Facebook, so your identity there serves as the basis of your profile on Outlately.  Once logged in, you can (and we hope you will) link your Foursquare account to your profile.
+    %p
+    Ready to start? Login using Facebook below.
+    %p
+    = render :partial => 'devise/sessions/signin_oauths'
+    

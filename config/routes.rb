@@ -92,14 +92,15 @@ Social::Application.routes.draw do
   match 'vote/users/:user_id/badge/:badge_id/:vote', :to => 'voting#create', :via => [:put],
     :as => :vote_user_badge
 
+  # home routes
+  match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
+  match 'city/:name', :to => "home#city", :via => [:put], :as => :home_city
+  match 'welcome', :to => 'home#welcome', :as => :welcome
   match 'about', :to => 'home#about', :as => :about
+  match 'ping', :to => "home#ping", :via => [:get]
 
   # unauthorized
   match 'unauthorized', :to => 'home#unauthorized'
-
-  match 'ping', :to => "home#ping", :via => [:get]
-  match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
-  match 'city/:name', :to => "home#city", :via => [:put], :as => :home_city
 
   match 'realtime', :to => "realtime#index"
 

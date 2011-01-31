@@ -37,8 +37,8 @@
       .wrapper
         %h1= link_to("Outlately", '#')
         %ul#nav
-          %li#nav-home= link_to("Home", root_path)
           - if user_signed_in?
+            %li#nav-home= link_to("Home", root_path)
             %li#nav-my-profile= link_to("My Profile", profile_path)
             %li#nav-plans= link_to("Plans", plans_path)
             %li#nav-invitations= link_to("+ Invite Friends", invite_path)
@@ -46,8 +46,10 @@
             - if current_user.has_role?('admin')
               %li#nav-admin= link_to("Admin", admin_path)
             %li#nav-sign-out= link_to("Sign Out", logout_path)
+          - else
+            %li#nav-login= link_to("Login", new_user_session_path)
 
-    - unless ["beta#show", "sessions#new"].include?(controller_hash_action)
+    - unless ["home#welcome", "sessions#new"].include?(controller_hash_action)
       #sub-header.wrapper.clearfix
         #me
           = image_tag(current_user.try(:primary_photo_url), :size => '64x64', :alt => 'my avatar')
