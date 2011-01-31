@@ -26,6 +26,9 @@ check host outlate.ly with address outlate.ly every 4 cycles
 check process delayed_job
   with pidfile "/usr/apps/outlately/shared/pids/delayed_job.pid"
 
+check process resque_worker
+  with pidfile "/usr/apps/outlately/shared/pids/resque_worker.pid"
+
 check process searchd
   with pidfile "/usr/apps/outlately/current/log/searchd.production.pid"
 
