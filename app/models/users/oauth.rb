@@ -86,9 +86,11 @@ module Users::Oauth
       if user.blank?
         # create user
         fname     = data['first_name']
+        lname     = data['last_name']
         username  = data['link'].try(:split, '/').try(:last)
-        # try setting handle to facebook username, default to first name
-        handle    = User.valid_facebook_handle?(username) ? username : fname
+        # set handle to 'first_name last_name.first'
+        handle    = handle_from_first_last_name(fname, lname)
+        # handle    = User.valid_facebook_handle?(username) ? username : fname
         gender    = data['gender']
         options   = Hash[:handle => handle, :gender => gender, :facebook_id => fbid]
         user      = User.create!(options)
@@ -96,7 +98,16 @@ module Users::Oauth
       end
       user
     end
-    
+
+    def base.handle_from_full_name(name)
+      tokens = name.split.map(&:strip)
+      handle_from_first_last_name(tokens[0], tokens[1])
+    end
+
+    def base.handle_from_first_last_name(fname, lname)
+      "#{fname.to_s} #{lname.first.to_s}."
+    end
+
     def base.find_or_create_foursquare_user(data)
       fsid  = data['id']
       user  = self.find_by_foursquare_id(fsid)
@@ -129,6 +140,14 @@ module Users::Oauth
     #       "updated_time": "2009-07-16T03:50:41+0000"}
     def update_from_facebook(data)
       return if data.blank?
+      if data['first_name'] and data['last_name']
+        # set handle if necessary
+        handle = self.class.handle_from_first_last_name(data['first_name'], data['last_name'])
+        if self.handle != handle
+          self.handle = handle
+          self.class.log("[user:#{self.id}] set user handle to #{self.handle}")
+        end
+      end
       if data['id'] and self.facebook_id.blank?
         # add user facebook id
         self.facebook_id = data['id']

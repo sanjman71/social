@@ -19,6 +19,7 @@ class FacebookFriend
         break if user.friends.count >= Friendship.limit
         begin
           friend_name     = friend_hash['name']
+          friend_handle   = User.handle_from_full_name(friend_name)
           friend_fbid     = friend_hash['id']
           # check if user already exists
           friend          = User.find_by_facebook_id(friend_fbid)
@@ -37,7 +38,7 @@ class FacebookFriend
             friend_data     = facebook.user(friend_fbid)
             friend_gender   = friend_data.try(:[], 'gender')
             # create friend, friendship
-            friend          = User.create!(:handle => friend_name, :facebook_id => friend_fbid,
+            friend          = User.create!(:handle => friend_handle, :facebook_id => friend_fbid,
                                            :gender => friend_gender)
             user.friendships.create(:friend => friend)
             log("[user:#{user.id}] #{user.handle} imported facebook friend #{friend.handle}:#{friend.id}:facebook:#{friend_fbid}")

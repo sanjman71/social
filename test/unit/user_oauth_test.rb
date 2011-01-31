@@ -20,6 +20,8 @@ class UserOauthTest < ActiveSupport::TestCase
       assert @user1.member?
       # should create user facebook oauth
       assert_equal 1, @user1.oauths.facebook.count
+      # should set handle to 'First L'
+      assert_equal "Sanjay K.", @user1.reload.handle
       # should create user facebook photo
       assert_equal 1, @user1.photos.facebook.count
       assert_equal [1], @user1.photos.facebook.collect(&:priority)
@@ -37,9 +39,9 @@ class UserOauthTest < ActiveSupport::TestCase
       # should queue delayed job to import facebook friends
       assert_equal 1, match_delayed_jobs(/async_import_friends/)
       work_off_delayed_jobs(/async_import_friends/)
-      # should create 3 users and add 3 friends, with handles and gender
+      # should create 3 users and add 3 friends, with formatted handles and gender
       assert_equal 3, @user1.reload.friends.size
-      assert_equal ["Praveen Shanbhag", "Adam Marchick", "Nevin Kapoor"], @user1.reload.friends.collect(&:handle)
+      assert_equal ["Praveen S.", "Adam M.", "Nevin K."], @user1.reload.friends.collect(&:handle)
       assert_equal [2, 2, 2], @user1.reload.friends.collect(&:gender)
     end
     
@@ -50,7 +52,7 @@ class UserOauthTest < ActiveSupport::TestCase
       credentials   = {'token' => "1"}
       User.find_for_facebook_oauth(credentials, user_data, @user1)
       # add user, who will be friended, to the system
-      @adam = User.create!(:handle => "marchick", :facebook_id => "620186040", :gender => 2)
+      @adam = User.create!(:handle => "Adam M.", :facebook_id => "620186040", :gender => 2)
       # stub friends data
       friend_data = YAML::load_file("#{Rails.root}/test/data/facebook_friends.txt")
       FacebookClient.any_instance.stubs(:friends).returns(friend_data)
@@ -60,9 +62,9 @@ class UserOauthTest < ActiveSupport::TestCase
       # should queue delayed job to import facebook friends
       assert_equal 1, match_delayed_jobs(/async_import_friends/)
       work_off_delayed_jobs(/async_import_friends/)
-      # should create 2 users and add 3 friends
+      # should create 2 users and add 3 friends, all with formatted handles
       assert_equal 3, @user1.reload.friends.size
-      assert_equal ["marchick", "Praveen Shanbhag", "Nevin Kapoor"], @user1.reload.friends.collect(&:handle)
+      assert_equal ["Adam M.", "Praveen S.", "Nevin K."], @user1.reload.friends.collect(&:handle)
       assert_equal [2, 2, 2], @user1.reload.friends.collect(&:gender)
     end
 
@@ -73,9 +75,9 @@ class UserOauthTest < ActiveSupport::TestCase
       credentials   = {'token' => "1"}
       User.find_for_facebook_oauth(credentials, user_data, @user1)
       # add user as friend
-      @adam = User.create!(:handle => "marchick", :facebook_id => "620186040", :gender => 2)
+      @adam = User.create!(:handle => "Adam M.", :facebook_id => "620186040", :gender => 2)
       @user1.friendships.create!(:friend => @adam)
-      assert_equal ["marchick"], @user1.reload.friends.collect(&:handle)
+      assert_equal ["Adam M."], @user1.reload.friends.collect(&:handle)
       # stub friends data
       friend_data = YAML::load_file("#{Rails.root}/test/data/facebook_friends.txt")
       FacebookClient.any_instance.stubs(:friends).returns(friend_data)
@@ -87,7 +89,7 @@ class UserOauthTest < ActiveSupport::TestCase
       work_off_delayed_jobs(/async_import_friends/)
       # should create 2 users and add 2 friends
       assert_equal 3, @user1.reload.friends.size
-      assert_equal ["marchick", "Praveen Shanbhag", "Nevin Kapoor"], @user1.reload.friends.collect(&:handle)
+      assert_equal ["Adam M.", "Praveen S.", "Nevin K."], @user1.reload.friends.collect(&:handle)
     end
   end
 

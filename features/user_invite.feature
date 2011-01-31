@@ -34,7 +34,7 @@ Feature: User sends signup invitations
 
     And "chicago_guy@outlately.com" should receive an email with subject "Outlately: Your invitation was accepted!"
     And I open the email with subject "Outlately: Your invitation was accepted!"
-    Then I should see "You invited invitee and they signed up." in the email body
+    Then I should see "You invited First L. and they signed up." in the email body
 
   @javascript @invite @email
   Scenario: User sends an invite because they were poked and the invitation is accepted

@@ -10,6 +10,7 @@ Feature: User Signup
     Given I login with facebook as "facebook_guy"
     Then I should be on the settings page
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
+    And I should see "First L." within "div#me"
 
   @signup @email
   Scenario: New user signup should send emails to site admins
