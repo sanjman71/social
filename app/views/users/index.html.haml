@@ -15,7 +15,9 @@
 
   .span-24.last#users
     - @users.each do |user|
-      .span-24.last.user{:style => 'margin-top: 10px;'}
+      - klasses = []
+      - klasses.push(user.state)
+      .span-24.last.user{:class => klasses}
         .span-5.prepend-1.name
           %h4.bottom= link_to user.handle, user_path(user), :id => 'link_user_profile'
           %span{:style => 'font-size: 0.9em; color: #777;'}= user.member? ? "Member" : "User"
@@ -25,6 +27,6 @@
           = pluralize(user.points, 'point')
         .span-5
           = user.state.titleize
-          = user.active? ? link_to('Disable', disable_user_path(user), :id => 'toggle_state') : link_to('Enable', enable_user_path(user), :id => 'toggle_state')
+          = user.active? ? link_to('Disable', disable_user_path(user, :return_to => request.fullpath), :method => :put, :id => 'toggle_state') : link_to('Enable', activate_user_path(user, :return_to => request.fullpath), :method => :put, :id => 'toggle_state')
         .span-5.last
           = pluralize(user.checkin_logs.error.count, 'error')

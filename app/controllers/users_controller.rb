@@ -127,6 +127,7 @@ class UsersController < ApplicationController
   def activate
     # @user initialized in before filter
     @user.activate!
+    flash[:notice] = "User #{@user.handle} activated"
   rescue Exception => e
     
   ensure
@@ -137,6 +138,7 @@ class UsersController < ApplicationController
   def disable
     # @user initialized in before filter
     @user.disable!
+    flash[:notice] = "User #{@user.handle} disabled"
   rescue Exception => e
     
   ensure
