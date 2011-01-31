@@ -105,7 +105,13 @@ module Users::Oauth
     end
 
     def base.handle_from_first_last_name(fname, lname)
-      "#{fname.to_s} #{lname.first.to_s}."
+      if lname.blank?
+        # use first name
+        fname
+      else
+        # use first name and last name initial
+        "#{fname.to_s} #{lname.first.to_s}."
+      end
     end
 
     def base.find_or_create_foursquare_user(data)
