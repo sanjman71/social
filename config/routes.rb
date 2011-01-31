@@ -28,9 +28,9 @@ Social::Application.routes.draw do
   match 'growls', :to => "growls#index"
 
   # user routes
-  match 'users/:geo(/:radius)', :to => 'users#index',
+  match 'users/:geo(/:radius)', :to => 'users#search',
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_users
-  match 'users/:city(/:radius)', :to => 'users#index',
+  match 'users/:city(/:radius)', :to => 'users#search',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_users
   match 'users/:id/bucks/:points', :to => "users#bucks", :as => :add_bucks_user
   match 'users/:id/via/:source', :to => "users#via", :as => :user_via
@@ -40,7 +40,9 @@ Social::Application.routes.draw do
   match 'settings', :to => 'settings#update', :via => :put
 
   resources :users do
+    put :activate, :on => :member
     get :become, :on => :member
+    put :disable, :on => :member
   end
 
   # location routes
@@ -110,6 +112,7 @@ Social::Application.routes.draw do
     match 'users_chart', :to => 'admin#users_chart', :as => :admin_users_chart
     match 'badges', :to => 'badges#index', :as => :admin_badges
     match 'checkins', :to => 'checkins#index', :as => :admin_checkins
+    match 'users', :to => 'users#index', :as => :admin_users
   end
 
   # pages routes

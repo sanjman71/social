@@ -110,6 +110,15 @@ class User < ActiveRecord::Base
   aasm_column               :state
   aasm_initial_state        :active
   aasm_state                :active
+  aasm_state                :disabled
+
+  aasm_event :disable do
+    transitions :to => :disabled, :from => [:active]
+  end
+
+  aasm_event :activate do
+    transitions :to => :active, :from => [:disabled]
+  end
   # END acts_as_state_machine
 
   scope                     :member, where(:member => 1)

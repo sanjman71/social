@@ -9,17 +9,21 @@ class UsersControllerTest < ActionController::TestCase
   context "routes" do
     should route(:get, "/profile").to(:controller => 'users', :action => 'show')
     should route(:get, "/users/geo:1.23..-77.89/radius:50").
-      to(:controller => 'users', :action => 'index', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
+      to(:controller => 'users', :action => 'search', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
     should route(:get, "/users/city:chicago/radius:75").
-      to(:controller => 'users', :action => 'index', :city => 'city:chicago', :radius => 'radius:75')
+      to(:controller => 'users', :action => 'search', :city => 'city:chicago', :radius => 'radius:75')
     should route(:get, "/users/city:chicago").
-      to(:controller => 'users', :action => 'index', :city => 'city:chicago')
+      to(:controller => 'users', :action => 'search', :city => 'city:chicago')
     should route(:get, "/users/1/become").
       to(:controller => 'users', :action => 'become', :id => '1')
     should route(:put, "/users/1/bucks/100").
       to(:controller => 'users', :action => 'bucks', :id => '1', :points => 100)
     should route(:get, "/users/1/via/email").
       to(:controller => 'users', :action => 'via', :id => '1', :source => 'email')
+    should route(:put, "/users/1/activate").
+      to(:controller => 'users', :action => 'activate', :id => '1')
+    should route(:put, "/users/1/disable").
+      to(:controller => 'users', :action => 'disable', :id => '1')
   end
 
   def setup
@@ -40,7 +44,7 @@ class UsersControllerTest < ActionController::TestCase
     DatabaseCleaner.clean
   end
 
-  context "index" do
+  context "search" do
     setup do
       @chicago1 = Factory.create(:user, :handle => 'chicago1', :city => @chicago)
       @chicago2 = Factory.create(:user, :handle => "chicago2", :city => @chicago)
@@ -53,13 +57,13 @@ class UsersControllerTest < ActionController::TestCase
           sleep(0.25)
           sign_in @chicago1
           set_beta
-          get :index, :city => 'city:chicago'
+          get :search, :city => 'city:chicago'
           assert_equal @chicago, assigns(:city)
           assert_equal 50, assigns(:radius)
           assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
           assert_equal 0.0..50.miles.meters.value, assigns(:options)[:geo_distance]
           assert_equal [@chicago2], assigns(:users)
-          assert_template "index"
+          assert_template "search"
         end
       end
     end
@@ -75,14 +79,14 @@ class UsersControllerTest < ActionController::TestCase
         ThinkingSphinx::Test.run do
           sign_in @chicago1
           set_beta
-          get :index, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:2"
+          get :search, :geo => "geo:#{@chicago.lat}..#{@chicago.lng}", :radius => "radius:2"
           assert_equal @chicago.lat, assigns(:lat)
           assert_equal @chicago.lng, assigns(:lng)
           assert_equal 2, assigns(:radius)
           assert_equal [@chicago.lat.radians, @chicago.lng.radians], assigns(:options)[:geo_origin]
           assert_equal 0.0..2.miles.meters.value, assigns(:options)[:geo_distance]
           assert_equal [@chicago2, @chicago3], assigns(:users)
-          assert_template "index"
+          assert_template "search"
         end
       end
     end
@@ -166,5 +170,35 @@ class UsersControllerTest < ActionController::TestCase
     #   end
     # end
   end
-  
+
+  context "disable" do
+    setup do
+      @admin = Factory.create(:user, :handle => 'admin')
+      @admin.grant_role('admin')
+      @user1 = Factory.create(:user, :handle => 'user')
+      assert @user1.active?
+    end
+
+    should "change to disabled state" do
+      sign_in @admin
+      put :disable, :id => @user1.id, :return_to => "/"
+      assert @user1.reload.disabled?
+    end
+  end
+
+  context "activate" do
+    setup do
+      @admin = Factory.create(:user, :handle => 'admin')
+      @admin.grant_role('admin')
+      @user1 = Factory.create(:user, :handle => 'user')
+      @user1.disable!
+      assert @user1.disabled?
+    end
+
+    should "change to active state" do
+      sign_in @admin
+      put :activate, :id => @user1.id, :return_to => "/"
+      assert @user1.reload.active?
+    end
+  end
 end

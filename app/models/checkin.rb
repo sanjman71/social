@@ -43,6 +43,8 @@ class Checkin < ActiveRecord::Base
     has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
     # use delayed job for delta index
     set_property :delta => :delayed
+    # only index active users
+    where "users.state = 'active'"
   end
 
   # returns true if this checkin is considered recent

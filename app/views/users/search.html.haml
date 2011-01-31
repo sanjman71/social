@@ -1,11 +1,10 @@
 - title('Users')
-- stylesheet('admin')
 
 #page-header
   .span-23.prepend-1.last
     %h2 Users
 
-#admin-content.clearfix
+#content.clearfix
   .span.24.last
     = display_flash(:all)
   .span-23.prepend-1.last
@@ -15,16 +14,13 @@
 
   .span-24.last#users
     - @users.each do |user|
-      .span-24.last.user{:style => 'margin-top: 10px;'}
-        .span-5.prepend-1.name
-          %h4.bottom= link_to user.handle, user_path(user), :id => 'link_user_profile'
+      .span-24.last#user{:style => 'margin-top: 10px;'}
+        .span-5.prepend-1#name
+          %h4.bottom= link_to user.handle, user_path(user), :class => 'admin'
           %span{:style => 'font-size: 0.9em; color: #777;'}= user.member? ? "Member" : "User"
         .span-3
           = pluralize(user.checkins_count, 'checkin')
         .span-5
           = pluralize(user.points, 'point')
-        .span-5
-          = user.state.titleize
-          = user.active? ? link_to('Disable', disable_user_path(user), :id => 'toggle_state') : link_to('Enable', enable_user_path(user), :id => 'toggle_state')
-        .span-5.last
+        .span-10.last
           = pluralize(user.checkin_logs.error.count, 'error')

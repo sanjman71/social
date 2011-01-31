@@ -12,3 +12,10 @@ body.admin #page-header { background: #ffffff; }
   color: #0000ff;
 }
 #admin_links a.current { text-decoration: none; }
+#admin-content #users .user.disabled { background-color: #cccccc; }
+#admin-content #users a#link_user_profile { color: #0000ff; }
+#admin-content #users a#toggle_state {
+  color: #0000ff;
+  margin-left: 3px;
+  font-size: 0.8em;
+}

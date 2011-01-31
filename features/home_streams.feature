@@ -20,7 +20,25 @@ Feature: Home Streams
     And I should see "chicago_coffee_guy" within "ul#social-stream"
 
   @javascript
-  Scenario: Male user should see member checkins by females in the Ladies stream
+  Scenario: User should see not see disabled user's checkins in the default Everyone stream
+    Given a city: "Chicago" should exist with name: "Chicago"
+    And a state: "IL" should exist with code: "IL"
+    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", state: "disabled"
+    And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    And user "chicago_coffee_gal" checked in to "Chicago Starbucks"
+    And user "chicago_coffee_guy" checked in to "Chicago Lavazza"
+    And I am logged in as "chicago_guy"
+    And sphinx is indexed
+    When I go to the home page
+    Then I should see "Everyone" within "ul#social-stream-nav li.active"
+    And I should see "chicago_coffee_gal" within "ul#social-stream"
+    And I should not see "chicago_coffee_guy" within "ul#social-stream"
+
+  @javascript
+  Scenario: Male user should see female member checkins in the Ladies stream
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
     And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
@@ -39,7 +57,7 @@ Feature: Home Streams
     And I should not see "chicago_coffee_guy" within "ul#social-stream"
 
   @javascript
-  Scenario: User should see user checkins by friends in the Friends stream
+  Scenario: User should see friend checkins in the Friends stream
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
     # create users

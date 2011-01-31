@@ -1,20 +1,37 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:become, :bucks, :show, :via]
+  before_filter :find_user, :only => [:activate, :become, :bucks, :disable, :show, :via]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
-  privilege_required 'admin', :only => [:become]
+  privilege_required 'admin', :only => [:activate, :become, :disable, :index]
   privilege_required 'manage users', :only => [:bucks], :on => :user
 
   # GET /users
+  # GET /admin/users?limit=10&page=0&member=1
+  def index
+    # check general parameters
+    @limit            = params[:limit] ? params[:limit].to_i : 20
+    @member           = params[:member].to_i
+
+    @pagination       = {:page => params[:page] ? params[:page].to_i : 1, :per_page => @limit}
+    @users            = User.where(:member => @member).order("users.id asc").paginate(@pagination)
+    @members          = User.where(:member => 1).count
+    @non_members      = User.where(:member => 0).count
+
+    respond_to do |format|
+      format.html { render(:action => 'index', :layout => 'admin') }
+    end
+  end
+
   # GET /users/geo:1.23..-23.89/radius:10?limit=5&without_user_ids=1,5,3
   # GET /users/city:chicago?limit=5&without_user_ids=1,5,3
   # GET /users/city:chicago/radius:10?limit=5&without_user_ids=1,5,3
-  def index
+  def search
     # check general parameters
     @without_user_ids = params[:without_user_ids] ? params[:without_user_ids].split(',').map(&:to_i).uniq.sort : nil
     @limit            = params[:limit] ? params[:limit].to_i : 5
+    @member           = params[:member].to_i
     @options          = Hash[:without_user_ids => @without_user_ids, :limit => @limit]
 
     case
@@ -30,11 +47,6 @@ class UsersController < ApplicationController
       @options.update(:geo_origin => [@city.lat.radians, @city.lng.radians],
                       :geo_distance => 0.0..@radius.miles.meters.value)
       @users        = current_user.search_users(@options)
-    else
-      @pagination   = {:page => params[:page] ? params[:page].to_i : 1, :per_page => 20}
-      @users        = User.order("users.member desc, users.id asc").paginate(@pagination)
-      @members      = User.where(:member => 1).count
-      @non_members  = User.where(:member => 0).count
     end
 
     respond_to do |format|
@@ -109,6 +121,26 @@ class UsersController < ApplicationController
         render :json => Hash[:points => @user.points, :growls => @growls].to_json
       end
     end
+  end
+
+  # PUT /users/1/activate
+  def activate
+    # @user initialized in before filter
+    @user.activate!
+  rescue Exception => e
+    
+  ensure
+    redirect_to(redirect_back_path(admin_users_path))
+  end
+
+  # PUT /users/1/disable
+  def disable
+    # @user initialized in before filter
+    @user.disable!
+  rescue Exception => e
+    
+  ensure
+    redirect_to(redirect_back_path(admin_users_path))
   end
 
   protected
