@@ -16,12 +16,7 @@ class HomeControllerTest < ActionController::TestCase
   end
 
   context "get index" do
-    should "redirect guests without beta password to beta#show" do
-      get :index
-      assert_redirected_to "/beta"
-    end
-
-    should "redirect guests with beta password to login" do
+    should "redirect guests to login" do
       set_beta
       get :index
       assert_redirected_to "/login"

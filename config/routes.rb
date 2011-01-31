@@ -96,7 +96,6 @@ Social::Application.routes.draw do
   match 'unauthorized', :to => 'home#unauthorized'
 
   match 'ping', :to => "home#ping", :via => [:get]
-  match 'beta', :to => "beta#show", :via => [:get, :post]
   match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
   match 'city/:name', :to => "home#city", :via => [:put], :as => :home_city
 
@@ -119,6 +118,7 @@ Social::Application.routes.draw do
   # invitations
   match 'invite', :to => "invitations#new", :as => :invite, :via => [:get]
   match 'invite', :to => "invitations#create", :via => [:post]
+  match 'invite/claim/:invitation_token', :to => "invitations#claim", :via => [:get], :as => :invite_claim
   match 'invitees/search', :to => "invitations#search", :as => :invitee_search, :via => [:get]
   match 'invite/poke', :to => "invitations#poke", :as => :invite_poke, :via => [:put]
 

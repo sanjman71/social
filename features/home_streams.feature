@@ -67,8 +67,8 @@ Feature: Home Streams
     And I should see "chicago_friend2" within "ul#social-stream"
     And I should not see "chicago_guy2" within "ul#social-stream"
     And I should see "Go Here" within "ul#social-stream"
-    And I should see "Invite Him" within "ul#social-stream"
-    And I should not see "Meet Him" within "ul#social-stream"
+    And I should see "Want Him To Join" within "ul#social-stream"
+    And I should not see "See His Profile" within "ul#social-stream"
 
   # @javascript
   # Scenario: User sees checkins in the past day in the Today stream

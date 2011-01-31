@@ -1,7 +1,6 @@
 class CheckinsController < ApplicationController
   before_filter       :authenticate_user!, :only => [:index, :search]
   before_filter       :find_user, :only => [:search]
-  skip_before_filter  :check_beta, :only => :poll
   respond_to          :html, :json, :js
 
   privilege_required  'admin', :only => [:index]

@@ -1,7 +1,5 @@
 # oauth (default) login
 Given /^I am logged in as "([^"]*)"$/ do |handle|
-  And %{I enter the beta password}
-
   # oauth login
   # And %{I go to #{handle}'s outlately oauth page}
   And %{outlately authorizes me as "#{handle}"}
@@ -9,8 +7,6 @@ end
 
 # password login
 Given /^I am password logged in as "([^"]*)"$/ do |handle|
-  And %{I enter the beta password}
-
   # user, password login
   And %{I go to login password page}
   And %{I fill in "user_handle" with "#{handle}"}
@@ -18,11 +14,11 @@ Given /^I am password logged in as "([^"]*)"$/ do |handle|
   And %{I press "Sign in"}
 end
 
-Given /^I enter the beta password$/ do
-  And %{I go to beta page}
-  And %{I fill in "code" with "applepie"}
-  And %{I press "Continue"}
-end
+# Given /^I enter the beta password$/ do
+#   And %{I go to beta page}
+#   And %{I fill in "code" with "applepie"}
+#   And %{I press "Continue"}
+# end
 
 ACCESS_TOKEN = {
   :access_token => "outlately"

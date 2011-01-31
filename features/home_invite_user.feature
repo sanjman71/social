@@ -32,7 +32,7 @@ Feature: Invite users by poking their friends
     And I should see "chicago_guy1" within "ul#social-stream"
     And I should see "chicago_friend1" within "ul#social-stream"
 
-    When I follow "Invite Him"
+    When I follow "Want Him To Join"
     # And the delayed jobs are processed
     Then "chicago_guy1@outlately.com" should receive an email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
     And I open the email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
@@ -51,6 +51,6 @@ Feature: Invite users by poking their friends
     And the delayed jobs are deleted
     And a clear email queue
     And I go to the home page
-    And I follow "Invite Him"
+    And I follow "Want Him To Join"
     And the delayed jobs are processed
     Then "chicago_guy1@outlately.com" should receive no emails

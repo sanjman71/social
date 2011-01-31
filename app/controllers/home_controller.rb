@@ -1,5 +1,4 @@
 class HomeController < ApplicationController
-  skip_before_filter  :check_beta, :only => [:ping]
   before_filter       :authenticate_user!, :only => [:index]
   before_filter       :check_user_has_city, :only => [:index]
 

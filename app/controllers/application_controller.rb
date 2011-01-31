@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  before_filter :check_beta
   before_filter :init_google_tracker
 
   include Growl
@@ -97,21 +96,6 @@ class ApplicationController < ActionController::Base
     if flash[:events]
       ga_events.concat(flash[:events])
       flash.delete(:events)
-    end
-  end
-
-  # check that user has signed up for the beta or has an invite
-  def check_beta
-    # check params 'invitation_token'
-    if params[:invitation_token] && Invitation.find_by_token(params[:invitation_token])
-      # set session 'invitation_token'
-      session[:invitation_token] = params[:invitation_token]
-      # set session 'beta' key
-      session[:beta] = 1
-    end
-
-    if session[:beta].to_i != 1
-      redirect_to(beta_path) and return
     end
   end
 

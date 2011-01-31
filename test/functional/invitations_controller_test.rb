@@ -6,6 +6,8 @@ class InvitationsControllerTest < ActionController::TestCase
   context "routes" do
     should route(:get, "/invite").to(:controller => 'invitations', :action => 'new')
     should route(:get, "/invitees/search").to(:controller => 'invitations', :action => 'search')
+    should route(:get, "/invite/claim/123xyz").
+      to(:controller => 'invitations', :action => 'claim', :invitation_token => '123xyz')
   end
 
   context "search" do

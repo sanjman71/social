@@ -1,5 +1,5 @@
 = raw RedCloth.new(@message.to_s).to_html
 %br
-Click #{link_to 'here', root_url(:invitation_token => @invitation.token)} to signup.
+Click #{link_to 'here', invite_claim_url(:invitation_token => @invitation.token)} to signup.
 
 = render(:partial => 'footer')

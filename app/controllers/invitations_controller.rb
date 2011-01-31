@@ -1,6 +1,6 @@
 class InvitationsController < ApplicationController
   respond_to    :html
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :except => [:claim]
 
   # GET /invite
   # GET /invite?to=user:5
@@ -55,6 +55,17 @@ class InvitationsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(invite_path) }
     end
+  end
+
+  # GET /invite/claim/123435
+  def claim
+    # check 'invitation_token'
+    if Invitation.find_by_token(params[:invitation_token])
+      # set session 'invitation_token'
+      session[:invitation_token] = params[:invitation_token]
+    end
+
+    redirect_to new_user_session_path and return
   end
 
   # GET /invitees/search?q=user@widget.com
