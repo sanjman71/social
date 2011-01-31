@@ -12,8 +12,4 @@ class InvitationTest < ActiveSupport::TestCase
     assert @invitation.sent_at
   end
 
-  should "send invitation email" do
-    @invitation = @inviter.invitations.create!(:recipient_email => 'user@outlately.com')
-    assert_equal 1, match_delayed_jobs(/user_invite/i)
-  end
 end

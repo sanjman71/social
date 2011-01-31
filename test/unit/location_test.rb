@@ -95,7 +95,7 @@ class LocationTest < ActiveSupport::TestCase
     fast_context "change state" do
       setup do
         @canada   = countries(:canada)
-        @ontario  = states(:ontario)
+        @ontario  = states(:on)
         @location.state   = @ontario
         @location.country = @canada
         @location.save
@@ -155,7 +155,7 @@ class LocationTest < ActiveSupport::TestCase
     fast_context "change city" do
       setup do
         @toronto  = cities(:toronto)
-        @ontario  = states(:ontario)
+        @ontario  = states(:on)
         @canada   = countries(:canada)
         @location.city = @toronto
         @location.state = @ontario
