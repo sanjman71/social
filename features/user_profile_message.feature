@@ -3,14 +3,14 @@ Feature: User Profile Message
   I want to send messages to other users from their profile page
   
   @javascript @profile @message
-  Scenario: A user visits another member's profile and sends a message
+  Scenario: A user sends a message from a member user profile
     Given a city: "Chicago" should exist with name: "Chicago"
     And a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", points: "100"
     And a user "chicago_gal" exists with handle: "chicago_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1", points: "100"
     And I am logged in as "chicago_guy"
     And user "chicago_gal" has email "chicago_gal@outlately.com"
     When I go to chicago_gal's profile page
-    Then I should see "Message"
+    Then I should see "Message" within "#profile-nav"
 
     And I follow "Message"
     And I fill in "message_body" with "Hey there"

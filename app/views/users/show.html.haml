@@ -1,6 +1,6 @@
 - title('Profile')
 - stylesheet('map')
-- javascript ('users')
+- javascript ('users_show')
 - javascript('jquery.autoresize.min')
 
 - if @checkins.try(:any?)
@@ -19,7 +19,7 @@
       - if @user.member?
         %li= link_to(I18n.t("user.profile.message"), '#dialog-profile-meetup', :id => 'profile-meetup')
       - else
-        %li= link_to(I18n.t("user.profile.invite", :name => @user.pronoun.titleize), '#', :id => 'profile-invite')
+        %li= link_to(I18n.t("user.profile.invite", :name => @user.pronoun.titleize), '#', :id => 'profile-invite', "data-invitee-id" => @user.id, "data-url" => invite_poke_path(:format => 'json'))
 
 #content.clearfix
   -##profile-photos

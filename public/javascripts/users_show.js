@@ -27,27 +27,6 @@ $.fn.init_checkin_map = function() {
   */
 }
 
-/*
-$.fn.init_match_pictures = function() {
-  $("#pics").cycle({fx:'fade', timeout:5000, speed:1000, before:onBefore, after:onAfter});
-
-  function onBefore() {
-    $("#match #handle,#match #data,#match #matchby").html('');
-  }
-  
-  function onAfter() {
-    var handle  = $(this).attr('data-handle');
-    var gender  = $(this).attr('data-gender');
-    var city    = $(this).attr('data-city');
-    var matchby = $(this).attr('data-matchby');
-    var data    = gender + " / " + city;
-    $("#match #handle").html(handle);
-    $("#match #data").html(data);
-    $("#match #matchby").html(matchby);
-  }
-}
-*/
-
 $.fn.init_user_dialogs = function() {
   $("a#profile-meetup").fancybox({autoDimensions: false, height: 200, width: 500});
   $("a#whatis-social-dna").fancybox();
@@ -118,6 +97,35 @@ $.fn.init_user_message_submit = function() {
   });
 }
 
+$.fn.init_user_invite = function() {
+  $("a#profile-invite").live('click', function() {
+    invitee_id  = $(this).attr('data-invitee-id');
+    url         = $(this).attr('data-url');
+    link        = $(this);
+
+    link.css('opacity', 0.5);
+
+    $.put(url, {invitee_id: invitee_id}, function(data) {
+      // reset link opacity
+      link.css('opacity', 1.0);
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
+      if (data['poke_id']) {
+        // user's friend will be poked
+        // track invite poke event
+        track_event('Invite', 'Poke');
+      }
+      if (data['goto']) {
+        window.location = data['goto'];
+      }
+    }, 'json');
+
+    return false;
+  })
+}
+
 /*
 $.fn.init_tooltips = function() {
   $("a#badges_tip").tooltip({effect: 'fade', predelay: 100, fadeOutSpeed: 100, position: "bottom right",
@@ -134,11 +142,11 @@ $.fn.init_growls = function() {
 }
 
 $(document).ready(function() {
-  // $(document).init_tooltips();
   $(document).init_user_dialogs();
   $(document).init_user_message_autoresize();
   $(document).init_user_message_counter();
   $(document).init_user_message_submit();
   $(document).init_checkin_map();
+  $(document).init_user_invite();
   $(document).init_growls();
 })

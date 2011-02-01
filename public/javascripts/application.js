@@ -31,6 +31,13 @@ function check_growls() {
   }, 'json');
 }
 
+// track google analytics event
+function track_event(category, action) {
+  try {
+    _gaq.push(['_trackEvent', category, action]);
+  } catch(e) {}
+}
+
 $.fn.init_get_points = function() {
   var points_field    = $("a#get-more-points");
   var points_text     = $(points_field).text();

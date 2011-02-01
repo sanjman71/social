@@ -33,6 +33,7 @@ default_run_options[:pty] = true
 # Load external recipe files
 load_paths << "config/recipes"
 load "delayed_job"
+load "resque_worker"
 load "sphinx"
 
 # automatically called after a deploy
@@ -58,10 +59,14 @@ after "deploy:update_code", "deploy:config"
 
 # after deploy
 after "deploy", "dj:restart"
+after "deploy", "rw:restart"
 after "deploy", "deploy:cleanup"
 
+# after deploy stop/start
 after "deploy:stop",  "dj:stop"
 after "deploy:start", "dj:start"
+after "deploy:stop",  "rw:stop"
+after "deploy:start", "rw:start"
 
 # after deploy:setup
 deploy.task :init, :roles => :app do
