@@ -1,5 +1,8 @@
 %h2 Sign in
 
+.span.24.last
+  = display_flash(:all)
+
 - login = params[:login].to_i == 1
 
 #oauth{:style => 'margin-top: 20px;'}

@@ -93,13 +93,22 @@ class OauthController < Devise::OmniauthCallbacksController
       @goto_path      = settings_path
     end
 
-    if !user_signed_in?
-      flash[:notice] = "Welcome back #{@user.handle}"
+    if @user.disabled?
+      flash[:notice]  = "Login failed"
+      @goto_path      = new_user_session_path
     else
-      flash[:notice] = "Successly linked #{service} account"
+      if !user_signed_in?
+        flash[:notice] = "Welcome back #{@user.handle}"
+        # track login
+        flash[:tracker] = track_page("/login/completed")
+      else
+        flash[:notice] = "Successly linked #{service} account"
+      end
+
+      # sign in user
+      sign_in(@user)
     end
-    # sign in user
-    sign_in(@user)
+
     # note: if we were going to use warden to login, we might use it like this
     # resource = warden.authenticate!(:simple, :scope => :user)
     redirect_to(@goto_path || root_path) and return
