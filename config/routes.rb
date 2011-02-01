@@ -139,6 +139,13 @@ Social::Application.routes.draw do
   match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
   match 'jobs/top', :to => 'jobs#top', :as => :top_job
 
+  # resque
+  mount Resque::Server.new, :at => "/resque"
+
+  # authenticate :admin do
+  #   mount Resque::Server.new, :at => "/resque"
+  # end
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
