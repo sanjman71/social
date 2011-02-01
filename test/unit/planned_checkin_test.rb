@@ -8,16 +8,22 @@ class PlannedCheckinTest < ActiveSupport::TestCase
   end
 
   context "create" do
-    should "set active to 1" do
+    should "set default active state to 1" do
       @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux)
       assert_equal 1, @pcheckin.reload.active
       assert @pcheckin.reload.active?
     end
 
-    should "set expires_at to be in 7 days" do
+    should "set default expires_at to be in 7 days" do
       @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux)
       assert @pcheckin.expires_at
       assert_equal 7, @pcheckin.expires_days_left
+    end
+
+    should "set expires_at to be in 3 days" do
+      @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux, :expires_at => 3.days.from_now)
+      assert @pcheckin.expires_at
+      assert_equal 3, @pcheckin.expires_days_left
     end
 
     should "set locationship todo_checkins to 1" do
@@ -40,9 +46,11 @@ class PlannedCheckinTest < ActiveSupport::TestCase
       assert @pcheckin.going_at
       assert_equal "Plans on going in 3 days", @pcheckin.going
       assert_equal 3, @pcheckin.going_days_left
+      # should set expire_at based on going_at
+      assert_equal 3, @pcheckin.expires_days_left
     end
 
-    should "not allow if there is an active planned checkin" do
+    should "not allow if there is already an active planned checkin" do
       Delayed::Job.delete_all
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
       work_off_delayed_jobs

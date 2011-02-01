@@ -10,8 +10,9 @@ class PlannedCheckin < ActiveRecord::Base
     self.active = 1
     # set default planned_at
     self.planned_at = Time.zone.now if self.planned_at.blank?
-    # set default expires_at
-    self.expires_at = self.planned_at + self.class.todo_days.days unless self.expires_at
+    # set expires_at based on going_at if present; otherwise use default value
+    self.expires_at = self.going_at if self.going_at.present?
+    self.expires_at ||= self.planned_at + self.class.todo_days.days unless self.expires_at
     # check for active objects
     actives = self.class.where(:user_id => user_id, :location_id => location_id, :active => 1)
     errors.add(:base, "multiple active planned checkins are not allowed") if actives.any?
