@@ -20,7 +20,8 @@ class MessagesController < ApplicationController
     # @message.body   = @body
 
     # send message
-    UserMailer.delay.user_send_message(:sender_id => @sender.id, :to_id => @to.id, :body => @body)
+    @options = {'sender_id' => @sender.id, 'to_id' => @to.id, 'body' => @body}
+    Resque.enqueue(UserMailerWorker, :user_send_message, @options)
 
     # log message
     Message.log("[user:#{@sender.id}] #{@sender.handle} sent message to:#{@to.handle}, body:#{@body}")

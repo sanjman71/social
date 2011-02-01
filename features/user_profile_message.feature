@@ -2,8 +2,8 @@ Feature: User Profile Message
   As a user
   I want to send messages to other users from their profile page
   
-  @javascript
-  Scenario: A user visits another user's profile and sends a message
+  @javascript @profile @message
+  Scenario: A user visits another member's profile and sends a message
     Given a city: "Chicago" should exist with name: "Chicago"
     And a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", points: "100"
     And a user "chicago_gal" exists with handle: "chicago_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1", points: "100"
@@ -18,8 +18,7 @@ Feature: User Profile Message
     And I wait for "3" seconds
     Then I should see "Sent message!"
 
-    And the delayed jobs are processed
-    Then "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy sent you a message..."
+    And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy sent you a message..."
     And I open the email
     Then I should see "Hey there" in the email body
     And I follow "here" in the email
