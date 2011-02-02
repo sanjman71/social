@@ -125,7 +125,7 @@ Feature: Home Streams
 
   @javascript
   Scenario: User without a location is redirected to their settings page and prompted to enter a location
-    Given a user "chicago_guy" who is a "straight" "male"
+    Given a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male"
     And I am logged in as "chicago_guy"
     When sphinx is indexed
     When I go to the home page
