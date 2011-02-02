@@ -56,6 +56,9 @@ $.fn.init_change_user_city = function() {
 $(document).ready(function() {
   $(document).init_change_user_city();
 
+  // remove date class from select fields - firefox doesn't like it
+  $("select.date").removeClass('date');
+
   // validate form
   $("form.user").validate({});
 })
