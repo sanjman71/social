@@ -490,8 +490,6 @@ class User < ActiveRecord::Base
     case options[:id]
     when :linked_account
       options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.linked_account'))
-    when :need_checkins
-      options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.need_checkins'))
     when :need_bucks
       options.update(:level => 'notice', :subject => 'bucks', :message => I18n.t('alert.need_bucks'))
     end

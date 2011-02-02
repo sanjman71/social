@@ -56,7 +56,6 @@ en:
       growl: "You just got %{points} points!"
   alert:
     linked_account: "You're just a few checkins from being matched."
-    need_checkins: "You are just a few checkins from being matched."
     need_bucks: "You are out of bucks.  Click 'Get more bucks' to get some more."
   user:
     spots: "Show %{pronoun} Spots"
@@ -68,8 +67,9 @@ en:
       location: 'Common Thread'
       default: 'Freakie'
     profile:
-      message: 'Message'
       invite: "Want %{name} To Join"
+      learn: 'Learn More'
+      message: 'Send Message'
   suggestion:
     error:
       flash: "Whoops, that's not allowed"

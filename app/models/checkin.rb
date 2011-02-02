@@ -101,9 +101,6 @@ class Checkin < ActiveRecord::Base
         SuggestionFactory.delay.create({:user_id => user.id, :algorithm => [:geo_checkins, :geo_tags, :gender],
                                         :limit => 1})
       end
-    else
-      # send alert
-      # user.send_alert(:id => :need_checkins)
     end
   end
 
