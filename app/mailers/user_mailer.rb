@@ -23,7 +23,7 @@ class UserMailer < ActionMailer::Base
     @poker        = @invite_poke.poker
     @subject      = "Outlately: Can you invite your friend #{@invitee.handle} to sign up..."
 
-    self.class.log("[email]: user invite poke to #{@email}, friend:#{@friend.handle}:#{@friend.id}, re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
+    self.class.log("[email:#{@friend.id}:#{@email}]: re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -46,7 +46,7 @@ class UserMailer < ActionMailer::Base
     @points     = options['points']
     @subject    = "Outlately: Your invitation was accepted!"
 
-    self.class.log("[email]: user invite accepted to #{@email}, inviter:#{@inviter.handle}:#{@inviter.id}")
+    self.class.log("[email:#{@inviter.id}:#{@email}]: invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -58,7 +58,7 @@ class UserMailer < ActionMailer::Base
     @email    = @poker.email_address
     @subject  = "Outlately: You might be interested in this user signup..."
 
-    self.class.log("[email]: user signup via poke to #{@email}, signup:#{@invitee.handle}:#{@invitee.id}")
+    self.class.log("[email:#{@poker.id}:#{@email}]: signup:#{@invitee.id}:#{@invitee.handle}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -70,7 +70,7 @@ class UserMailer < ActionMailer::Base
     @text     = options['body']
     @subject  = "Outlately: #{@sender.handle} sent you a message..."
 
-    self.class.log("[email]: user message to #{@email}, from:#{@sender.handle}:#{@sender.id}")
+    self.class.log("[email:#{@to.id}:#{@email}]: from:#{@sender.id}:#{@sender.handle}")
 
     mail(:to => @email, :subject => @subject)
   end

@@ -157,12 +157,12 @@ $.fn.init_growls = function() {
 }
 
 $(document).ready(function() {
+  $(document).init_user_invite();
   $(document).init_user_dialogs();
   $(document).init_user_message_autoresize();
   $(document).init_user_message_counter();
   $(document).init_user_message_submit();
-  $(document).init_checkin_map();
   $(document).init_user_learn_more();
-  $(document).init_user_invite();
+  $(document).init_checkin_map();
   $(document).init_growls();
 })
