@@ -1,16 +1,9 @@
-# find or create user with a location
-Given /^a user "([^"]*)" in "([^"]*)" who is a "([^"]*)" "([^"]*)"$/ do |handle, city_state, orientation, gender|
-  match   = city_state.match(/^(.*), (.*)$/)
-  state   = State.find_by_code!(match[2])
-  city    = City.find_or_create_by_name(:name => match[1], :state => state)
-  user    = User.find_or_create_by_handle(:handle => handle, :city => city, :orientation => orientation,
-                                          :gender => gender, :password => 'secret', :password_confirmation => 'secret')
-end
-
-# find or create user without a location
-Given /^a user "([^"]*)" who is a "([^"]*)" "([^"]*)"$/ do |handle, orientation, gender|
-  user = User.find_or_create_by_handle(:handle => handle, :orientation => orientation,
-                                       :gender => gender, :password => 'secret', :password_confirmation => 'secret')
+# add user city
+Given /^user "([^"]*)" has city "([^"]*)"$/ do |handle, city|
+  user  = User.find_by_handle!(handle)
+  city  = City.find_by_name(city)
+  user.city = city
+  user.save
 end
 
 # add user admin role

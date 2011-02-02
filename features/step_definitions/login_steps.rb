@@ -44,8 +44,6 @@ end
 Then /^I login with facebook as "([^"]*)"$/ do |handle|
   # map handle to user, if one exists
   user = User.find_by_handle(handle)
-  # set facebook oauth data
-  FACEBOOK_INFO[:link] = "http://facebok.com/#{handle}"
   if user
     # link handle to authenticating facebook user
     FACEBOOK_INFO[:id] = user.facebook_id
