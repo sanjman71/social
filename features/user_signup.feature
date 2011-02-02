@@ -4,6 +4,7 @@ Feature: User Signup
 
   Background:
     Given a city: "Chicago" should exist with name: "Chicago"
+    And a state: "IL" should exist with code: "IL"
 
   @signup @goal
   Scenario: New user signup should complete the signup goal
@@ -11,12 +12,6 @@ Feature: User Signup
     Then I should be on the settings page
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "First L." within "div#me"
-
-  @signup @email
-  Scenario: New user signup should send emails to site admins
-    Given I login with facebook as "facebook_guy"
-    Then "sanjay@jarna.com" should receive an email with subject "Outlately: member signup"
-    And "marchick@gmail.com" should receive an email with subject "Outlately: member signup"
 
   @signup @goal
   Scenario: Non-member signup should complete the signup goal
@@ -33,4 +28,61 @@ Feature: User Signup
     And I should not see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should not see "_gaq.push(['_trackPageview', '/signup/invited'])"
 
-    
+  @signup @email
+  Scenario: New user signup should send email to site admins
+    Given I login with facebook as "facebook_guy"
+    And the resque jobs are processed
+    Then "sanjay@jarna.com" should receive an email with subject "Outlately: member signup"
+    And "marchick@gmail.com" should receive an email with subject "Outlately: member signup"
+
+  @signup @javascript
+  Scenario: New user signup should walk user through newbie signup process
+    Given I login with facebook as "First L."
+    And the resque jobs are cleared
+    And user "First L." has city "Chicago"
+    # And user "First L." has birthdate "Jan 15 1991"
+    # Then I should be on path "/newbie/settings"
+    And I go to path "/newbie/settings"
+    Then I should see "My Settings"
+    And I should see "Step 1: Make sure your profile settings are correct."
+    And I should see "_gaq.push(['_trackPageview', '/newbie/1'])"
+    And the "user_email" field should equal "facebook_guy@gmail.com"
+    And the "user_city_name" field should equal "Chicago, IL"
+    And I select "January" from "user_birthdate_2i"
+    And I select "15" from "user_birthdate_3i"
+    And I select "1991" from "user_birthdate_1i"
+    And I wait for "1" second
+    And I press "Update"
+
+    Then I should be on path "/newbie/favorites"
+    # And I go to path "/newbie/favorites"
+    Then I should see "Favorite Places"
+    And I should see "Step 2: Tell us a place you love going."
+    And I should see "_gaq.push(['_trackPageview', '/newbie/2'])"
+    And I fill in "search_places_autocomplete" with "Paramount Room"
+    And I wait for "3" seconds
+    And I select the option containing "Paramount Room" in the autocomplete list
+    And I follow "Add"
+    # should follow js redirect
+    And I wait for "1" second
+    Then I should be on path "/newbie/plans"
+
+    And the resque jobs are processed
+    Then "facebook_guy@gmail.com" should receive an email with subject "Outlately: You marked Paramount Room as a favorite place..."
+
+    And I should see "Planned Checkins"
+    And I should see "Step 3: Tell us a place you plan to go."
+    And I should see "_gaq.push(['_trackPageview', '/newbie/3'])"
+    And I fill in "search_places_autocomplete" with "dmk burger"
+    And I wait for "3" seconds
+    And I select the option containing "DMK Burger Bar" in the autocomplete list
+    And I follow "Add"
+    # should follow js redirect
+    And I wait for "1" second
+    Then I should be on path "/"
+    And I should see "_gaq.push(['_trackPageview', '/newbie/completed'])"
+
+    And the resque jobs are processed
+    Then "facebook_guy@gmail.com" should receive an email with subject "Outlately: You planned a checkin at DMK Burger Bar..."
+
+

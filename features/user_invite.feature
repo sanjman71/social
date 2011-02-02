@@ -7,6 +7,7 @@ Feature: User sends signup invitations
     Given a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", member: "1"
     And user "chicago_guy" has email "chicago_guy@outlately.com"
     And I am logged in as "chicago_guy"
+    And the resque jobs are reset
 
   @javascript @invite @email
   Scenario: User sends an invite and the invitation is accepted
@@ -16,7 +17,7 @@ Feature: User sends signup invitations
     And I press "Send"
     Then I should see "Sent Invitation."
     And I should see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"
-    And the delayed jobs are processed
+    And the resque jobs are processed
     And I go to the logout page
 
     Then "invitee@outlately.com" should receive an email with subject "Outlately: chicago_guy invited you to Outlately!"
@@ -27,7 +28,7 @@ Feature: User sends signup invitations
 
     # user facebook signup
     And I login with facebook as "invitee"
-    And the delayed jobs are processed
+    And the resque jobs are processed
     Then I should be on the settings page
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "_gaq.push(['_trackPageview', '/signup/invited'])"
@@ -53,7 +54,7 @@ Feature: User sends signup invitations
     And I press "Send"
     Then I should see "Sent Invitation."
     And I should see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"
-    And the delayed jobs are processed
+    And the resque jobs are processed
     And I go to the logout page
 
     Then "chicago_hottie@outlately.com" should receive an email with subject "Outlately: chicago_guy invited you to Outlately!"
@@ -64,7 +65,7 @@ Feature: User sends signup invitations
 
     # user facebook signup
     And I login with facebook as "chicago_hottie"
-    And the delayed jobs are processed
+    And the resque jobs are processed
     Then I should be on the settings page
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "_gaq.push(['_trackPageview', '/signup/invited'])"

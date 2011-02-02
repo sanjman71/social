@@ -23,8 +23,8 @@ Feature: User Profile
     When I go to chicago_gal's profile page
     Then I should see "Message"
 
-  Scenario: A user visiting a non-member's profile should see an 'Want Her To Join' button
+  Scenario: A user visiting a non-member's profile should see an 'Ask Her To Join' button
     Given a user "chicago_nonmember" exists with handle: "chicago_nonmember", gender: "Female", orientation: "Straight", city: city "Chicago", member: "0", points: "0"
     And I am logged in as "chicago_guy"
     When I go to chicago_nonmember's profile page
-    Then I should see "Want Her To Join"
+    Then I should see "Ask Her To Join"

@@ -68,6 +68,9 @@ Social::Application.routes.draw do
   resources :shouts, :only => [:index]
   match 'shouts/add(/:location_id)', :to => 'shouts#add', :via => [:put], :as => :add_shout
 
+  # favorites
+  match 'favorites/add(/:location_id)', :to => 'favorites#add', :via => [:put], :as => :add_favorite_location
+
   # suggestion routes
   match 'suggestions/:id/relocate(/:location_id)', :to => 'suggestions#relocate',
     :as => :relocate_suggestion, :via => [:post, :put]
@@ -98,6 +101,12 @@ Social::Application.routes.draw do
   match 'welcome', :to => 'home#welcome', :as => :welcome
   match 'about', :to => 'home#about', :as => :about
   match 'ping', :to => "home#ping", :via => [:get]
+
+  # newbie routes
+  match '/newbie/settings', :to => "settings#show", :as => :newbie_settings
+  match '/newbie/favorites', :to => "newbie#favorites", :as => :newbie_favorites
+  match '/newbie/plans', :to => "newbie#plans", :as => :newbie_plans
+  match '/newbie/completed', :to => "newbie#completed", :as => :newbie_completed
 
   # unauthorized
   match 'unauthorized', :to => 'home#unauthorized'

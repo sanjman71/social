@@ -12,35 +12,29 @@
     = display_flash(:all)
     = display_alerts
 
-  - if @show_handle_message
-    .span-23.prepend-1.last#handle_message
-      %h4{:style => 'line-height: 1.5em;'}
-        == Choose a different handle name if this one doesn't work for you.
-        == You can change it later as well.
-
   .span-24.last
     -# initialize nested objects
     - @user.email_addresses.build if @user.email_addresses_count == 0
     - @user.city ||= City.new
     - @user.build_availability if @user.availability.blank?
 
-    = simple_form_for(@user, :url => settings_path(:return_to => @show_handle_message ? root_path : nil)) do |f|
-      -# handle can not be changed
+    = simple_form_for(@user, :url => settings_path(:return_to => @goto_path || root_path)) do |f|
+      -# handle is not editable
       -#.span-24.last
         -# handle
         -#= f.input :handle, :hint => 'your name on the site'
       -# gender and orientation
       .span-24.last
-        = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name
+        = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name, :required => true
       .span-24.last
-        = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name
+        = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name, :required => true
       -# birthdate
       .span-24.last
-        = f.input :birthdate, :as => :date, :start_year => Date.today.year - 60, :end_year => Date.today.year - 12, :order => [:month, :day, :year]
+        = f.input :birthdate, :as => :date, :start_year => Date.today.year - 60, :end_year => Date.today.year - 15, :order => [:month, :day, :year]
       -# email address
       .span-24.last
         = f.simple_fields_for :email_addresses do |email_form|
-          = email_form.input :address, :label => 'Email Address', :required => false, :hint => 'used for notifications + reminders'
+          = email_form.input :address, :label => 'Email Address', :required => true, :hint => 'used for notifications + reminders', :input_html => {:class => 'required email', :id => 'user_email'}
       -# location
       .span-24.last
         = f.simple_fields_for :city do |city_form|
@@ -50,7 +44,8 @@
       -#.span-24.last
         -#= f.simple_fields_for :availability do |avail_form|
           -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
-      .span-19.prepend-1.last
-        = f.submit 'Update', :class => 'big', :id => 'edit_user_submit'
-        or
-        %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em;'
+      .span-19.prepend-1.last{:style => 'margin-bottom: 20px;'}
+        = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
+        - unless @newbie
+          or
+          %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em;'

@@ -29,6 +29,7 @@ $.fn.init_checkin_map = function() {
 
 $.fn.init_user_dialogs = function() {
   $("a#profile-meetup").fancybox({autoDimensions: false, height: 200, width: 500});
+  $("a#profile-learn-more").fancybox({autoDimensions: false, height: 200, width: 500});
   $("a#whatis-social-dna").fancybox();
 }
 
@@ -97,6 +98,20 @@ $.fn.init_user_message_submit = function() {
   });
 }
 
+$.fn.init_user_learn_more = function() {
+  $("#learn_more_ok").click(function() {
+    $.fancybox.close();
+    track_event('Learn', 'Ok');
+    return false;
+  })
+
+  $("#learn_more_cancel").click(function() {
+    $.fancybox.close();
+    track_event('Learn', 'Cancel');
+    return false;
+  })
+}
+
 $.fn.init_user_invite = function() {
   $("a#profile-invite").live('click', function() {
     invitee_id  = $(this).attr('data-invitee-id');
@@ -147,6 +162,7 @@ $(document).ready(function() {
   $(document).init_user_message_counter();
   $(document).init_user_message_submit();
   $(document).init_checkin_map();
+  $(document).init_user_learn_more();
   $(document).init_user_invite();
   $(document).init_growls();
 })

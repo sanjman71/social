@@ -24,7 +24,7 @@ en:
       plan_todo: "Plan To Go Here"
       join_todo: "Join Me"
       meet_user: "See %{name} Profile"
-      invite_user: "Want %{name} To Join"
+      invite_user: "Ask %{name} To Join"
       name:
         guys: Men
         gals: Ladies
@@ -55,7 +55,7 @@ en:
     add_bucks:
       growl: "You just got %{points} points!"
   alert:
-    linked_account: "You're just a few checkins from being matched."
+    linked_account: "We linked your account."
     need_bucks: "You are out of bucks.  Click 'Get more bucks' to get some more."
   user:
     spots: "Show %{pronoun} Spots"
@@ -67,7 +67,7 @@ en:
       location: 'Common Thread'
       default: 'Freakie'
     profile:
-      invite: "Want %{name} To Join"
+      invite: "Ask %{name} To Join"
       learn: 'Learn More'
       message: 'Send Message'
   suggestion:

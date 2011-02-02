@@ -10,10 +10,12 @@ Feature: User Profile Invite
     And a user "chicago_friend" exists with handle: "chicago_friend", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
     And "chicago_friend" is friends with "chicago_gal"
     And I am logged in as "chicago_guy"
+    And the resque jobs are cleared
     And user "chicago_friend" has email "chicago_friend@outlately.com"
     When I go to chicago_gal's profile page
-    Then I should see "Want Her To Join" within "#profile-nav"
+    Then I should see "Ask Her To Join" within "#profile-nav"
 
-    # When I click "a#profile-invite"
-    When I follow "Want Her To Join"
+    When I follow "Ask Her To Join" within "#profile-nav"
+    And I wait for "2" seconds
+    And the resque jobs are processed
     Then "chicago_friend@outlately.com" should receive an email with subject "Outlately: Can you invite your friend chicago_gal to sign up..."

@@ -23,6 +23,7 @@ Devise::OmniAuth.test_mode!
 
 Before do
   WebMock.allow_net_connect!
+  Resque.reset!
   Timecop.return
   ThinkingSphinx::Test.index
   Badges::Init.add_roles_and_privileges

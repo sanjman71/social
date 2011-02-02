@@ -1,0 +1,8 @@
+%div{:style => 'display:none;'}
+  #dialog-profile-learn-more{'data-handle' => user.try(:handle), 'data-user-id' => user.try(:id).to_i}
+    %h3 Learn more about #{@user.handle}
+    %h4 Check in at one of #{@user.possessive_pronoun} places and we'll tell you more.
+    = submit_tag 'Ok', :id => 'learn_more_ok', :style => 'font-size: 1.1em;'
+    == or
+    = submit_tag 'Nevermind', :id => 'learn_more_cancel', :style => 'font-size: 1.1em;'
+    

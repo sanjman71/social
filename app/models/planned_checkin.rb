@@ -84,6 +84,8 @@ class PlannedCheckin < ActiveRecord::Base
     self.class.log("[user:#{user.id}] #{user.handle} added planned_checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
+    # send email
+    Resque.enqueue(CheckinMailerWorker, :todo_added, 'planned_checkin_id' => self.id, 'points' => Currency.for_completed_todo)
   end
 
   # find or create locationship, and update counters

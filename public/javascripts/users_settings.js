@@ -55,4 +55,7 @@ $.fn.init_change_user_city = function() {
 
 $(document).ready(function() {
   $(document).init_change_user_city();
+
+  // validate form
+  $("form.user").validate({});
 })

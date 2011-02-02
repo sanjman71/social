@@ -19,6 +19,14 @@ Given /^user "([^"]*)" has email "([^"]*)"$/ do |handle, email|
   user.save
 end
 
+# add user birthdate
+Given /^user "([^"]*)" has birthdate "([^"]*)"$/ do |handle, birthdate|
+  user = User.find_by_handle!(handle)
+  date = Date.parse(birthdate)
+  user.birthdate = date
+  user.save
+end
+
 # add user oauth
 Given /^user "([^"]*)" has oauth "([^"]*)"$/ do |handle, provider|
   user  = User.find_by_handle!(handle)

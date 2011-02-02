@@ -9,7 +9,7 @@ Feature: User's planned checkins
     And a location "Chicago Lavazza" exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
 
   @javascript
-  Scenario: User should see their planned checkins, most recent first, and expired plans marked clearly
+  Scenario: User should see their planned checkins, most recent first
     Given a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Starbucks", planned_at: "#{3.days.ago}"
     And a planned_checkin exists with user: user "chicago_guy", location: location "Chicago Lavazza"
     And 5 days have passed
@@ -18,7 +18,6 @@ Feature: User's planned checkins
     When I go to chicago_guy's plans page
     Then I should see "Chicago Lavazza" within "div#todos div.location:first-child"
     And I should see "2 days left" within "div.location"
-    And I should see "Chicago Starbucks" within "div#todos"
-    And I should see "Expired"
+    And I should not see "Chicago Starbucks" within "div#todos"
 
   

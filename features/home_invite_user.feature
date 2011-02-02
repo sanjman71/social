@@ -22,9 +22,10 @@ Feature: Invite users by poking their friends
     And user "chicago_friend1" checked in to "Chicago Starbucks"
     # add friends
     And "chicago_friend1" is friends with "chicago_guy1"
-
+    And the resque jobs are reset
+    
   @javascript @invite @email
-  Scenario: Clicking 'Want Him To Join' in a user stream sends a poke message to their friend
+  Scenario: Clicking 'Ask Him To Join' in a user stream sends a poke message to their friend
     Given I am logged in as "chicago_guy2"
     And sphinx is indexed
     When I go to the home page
@@ -32,7 +33,8 @@ Feature: Invite users by poking their friends
     And I should see "chicago_guy1" within "ul#social-stream"
     And I should see "chicago_friend1" within "ul#social-stream"
 
-    When I follow "Want Him To Join"
+    When I follow "Ask Him To Join"
+    And the resque jobs are processed
     Then "chicago_guy1@outlately.com" should receive an email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
     And I open the email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
     Then I should see "chicago_guy2 wants chicago_friend1 to join Outlately.  Since you're friends with chicago_friend1," in the email body
@@ -40,16 +42,18 @@ Feature: Invite users by poking their friends
     Then I should be on the invite page
 
   @javascript @invite @email
-  Scenario: Clicking 'Want Him To Join' on an already poked user should not send another message
+  Scenario: Clicking 'Ask Him To Join' on an already poked user should not send another message
     Given I am logged in as "chicago_guy2"
-    And sphinx is indexed
     # chicago_guy2 already poked chicago_friend1
     And user "chicago_guy2" poked "chicago_guy1" to invite "chicago_friend1"
     # clicking invite shouldn't send another email
     When 3 days have passed
-    And the delayed jobs are deleted
+    And sphinx is indexed
+    And the resque jobs are reset
     And a clear email queue
     And I go to the home page
-    And I follow "Want Him To Join"
-    And the delayed jobs are processed
+    Then I should see "Ask Him To Join"
+
+    When I follow "Ask Him To Join"
+    And the resque jobs are processed
     Then "chicago_guy1@outlately.com" should receive no emails

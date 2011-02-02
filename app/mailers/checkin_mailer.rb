@@ -1,16 +1,42 @@
 class CheckinMailer < ActionMailer::Base
   default :from => "outlately@jarna.com"
 
+  def newbie_favorite_added(options)
+    @location = Location.find_by_id(options['location_id'])
+    @user     = User.find_by_id(options['user_id'])
+    @email    = @user.email_address
+
+    unless @email.blank?
+      AppLogger.log("[email:#{@user.id}:#{@email}] newbie_favorite_added:location:#{@location.try(:name)}")
+      mail(:to => @email, :subject => "Outlately: You marked #{@location.try(:name)} as a favorite place...")
+    end
+  end
+
   def checkin_imported(options)
     @checkin  = Checkin.find_by_id(options[:checkin_id])
     @user     = @checkin.user
     @location = @checkin.location
     @email    = @user.email_address
     @points   = options[:points]
+    @subject  = "Outlately: You checked in at #{@location.try(:name)}..."
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] checkin_imported:location:#{@location.try(:name)}")
-      mail(:to => @email, :subject => "Outlately: You checked in at #{@location.try(:name)}")
+      mail(:to => @email, :subject => @subject)
+    end
+  end
+
+  def todo_added(options)
+    @pcheckin = PlannedCheckin.find_by_id(options['planned_checkin_id'])
+    @user     = @pcheckin.user
+    @location = @pcheckin.location
+    @email    = @user.email_address
+    @points   = options['points']
+    @subject  = "Outlately: You planned a checkin at #{@location.name}..."
+
+    unless @email.blank?
+      AppLogger.log("[email:#{@user.id}:#{@email}] todo_added:location:#{@location.try(:name)}")
+      mail(:to => @email, :subject => @subject)
     end
   end
 
@@ -19,7 +45,7 @@ class CheckinMailer < ActionMailer::Base
     @location = Location.find_by_id(options[:location_id])
     @email    = @user.email_address
     @points   = Currency.for_completed_todo
-    @subject  = "Your planned checkin at #{@location.name} is about to expire"
+    @subject  = "Your planned checkin at #{@location.name} is about to expire..."
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_reminder:location:#{@location.try(:name)}")
@@ -45,7 +71,7 @@ class CheckinMailer < ActionMailer::Base
     @email    = @user.email_address
     @location = Location.find_by_id(options[:location_id])
     @points   = options[:points]
-    @subject  = "Your planned checkin at #{@location.name} expired"
+    @subject  = "Your planned checkin at #{@location.name} expired..."
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_expired:location:#{@location.try(:name)}")

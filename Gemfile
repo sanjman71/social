@@ -56,6 +56,7 @@ group :development, :test do
   gem 'mocha', :require => nil
   gem 'pickle',                 '>= 0.4.3'
   gem 'random_data'
+  gem 'resque_unit'
   gem 'rspec-rails',  :require => nil
   gem 'ruby-debug19'
   gem 'shoulda', :require => nil

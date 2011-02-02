@@ -8,6 +8,7 @@ Feature: User Profile Message
     And a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", points: "100"
     And a user "chicago_gal" exists with handle: "chicago_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1", points: "100"
     And I am logged in as "chicago_guy"
+    And the resque jobs are reset
     And user "chicago_gal" has email "chicago_gal@outlately.com"
     When I go to chicago_gal's profile page
     Then I should see "Message" within "#profile-nav"
@@ -17,7 +18,8 @@ Feature: User Profile Message
     And I press "Send"
     And I wait for "3" seconds
     Then I should see "Sent message!"
-
+    
+    And the resque jobs are processed
     And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy sent you a message..."
     And I open the email
     Then I should see "Hey there" in the email body

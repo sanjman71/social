@@ -1,0 +1,19 @@
+- javascript('plans', 'location_search')
+
+#page-header
+  .span-23.prepend-1.last
+    %h2= @title
+
+#content.clearfix
+  .span.24.last
+    = display_flash(:all)
+
+  .span-23.prepend-1.last.search_places_autocomplete_form#todo_search
+    .span-23.last
+      %span#help Use the search box below to add a place.
+    .span-23.last
+      = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), :placeholder => 'e.g. starbucks'
+      %span#hint{:style => 'margin-left: 5px;'}
+      #place.hide
+    .span-23.last
+      = link_to 'Add', '#', :id => 'add_todo', 'data-url' => @data_url, 'data-disable-with' => 'adding ...', 'data-return-to' => @data_goto

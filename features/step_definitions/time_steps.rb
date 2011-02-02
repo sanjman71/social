@@ -1,4 +1,4 @@
-When /^I wait for "([^"]*)" second(?:s)$/ do |seconds|
+When /^I wait for "(\d+)" second|seconds$/ do |seconds|
   sleep(seconds.to_f)
 end
 

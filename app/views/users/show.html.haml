@@ -18,6 +18,7 @@
     %ul#profile-nav
       - if @user.member?
         %li= link_to(I18n.t("user.profile.message"), '#dialog-profile-meetup', :id => 'profile-meetup')
+        %li= link_to(I18n.t("user.profile.learn"), '#dialog-profile-learn-more', :id => 'profile-learn-more')
       - else
         %li= link_to(I18n.t("user.profile.invite", :name => @user.pronoun.titleize), '#', :id => 'profile-invite', "data-invitee-id" => @user.id, "data-url" => invite_poke_path(:format => 'json'))
 
@@ -47,4 +48,5 @@
       = render(:partial => 'checkins', :locals => {:checkins => @checkins})
 
 = render(:partial => 'users/dialog_profile_meetup', :locals => {:user => @user})
+= render(:partial => 'users/dialog_profile_learn_more', :locals => {:user => @user})
 = render(:partial => 'users/dialog_whatis_social_dna')
