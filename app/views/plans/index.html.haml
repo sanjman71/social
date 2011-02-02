@@ -29,7 +29,3 @@
     - @pcheckins.each do |pcheckin|
       .span-24.last.location.padding-bottom-10
         = render(:partial => 'plans/todo_location', :locals => {:pcheckin => pcheckin})
-
-    - @pexpired.each do |pcheckin|
-      .span-24.last.location.padding-bottom-10
-        = render(:partial => 'plans/todo_location', :locals => {:pcheckin => pcheckin})

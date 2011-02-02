@@ -8,7 +8,6 @@ class PlansController < ApplicationController
   def index
     @user       = current_user
     @pcheckins  = @user.planned_checkins.active
-    @pexpired   = @user.planned_checkins.inactive
 
     if @pcheckins.any? and @user.primary_email_address.blank?
       flash.now[:notice] = "Add an email address to your profile so we can notify you of checkins on your todo list"
@@ -20,7 +19,7 @@ class PlansController < ApplicationController
     @join_todo  = PlannedCheckin.find(params[:plan_id])
     @location   = @join_todo.location
     @going_at   = @join_todo.going_at
-  
+
     add
   end
 
