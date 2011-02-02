@@ -2,6 +2,11 @@
   - ApplicationHelper::FLASH_TYPES.each do |type|
     - if !flash[type].blank?
       == <div class="#{type}">
-      == #{flash[type]}
+      - if flash[type].is_a?(Array)
+        - flash[type].each do |line|
+          = line
+          %br
+      - else
+        = flash[type]
       == </div>
       
