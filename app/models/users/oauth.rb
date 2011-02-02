@@ -165,6 +165,10 @@ module Users::Oauth
                            :url => "https://graph.facebook.com/#{self.facebook_id}/picture?type=square")
         self.class.log("[user:#{self.id}] #{self.handle} added facebook photo")
       end
+      if data['email'] and !self.email_addresses.collect(&:address).include?(data['email'])
+        self.email_addresses.build(:address => data['email'])
+        self.class.log("[user:#{self.id}] #{self.handle} added email #{data['email']}")
+      end
       if data['location'] and !self.mappable?
         begin
           # add user location city, if it exists
