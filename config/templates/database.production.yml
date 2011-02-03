@@ -6,3 +6,4 @@ production:
   database: outlately_production
   username: rails
   password: rails
+  reconnect: true
