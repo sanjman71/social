@@ -12,11 +12,12 @@ class NewbieController < ApplicationController
     @title      = "Favorite Places"
     @step       = 2
     @required   = ['place']
+    @button     = "Next"
 
     # track page
     flash.now[:tracker] = track_page("/newbie/2")
 
-    render(:action => 'newbie')
+    render(:action => 'steps')
   end
 
   # GET /newbie/plans
@@ -28,18 +29,18 @@ class NewbieController < ApplicationController
     @title      = "Planned Checkins"
     @step       = 3
     @required   = ['place', 'going']
+    @button     = "Done"
 
     # track page
     flash.now[:tracker] = track_page("/newbie/3")
 
-    render(:action => 'newbie')
+    render(:action => 'steps')
   end
 
   # GET /newbie/completed
   def completed
     # track page
     flash[:tracker] = track_page("/newbie/completed")
-    redirect_to(root_path) and return
   end
 
 end

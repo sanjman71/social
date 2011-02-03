@@ -62,15 +62,15 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
 }
 div#todo_header a { color: #0000ff; }
 div#todo_search a { color: #0000ff; }
-div#todo_search a#add_todo {
-  height: 20px;
-  width: 35px;
+div#todo_search a.button {
+  height: 22px;
+  width: 37px;
   line-height: 20px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
   color: #ffffff;
-  background-color: #ff6f00;
+  background-color: #333333;
   padding: 0 10px;
   text-decoration: none;
   display: block;

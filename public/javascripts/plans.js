@@ -19,7 +19,7 @@ $.fn.init_add_plans = function() {
     going       = going_elem.val();
 
     if (!$(place_elem).hasClass('selected')) {
-      alert("Please select a location");
+      alert("Please select a place");
       return false;
     }
 
