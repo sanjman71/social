@@ -129,7 +129,7 @@ class UsersController < ApplicationController
     @user.activate!
     flash[:notice] = "User #{@user.handle} activated"
   rescue Exception => e
-    
+    flash[:error]  = e.message
   ensure
     redirect_to(redirect_back_path(admin_users_path))
   end
@@ -140,7 +140,7 @@ class UsersController < ApplicationController
     @user.disable!
     flash[:notice] = "User #{@user.handle} disabled"
   rescue Exception => e
-    
+    flash[:error]  = e.message
   ensure
     redirect_to(redirect_back_path(admin_users_path))
   end

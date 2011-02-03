@@ -49,7 +49,7 @@
           - else
             %li#nav-login= link_to("Login", new_user_session_path)
 
-    - unless ["home#welcome", "sessions#new"].include?(controller_hash_action)
+    - unless ["sessions#new"].include?(controller_hash_action)
       #sub-header.wrapper.clearfix
         #me
           = image_tag(current_user.try(:primary_photo_url), :size => '64x64', :alt => 'my avatar')

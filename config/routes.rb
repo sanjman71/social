@@ -98,7 +98,6 @@ Social::Application.routes.draw do
   # home routes
   match 'stream/:name', :to => "home#stream", :via => [:put], :as => :home_stream
   match 'city/:name', :to => "home#city", :via => [:put], :as => :home_city
-  match 'welcome', :to => 'home#welcome', :as => :welcome
   match 'about', :to => 'home#about', :as => :about
   match 'ping', :to => "home#ping", :via => [:get]
 
@@ -143,10 +142,12 @@ Social::Application.routes.draw do
   end
 
   # jobs routes
-  match 'jobs', :to => 'jobs#index', :as => :jobs
-  match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
-  match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
-  match 'jobs/top', :to => 'jobs#top', :as => :top_job
+  authenticate :admin do
+    match 'jobs', :to => 'jobs#index', :as => :jobs
+    match 'jobs/backup', :to => 'jobs#backup', :as => :backup_job
+    match 'jobs/sphinx', :to => 'jobs#sphinx', :as => :sphinx_job
+    match 'jobs/top', :to => 'jobs#top', :as => :top_job
+  end
 
   # resque
   authenticate :user do

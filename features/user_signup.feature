@@ -8,17 +8,25 @@ Feature: User Signup
 
   @signup @goal
   Scenario: New user signup should complete the signup goal
+    Given I go to the home page
+    Then I should be on the login page
+    And I should see "Welcome To Outlately"
+
     Given I login with facebook as "facebook_guy"
-    Then I should be on the settings page
+    Then I should be on path "/newbie/settings"
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "First L." within "div#me"
 
   @signup @goal
   Scenario: Non-member signup should complete the signup goal
-    Given a user "facebook_guy" exists with handle: "facebook_guy", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago"
+    Given a user "facebook_guy" exists with handle: "facebook_guy", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
     And 7 days have passed
+    And I go to the home page
+    Then I should be on the login page
+    And I should see "Welcome To Outlately"
+
     Given I login with facebook as "facebook_guy"
-    Then I should be on the settings page
+    Then I should be on path "/newbie/settings"
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "First L." within "div#me"
     # logging in a second time should not trigger the signup goal
@@ -36,13 +44,15 @@ Feature: User Signup
     And "marchick@gmail.com" should receive an email with subject "Outlately: member signup"
 
   @signup @javascript
-  Scenario: New user signup should walk user through newbie signup process
+  Scenario: New user signup should trigger the newbie signup process
+    Given I go to the home page
+    Then I should be on the login page
+    And I should see "Welcome To Outlately"
+
     Given I login with facebook as "First L."
     And the resque jobs are cleared
     And user "First L." has city "Chicago"
-    # And user "First L." has birthdate "Jan 15 1991"
-    # Then I should be on path "/newbie/settings"
-    And I go to path "/newbie/settings"
+    Then I should be on path "/newbie/settings"
     Then I should see "My Settings"
     And I should see "Step 1 of 3:"
     And I should see "_gaq.push(['_trackPageview', '/newbie/1'])"

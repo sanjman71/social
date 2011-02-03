@@ -14,13 +14,8 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource_or_scope)
     case resource_or_scope
     when :user, User
-      if resource_or_scope.created_recently?(1)
-        # allow user to change handle
-        settings_path(:handle => 1)
-      else
-        # the default post login page
-        root_url
-      end
+      # the default post login page
+      root_url
     else
       super
     end

@@ -29,7 +29,7 @@ Feature: User sends signup invitations
     # user facebook signup
     And I login with facebook as "invitee"
     And the resque jobs are processed
-    Then I should be on the settings page
+    Then I should be on path "/newbie/settings"
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "_gaq.push(['_trackPageview', '/signup/invited'])"
 
@@ -66,7 +66,7 @@ Feature: User sends signup invitations
     # user facebook signup
     And I login with facebook as "chicago_hottie"
     And the resque jobs are processed
-    Then I should be on the settings page
+    Then I should be on path "/newbie/settings"
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "_gaq.push(['_trackPageview', '/signup/invited'])"
 

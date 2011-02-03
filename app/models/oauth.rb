@@ -34,8 +34,6 @@ class Oauth < ActiveRecord::Base
   def event_oauth_created
     # add user points
     user.add_points_for_oauth(self)
-    # send user alert
-    user.send_alert(:id => :linked_account)
     # import user checkins, friends
     case provider
     when 'foursquare'

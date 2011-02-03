@@ -30,7 +30,8 @@ FACEBOOK_INFO = {
   :email => 'facebook_guy@gmail.com',
   :first_name => 'First',
   :last_name => 'Last',
-  :website => 'http://outlate.ly'
+  :website => 'http://outlate.ly',
+  :location => {"id" => 108659242498155, "name" => "Chicago, Illinois"}
 }
 
 Then /^outlately authorizes me as "([^"]*)"$/ do |handle|

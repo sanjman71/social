@@ -88,9 +88,9 @@ class OauthController < Devise::OmniauthCallbacksController
     end
 
     if @user.sign_in_count == 0
-      # user's first time signing in; track signup and redirect to settings page
+      # user's first time signing in; track signup and redirect to newbie settings page
       flash[:tracker] = track_page("/signup/completed")
-      @goto_path      = settings_path
+      @goto_path      = newbie_settings_path
     end
 
     if @user.disabled?
@@ -98,7 +98,6 @@ class OauthController < Devise::OmniauthCallbacksController
       @goto_path      = new_user_session_path
     else
       if !user_signed_in?
-        flash[:notice] = "Welcome back #{@user.handle}"
         # track login
         flash[:tracker] = track_page("/login/completed")
       else
