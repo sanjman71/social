@@ -78,14 +78,17 @@ Feature: User Signup
     And I wait for "3" seconds
     And I select the option containing "DMK Burger Bar" in the autocomplete list
     And I fill in "going" with tomorrow
-    And I follow "Next"
+    And I follow "Done"
     # should follow js redirect
     And I wait for "1" second
-    Then I should be on path "/"
+    Then I should be on path "/newbie/completed"
     And I should see "_gaq.push(['_trackPageview', '/newbie/completed'])"
+    And I should see "Click 'Go' to join the fun"
 
     And the resque jobs are processed
     Then "facebook_guy@gmail.com" should receive an email with subject "Outlately: You planned a checkin at DMK Burger Bar..."
     And I open the email with subject "Outlately: You planned a checkin at DMK Burger Bar..."
-    Then I should see "Your planned checkin is in 1 day." in the email body
+    Then I should see "Your planned checkin is in" in the email body
 
+    And I follow "Go"
+    Then I should be on the home page

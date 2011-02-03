@@ -183,3 +183,18 @@ div#tags a#submit_tags {
   margin-top: 20px;
   color: #0000ff;
 }
+div.newbie a.button.go {
+  height: 20px;
+  width: 60px;
+  line-height: 20px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  color: #ffffff;
+  background-color: #333333;
+  padding: 0 10px;
+  text-decoration: none;
+  display: block;
+  font-size: 11px;
+  text-align: center;
+}
