@@ -11,11 +11,20 @@ $.fn.init_add_plans = function() {
     return false;
   })
 
+ $(".datepicker").datepicker({minDate: '+0', maxDate: '+5d'});
+ 
   $("a#add_todo").live('click', function(event) {
     place_elem  = $(this).closest("#todo_search").find("#place");
+    going_elem  = $(this).closest("#todo_search").find("#going");
+    going       = going_elem.val();
 
     if (!$(place_elem).hasClass('selected')) {
       alert("Please select a location");
+      return false;
+    }
+
+    if (going == '') {
+      alert("Please select a date");
       return false;
     }
 
@@ -35,7 +44,7 @@ $.fn.init_add_plans = function() {
     $(this).text(disable_text).addClass('disabled');
     // send request
     return_to     = $(this).attr('data-return-to');
-    $.put(url, {location:loc, return_to:return_to}, null, "script");
+    $.put(url, {location:loc, going:going, return_to:return_to}, null, "script");
     return false;
   })
 }

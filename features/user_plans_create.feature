@@ -14,6 +14,7 @@ Feature: Add plans
     And I fill in "search_places_autocomplete" with "Paramount Room"
     And I wait for "3" seconds
     And I select the option containing "Paramount Room" in the autocomplete list
+    And I fill in "going" with tomorrow
     And I follow "Add"
 
     Then I should be on the plans page

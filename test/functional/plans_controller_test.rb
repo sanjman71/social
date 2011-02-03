@@ -25,7 +25,6 @@ class PlansControllerTest < ActionController::TestCase
 
     should "add planned checkin and send email to original planner" do
       sign_in @user2
-      set_beta
       put :join, :plan_id => @todo1.id, :going => 'tomorrow'
       # should add location to planned checkins list, with original going_at
       assert_equal 1, @user1.reload.planned_checkins.count
@@ -46,7 +45,6 @@ class PlansControllerTest < ActionController::TestCase
 
     should "add planned checkin with default going_at" do
       sign_in @user1
-      set_beta
       put :add, :location_id => @sbux.id
       # should add location to planned checkins list, with default going_at
       assert_equal 1, @user1.reload.planned_checkins.count
@@ -60,7 +58,6 @@ class PlansControllerTest < ActionController::TestCase
 
     should "add planned checkin with going_at tomorrow" do
       sign_in @user1
-      set_beta
       put :add, :location_id => @sbux.id, :going => 'tomorrow'
       # should add location to planned checkins list
       assert_equal 1, @user1.reload.planned_checkins.count
@@ -72,9 +69,22 @@ class PlansControllerTest < ActionController::TestCase
       assert_equal "We added Starbucks to your todo list", flash[:notice]
     end
 
+    should "add planned checkin with going_at date mm/dd/yyyy" do
+      sign_in @user1
+      @going = (Date.today+3.days).to_s(:date_ddmmyyyy)
+      put :add, :location_id => @sbux.id, :going => @going
+      # should add location to planned checkins list
+      assert_equal 1, @user1.reload.planned_checkins.count
+      assert_equal [@sbux], @user1.reload.planned_checkins.collect(&:location)
+      assert_equal [Date.today+3.days], @user1.reload.planned_checkins.collect{ |o| o.going_at.to_date }
+      # should add growl message
+      assert_equal 1, assigns(:growls).size
+      assert_redirected_to '/'
+      assert_equal "We added Starbucks to your todo list", flash[:notice]
+    end
+
     should "create location and add planned checkin" do
       sign_in @user1
-      set_beta
       put :add, :location => {:name => "Intelligentsia Coffee",
                               :source => "foursquare:44123",
                               :address => "53 W. Jackson Blvd.",
@@ -95,7 +105,6 @@ class PlansControllerTest < ActionController::TestCase
     should "ignore if location already on planned list" do
       @pcheckin1 = @user1.planned_checkins.create(:location => @sbux)
       sign_in @user1
-      set_beta
       put :add, :location_id => @sbux.id
       # should have same planned checkin
       assert_equal [@pcheckin1], @user1.planned_checkins 
@@ -108,7 +117,6 @@ class PlansControllerTest < ActionController::TestCase
     should "allow if location already on checkin list" do
       @user1.locationships.create!(:location => @sbux, :my_checkins => 1)
       sign_in @user1
-      set_beta
       put :add, :location_id => @sbux.id
       # should add location to planned checkins list
       assert_equal 1, @user1.reload.planned_checkins.count
@@ -121,7 +129,6 @@ class PlansControllerTest < ActionController::TestCase
 
     should "redirect to params['return_to]" do
       sign_in @user1
-      set_beta
       put :add, :location_id => @sbux.id, :return_to => "/plans"
       assert_redirected_to '/plans'
     end

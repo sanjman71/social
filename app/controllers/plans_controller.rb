@@ -89,7 +89,7 @@ class PlansController < ApplicationController
     when /^[a-z]+$/
       @going_at = Chronic.parse(params[:going]).end_of_day
     when /\d+/
-      @going_at = Chronic(parse(params[:going])).end_of_day
+      @going_at = Chronic.parse(params[:going]).end_of_day
     end
   end
 
