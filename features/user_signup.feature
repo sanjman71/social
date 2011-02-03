@@ -55,7 +55,6 @@ Feature: User Signup
     And I press "Update"
 
     Then I should be on path "/newbie/favorites"
-    # And I go to path "/newbie/favorites"
     Then I should see "Favorite Places"
     And I should see "Step 2: Tell us a place you love going."
     And I should see "_gaq.push(['_trackPageview', '/newbie/2'])"
@@ -69,6 +68,8 @@ Feature: User Signup
 
     And the resque jobs are processed
     Then "facebook_guy@gmail.com" should receive an email with subject "Outlately: You marked Paramount Room as a favorite place..."
+    And I open the email
+    Then I should see "Each time you checkin, you'll receive an email like this that includes similar checkins from other users." in the email body
 
     And I should see "Planned Checkins"
     And I should see "Step 3: Tell us a place you plan to go."
@@ -84,5 +85,7 @@ Feature: User Signup
 
     And the resque jobs are processed
     Then "facebook_guy@gmail.com" should receive an email with subject "Outlately: You planned a checkin at DMK Burger Bar..."
+    And I open the email with subject "Outlately: You planned a checkin at DMK Burger Bar..."
+    Then I should see "Your planned checkin is in 7 days." in the email body
 
 

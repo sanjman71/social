@@ -33,6 +33,7 @@ class CheckinMailer < ActionMailer::Base
     @email    = @user.email_address
     @points   = options['points']
     @subject  = "Outlately: You planned a checkin at #{@location.name}..."
+    @days     = @pcheckin.going_days_left || @pcheckin.expires_days_left
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_added:location:#{@location.try(:name)}")
