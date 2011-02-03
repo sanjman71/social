@@ -23,7 +23,7 @@
       %span#hint{:style => 'margin-left: 5px;'}
       #place.hide
     .span-23.last
-      = text_field_tag :going, '', :id => 'going', :placeholder => 'e.g. tomorrow', :class => 'datepicker'
+      = text_field_tag :going, '', :id => 'going', :placeholder => 'e.g. tomorrow', :class => 'datepicker required'
     .span-23.last
       = link_to 'Add', '#', :id => 'add_todo', 'data-url' => add_todo_location_path(:format => 'js'), 'data-disable-with' => 'adding ...', 'data-return-to' => request.fullpath
 

@@ -30,5 +30,8 @@
       = text_field_tag :search, '', :id => 'search_places_autocomplete',  'data-search-url' => search_locations_path(:foursquare, :format => 'json'), :placeholder => 'e.g. starbucks'
       %span#hint{:style => 'margin-left: 5px;'}
       #place.hide
-    .span-23.last
-      = link_to 'Add', '#', :id => 'add_todo', 'data-url' => @data_url, 'data-disable-with' => 'adding ...', 'data-return-to' => @data_goto
+    - if @required.include?('going')
+      .span-23.last
+        = text_field_tag :going, '', :id => 'going', :placeholder => 'e.g. tomorrow', :class => 'datepicker required'
+    .span-23.last{:style => 'margin-top: 10px;'}
+      = link_to 'Next', '#', :id => 'add_todo', 'data-url' => @data_url, 'data-disable-with' => '...', 'data-return-to' => @data_goto, :style => 'font-size: 1.3em;'

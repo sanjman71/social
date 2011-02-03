@@ -11,6 +11,7 @@ class NewbieController < ApplicationController
     @data_goto  = newbie_plans_path
     @title      = "Favorite Places"
     @step       = 2
+    @required   = ['place']
 
     # track page
     flash.now[:tracker] = track_page("/newbie/2")
@@ -26,6 +27,7 @@ class NewbieController < ApplicationController
     @data_goto  = newbie_completed_path
     @title      = "Planned Checkins"
     @step       = 3
+    @required   = ['place', 'going']
 
     # track page
     flash.now[:tracker] = track_page("/newbie/3")

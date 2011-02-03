@@ -61,7 +61,7 @@ Feature: User Signup
     And I fill in "search_places_autocomplete" with "Paramount Room"
     And I wait for "3" seconds
     And I select the option containing "Paramount Room" in the autocomplete list
-    And I follow "Add"
+    And I follow "Next"
     # should follow js redirect
     And I wait for "1" second
     Then I should be on path "/newbie/plans"
@@ -77,7 +77,8 @@ Feature: User Signup
     And I fill in "search_places_autocomplete" with "dmk burger"
     And I wait for "3" seconds
     And I select the option containing "DMK Burger Bar" in the autocomplete list
-    And I follow "Add"
+    And I fill in "going" with tomorrow
+    And I follow "Next"
     # should follow js redirect
     And I wait for "1" second
     Then I should be on path "/"
@@ -86,5 +87,5 @@ Feature: User Signup
     And the resque jobs are processed
     Then "facebook_guy@gmail.com" should receive an email with subject "Outlately: You planned a checkin at DMK Burger Bar..."
     And I open the email with subject "Outlately: You planned a checkin at DMK Burger Bar..."
-    Then I should see "Your planned checkin is in 7 days." in the email body
+    Then I should see "Your planned checkin is in 1 day." in the email body
 

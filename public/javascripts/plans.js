@@ -23,7 +23,7 @@ $.fn.init_add_plans = function() {
       return false;
     }
 
-    if (going == '') {
+    if (going_elem.hasClass('required') && going == '') {
       alert("Please select a date");
       return false;
     }
