@@ -8,6 +8,21 @@
   .span.24.last
     = display_flash(:all)
 
+  .span.24.last#newbie.notice
+    %h4{:style => 'font-size: 1.3em; line-height: 1.5em;'}
+      Step #{@step} of 3:
+      - case @step
+      - when 2
+        %p
+        Checkins are the way you build your profile on Outlately.  Each time you checkin, you'll get an email with similar checkins around you.
+        %p
+        Tell us a place you love going.
+      - when 3
+        %p
+        By planning a checkin, you enable people to express interest in meeting up or buying you a drink.  You can see their authentic Facebook profile information and decide if you are interested.
+        %p
+        Tell us a place you plan to go.
+
   .span-23.prepend-1.last.search_places_autocomplete_form#todo_search
     .span-23.last
       %span#help Use the search box below to add a place.

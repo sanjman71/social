@@ -10,11 +10,7 @@ class NewbieController < ApplicationController
     # next step is newbie plans
     @data_goto  = newbie_plans_path
     @title      = "Favorite Places"
-
-    @notice     = ["Checkins are the way you build your profile on Outlately."]
-    @notice     += [""]
-    @notice     += ["Step 2: Tell us a place you love going."]
-    flash.now[:notice] = @notice
+    @step       = 2
 
     # track page
     flash.now[:tracker] = track_page("/newbie/2")
@@ -29,12 +25,7 @@ class NewbieController < ApplicationController
     @data_url   = add_todo_location_path(:format => 'js')
     @data_goto  = newbie_completed_path
     @title      = "Planned Checkins"
-
-    @notice     = ["By planning a checkin, you enable people to express interest in meeting up or buying you a drink.
-                    You can always say 'no thanks' if you're not interested."]
-    @notice     += [""]
-    @notice     += ["Step 3: Tell us a place you plan to go."]
-    flash.now[:notice] = @notice
+    @step       = 3
 
     # track page
     flash.now[:tracker] = track_page("/newbie/3")

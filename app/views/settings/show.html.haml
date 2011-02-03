@@ -12,6 +12,14 @@
     = display_flash(:all)
     = display_alerts
 
+  .span.24.last#newbie.notice
+    %h4{:style => 'font-size: 1.3em; line-height: 1.5em;'}
+      Step 1 of 3:
+      %p
+      Outlately is a community for those who like meeting people and checking out new places.
+      %p
+      We'll walk you through the 3 step setup process, starting with your profile.
+
   .span-24.last
     -# initialize nested objects
     - @user.email_addresses.build if @user.email_addresses_count == 0
@@ -45,7 +53,9 @@
         -#= f.simple_fields_for :availability do |avail_form|
           -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
       .span-19.prepend-1.last{:style => 'margin-bottom: 20px;'}
-        = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
+        - if @newbie
+          = f.submit 'Next', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
         - unless @newbie
+          = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
           or
           %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em;'
