@@ -116,8 +116,8 @@ class PlannedCheckin < ActiveRecord::Base
       user.add_points_for_completed_planned_checkin(Currency.for_completed_todo)
       if user.email_addresses_count?
         # send email
-        CheckinMailer.delay.todo_completed({:user_id => user.id, :location_id => location.id,
-                                            :points => Currency.for_completed_todo})
+        Resque.enqueue(CheckinMailerWorker, :todo_completed, 'user_id' => user.id,
+                                            'location_id' => location.id, 'points' => Currency.for_completed_todo)
       end
       return :completed
     end
@@ -130,8 +130,8 @@ class PlannedCheckin < ActiveRecord::Base
       user.add_points_for_expired_planned_checkin(Currency.for_expired_todo)
       if user.email_addresses_count?
         # send email
-        CheckinMailer.delay.todo_expired({:user_id => user.id, :location_id => location.id,
-                                          :points => Currency.for_expired_todo})
+        Resque.enqueue(CheckinMailerWorker, :todo_expired, 'user_id' => user.id,
+                                            'location_id' => location.id, 'points' => Currency.for_expired_todo)
       end
       return :expired
     end

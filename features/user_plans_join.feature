@@ -1,7 +1,7 @@
 Feature: Join in on a planned checkin
   As a user I want to be able to join another user when I see they have a planned checkin
 
-  @javascript
+  @javascript @todo @email
   Scenario: User joins other planned checkins from the home page with the 'Join Me' button
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
@@ -20,7 +20,9 @@ Feature: Join in on a planned checkin
 
     And I follow "Join Me"
     Then I should see "If you go there within 7 days"
-    And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy is planning on joining you..."
-    And "chicago_gal@outlately.com" opens the email
+
+    And the resque jobs are processed
+    Then "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy is planning on joining you..."
+    And "chicago_gal@outlately.com" opens the email with subject "Outlately: chicago_guy is planning on joining you..."
     Then I should see "chicago_guy is also going to 'Chicago Starbucks' tomorrow." in the email body
     

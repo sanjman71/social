@@ -13,11 +13,11 @@ class CheckinMailer < ActionMailer::Base
   end
 
   def checkin_imported(options)
-    @checkin  = Checkin.find_by_id(options[:checkin_id])
+    @checkin  = Checkin.find_by_id(options['checkin_id'])
     @user     = @checkin.user
     @location = @checkin.location
     @email    = @user.email_address
-    @points   = options[:points]
+    @points   = options['points']
     @subject  = "Outlately: You checked in at #{@location.try(:name)}..."
 
     unless @email.blank?
@@ -42,11 +42,11 @@ class CheckinMailer < ActionMailer::Base
   end
 
   def todo_reminder(options)
-    @user     = User.find_by_id(options[:user_id])
-    @location = Location.find_by_id(options[:location_id])
+    @user     = User.find_by_id(options['user_id'])
+    @location = Location.find_by_id(options['location_id'])
     @email    = @user.email_address
-    @points   = Currency.for_completed_todo
-    @subject  = "Your planned checkin at #{@location.name} is about to expire..."
+    @points   = options['points']
+    @subject  = "Outlately: Your planned checkin at #{@location.name} is about to expire..."
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_reminder:location:#{@location.try(:name)}")
@@ -55,11 +55,11 @@ class CheckinMailer < ActionMailer::Base
   end
 
   def todo_completed(options)
-    @user     = User.find_by_id(options[:user_id])
+    @user     = User.find_by_id(options['user_id'])
     @email    = @user.email_address
-    @location = Location.find_by_id(options[:location_id])
-    @points   = options[:points]
-    @subject  = "Your planned checkin at #{@location.name} was completed!"
+    @location = Location.find_by_id(options['location_id'])
+    @points   = options['points']
+    @subject  = "Outlately: Your planned checkin at #{@location.name} was completed!"
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_completed:location:#{@location.try(:name)}")
@@ -68,11 +68,11 @@ class CheckinMailer < ActionMailer::Base
   end
 
   def todo_expired(options)
-    @user     = User.find_by_id(options[:user_id])
+    @user     = User.find_by_id(options['user_id'])
     @email    = @user.email_address
-    @location = Location.find_by_id(options[:location_id])
-    @points   = options[:points]
-    @subject  = "Your planned checkin at #{@location.name} expired..."
+    @location = Location.find_by_id(options['location_id'])
+    @points   = options['points']
+    @subject  = "Outlately: Your planned checkin at #{@location.name} expired..."
 
     unless @email.blank?
       AppLogger.log("[email:#{@user.id}:#{@email}] todo_expired:location:#{@location.try(:name)}")
@@ -81,9 +81,9 @@ class CheckinMailer < ActionMailer::Base
   end
 
   def todo_joined(options)
-    @orig_todo  = PlannedCheckin.find_by_id(options[:orig_todo])
+    @orig_todo  = PlannedCheckin.find_by_id(options['orig_todo'])
     @orig_user  = @orig_todo.user
-    @new_todo   = PlannedCheckin.find_by_id(options[:new_todo])
+    @new_todo   = PlannedCheckin.find_by_id(options['new_todo'])
     @new_user   = @new_todo.user
     # send email to 'original' user
     @email      = @orig_user.email_address

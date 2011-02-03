@@ -7,7 +7,7 @@ Feature: Import user checkin
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
-    And the delayed jobs are processed
+    And the resque jobs are processed
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: You checked in at Starbucks"
     When I open the email
     Then I should see "Good work. That checkin got you 10 points." in the email body
@@ -23,7 +23,7 @@ Feature: Import user checkin
     And a checkin exists with user: user "coffee_gal2", location: location "Starbucks", checkin_at: "#{2.days.ago}", source_id: "1", source_type: "foursquare"
     And sphinx is indexed
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{10.minutes.ago}", source_id: "1", source_type: "foursquare"
-    And the delayed jobs are processed
+    And the resque jobs are processed
 
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: Check out who else is out and about..."
     When I open the email with subject "Outlately: Check out who else is out and about..."
@@ -35,7 +35,7 @@ Feature: Import user checkin
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{12.hours.ago-1.minute}", source_id: "1", source_type: "foursquare"
-    And the delayed jobs are processed
+    And the resque jobs are processed
     Then "sanjay@outlately.com" should have no emails
   
   Scenario: Non-member should not receive emails for any imported checkins
@@ -43,6 +43,6 @@ Feature: Import user checkin
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{1.hour.ago}", source_id: "1", source_type: "foursquare"
-    And the delayed jobs are processed
+    And the resque jobs are processed
     Then "sanjay@outlately.com" should have no emails
   

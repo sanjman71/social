@@ -70,8 +70,8 @@ class Checkin < ActiveRecord::Base
 
   # notify user that checkin was imported
   def async_checkin_imported_email
-    CheckinMailer.delay.checkin_imported({:checkin_id => self.id,
-                                          :points => Currency.points_for_checkin(user, self)})
+    Resque.enqueue(CheckinMailerWorker, :checkin_imported, 'checkin_id' => self.id,
+                                        'points' => Currency.points_for_checkin(user, self))
   end
 
   # notify user of matching checkins based on this recent checkin

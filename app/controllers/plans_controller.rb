@@ -45,7 +45,7 @@ class PlansController < ApplicationController
       @status = 'ok'
 
       if @join_todo
-        CheckinMailer.delay.todo_joined({:orig_todo => @join_todo.id, :new_todo => @pcheckin.id})
+        Resque.enqueue(CheckinMailerWorker, :todo_joined, 'orig_todo' => @join_todo.id, 'new_todo' => @pcheckin.id)
       end
     rescue Exception => e
       # @location already planned
