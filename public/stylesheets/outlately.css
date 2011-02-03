@@ -183,6 +183,10 @@ div#tags a#submit_tags {
   margin-top: 20px;
   color: #0000ff;
 }
+div.newbie h3 {
+  line-height: 1.5em;
+  font-weight: bold;
+}
 div.newbie a.button.go {
   height: 20px;
   width: 60px;
