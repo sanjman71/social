@@ -27,7 +27,8 @@ class SettingsController < ApplicationController
       User.log("[user:#{@user.id}] #{@user.handle} updated #{params[:user].inspect}")
       flash[:notice] = "Profile updated"
     else
-      flash[:error]  = "There was an error updating your profile"
+      flash[:error]  = ["There was an error updating your profile"]
+      flash[:error] += Array(@user.errors)
     end
     redirect_back_to(root_path)
   end
