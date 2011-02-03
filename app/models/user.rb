@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
 
   validates_presence_of     :password,  :if => :password_required?
   validates_confirmation_of :password,  :if => :password_set?
-  validates                 :handle, :presence => true, :uniqueness => true, :unless => :rpx?
+  validates                 :handle, :presence => true, :unless => :rpx?
 
   has_many                  :email_addresses, :as => :emailable, :dependent => :destroy, :order => "priority asc",
                             :after_add => :after_add_email_address, :after_remove => :after_remove_email_address
@@ -514,7 +514,8 @@ class User < ActiveRecord::Base
     # look for planned checkins that expire in 2-3 days
     pcheckins = planned_checkins.active.where(:expires_at.gt => 2.days.from_now, :expires_at.lt => 3.days.from_now)
     pcheckins.each do |pcheckin|
-      CheckinMailer.delay.todo_reminder({:user_id => self.id, :location_id => pcheckin.location})
+      Resque.enqueue(CheckinMailerWorker, :todo_reminder, 'user_id' => self.id, 'location_id' => pcheckin.location.id,
+                                          'points' => Currency.for_completed_todo)
     end
     pcheckins.size
   end
