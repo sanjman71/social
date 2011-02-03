@@ -9,7 +9,7 @@ when 'start'
   puts "*** starting resque worker"
   system cmd
   # write pid file
-  sleep(3)
+  sleep(10)
   system "pidof 'resque-1.10.0: Waiting for critical' > tmp/pids/resque_worker.pid"
 when 'stop'
   if File.exists?("tmp/pids/resque_worker.pid")
