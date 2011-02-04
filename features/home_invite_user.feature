@@ -8,10 +8,13 @@ Feature: Invite users by poking their friends
     And a state: "IL" should exist with code: "IL"
     # create users
     And a user "chicago_guy1" exists with handle: "chicago_guy1", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
-    And user "chicago_guy1" has email "chicago_guy1@outlately.com"
+    And user "chicago_guy1" has email "chicago_guy1@gmail.com"
     And a user "chicago_guy2" exists with handle: "chicago_guy2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And user "chicago_guy2" has email "chicago_guy2@gmail.com"
     And a user "chicago_friend1" exists with handle: "chicago_friend1", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
+    And user "chicago_friend1" has email "chicago_friend1@gmail.com"
     And a user exists with handle: "chicago_friend2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
+    And user "chicago_friend2" has email "chicago_friend2@gmail.com"
     # create locations
     And a location "Chicago Starbucks" exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And a location "Chicago Lavazza" exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
@@ -34,8 +37,10 @@ Feature: Invite users by poking their friends
     And I should see "chicago_friend1" within "ul#social-stream"
 
     When I follow "Ask Him To Join"
+    # wait for ajax call
+    And I wait for "2" seconds
     And the resque jobs are processed
-    Then "chicago_guy1@outlately.com" should receive an email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
+    Then "chicago_guy1@gmail.com" should receive an email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
     And I open the email with subject "Outlately: Can you invite your friend chicago_friend1 to sign up..."
     Then I should see "chicago_guy2 wants chicago_friend1 to join Outlately.  Since you're friends with chicago_friend1," in the email body
     And I follow "invite" in the email
@@ -48,12 +53,16 @@ Feature: Invite users by poking their friends
     And user "chicago_guy2" poked "chicago_guy1" to invite "chicago_friend1"
     # clicking invite shouldn't send another email
     When 3 days have passed
-    And sphinx is indexed
-    And the resque jobs are reset
     And a clear email queue
+    And the resque jobs are reset
+    And sphinx is indexed
     And I go to the home page
+    # wait for streams
+    And I wait for "2" seconds
     Then I should see "Ask Him To Join"
 
     When I follow "Ask Him To Join"
+    # wait for ajax call
+    And I wait for "2" seconds
     And the resque jobs are processed
-    Then "chicago_guy1@outlately.com" should receive no emails
+    Then "chicago_guy1@gmail.com" should receive no emails
