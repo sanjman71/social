@@ -100,6 +100,8 @@ class OauthController < Devise::OmniauthCallbacksController
       if !user_signed_in?
         # track login
         flash[:tracker] = track_page("/login/completed")
+        # check 'user_return_to'
+        @goto_path      = session[:user_return_to]
       else
         flash[:notice] = "Successly linked #{service} account"
       end
