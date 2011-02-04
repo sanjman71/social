@@ -60,31 +60,15 @@ class Checkin < ActiveRecord::Base
     self.delay.async_update_locationships
     if recent_checkin? && user.member? && user.email_addresses_count?
       # send email notifying user that their checkin was imported
-      async_checkin_imported_email
+      Resque.enqueue(CheckinMailerWorker, :checkin_imported, 'checkin_id' => self.id,
+                                          'points' => Currency.points_for_checkin(user, self))
       if enabled(:send_checkin_matches)
-        # send checkin matches email
-        async_checkin_matches_email
+        # search for similar checkin matches
+        Resque.enqueue(CheckinWorker, :search_similar_checkin_matches, 'checkin_id' => self.id)
       end
+      # search for learn matches
+      Resque.enqueue(CheckinWorker, :search_learn_matches, 'checkin_id' => self.id)
     end
-  end
-
-  # notify user that checkin was imported
-  def async_checkin_imported_email
-    Resque.enqueue(CheckinMailerWorker, :checkin_imported, 'checkin_id' => self.id,
-                                        'points' => Currency.points_for_checkin(user, self))
-  end
-
-  # notify user of matching checkins based on this recent checkin
-  def async_checkin_matches_email
-    # find matching checkins
-    matches = match_strategies([:exact, :similar, :nearby], :limit => 3)
-    # log data
-    self.class.log("[user:#{user.id}] #{user.handle} matched checkin:#{self.id} with #{matches.size} matches")
-    if matches.any?
-      # send email
-      UserMailer.delay.user_matching_checkins(:user_id => user.id, :checkin_ids => [matches.collect(&:id)])
-    end
-    matches.size
   end
 
   # user checkins were imported

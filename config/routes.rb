@@ -43,6 +43,7 @@ Social::Application.routes.draw do
     put :activate, :on => :member
     get :become, :on => :member
     put :disable, :on => :member
+    put :learn, :on => :member
   end
 
   # location routes

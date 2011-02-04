@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:activate, :become, :bucks, :disable, :show, :via]
+  before_filter :find_user, :only => [:activate, :become, :bucks, :disable, :learn, :show, :via]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -143,6 +143,23 @@ class UsersController < ApplicationController
     flash[:error]  = e.message
   ensure
     redirect_to(redirect_back_path(admin_users_path))
+  end
+
+  # PUT /users/1/learn
+  def learn
+    # @user initialized in before filter
+
+    # add @user to current_user learn set
+    current_user.learns_add(@user)
+    @stats  = 'ok'
+  rescue Exception => e
+    @status  = 'error'
+    @message = e.message
+    flash[:error]  = @message
+  ensure
+    respond_to do |format|
+      format.html { redirect_to(redirect_back_path(admin_users_path)) }
+    end
   end
 
   protected

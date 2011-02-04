@@ -24,6 +24,7 @@ Feature: Import user checkin
     And sphinx is indexed
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{10.minutes.ago}", source_id: "1", source_type: "foursquare"
     And the resque jobs are processed
+    And the resque jobs are processed
 
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: Check out who else is out and about..."
     When I open the email with subject "Outlately: Check out who else is out and about..."

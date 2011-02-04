@@ -201,4 +201,21 @@ class UsersControllerTest < ActionController::TestCase
       assert @user1.reload.active?
     end
   end
+
+  context "learn" do
+    setup do
+      redis_flushdb
+      @user1 = Factory.create(:user, :handle => 'user1')
+      assert @user1.active?
+      @user2 = Factory.create(:user, :handle => 'user2')
+      assert @user2.active?
+    end
+
+    should "add user2 to user1's learn set" do
+      sign_in @user1
+      put :learn, :id => @user2.id
+      assert_equal ["user:#{@user2.id}"], @user1.learns_get
+    end
+  end
+
 end

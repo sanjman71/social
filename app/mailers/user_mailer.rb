@@ -63,6 +63,17 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
+  def user_learns(options)
+    @user           = User.find(options['user_id'])
+    @learn_handle   = options['learn_handle']
+    @email          = @user.email_address
+    @subject        = "Outlately: You wanted to know more about #{@learn_handle}..."
+    
+    self.class.log("[email:#{@user.id}:#{@email}]: user_learns:#{@learn_handle}")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
   def user_send_message(options)
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
@@ -86,8 +97,8 @@ class UserMailer < ActionMailer::Base
   end
 
   def user_matching_checkins(options)
-    @user     = User.find(options[:user_id])
-    @checkins = Checkin.find(options[:checkin_ids]) rescue []
+    @user     = User.find(options['user_id'])
+    @checkins = Checkin.find(options['checkin_ids']) rescue []
     @email    = @user.email_address
     @subject  = "Outlately: Check out who else is out and about..."
 

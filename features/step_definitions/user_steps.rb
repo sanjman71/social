@@ -40,6 +40,13 @@ Given /^"([^"]*)" is friends with "([^"]*)"$/ do |handle1, handle2|
   user.friendships.create!(:friend => friend)
 end
 
+# add user learn
+Given /^"([^"]*)" want to learn more about "([^"]*)"$/ do |handle1, handle2|
+  user1 = User.find_by_handle!(handle1)
+  user2 = User.find_by_handle!(handle2)
+  user1.learns_add(user2)
+end
+
 # set user points
 Given /^a user "([^"]*)" with "([^"]*)" dollars$/ do |handle, points|
   user = User.find_by_handle!(handle)

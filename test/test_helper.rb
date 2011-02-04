@@ -41,6 +41,11 @@ class ActiveSupport::TestCase
     Badges::Init.add_roles_and_privileges
   end
 
+  def redis_flushdb
+    @redis = RedisSocket.new
+    @redis.flushdb
+  end
+
   def match_delayed_jobs(regex)
     Delayed::Job.all.select{ |dj| dj.handler.match(regex) }.size
   end

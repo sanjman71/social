@@ -442,9 +442,28 @@ class User < ActiveRecord::Base
     !self.encrypted_password.blank?
   end
 
-  # return true if the user was created in the past few minutes
-  def created_recently?(minutes=1)
-    self.created_at > Time.zone.now-minutes.minutes
+  #
+  # learn methods
+  #
+  
+  def learns_add(user)
+    @redis  = RedisSocket.new
+    @key    = "user:#{self.id}:learn"
+    @value  = "user:#{user.id}"
+    @redis.sadd(@key, @value)
+  end
+
+  def learns_remove(user)
+    @redis  = RedisSocket.new
+    @key    = "user:#{self.id}:learn"
+    @value  = "user:#{user.id}"
+    @redis.srem(@key, @value)
+  end
+
+  def learns_get
+    @redis  = RedisSocket.new
+    @key    = "user:#{self.id}:learn"
+    @redis.smembers(@key)
   end
 
   # returns true if the user is ready to receive suggestions
@@ -488,8 +507,9 @@ class User < ActiveRecord::Base
 
   def send_alert(options)
     case options[:id]
-    when :linked_account
-      options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.linked_account'))
+    # deprecated
+    # when :linked_account
+    #   options.update(:level => 'notice', :subject => 'checkins', :message => I18n.t('alert.linked_account'))
     when :need_bucks
       options.update(:level => 'notice', :subject => 'bucks', :message => I18n.t('alert.need_bucks'))
     end
