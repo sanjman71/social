@@ -8,9 +8,10 @@ when 'start'
   cmd = "RAILS_ENV=#{env} QUEUE=critical VVERBOSE=1 nohup rake environment resque:work >> log/resque_worker.log &"
   puts "*** starting resque worker"
   system cmd
+when 'pid'
   # write pid file
-  sleep(10)
   system "pidof 'resque-1.10.0: Waiting for critical' > tmp/pids/resque_worker.pid"
+  system "more tmp/pids/resque_worker.pid"
 when 'stop'
   if File.exists?("tmp/pids/resque_worker.pid")
     puts "*** stopping resque worker"
@@ -20,5 +21,5 @@ when 'stop'
     puts "*** resque worker not running"
   end
 else
-  puts "[start|stop]"
+  puts "[start|stop|pid]"
 end
