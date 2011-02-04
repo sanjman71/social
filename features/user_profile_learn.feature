@@ -22,6 +22,8 @@ Feature: User Learn More
     And the resque jobs are processed
 
     Then "chicago_guy@gmail.com" should receive an email with subject "Outlately: You wanted to know more about chicago_gal..."
+    And I open the email with subject "Outlately: You wanted to know more about chicago_gal..."
+    And I should see "You and chicago_gal have 0 mutual friends" in the email body
 
     # another checkin should not trigger another email
     Given a clear email queue

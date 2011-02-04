@@ -36,8 +36,10 @@ class CheckinWorker
       learn_user  = User.find_by_id(learn_id)
       next if learn_user.blank?
       if learn_user.checkins.select(:location_id).collect(&:location_id).include?(checkin.location_id)
-        # match - send user an email
-        Resque.enqueue(UserMailerWorker, :user_learns, 'user_id' => user.id, 'learn_handle' => learn_user.handle)
+        # match - send user an email with common friends
+        common_friends = User.common_friends(user, learn_user).size
+        Resque.enqueue(UserMailerWorker, :user_learns, 'user_id' => user.id, 'learn_handle' => learn_user.handle,
+                                         'common_friends' => common_friends)
         # remove learn
         user.learns_remove(learn_user)
       end
