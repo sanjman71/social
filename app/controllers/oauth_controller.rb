@@ -87,12 +87,6 @@ class OauthController < Devise::OmniauthCallbacksController
       flash[:tracker] = track_page("/signup/invited")
     end
 
-    if @user.sign_in_count == 0
-      # user's first time signing in; track signup and redirect to newbie settings page
-      flash[:tracker] = track_page("/signup/completed")
-      @goto_path      = newbie_settings_path
-    end
-
     if @user.disabled?
       flash[:notice]  = "Login failed"
       @goto_path      = new_user_session_path
@@ -104,6 +98,12 @@ class OauthController < Devise::OmniauthCallbacksController
         @goto_path      = session[:user_return_to]
       else
         flash[:notice] = "Successly linked #{service} account"
+      end
+
+      if @user.sign_in_count == 0
+        # user's first time signing in; track signup and force redirect to newbie settings page
+        flash[:tracker] = track_page("/signup/completed")
+        @goto_path      = newbie_settings_path
       end
 
       # sign in user

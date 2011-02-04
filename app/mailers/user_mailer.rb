@@ -5,9 +5,13 @@ class UserMailer < ActionMailer::Base
     AppLogger.log(s, nil, level)
   end
 
+  def admin_emails
+    "sanjay@jarna.com, marchick@gmail.com"
+  end
+
   def user_signup(options)
     @user     = User.find(options['user_id'])
-    @emails   = 'sanjay@jarna.com, marchick@gmail.com'
+    @emails   = admin_emails
 
     self.class.log("[email]: user signup #{@user.handle}:#{@user.id}")
 
@@ -22,6 +26,12 @@ class UserMailer < ActionMailer::Base
     @invitee      = @invite_poke.invitee
     @poker        = @invite_poke.poker
     @subject      = "Outlately: Can you invite your friend #{@invitee.handle} to sign up..."
+
+    if @email.blank?
+      # send email to admins instead, with a modified subject
+      @email    = admin_emails
+      @subject  = "Outlately: friend poke sent here because #{@friend.handle}:#{@friend.id} doesn't have an email address"
+    end
 
     self.class.log("[email:#{@friend.id}:#{@email}]: re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
 
