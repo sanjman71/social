@@ -42,8 +42,7 @@ class ActiveSupport::TestCase
   end
 
   def redis_flushdb
-    @redis = RedisSocket.new
-    @redis.flushdb
+    RedisSocket.reset!
   end
 
   def match_delayed_jobs(regex)

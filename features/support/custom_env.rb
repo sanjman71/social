@@ -23,6 +23,7 @@ Devise::OmniAuth.test_mode!
 
 Before do
   WebMock.allow_net_connect!
+  RedisSocket.reset!
   Resque.reset!
   Timecop.return
   ThinkingSphinx::Test.index

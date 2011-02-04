@@ -29,7 +29,7 @@ $.fn.init_checkin_map = function() {
 
 $.fn.init_user_dialogs = function() {
   $("a#profile-meetup").fancybox({autoDimensions: false, height: 200, width: 500});
-  $("a#profile-learn-more").fancybox({autoDimensions: false, height: 200, width: 500});
+  $("a#profile-learn-more").fancybox({autoDimensions: false, height: 150, width: 400});
   $("a#whatis-social-dna").fancybox();
 }
 
@@ -100,12 +100,21 @@ $.fn.init_user_message_submit = function() {
 
 $.fn.init_user_learn_more = function() {
   $("#learn_more_ok").click(function() {
-    $.fancybox.close();
+    url = $(this).attr('data-url');
+    $.put(url, {}, function(data) {
+      // close dialog
+      $.fancybox.close();
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
+    }, 'json');
     track_event('Learn', 'Ok');
     return false;
   })
 
   $("#learn_more_cancel").click(function() {
+    // close dialog
     $.fancybox.close();
     track_event('Learn', 'Cancel');
     return false;

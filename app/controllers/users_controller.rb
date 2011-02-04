@@ -150,8 +150,10 @@ class UsersController < ApplicationController
     # @user initialized in before filter
 
     # add @user to current_user learn set
-    current_user.learns_add(@user)
-    @stats  = 'ok'
+    # returns true if value was added to the set; false otherwise
+    @added   = current_user.learns_add(@user)
+    @status  = 'ok'
+    @growls   = [{:message => "You're all set.  Just checkin to one of #{@user.possessive_pronoun} places.", :timeout => 2000}]
   rescue Exception => e
     @status  = 'error'
     @message = e.message
@@ -159,6 +161,9 @@ class UsersController < ApplicationController
   ensure
     respond_to do |format|
       format.html { redirect_to(redirect_back_path(admin_users_path)) }
+      format.json do
+        render(:json => {'status' => @status, 'added' => @added, 'message' => @message, 'growls' => @growls}.to_json)
+      end
     end
   end
 

@@ -211,10 +211,35 @@ class UsersControllerTest < ActionController::TestCase
       assert @user2.active?
     end
 
-    should "add user2 to user1's learn set" do
-      sign_in @user1
-      put :learn, :id => @user2.id
-      assert_equal ["user:#{@user2.id}"], @user1.learns_get
+    context "html request" do
+      should "add user2 to user1's learn set" do
+        sign_in @user1
+        put :learn, :id => @user2.id
+        assert_equal ["user:#{@user2.id}"], @user1.learns_get
+      end
+    end
+
+    context "json request" do
+      should "add user2 to user1's learn set" do
+        sign_in @user1
+        put :learn, :id => @user2.id, :format => 'json'
+        assert_equal "application/json", @response.content_type
+        @json = JSON.parse(@response.body)
+        assert_equal 'ok', @json['status']
+        assert @json['added']
+        assert_equal ["user:#{@user2.id}"], @user1.learns_get
+      end
+
+      should "not re-add user2 to user1's learn set" do
+        sign_in @user1
+        @user1.learns_add(@user2)
+        put :learn, :id => @user2.id, :format => 'json'
+        assert_equal "application/json", @response.content_type
+        @json = JSON.parse(@response.body)
+        assert_equal 'ok', @json['status']
+        assert_false @json['added']
+        assert_equal ["user:#{@user2.id}"], @user1.learns_get
+      end
     end
   end
 
