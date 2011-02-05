@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:activate, :become, :bucks, :disable, :learn, :show, :via]
+  before_filter :find_user, :only => [:activate, :become, :bucks, :disable, :learn, :share_drink, :show, :via]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -167,6 +167,30 @@ class UsersController < ApplicationController
       format.json do
         render(:json => {'status' => @status, 'added' => @added, 'message' => @message, 'growls' => @growls}.to_json)
       end
+    end
+  end
+
+  # GET /users/1/share_drink
+  def share_drink
+    # @user initialized in before filter
+
+    # send message
+    @sender  = current_user
+    @options = {'sender_id' => @sender.id, 'to_id' => @user.id}
+    Resque.enqueue(UserMailerWorker, :user_send_share_drink_message, @options)
+
+    # log message
+    Message.log("[user:#{@sender.id}] #{@sender.handle} sent share a drink message to:#{@user.handle}")
+
+    flash[:notice] = "We'll send them a note saying you'd like to grab a drink"
+
+    # track access by 'email' (default for now), and share drink action
+    track_page("/users/#{@user.id}/via/email")
+    track_page("/share/drink")
+    flash[:tracker] = ga_tracker
+
+    respond_to do |format|
+      format.html { redirect_to(redirect_back_path(user_path(@user))) }
     end
   end
 

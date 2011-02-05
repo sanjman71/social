@@ -97,6 +97,17 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
+  def user_send_share_drink_message(options)
+    @sender   = User.find(options['sender_id'])
+    @to       = User.find(options['to_id'])
+    @email    = @to.email_address
+    @subject  = "Outlately: Want to share a drink with..."
+
+    self.class.log("[email:#{@to.id}:#{@email}]: from:#{@sender.id}:#{@sender.handle}")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
   def user_badge_added(options)
     @badging  = Badging.find(options[:badging_id])
     @user     = @badging.user

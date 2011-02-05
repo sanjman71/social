@@ -33,6 +33,10 @@ module NavigationHelpers
       user = User.find_by_handle($1)
       "/users/#{user.id}"
 
+    when /^(.*)'s share a drink page$/i
+      user = User.find_by_handle($1)
+      "/users/#{user.id}/share_drink"
+
     when /^(.*)'s user edit page$/i
       user = User.find_by_handle($1)
       "/users/#{user.id}/edit"

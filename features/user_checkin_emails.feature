@@ -35,6 +35,7 @@ Feature: Import user checkin
     When "sanjay@outlately.com" open the email with subject "Outlately: Who's out and about right now..."
     Then I should see "coffee_gal1" in the email body
     And I should see "coffee_gal2" in the email body
+    And I should see "Share a Drink" in the email body
 
     # another check should not generate an email with the same realtime checkins
     And user "sanjay" checked in to "Lavazza" "2 minutes ago"
