@@ -186,7 +186,7 @@ class UsersController < ApplicationController
 
     # track access by 'email' (default for now), and share drink action
     track_page("/users/#{@user.id}/via/email")
-    track_page("/share/drink")
+    track_page("/action/share/drink")
     flash[:tracker] = ga_tracker
 
     respond_to do |format|

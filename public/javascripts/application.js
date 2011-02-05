@@ -31,10 +31,17 @@ function check_growls() {
   }, 'json');
 }
 
-// track google analytics event
+// track google analytics
+
 function track_event(category, action) {
   try {
     _gaq.push(['_trackEvent', category, action]);
+  } catch(e) {}
+}
+
+function track_page(page) {
+  try {
+    _gaq.push(['_trackPageview', page]);
   } catch(e) {}
 }
 

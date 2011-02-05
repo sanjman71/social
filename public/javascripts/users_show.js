@@ -109,14 +109,13 @@ $.fn.init_user_learn_more = function() {
         show_growls(data['growls']);
       }
     }, 'json');
-    track_event('Learn', 'Ok');
+    track_page('/action/learn/more');
     return false;
   })
 
   $("#learn_more_cancel").click(function() {
     // close dialog
     $.fancybox.close();
-    track_event('Learn', 'Cancel');
     return false;
   })
 }
