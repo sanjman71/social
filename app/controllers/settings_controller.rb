@@ -11,7 +11,7 @@ class SettingsController < ApplicationController
 
     if @newbie
       # track page
-      flash.now[:tracker] = track_page("/newbie/1")
+      flash.now[:tracker] = track_page("/newbie/settings")
       # set next page
       @goto_path = newbie_favorites_path
     end

@@ -15,7 +15,7 @@ class NewbieController < ApplicationController
     @button     = "Next"
 
     # track page
-    flash.now[:tracker] = track_page("/newbie/2")
+    flash.now[:tracker] = track_page("/newbie/favorites")
 
     render(:action => 'steps')
   end
@@ -32,7 +32,7 @@ class NewbieController < ApplicationController
     @button     = "Done"
 
     # track page
-    flash.now[:tracker] = track_page("/newbie/3")
+    flash.now[:tracker] = track_page("/newbie/plans")
 
     render(:action => 'steps')
   end
