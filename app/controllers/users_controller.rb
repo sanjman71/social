@@ -99,6 +99,9 @@ class UsersController < ApplicationController
       @points = @viewer.subtract_points_for_viewing_profile(@user)
       flash.now[:growls] = [{:message => I18n.t("currency.view_profile.growl", :points => @points), :timeout => 2000}]
     end
+
+    # track profile viewer
+    flash.now[:tracker] = track_page("/users/#{@user.id}/by/#{@viewer.id}")
   end
 
   # GET /users/1/become
