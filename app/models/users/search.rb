@@ -343,6 +343,11 @@ module Users::Search
       without.update(:user_ids => options[:without_user_ids])
     end
 
+    # timestamp_at - applies to all objects
+    if options[:with_timestamp_at] # e.g. 1290826420..1290829246 (timestamp converted to int)
+      with.update(:timestamp_at => options[:with_timestamp_at])
+    end
+
     # checkins
     if options[:with_checkin_at] # e.g. 1290826420..1290829246 (timestamp converted to int)
       with.update(:checkin_at => options[:with_checkin_at])

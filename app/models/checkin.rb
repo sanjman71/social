@@ -47,9 +47,9 @@ class Checkin < ActiveRecord::Base
     where "users.state = 'active'"
   end
 
-  # returns true if this checkin is considered recent
-  def recent_checkin?
-    checkin_at > 12.hours.ago rescue false
+  # returns true if this checkin is more recent than the specified time
+  def checkin_since?(time=2.hours.ago)
+    checkin_at > time rescue false
   end
 
   # user checkin was added
@@ -58,7 +58,7 @@ class Checkin < ActiveRecord::Base
     self.class.log("[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
-    if recent_checkin? && user.member? && user.email_addresses_count?
+    if checkin_since?(12.hours.ago) && user.member? && user.email_addresses_count?
       # send email notifying user that their checkin was imported
       Resque.enqueue(CheckinMailerWorker, :checkin_imported, 'checkin_id' => self.id,
                                           'points' => Currency.points_for_checkin(user, self))
@@ -68,6 +68,10 @@ class Checkin < ActiveRecord::Base
       end
       # search for learn matches
       Resque.enqueue(CheckinWorker, :search_learn_matches, 'checkin_id' => self.id)
+    end
+    if checkin_since?(1.hour.ago) && user.member?
+      # mark member with a recent checkin as out
+      Realtime.mark_user_as_out(user, self)
     end
   end
 

@@ -9,7 +9,7 @@ Feature: Create badges
     And user "chicago_guy" is an admin
     And a location "Chicago Starbucks" exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And location "Chicago Starbucks" is tagged with "coffee, snickers"
-    And user "chicago_guy" checked in to "Chicago Starbucks"
+    And user "chicago_guy" checked in to "Chicago Starbucks" "5 minutes ago"
     And I am logged in as "chicago_guy"
     And I go to path "/admin/badges"
 

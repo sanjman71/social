@@ -8,7 +8,8 @@ module Checkins::Match
         # no repeate checkins or users, group each set of results to 1 per user
         checkin_ids = array.collect(&:id)
         user_ids    = array.collect(&:user_id)
-        hash        = {:limit => limit, :without_checkin_ids => checkin_ids, :without_user_ids => user_ids, :group => :user}
+        hash        = {:limit => limit, :without_checkin_ids => checkin_ids, :without_user_ids => user_ids,
+                       :group => :user}.merge(options.except(:limit))
         results     = send("match_#{strategy}", hash)
       else
         results     = []
@@ -41,6 +42,9 @@ module Checkins::Match
   end
 
   def match_nearby(options={})
-    []
+    options.merge!(:order => :sort_similar_locations, :miles => 50,
+                   :geo_origin => [location.lat.radians, location.lng.radians],
+                   :order => :sort_timestamp_at)
+    user.search_daters_checkins(options)
   end
 end

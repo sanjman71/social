@@ -20,9 +20,9 @@ Feature: Invite users by poking their friends
     And a location "Chicago Lavazza" exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And a location "Chicago Argo Tea" exists with name: "Chicago Argo Tea", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     # add checkins
-    And user "chicago_guy1" checked in to "Chicago Argo Tea"
-    And user "chicago_guy2" checked in to "Chicago Argo Tea"
-    And user "chicago_friend1" checked in to "Chicago Starbucks"
+    And user "chicago_guy1" checked in to "Chicago Argo Tea" "25 minutes ago"
+    And user "chicago_guy2" checked in to "Chicago Argo Tea" "15 minutes ago"
+    And user "chicago_friend1" checked in to "Chicago Starbucks" "5 minutes ago"
     # add friends
     And "chicago_friend1" is friends with "chicago_guy1"
     And the resque jobs are reset

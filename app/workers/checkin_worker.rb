@@ -10,6 +10,42 @@ class CheckinWorker
     AppLogger.log(s, nil, level)
   end
 
+  def self.search_realtime_checkin_matches(options={})
+    # find users who are out
+    values = Realtime.find_users_out
+
+    # even values: e.g. "user:1:checkin:5"
+    # odd  values: timestamps, e.g. '1296846974'
+    values.each_with_index do |member, index|
+      next if index.odd?
+      match       = member.match(/user:(\d+):checkin:(\d+)/)
+      user_id     = match[1]
+      user        = User.find_by_id(user_id)
+      checkin_id  = match[2]
+      checkin     = Checkin.find_by_id(checkin_id)
+      # skip non-members
+      next unless user.member?
+      # check timestamp (in utc) to see if key has expired
+      expires_at  = Time.at(values[index+1].to_i) + 1.hour
+      if expires_at.to_i < Time.now.utc.to_i
+        Realtime.unmark_user_as_out(member)
+      end
+      # find nearby checkins within +/- 1 hour, exclude checkins already sent
+      without_ids = Realtime.find_checkins_sent_while_out(user).collect(&:to_i)
+      timerange   = Range.new(checkin.checkin_at.utc-1.hour, checkin.checkin_at.utc+1.hour)
+      matches     = checkin.match_strategies([:nearby], :with_timestamp_at => timerange,
+                                             :without_checkin_ids => without_ids, :limit => 3)
+      log("[user:#{user.id}] #{user.handle} is out, found #{matches.size} realtime checkin matches")
+      if matches.any?
+        # track checkins sent while user is out
+        Realtime.add_checkins_sent_while_out(user, matches)
+        # send email
+        Resque.enqueue(UserMailerWorker, :user_nearby_realtime_checkins, 'user_id' => user.id,
+                                         'checkin_ids' => [matches.collect(&:id)])
+      end
+    end
+  end
+
   def self.search_similar_checkin_matches(options)
     checkin = Checkin.find_by_id(options['checkin_id'])
     user    = checkin.user
@@ -45,5 +81,4 @@ class CheckinWorker
       end
     end
   end
-
 end

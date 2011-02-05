@@ -1,0 +1,17 @@
+Thanks for checking in. Here's who's out right now.
+%br
+%br
+
+%table{:style => "width: 600px;", :cellpadding => "10"}
+  - @checkins.each do |checkin|
+    - user      = checkin.user
+    - location  = checkin.location
+    %tr
+      %td{:style => 'width: 75px;'}
+        = image_tag(user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
+      %td{:style => 'width: 500px;'}
+        = link_to(user.handle, user_via_url(user.id, 'email'))
+        %br{:style => 'margin: 3px 0;'}
+        = location.name
+
+= render(:partial => 'footer')

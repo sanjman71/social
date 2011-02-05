@@ -29,7 +29,7 @@ Feature: Add plans
     And a user "chicago_gal" exists with handle: "chicago_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
     And user "chicago_gal" has email "chicago_gal@outlately.com"
     And a location "Chicago Starbucks" exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
-    And user "chicago_gal" checked in to "Chicago Starbucks"
+    And user "chicago_gal" checked in to "Chicago Starbucks" "5 minutes ago"
     And I am logged in as "chicago_guy"
     And sphinx is indexed
     When I go to the home page

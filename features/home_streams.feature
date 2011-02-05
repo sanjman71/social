@@ -10,8 +10,8 @@ Feature: Home Streams
     And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
-    And user "chicago_coffee_gal" checked in to "Chicago Starbucks"
-    And user "chicago_coffee_guy" checked in to "Chicago Lavazza"
+    And user "chicago_coffee_gal" checked in to "Chicago Starbucks" "15 minutes ago"
+    And user "chicago_coffee_guy" checked in to "Chicago Lavazza" "5 minutes ago"
     And I am logged in as "chicago_guy"
     And sphinx is indexed
     When I go to the home page
@@ -28,8 +28,8 @@ Feature: Home Streams
     And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", state: "disabled"
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
-    And user "chicago_coffee_gal" checked in to "Chicago Starbucks"
-    And user "chicago_coffee_guy" checked in to "Chicago Lavazza"
+    And user "chicago_coffee_gal" checked in to "Chicago Starbucks" "15 minutes ago"
+    And user "chicago_coffee_guy" checked in to "Chicago Lavazza" "5 minutes ago"
     And I am logged in as "chicago_guy"
     And sphinx is indexed
     When I go to the home page
@@ -46,8 +46,8 @@ Feature: Home Streams
     And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
-    And user "chicago_coffee_gal" checked in to "Chicago Starbucks"
-    And user "chicago_coffee_guy" checked in to "Chicago Lavazza"
+    And user "chicago_coffee_gal" checked in to "Chicago Starbucks" "15 minutes ago"
+    And user "chicago_coffee_guy" checked in to "Chicago Lavazza" "5 minutes ago"
     And I am logged in as "chicago_guy"
     And sphinx is indexed
     When I go to the home page
@@ -70,9 +70,9 @@ Feature: Home Streams
     And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     And a location exists with name: "Chicago Argo Tea", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
     # add checkins
-    And user "chicago_friend1" checked in to "Chicago Starbucks"
-    And user "chicago_friend2" checked in to "Chicago Lavazza"
-    And user "chicago_guy2" checked in to "Chicago Argo Tea"
+    And user "chicago_friend1" checked in to "Chicago Starbucks" "5 minutes ago"
+    And user "chicago_friend2" checked in to "Chicago Lavazza" "15 minutes ago"
+    And user "chicago_guy2" checked in to "Chicago Argo Tea" "3 minutes ago"
     # add friends
     And "chicago_friend1" is friends with "chicago_guy"
     And "chicago_friend2" is friends with "chicago_guy"
