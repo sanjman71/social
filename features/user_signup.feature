@@ -55,7 +55,7 @@ Feature: User Signup
     Then I should be on path "/newbie/settings"
     Then I should see "My Settings"
     And I should see "Step 1 of 3:"
-    And I should see "_gaq.push(['_trackPageview', '/newbie/1'])"
+    And I should see "_gaq.push(['_trackPageview', '/newbie/settings'])"
     And the "user_email" field should equal "facebook_guy@gmail.com"
     And the "user_city_name" field should equal "Chicago, IL"
     And I select "January" from "user_birthdate_2i"
@@ -67,7 +67,7 @@ Feature: User Signup
     Then I should be on path "/newbie/favorites"
     Then I should see "Favorite Places"
     And I should see "Step 2 of 3:"
-    And I should see "_gaq.push(['_trackPageview', '/newbie/2'])"
+    And I should see "_gaq.push(['_trackPageview', '/newbie/favorites'])"
     And I fill in "search_places_autocomplete" with "Paramount Room"
     And I wait for "3" seconds
     And I select the option containing "Paramount Room" in the autocomplete list
@@ -83,7 +83,7 @@ Feature: User Signup
 
     And I should see "Planned Checkins"
     And I should see "Step 3 of 3:"
-    And I should see "_gaq.push(['_trackPageview', '/newbie/3'])"
+    And I should see "_gaq.push(['_trackPageview', '/newbie/plans'])"
     And I fill in "search_places_autocomplete" with "dmk burger"
     And I wait for "3" seconds
     And I select the option containing "DMK Burger Bar" in the autocomplete list

@@ -16,6 +16,7 @@ Feature: Add plans
     And I select the option containing "Paramount Room" in the autocomplete list
     And I fill in "going" with tomorrow
     And I follow "Add"
+    And I wait for "2" seconds
 
     Then I should be on the plans page
     And I should see "We added Paramount Room to your todo list"
