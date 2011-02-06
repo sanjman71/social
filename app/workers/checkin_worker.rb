@@ -42,7 +42,7 @@ class CheckinWorker
         Realtime.add_checkins_sent_while_out(user, matches)
         # send email
         Resque.enqueue(UserMailerWorker, :user_nearby_realtime_checkins, 'user_id' => user.id,
-                                         'checkin_ids' => [matches.collect(&:id)])
+                                         'checkin_id' => checkin.id, 'checkin_ids' => [matches.collect(&:id)])
       end
     end
   end

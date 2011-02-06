@@ -16,7 +16,7 @@ Feature: Import user checkin
   Scenario: Members who are marked as 'out' should receive an email with other realtime checkins
     Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male"
     And user "sanjay" has email "sanjay@outlately.com"
-    Given a user "coffee_gal1" exists with handle: "coffee_gal1", member: "0", gender: "Female", orientation: "Straight"
+    Given a user "coffee_gal1" exists with handle: "coffee_gal1", member: "1", gender: "Female", orientation: "Straight"
     Given a user "coffee_gal2" exists with handle: "coffee_gal2", member: "0", gender: "Female", orientation: "Straight"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
     And a location "Lavazza" exists with name: "Lavazza", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
@@ -33,7 +33,8 @@ Feature: Import user checkin
     And "coffee_gal1@outlately.com" should receive no emails with subject "Outlately: Who's out and about right now..."
     And "coffee_gal2@outlately.com" should receive no emails with subject "Outlately: Who's out and about right now..."
     When "sanjay@outlately.com" open the email with subject "Outlately: Who's out and about right now..."
-    Then I should see "coffee_gal1" in the email body
+    Then I should see "Thanks for checking in at Starbucks." in the email body
+    And I should see "coffee_gal1" in the email body
     And I should see "coffee_gal2" in the email body
     And I should see "Share a Drink" in the email body
 
@@ -56,7 +57,8 @@ Feature: Import user checkin
     And the resque jobs are processed
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: Who's out and about right now..."
     When I open the email with subject "Outlately: Who's out and about right now..."
-    Then I should see "coffee_gal1" in the email body
+    Then I should see "Thanks for checking in at Starbucks." in the email body
+    And I should see "coffee_gal1" in the email body
     And I should see "Lavazza" in the email body
 
     # a new checkin outside of the 'out' window should not generate an email
@@ -77,8 +79,8 @@ Feature: Import user checkin
     Given a user "coffee_gal1" exists with handle: "coffee_gal1", member: "1", gender: "Female", orientation: "Straight"
     Given a user "coffee_gal2" exists with handle: "coffee_gal2", member: "0", gender: "Female", orientation: "Straight"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
-    And a checkin exists with user: user "coffee_gal1", location: location "Starbucks", checkin_at: "#{1.day.ago}", source_id: "1", source_type: "foursquare"
-    And a checkin exists with user: user "coffee_gal2", location: location "Starbucks", checkin_at: "#{2.days.ago}", source_id: "1", source_type: "foursquare"
+    And user "coffee_gal1" checked in to "Starbucks" "1 day ago"
+    And user "coffee_gal2" checked in to "Starbucks" "2 days ago"
     And sphinx is indexed
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{10.minutes.ago}", source_id: "1", source_type: "foursquare"
     And the resque jobs are processed
@@ -98,7 +100,7 @@ Feature: Import user checkin
     Then "sanjay@outlately.com" should have no emails
 
   @checkin @email
-  Scenario: Non-member should not receive emails for any imported checkins
+  Scenario: Non-member should not receive emails for imported checkins
     Given a user "sanjay" exists with handle: "sanjay", member: "0"
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"

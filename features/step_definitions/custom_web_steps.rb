@@ -15,3 +15,7 @@ Then /^the "([^"]*)" field(?: within "([^\"]*)")? should(not )? equal "([^"]*)"$
   end
 end
 
+Then /^I should see "([^"]*)" within "([^"]*)" count "([^"]*)"$/ do |text, selector, count|
+  assert page.has_css?(selector, :text => text, :count => count.to_i)
+end
+
