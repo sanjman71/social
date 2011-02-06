@@ -51,6 +51,11 @@ every 1.hour do
   command "cd /usr/apps/outlately/current && thor checkins:expire_planned_checkins >> /usr/apps/outlately/shared/log/checkin_todo_expired.log"
 end
 
+every 15.minutes do
+  # send realtime checkin messages
+  command "cd /usr/apps/outlately/current && thor checkins:send_realtime >> /usr/apps/outlately/shared/log/checkin_send_realtime.log"
+end
+
 every 1.day, :at => '11:00 am' do
   # send reports
   command "cd /usr/apps/outlately/current && thor checkins:stats --sendto='sanjay@jarna.com,marchick@gmail.com' >> /usr/apps/outlately/shared/log/checkin_stats.log"

@@ -103,7 +103,14 @@ class Checkins < Thor
     puts "#{Time.now}: expired #{expired} planned checkins"
   end
 
-  desc "stats", "checkin stats over numbers over days, weeks"
+  desc "send_realtime", "send realtime checkins to members who are 'out'"
+  def send_realtime
+    puts "#{Time.now}: sending realtime checkins ..."
+    Resque.enqueue(CheckinWorker, :search_realtime_checkin_matches)
+    puts "#{Time.now}: queued job"
+  end
+
+  desc "stats", "checkin stats spanning number of days, weeks"
   method_options :sendto => nil
   method_options :filename => nil
   def stats
