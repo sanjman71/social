@@ -8,7 +8,7 @@ Thanks for checking in at #{@checkin.location.try(:name)}. Here's who's out righ
     - location  = checkin.location
     %tr
       %td{:style => 'width: 75px;'}
-        = image_tag(user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
+        = link_to image_tag(user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar'), user_url(user.id, 'utm_campaign' => 'realtime-checkins', 'utm_medium' => 'email', 'utm_source' => 'outlately')
       %td{:style => 'width: 500px;'}
         -#= link_to(user.handle, user_url(user.id))
         = user.handle

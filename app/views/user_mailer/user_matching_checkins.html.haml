@@ -10,7 +10,7 @@ Thanks for checking in. Here's who else is out and about around you.
       %td{:style => 'width: 75px;'}
         = image_tag(user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
       %td{:style => 'width: 500px;'}
-        = link_to(user.handle, user_via_url(user.id, 'email'))
+        = link_to(user.handle, user_url(user.id, 'utm_campaign' => 'matching-checkins', 'utm_medium' => 'email', 'utm_source' => 'outlately'))
         %br{:style => 'margin: 3px 0;'}
         = location.name
 
