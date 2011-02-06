@@ -6,7 +6,7 @@ class Users < Thor
     puts "#{Time.now}: #{values.size/2} users are out"
     values.each_with_index do |value, index|
       next if index.odd?
-      puts value
+      puts "#{Time.now}: *** #{value}"
     end
   end
 
