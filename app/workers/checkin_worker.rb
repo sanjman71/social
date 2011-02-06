@@ -16,9 +16,9 @@ class CheckinWorker
 
     # even values: e.g. "user:1:checkin:5"
     # odd  values: timestamps, e.g. '1296846974'
-    values.each_with_index do |member, index|
+    values.each_with_index do |value, index|
       next if index.odd?
-      match       = member.match(/user:(\d+):checkin:(\d+)/)
+      match       = value.match(/user:(\d+):checkin:(\d+)/)
       user_id     = match[1]
       user        = User.find_by_id(user_id)
       checkin_id  = match[2]
@@ -28,7 +28,8 @@ class CheckinWorker
       # check timestamp (in utc) to see if key has expired
       expires_at  = Time.at(values[index+1].to_i) + 1.hour
       if expires_at.to_i < Time.now.utc.to_i
-        Realtime.unmark_user_as_out(member)
+        log("[user:#{user.id}] #{user.handle} is not out anymore")
+        Realtime.unmark_user_as_out(value)
       end
       # find nearby checkins within +/- 1 hour, exclude checkins already sent
       without_ids = Realtime.find_checkins_sent_while_out(user).collect(&:to_i)

@@ -60,8 +60,8 @@ Feature: Import user checkin
     And I should see "Lavazza" in the email body
 
     # a new checkin outside of the 'out' window should not generate an email
-    Given 1 day has passed
-    And user "coffee_gal2" checked in to "Lavazza" "3 minutes ago"
+    Given 2 hours has passed
+    And user "coffee_gal2" checked in to "Lavazza" "30 minutes ago"
     And a clear email queue
     And sphinx is indexed
     And the realtime checkin stream job is queued
