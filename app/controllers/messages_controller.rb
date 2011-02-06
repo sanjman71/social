@@ -21,7 +21,7 @@ class MessagesController < ApplicationController
 
     # send message
     @options = {'sender_id' => @sender.id, 'to_id' => @to.id, 'body' => @body}
-    Resque.enqueue(UserMailerWorker, :user_send_message, @options)
+    Resque.enqueue(UserMailerWorker, :user_message, @options)
 
     # log message
     Message.log("[user:#{@sender.id}] #{@sender.handle} sent message to:#{@to.handle}, body:#{@body}")

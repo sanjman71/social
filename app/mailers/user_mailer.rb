@@ -13,7 +13,7 @@ class UserMailer < ActionMailer::Base
     @user     = User.find(options['user_id'])
     @emails   = admin_emails
 
-    self.class.log("[email]: user signup #{@user.handle}:#{@user.id}")
+    self.class.log("[email:admin]: user signup #{@user.handle}:#{@user.id}")
 
     mail(:to => @emails, :subject => "Outlately: member signup #{@user.handle}:#{@user.id}")
   end
@@ -85,7 +85,7 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
-  def user_send_message(options)
+  def user_message(options)
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
     @email    = @to.email_address
