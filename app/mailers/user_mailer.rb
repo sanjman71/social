@@ -33,7 +33,7 @@ class UserMailer < ActionMailer::Base
       @subject  = "Outlately: friend poke sent here because #{@friend.handle}:#{@friend.id} doesn't have an email address"
     end
 
-    self.class.log("[email:#{@friend.id}:#{@email}]: re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
+    self.class.log("[email:#{@friend.id}]: #{@email} re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -56,7 +56,7 @@ class UserMailer < ActionMailer::Base
     @points     = options['points']
     @subject    = "Outlately: Your invitation was accepted!"
 
-    self.class.log("[email:#{@inviter.id}:#{@email}]: invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
+    self.class.log("[email:#{@inviter.id}]: #{@email} invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -68,7 +68,7 @@ class UserMailer < ActionMailer::Base
     @email    = @poker.email_address
     @subject  = "Outlately: You might be interested in this user signup..."
 
-    self.class.log("[email:#{@poker.id}:#{@email}]: signup:#{@invitee.id}:#{@invitee.handle}")
+    self.class.log("[email:#{@poker.id}]: #{@email} signup:#{@invitee.id}:#{@invitee.handle}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -80,7 +80,7 @@ class UserMailer < ActionMailer::Base
     @email          = @user.email_address
     @subject        = "Outlately: You wanted to know more about #{@learn_handle}..."
 
-    self.class.log("[email:#{@user.id}:#{@email}]: user_learns:#{@learn_handle}")
+    self.class.log("[email:#{@user.id}]: #{@email} user_learns:#{@learn_handle}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -92,7 +92,7 @@ class UserMailer < ActionMailer::Base
     @text     = options['body']
     @subject  = "Outlately: #{@sender.handle} sent you a message..."
 
-    self.class.log("[email:#{@to.id}:#{@email}]: from:#{@sender.id}:#{@sender.handle}")
+    self.class.log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -103,7 +103,7 @@ class UserMailer < ActionMailer::Base
     @email    = @to.email_address
     @subject  = "Outlately: Want to share a drink with..."
 
-    self.class.log("[email:#{@to.id}:#{@email}]: from:#{@sender.id}:#{@sender.handle}")
+    self.class.log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -115,6 +115,8 @@ class UserMailer < ActionMailer::Base
     @email    = @user.email_address
     @subject  = "Outlately: Your Social DNA includes a new badge..."
 
+    self.class.log("[email:#{@user.id}]: #{@email} new social dna badge")
+
     mail(:to => @email, :subject => @subject)
   end
 
@@ -125,6 +127,8 @@ class UserMailer < ActionMailer::Base
     @email    = @user.email_address
     @subject  = "Outlately: Who's out and about right now..."
 
+    self.class.log("[email:#{@user.id}]: #{@email} realtime checkins")
+
     mail(:to => @email, :subject => @subject)
   end
 
@@ -133,6 +137,8 @@ class UserMailer < ActionMailer::Base
     @checkins = Checkin.find(options['checkin_ids']) rescue []
     @email    = @user.email_address
     @subject  = "Outlately: Check out who else is out and about..."
+
+    self.class.log("[email:#{@user.id}]: #{@email} matching checkins")
 
     mail(:to => @email, :subject => @subject)
   end
