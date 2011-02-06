@@ -23,6 +23,7 @@ Feature: User Profile Message
     And "chicago_gal@outlately.com" should receive an email with subject "Outlately: chicago_guy sent you a message..."
     And I open the email
     Then I should see "Hey there" in the email body
+    And I should see "utm_campaign" in the email body
     And I follow "here" in the email
     Then I should be on chicago_guy's profile page
 

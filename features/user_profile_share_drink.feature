@@ -13,7 +13,6 @@ Feature: User Profile Share a Drink
 
     And I go to chicago_gal's share a drink page
     Then I should be on chicago_gal's profile page
-    And I should see "_gaq.push(['_trackPageview', '/users/2/via/email'])"
     And I should see "_gaq.push(['_trackPageview', '/action/share/drink'])"
     # And I should see "We'll send them a note saying you'd like to grab a drink"
 

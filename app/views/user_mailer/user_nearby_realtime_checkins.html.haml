@@ -10,7 +10,7 @@ Thanks for checking in at #{@checkin.location.try(:name)}. Here's who's out righ
       %td{:style => 'width: 75px;'}
         = image_tag(user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
       %td{:style => 'width: 500px;'}
-        -#= link_to(user.handle, user_via_url(user.id, 'email'))
+        -#= link_to(user.handle, user_url(user.id))
         = user.handle
         == &nbsp;
         - if user.member?

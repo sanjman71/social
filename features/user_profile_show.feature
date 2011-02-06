@@ -33,12 +33,3 @@ Feature: User Profile
     When I go to chicago_nonmember's profile page
     Then I should see "Ask Her To Join"
 
-  @profile @tracker
-  Scenario: Visiting a user profile via email click should track via and by
-    Given a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", member: "1"
-    And I am logged in as "chicago_guy"
-    And I go to path "/users/1/via/email"
-    Then I should be on chicago_guy's profile page
-    And I should see "_gaq.push(['_trackPageview', '/users/1/via/email'])"
-    And I should see "_gaq.push(['_trackPageview', '/users/1/by/1'])"
-

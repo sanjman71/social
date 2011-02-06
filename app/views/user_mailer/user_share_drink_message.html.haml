@@ -1,0 +1,5 @@
+#{@sender.handle} wants to share a drink with you.
+%p
+Click #{link_to('here', user_url(@sender.id, 'utm_campaign' => 'share-drink', 'utm_medium' => 'email', 'utm_source' => 'outlately'))} to respond.
+
+= render(:partial => 'footer')

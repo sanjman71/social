@@ -97,7 +97,7 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
-  def user_send_share_drink_message(options)
+  def user_share_drink_message(options)
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
     @email    = @to.email_address
