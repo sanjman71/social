@@ -16,7 +16,7 @@ Feature: User sends signup invitations
     And I fill in "invitees" with "invitee@outlately.com"
     And I press "Send"
     Then I should see "Sent Invitation."
-    And I should see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"
+    And I should see "_gaq.push(['_trackPageview', '/action/invite/message'])"
     And the resque jobs are processed
     And I go to the logout page
 
@@ -53,7 +53,7 @@ Feature: User sends signup invitations
     And I fill in "invitees" with "chicago_hottie@outlately.com"
     And I press "Send"
     Then I should see "Sent Invitation."
-    And I should see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"
+    And I should see "_gaq.push(['_trackPageview', '/action/invite/message'])"
     And the resque jobs are processed
     And I go to the logout page
 
@@ -81,4 +81,4 @@ Feature: User sends signup invitations
     And I fill in "invitees" with "chicago_guy@outlately.com"
     And I press "Send"
     Then I should see "No Invitations Sent. There is already a member with email chicago_guy@outlately.com"
-    And I should not see "_gaq.push(['_trackEvent', 'Invite', 'Message'])"
+    And I should not see "_gaq.push(['_trackPageview', '/action/invite/message'])"

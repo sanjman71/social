@@ -37,11 +37,11 @@ class InvitationsController < ApplicationController
       flash[:notice]  = "No Invitations Sent."
     when 1
       flash[:notice]  = "Sent Invitation."
-      flash[:tracker] = track_event('Invite', 'Message')
+      flash[:tracker] = track_page("/action/invite/message")
       Invitation.log("[user:#{@sender.id}] #{@sender.handle} invited #{@emails.join(',')}")
     else
       flash[:notice]  = "Sent #{@emails.size} Invitations."
-      flash[:tracker] = track_event('Invite', 'Message')
+      flash[:tracker] = track_page("/action/invite/message")
       Invitation.log("[user:#{@sender.id}] #{@sender.handle} invited #{@emails.join(',')}")
     end
     if @ignored.any?

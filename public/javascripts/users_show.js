@@ -137,8 +137,8 @@ $.fn.init_user_invite = function() {
       }
       if (data['poke_id']) {
         // user's friend will be poked
-        // track invite poke event
-        track_event('Invite', 'Poke');
+        // track invite poke
+        track_page('/action/invite/poke');
       }
       if (data['goto']) {
         window.location = data['goto'];
