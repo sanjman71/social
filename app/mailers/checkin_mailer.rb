@@ -42,8 +42,9 @@ class CheckinMailer < ActionMailer::Base
   end
 
   def todo_reminder(options)
-    @user     = User.find_by_id(options['user_id'])
-    @location = Location.find_by_id(options['location_id'])
+    @pcheckin = PlannedCheckin.find(options['todo_id'])
+    @user     = @pcheckin.user
+    @location = @pcheckin.location
     @email    = @user.email_address
     @points   = options['points']
     @subject  = "Outlately: Your planned checkin at #{@location.name} is about to expire..."

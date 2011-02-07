@@ -531,11 +531,14 @@ class User < ActiveRecord::Base
   def send_planned_checkin_reminders
     # check if user has an email address
     return 0 if email_addresses_count == 0
-    # look for planned checkins that expire in 2-3 days
-    pcheckins = planned_checkins.active.where(:expires_at.gt => 2.days.from_now, :expires_at.lt => 3.days.from_now)
+    # look for planned checkins that expire in 2-3 days, without a reminder_at timestamp
+    pcheckins = planned_checkins.active.where(:expires_at.gt => 2.days.from_now, :expires_at.lt => 3.days.from_now,
+                                              :reminder_at => nil)
     pcheckins.each do |pcheckin|
-      Resque.enqueue(CheckinMailerWorker, :todo_reminder, 'user_id' => self.id, 'location_id' => pcheckin.location.id,
-                                          'points' => Currency.for_completed_todo)
+      # send email
+      Resque.enqueue(CheckinMailerWorker, :todo_reminder, 'todo_id' => pcheckin.id, 'points' => Currency.for_completed_todo)
+      # set reminder_at timestamp
+      pcheckin.update_attribute(:reminder_at, Time.zone.now)
     end
     pcheckins.size
   end

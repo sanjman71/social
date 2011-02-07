@@ -106,7 +106,8 @@ class PlannedCheckin < ActiveRecord::Base
     return :inactive if !active?
 
     # find all user checkins to this location in the interval [planned_at, expires_at]
-    user_checkins = user.checkins.where(:location_id => location_id, :checkin_at.gte => planned_at, :checkin_at.lte => expires_at)
+    user_checkins = user.checkins.where(:location_id => location_id, :checkin_at.gte => planned_at,
+                                        :checkin_at.lte => expires_at)
 
     if user_checkins.any?
       # mark as completed, inactive
