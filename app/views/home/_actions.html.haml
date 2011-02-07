@@ -8,9 +8,5 @@
 = link_to(plan_text, '#', :id => plan_id, "data-url" => plan_link)
 
 - if (user != current_user)
-  - if user.member?
-    -# can meet members
-    = link_to(I18n.t("home.stream.meet_user", :name => user.possessive_pronoun.titleize), user_path(user), :id => 'meet_user')
-  - else
-    -# invite others
-    = link_to(I18n.t("home.stream.invite_user", :name => user.pronoun.titleize), '#', :id => 'invite_user', "data-invitee-id" => user.id, "data-url" => invite_poke_path(:format => 'json'))
+  -# link to user profile
+  = link_to(I18n.t("home.stream.see_profile", :name => user.possessive_pronoun.titleize), user_path(user), :id => 'meet_user')

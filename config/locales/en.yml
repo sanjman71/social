@@ -23,7 +23,7 @@ en:
       title: Social Stream
       plan_todo: "Plan To Go Here"
       join_todo: "Join Me"
-      meet_user: "See %{name} Profile"
+      see_profile: "See %{name} Profile"
       invite_user: "Ask %{name} To Join"
       name:
         guys: Men

@@ -1,14 +1,16 @@
 $.fn.init_checkin_map = function() {
   // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
-  $('#map').jMapping({
-    location_selector: ".map-location.visible",
-    category_icon_options: {
-      'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
-      'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
-      'default': {primaryColor: '#465AE0', height: '32', width: '32'}
-    }
-  });
-  
+  if (map) {
+    $('#map').jMapping({
+      location_selector: ".map-location.visible",
+      category_icon_options: {
+        'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
+        'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
+        'default': {primaryColor: '#465AE0', height: '32', width: '32'}
+      }
+    });
+  }
+
   /*
   $("a#show_checkin_city").click(function() {
     // mark locations with the selected city as visible
