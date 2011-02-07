@@ -75,12 +75,12 @@ class UserMailer < ActionMailer::Base
 
   def user_learns(options)
     @user           = User.find(options['user_id'])
-    @learn_handle   = options['learn_handle']
+    @about_user     = User.find(options['about_user_id'])
     @common_friends = options['common_friends']
     @email          = @user.email_address
-    @subject        = "Outlately: You wanted to know more about #{@learn_handle}..."
+    @subject        = "Outlately: You wanted to know more about #{@about_user.handle}..."
 
-    self.class.log("[email:#{@user.id}]: #{@email} user_learns:#{@learn_handle}")
+    self.class.log("[email:#{@user.id}]: #{@email} user_learns:#{@about_user.handle}")
 
     mail(:to => @email, :subject => @subject)
   end

@@ -69,16 +69,16 @@ class CheckinWorker
     return if learns.empty?
 
     learns.each do |learn|
-      learn_id    = learn.match(/user:(\d+)/)[1]
-      learn_user  = User.find_by_id(learn_id)
-      next if learn_user.blank?
-      if learn_user.checkins.select(:location_id).collect(&:location_id).include?(checkin.location_id)
+      about_id    = learn.match(/user:(\d+)/)[1]
+      about_user  = User.find_by_id(about_id)
+      next if about_user.blank?
+      if about_user.checkins.select(:location_id).collect(&:location_id).include?(checkin.location_id)
         # match - send user an email with common friends
-        common_friends = User.common_friends(user, learn_user).size
-        Resque.enqueue(UserMailerWorker, :user_learns, 'user_id' => user.id, 'learn_handle' => learn_user.handle,
+        common_friends = User.common_friends(user, about_user).size
+        Resque.enqueue(UserMailerWorker, :user_learns, 'user_id' => user.id, 'about_user_id' => about_user.id,
                                          'common_friends' => common_friends)
         # remove learn
-        user.learns_remove(learn_user)
+        user.learns_remove(about_user)
       end
     end
   end
