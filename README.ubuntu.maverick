@@ -50,6 +50,9 @@
 # Set timezone
 
 1. sudo tzselect
+# not sure this really works
+2. edit /etc/timezone
+  - "US/Central" for cst
 
 # SSL certificates
 
