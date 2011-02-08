@@ -6,9 +6,9 @@ class UserMailer < ActionMailer::Base
   end
 
   def track(id)
-    key   = Time.zone.now.to_s(:date_yyyymmdd) + ":email:#{id}"
+    key   = Time.zone.now.to_s(:date_yyyymmdd) + ":emails"
     redis = RedisSocket.new
-    redis.incr(key)
+    redis.hincrby(key, id, 1)
   end
 
   def admin_emails
