@@ -152,15 +152,4 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
-  # deprecated
-  def user_matching_checkins(options)
-    @user     = User.find(options['user_id'])
-    @checkins = Checkin.find(options['checkin_ids']) rescue []
-    @email    = @user.email_address
-    @subject  = "Outlately: Check out who else is out and about..."
-
-    self.class.log("[email:#{@user.id}]: #{@email} matching checkins")
-
-    mail(:to => @email, :subject => @subject)
-  end
 end

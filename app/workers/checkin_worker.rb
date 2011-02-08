@@ -75,22 +75,6 @@ class CheckinWorker
     end
   end
 
-  # deprecated
-  # def self.search_similar_checkin_matches(options)
-  #   checkin = Checkin.find_by_id(options['checkin_id'])
-  #   user    = checkin.user
-  #   # find matching checkins
-  #   matches = checkin.match_strategies([:exact, :similar, :nearby], :limit => 3)
-  #   # log data
-  #   log("[user:#{user.id}] #{user.handle} matched checkin:#{checkin.id} with #{matches.size} matches")
-  #   if matches.any?
-  #     # send email
-  #     Resque.enqueue(UserMailerWorker, :user_matching_checkins, 'user_id' => user.id,
-  #                                      'checkin_ids' => [matches.collect(&:id)])
-  #   end
-  #   matches.size
-  # end
-
   def self.search_learn_matches(options)
     checkin = Checkin.find_by_id(options['checkin_id'])
     user    = checkin.user
