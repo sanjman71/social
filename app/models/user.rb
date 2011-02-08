@@ -273,6 +273,16 @@ class User < ActiveRecord::Base
     self.id == 0
   end
 
+  # find user's facebook oauth; allow use of friend's oauth if :friend => true
+  def find_facebook_oauth(options={})
+    oauth = oauths.facebook.first
+    if oauth.blank? and options[:friend]
+      # use a member friend's oauth token
+      oauth = (friends.member + inverse_friends.member).first.oauths.facebook.first rescue nil
+    end
+    oauth
+  end
+
   # handle gender as string, e.g. 'female', 'male'
   def gender=(s)
     if s.is_a?(String)
