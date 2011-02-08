@@ -254,6 +254,7 @@ GEM
       json (~> 1.4.6)
     rest-client (1.6.1)
       mime-types (>= 1.16)
+    rest-graph (1.7.0)
     riddle (1.2.1)
     rspec (2.2.0)
       rspec-core (~> 2.2)
@@ -373,6 +374,7 @@ DEPENDENCIES
   random_data
   resque (>= 1.10.0)
   resque_unit
+  rest-graph (>= 1.7.0)
   rspec-rails
   ruby-debug19
   ruby-mysql
