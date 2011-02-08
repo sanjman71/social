@@ -113,7 +113,7 @@ class UserMailer < ActionMailer::Base
     @user     = @badging.user
     @badge    = @badging.badge
     @email    = @user.email_address
-    @subject  = "Outlately: Your Social DNA includes a new badge..."
+    @subject  = "Outlately: Your Social DNA has been updated with a new badge..."
 
     self.class.log("[email:#{@user.id}]: #{@email} new social dna badge")
 
