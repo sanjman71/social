@@ -194,11 +194,10 @@ Devise.setup do |config|
   # - the oauth callbacks include User.find_for_foursquare_oauth where the mapping of oauth token to use happens
 
   config.omniauth :facebook, FACEBOOK_KEY, FACEBOOK_SECRET,
-                  :scope => 'offline_access,email,user_checkins,friends_checkins,user_about_me,friends_about_me,
-                             user_birthday,friends_birthday,user_location,friends_location,
-                             user_photos,friends_photos,user_education_history,friends_work_history,
-                             user_work_history,friends_work_history,
-                             user_relationship_details,friends_relationship_details'
+                  :scope => 'offline_access,email,read_stream,user_birthday,user_checkins,friends_checkins,
+                             user_location,friends_location,user_events,friends_events,user_groups,friends_groups,
+                             user_photos,friends_photos,user_education_history,friends_education_history,
+                             user_work_history,friends_work_history,user_likes,user_relationship_details'
   config.omniauth :foursquare, FOURSQUARE_KEY, FOURSQUARE_SECRET
   config.omniauth :twitter, TWITTER_KEY, TWITTER_SECRET
   config.omniauth :github, GITHUB_KEY, GITHUB_SECRET

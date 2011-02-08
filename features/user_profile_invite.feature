@@ -2,7 +2,7 @@ Feature: User Profile Invite
   As a user
   I want to send invites or invite pokes to other users from their profile page
   
-  @javascript @profile @invite
+  @javascript @invite @email
   Scenario: A user sends an invite poke from a non-member profile
     Given a city: "Chicago" should exist with name: "Chicago"
     And a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
@@ -19,3 +19,11 @@ Feature: User Profile Invite
     And I wait for "2" seconds
     And the resque jobs are processed
     Then "chicago_friend@outlately.com" should receive an email with subject "Outlately: Can you invite your friend chicago_gal to sign up..."
+
+    # asking again should not send another email
+    When I go to chicago_gal's profile page
+    And no emails have been sent
+    And I follow "Ask Her To Join" within "#profile-nav"
+    And I wait for "2" seconds
+    And the resque jobs are processed
+    Then "chicago_friend@outlately.com" should receive no emails with subject "Outlately: Can you invite your friend chicago_gal to sign up..."

@@ -5,4 +5,5 @@ Time::DATE_FORMATS[:datetime_army]              = "%b %d %Y %H%M"               
 Time::DATE_FORMATS[:datetime_schedule]          = "%Y%m%dT%H%M%S"                 # 20081031T120000
 Time::DATE_FORMATS[:datetime_compact]           = "%Y%m%dT%H%M%S"                 # 20081031T120000
 Time::DATE_FORMATS[:date_ddmmyyyy]              = "%m/%d/%Y"                      # 2/13/2011
+Time::DATE_FORMATS[:date_yyyymmdd]              = "%Y%m%d"                        # 20110213
 Time::DATE_FORMATS[:date_dow_ddmmyyyy]          = "%a %m/%d/%Y"                   # Fri 2/13/2011

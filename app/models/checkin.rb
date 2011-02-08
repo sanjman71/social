@@ -60,7 +60,7 @@ class Checkin < ActiveRecord::Base
     self.delay.async_update_locationships
     if checkin_since?(12.hours.ago) && user.member? && user.email_addresses_count?
       # send checkin imported email
-      Resque.enqueue(CheckinMailerWorker, :checkin_imported, 'checkin_id' => self.id,
+      Resque.enqueue(CheckinMailerWorker, :imported_checkin, 'checkin_id' => self.id,
                                           'points' => Currency.points_for_checkin(user, self))
       # search for learn matches
       Resque.enqueue(CheckinWorker, :search_learn_matches, 'checkin_id' => self.id)

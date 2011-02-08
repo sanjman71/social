@@ -88,7 +88,7 @@ class CheckinWorker
       if about_user.checkins.select(:location_id).collect(&:location_id).include?(checkin.location_id)
         # match - send user an email with common friends
         common_friends = User.common_friends(user, about_user).size
-        Resque.enqueue(UserMailerWorker, :user_learns, 'user_id' => user.id, 'about_user_id' => about_user.id,
+        Resque.enqueue(UserMailerWorker, :user_learn_more, 'user_id' => user.id, 'about_user_id' => about_user.id,
                                          'common_friends' => common_friends)
         # remove learn
         user.learns_remove(about_user)

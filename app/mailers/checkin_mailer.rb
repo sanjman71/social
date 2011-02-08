@@ -1,18 +1,29 @@
 class CheckinMailer < ActionMailer::Base
   default :from => "outlately@jarna.com"
 
+  def log(s, level = :info)
+    AppLogger.log(s, nil, level)
+  end
+
+  def track(id)
+    key   = Time.zone.now.to_s(:date_yyyymmdd) + ":email:#{id}"
+    redis = RedisSocket.new
+    redis.incr(key)
+  end
+
   def newbie_favorite_added(options)
     @location = Location.find_by_id(options['location_id'])
     @user     = User.find_by_id(options['user_id'])
     @email    = @user.email_address
 
     unless @email.blank?
-      AppLogger.log("[email:#{@user.id}:#{@email}] newbie_favorite_added:location:#{@location.try(:name)}")
+      log("[email:#{@user.id}] #{@email} newbie_favorite_added:location:#{@location.try(:name)}")
+      track('newbie_favorite_added')
       mail(:to => @email, :subject => "Outlately: You marked #{@location.try(:name)} as a favorite place...")
     end
   end
 
-  def checkin_imported(options)
+  def imported_checkin(options)
     @checkin  = Checkin.find_by_id(options['checkin_id'])
     @user     = @checkin.user
     @location = @checkin.location
@@ -21,7 +32,8 @@ class CheckinMailer < ActionMailer::Base
     @subject  = "Outlately: You checked in at #{@location.try(:name)}..."
 
     unless @email.blank?
-      AppLogger.log("[email:#{@user.id}:#{@email}] checkin_imported:location:#{@location.try(:name)}")
+      log("[email:#{@user.id}] #{@email} imported_checkin:location:#{@location.try(:name)}")
+      track("imported_checkin")
       mail(:to => @email, :subject => @subject)
     end
   end
@@ -36,7 +48,8 @@ class CheckinMailer < ActionMailer::Base
     @days     = @pcheckin.going_days_left || @pcheckin.expires_days_left
 
     unless @email.blank?
-      AppLogger.log("[email:#{@user.id}:#{@email}] todo_added:location:#{@location.try(:name)}")
+      log("[email:#{@user.id}] #{@email} todo_added:location:#{@location.try(:name)}")
+      track("todo_added")
       mail(:to => @email, :subject => @subject)
     end
   end
@@ -50,7 +63,8 @@ class CheckinMailer < ActionMailer::Base
     @subject  = "Outlately: Your planned checkin at #{@location.name} is about to expire..."
 
     unless @email.blank?
-      AppLogger.log("[email:#{@user.id}:#{@email}] todo_reminder:location:#{@location.try(:name)}")
+      log("[email:#{@user.id}] #{@email} todo_reminder:location:#{@location.try(:name)}")
+      track("todo_reminder")
       mail(:to => @email, :subject => @subject)
     end
   end
@@ -63,7 +77,8 @@ class CheckinMailer < ActionMailer::Base
     @subject  = "Outlately: Your planned checkin at #{@location.name} was completed!"
 
     unless @email.blank?
-      AppLogger.log("[email:#{@user.id}:#{@email}] todo_completed:location:#{@location.try(:name)}")
+      log("[email:#{@user.id}] #{@email} todo_completed:location:#{@location.try(:name)}")
+      track("todo_completed")
       mail(:to => @email, :subject => @subject)
     end
   end
@@ -76,7 +91,8 @@ class CheckinMailer < ActionMailer::Base
     @subject  = "Outlately: Your planned checkin at #{@location.name} expired..."
 
     unless @email.blank?
-      AppLogger.log("[email:#{@user.id}:#{@email}] todo_expired:location:#{@location.try(:name)}")
+      log("[email:#{@user.id}] #{@email} todo_expired:location:#{@location.try(:name)}")
+      track("todo_expired")
       mail(:to => @email, :subject => @subject)
     end
   end
@@ -100,7 +116,8 @@ class CheckinMailer < ActionMailer::Base
     end
 
     unless @email.blank?
-      AppLogger.log("[email:#{@orig_user.id}:#{@email}] todo_joined:#{@new_todo.id}:user:#{@new_todo.user.id}:location:#{@new_todo.location.try(:name)}")
+      log("[email:#{@orig_user.id}] #{@email} todo_joined:#{@new_todo.id}:user:#{@new_todo.user.id}:location:#{@new_todo.location.try(:name)}")
+      track("todo_joined")
       mail(:to => @email, :subject => @subject)
     end
   end

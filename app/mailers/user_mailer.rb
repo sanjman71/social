@@ -1,8 +1,14 @@
 class UserMailer < ActionMailer::Base
   default :from => "outlately@jarna.com"
 
-  def self.log(s, level = :info)
+  def log(s, level = :info)
     AppLogger.log(s, nil, level)
+  end
+
+  def track(id)
+    key   = Time.zone.now.to_s(:date_yyyymmdd) + ":email:#{id}"
+    redis = RedisSocket.new
+    redis.incr(key)
   end
 
   def admin_emails
@@ -13,7 +19,7 @@ class UserMailer < ActionMailer::Base
     @user     = User.find(options['user_id'])
     @emails   = admin_emails
 
-    self.class.log("[email:admin]: user signup #{@user.handle}:#{@user.id}")
+    log("[email:admin]: user signup #{@user.handle}:#{@user.id}")
 
     mail(:to => @emails, :subject => "Outlately: member signup #{@user.handle}:#{@user.id}")
   end
@@ -33,7 +39,9 @@ class UserMailer < ActionMailer::Base
       @subject  = "Outlately: friend poke sent here because #{@friend.handle}:#{@friend.id} doesn't have an email address"
     end
 
-    self.class.log("[email:#{@friend.id}]: #{@email} re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
+    # log and track
+    log("[email:#{@friend.id}]: #{@email} re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
+    track("invite_poke")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -44,6 +52,10 @@ class UserMailer < ActionMailer::Base
     @sender     = @invitation.sender
     @subject    = @invitation.subject || "Outlately Invitation!"
     @message    = @invitation.body
+
+    # log and track
+    log("[email:#{@sender.id}]: #{@email} invited by #{@sender.handle}")
+    track("invite")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -56,7 +68,9 @@ class UserMailer < ActionMailer::Base
     @points     = options['points']
     @subject    = "Outlately: Your invitation was accepted!"
 
-    self.class.log("[email:#{@inviter.id}]: #{@email} invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
+    # log and track
+    log("[email:#{@inviter.id}]: #{@email} invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
+    track("invite_accepted")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -68,19 +82,23 @@ class UserMailer < ActionMailer::Base
     @email    = @poker.email_address
     @subject  = "Outlately: You might be interested in this user signup..."
 
-    self.class.log("[email:#{@poker.id}]: #{@email} signup:#{@invitee.id}:#{@invitee.handle}")
+    # log and track
+    log("[email:#{@poker.id}]: #{@email} signup:#{@invitee.id}:#{@invitee.handle}")
+    track("signup_poker")
 
     mail(:to => @email, :subject => @subject)
   end
 
-  def user_learns(options)
+  def user_learn_more(options)
     @user           = User.find(options['user_id'])
     @about_user     = User.find(options['about_user_id'])
     @common_friends = options['common_friends']
     @email          = @user.email_address
     @subject        = "Outlately: You wanted to know more about #{@about_user.handle}..."
 
-    self.class.log("[email:#{@user.id}]: #{@email} user_learns:#{@about_user.handle}")
+    # log and track
+    log("[email:#{@user.id}]: #{@email} user_learn_more:#{@about_user.handle}")
+    track("learn_more")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -92,7 +110,9 @@ class UserMailer < ActionMailer::Base
     @text     = options['body']
     @subject  = "Outlately: #{@sender.handle} sent you a message..."
 
-    self.class.log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    # log and track
+    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    track("message")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -103,7 +123,9 @@ class UserMailer < ActionMailer::Base
     @email    = @to.email_address
     @subject  = "Outlately: Want to share a drink with..."
 
-    self.class.log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    # log and track
+    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    track("share_drink")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -115,7 +137,9 @@ class UserMailer < ActionMailer::Base
     @email    = @user.email_address
     @subject  = "Outlately: Your Social DNA has been updated with a new badge..."
 
-    self.class.log("[email:#{@user.id}]: #{@email} new social dna badge")
+    # log and track
+    log("[email:#{@user.id}]: #{@email} new social dna badge")
+    track("badge_added")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -127,7 +151,9 @@ class UserMailer < ActionMailer::Base
     @email    = @user.email_address
     @subject  = "Outlately: Who's out and about right now..."
 
-    self.class.log("[email:#{@user.id}]: #{@email} realtime checkins")
+    # log and track
+    log("[email:#{@user.id}]: #{@email} realtime checkins")
+    track("realtime_checkins")
 
     mail(:to => @email, :subject => @subject)
   end
@@ -147,7 +173,9 @@ class UserMailer < ActionMailer::Base
       @text     = "We noticed your #{@my_checkins.size} checkins yesterday."
     end
 
-    self.class.log("[email:#{@user.id}]: #{@email} daily checkins")
+    # log and track
+    log("[email:#{@user.id}]: #{@email} daily checkins")
+    track("daily_checkins")
 
     mail(:to => @email, :subject => @subject)
   end
