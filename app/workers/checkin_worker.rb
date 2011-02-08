@@ -47,20 +47,49 @@ class CheckinWorker
     end
   end
 
-  def self.search_similar_checkin_matches(options)
-    checkin = Checkin.find_by_id(options['checkin_id'])
-    user    = checkin.user
-    # find matching checkins
-    matches = checkin.match_strategies([:exact, :similar, :nearby], :limit => 3)
-    # log data
-    log("[user:#{user.id}] #{user.handle} matched checkin:#{checkin.id} with #{matches.size} matches")
-    if matches.any?
-      # send email
-      Resque.enqueue(UserMailerWorker, :user_matching_checkins, 'user_id' => user.id,
-                                       'checkin_ids' => [matches.collect(&:id)])
+  def self.search_daily_checkin_matches(options={})
+    tstart              = (Time.zone.now-1.day).beginning_of_day
+    tend                = tstart.end_of_day
+    checkins_per_email  = 3
+
+    # find members who checked in between [tstart, tend]
+    User.member.each do |user|
+      # user.send_daily_checkin_emails(:tstart => tstart, :tend => tend)
+      user_checkins = user.checkins.where(:checkin_at.gte => tstart, :checkin_at.lte => tend)
+      if user_checkins.any?
+        matches = user_checkins.inject([]) do |array, checkin|
+          # find matching checkins
+          limit   = checkins_per_email - array.size
+          matches = limit > 0 ? checkin.match_strategies([:exact, :similar], :limit => limit) : []
+          # log data
+          log("[user:#{user.id}] #{user.handle} daily checkin match:#{checkin.id} with #{matches.size} matches")
+          array  += matches
+        end
+        if matches.any?
+          # send email
+          Resque.enqueue(UserMailerWorker, :user_daily_checkins,
+                         'user_id' => user.id, 'my_checkin_ids' => user_checkins.collect(&:id),
+                         'checkin_ids' => matches.collect(&:id))
+        end
+      end
     end
-    matches.size
   end
+
+  # deprecated
+  # def self.search_similar_checkin_matches(options)
+  #   checkin = Checkin.find_by_id(options['checkin_id'])
+  #   user    = checkin.user
+  #   # find matching checkins
+  #   matches = checkin.match_strategies([:exact, :similar, :nearby], :limit => 3)
+  #   # log data
+  #   log("[user:#{user.id}] #{user.handle} matched checkin:#{checkin.id} with #{matches.size} matches")
+  #   if matches.any?
+  #     # send email
+  #     Resque.enqueue(UserMailerWorker, :user_matching_checkins, 'user_id' => user.id,
+  #                                      'checkin_ids' => [matches.collect(&:id)])
+  #   end
+  #   matches.size
+  # end
 
   def self.search_learn_matches(options)
     checkin = Checkin.find_by_id(options['checkin_id'])

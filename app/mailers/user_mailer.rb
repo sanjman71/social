@@ -132,6 +132,27 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
+  def user_daily_checkins(options)
+    @user         = User.find(options['user_id'])
+    @my_checkins  = Checkin.find(options['my_checkin_ids']) rescue []
+    @checkins     = Checkin.find(options['checkin_ids']) rescue []
+    @email        = @user.email_address
+    @subject      = "Outlately: Your daily checkin email..."
+
+    case @my_checkins.size
+    when 1
+      @checkin  = @my_checkins.first
+      @text     = "We noticed your checkin at #{@checkin.location.try(:name)} yesterday."
+    else
+      @text     = "We noticed your #{@my_checkins.size} checkins yesterday."
+    end
+
+    self.class.log("[email:#{@user.id}]: #{@email} daily checkins")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
+  # deprecated
   def user_matching_checkins(options)
     @user     = User.find(options['user_id'])
     @checkins = Checkin.find(options['checkin_ids']) rescue []

@@ -15,7 +15,11 @@ Given /^planned checkins are expired$/ do
   PlannedCheckin.expire_all
 end
 
-Given /^the realtime checkin stream job is queued$/ do
+Given /^the realtime checkin matches job is queued$/ do
   Resque.enqueue(CheckinWorker, :search_realtime_checkin_matches)
+end
+
+Given /^the daily checkin matches job is queued$/ do
+  Resque.enqueue(CheckinWorker, :search_daily_checkin_matches)
 end
 

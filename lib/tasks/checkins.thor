@@ -110,6 +110,13 @@ class Checkins < Thor
     puts "#{Time.now}: queued job"
   end
 
+  desc "send_daily", "send daily checkins to members"
+  def send_daily
+    puts "#{Time.now}: sending daily checkins ..."
+    Resque.enqueue(CheckinWorker, :search_daily_checkin_matches)
+    puts "#{Time.now}: queued job"
+  end
+
   desc "stats", "checkin stats spanning number of days, weeks"
   method_options :sendto => nil
   method_options :filename => nil

@@ -41,8 +41,8 @@ every 1.hour do
   rake "db:backup DB=outlately_production BACKUP_DIR=/usr/apps/outlately/shared/backups"
 end
 
-# times seem to be interpreted in utc
-every 1.day, :at => '12:00 pm' do
+# times are utc
+every 1.day, :at => '1:00 pm' do
   # send planned checkin reminders
   command "cd /usr/apps/outlately/current && thor checkins:send_planned_checkin_reminders >> /usr/apps/outlately/shared/log/checkin_todo_reminders.log"
 end
@@ -55,6 +55,12 @@ end
 every 15.minutes do
   # send realtime checkin messages
   command "cd /usr/apps/outlately/current && thor checkins:send_realtime >> /usr/apps/outlately/shared/log/checkin_send_realtime.log"
+end
+
+# times are utc
+every 1.day, :at => '1:00 pm' do
+  # send daily checkin emails
+  command "cd /usr/apps/outlately/current && thor checkins:send_daily >> /usr/apps/outlately/shared/log/checkin_send_daily.log"
 end
 
 every 1.day, :at => '11:00 am' do

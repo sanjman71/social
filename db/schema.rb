@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110126044709) do
+ActiveRecord::Schema.define(:version => 20110207154207) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -393,12 +393,14 @@ ActiveRecord::Schema.define(:version => 20110126044709) do
     t.integer  "active",       :default => 0
     t.boolean  "delta",        :default => false
     t.datetime "going_at"
+    t.datetime "reminder_at"
   end
 
   add_index "planned_checkins", ["expires_at"], :name => "index_planned_checkins_on_expires_at"
   add_index "planned_checkins", ["going_at"], :name => "index_planned_checkins_on_going_at"
   add_index "planned_checkins", ["location_id", "active"], :name => "index_planned_checkins_on_location_id_and_active"
   add_index "planned_checkins", ["location_id"], :name => "index_planned_checkins_on_location_id"
+  add_index "planned_checkins", ["reminder_at"], :name => "index_planned_checkins_on_reminder_at"
   add_index "planned_checkins", ["user_id", "active"], :name => "index_planned_checkins_on_user_id_and_active"
   add_index "planned_checkins", ["user_id"], :name => "index_planned_checkins_on_user_id"
 
