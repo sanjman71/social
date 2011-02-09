@@ -33,16 +33,18 @@
         - when 'shout'
           = render(:partial => 'home/shouts', :locals => {:objects => [object], :visible => visible})
 
-  .half-col.right
+  .half-col.right#social-stream-map
     #popular-cities.clearfix
       = render(:partial => 'city_cloud', :locals => {:cities => @pop_cities})
-      
-    %h4= @city.name
+
+    %h4#map-city= @city.name
     #map.home
       -# map is here
 
     #map-side-bar.hide
       = render(:partial => 'locations/locations_map', :locals => {:locations => @objects.collect(&:location)})
+
+  .half-col.right#social-stream-details{:style => 'background: #fff; display: none; min-height: 500px;'}
 
 :javascript
   var stream_map        = #{user_signed_in?};

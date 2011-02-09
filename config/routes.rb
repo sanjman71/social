@@ -44,6 +44,7 @@ Social::Application.routes.draw do
     put :disable, :on => :member
     put :learn, :on => :member
     get :share_drink, :on => :member
+    get :details, :on => :member
   end
 
   # location routes
@@ -117,6 +118,7 @@ Social::Application.routes.draw do
   scope 'admin' do
     match '', :to => 'admin#index', :as => :admin
     match 'checkins_chart', :to => 'admin#checkins_chart', :as => :admin_checkins_chart
+    match 'emails_chart', :to => 'admin#emails_chart', :as => :admin_emails_chart
     match 'invites_chart', :to => 'admin#invites_chart', :as => :admin_invites_chart
     match 'tags_chart', :to => 'admin#tags_chart', :as => :admin_tags_chart
     match 'users_chart', :to => 'admin#users_chart', :as => :admin_users_chart

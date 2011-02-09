@@ -10,5 +10,11 @@
       = user.handle
       %small= checkin_time_ago(checkin.checkin_at)
     %h3= truncate(location.name, :length => 33)
-    %div#actions
-      = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => checkin})
+    - if @version == 2
+      %div#more-details{"data-url" => details_user_path(user, :format => 'js')}
+        >
+      %div#less-details{:style => 'display: none;'}
+        <
+    - else
+      %div#actions
+        = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => checkin})

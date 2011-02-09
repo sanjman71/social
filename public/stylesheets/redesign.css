@@ -590,7 +590,15 @@ ul#social-stream {
   top: 5px;
 }
 
-#social-stream #actions a {
+#social-stream #more-details, #social-stream #less-details {
+  position: absolute;
+  width: 15px;
+  right: 5px;
+  top: 5px;
+  font-size: 15px;
+}
+
+#social-stream #actions a, #social-stream-details #actions a {
   display: block;
   text-decoration: none;
   font-size: 9px;

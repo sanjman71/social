@@ -17,6 +17,8 @@ function unpauseTimer() {
   stream_paused = false;
 }
 
+// deprecated
+/*
 $.fn.init_stream_invites = function() {
   $("a#invite_user").live('click', function() {
     invitee_id  = $(this).attr('data-invitee-id');
@@ -45,6 +47,7 @@ $.fn.init_stream_invites = function() {
     return false;
   })
 }
+*/
 
 $.fn.init_stream_todos = function() {
 
@@ -313,9 +316,30 @@ $.fn.init_stream_timer = function() {
   }
 }
 
+$.fn.init_stream_user_details = function() {
+  $("div#more-details").click(function() {
+    pauseTimer();
+    // hide map
+    $("#social-stream-map").hide();
+    // get details
+    url = $(this).attr('data-url')
+    $.get(url, {}, null, "script");
+    // show reverse arrow
+    $(this).hide().siblings("#less-details").show();
+  })
+
+  $("div#less-details").click(function() {
+    // hide details
+    $("#social-stream-details").hide();
+    // show arrow
+    $(this).hide().siblings("#more-details").show();
+    unpauseTimer()
+  })
+}
+
 $(document).ready(function() {
   $(document).init_stream_todos();
-  $(document).init_stream_invites();
   $(document).init_stream_map();
   $(document).init_stream_timer();
+  $(document).init_stream_user_details();
 })

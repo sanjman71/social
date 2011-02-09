@@ -22,6 +22,9 @@ class HomeController < ApplicationController
       @streams      = streams
       @my_cities    = cities
       @pop_cities   = popular_cities
+
+      # version
+      @version      = params[:version].to_i
     end
 
     # add user city to my_cities list
