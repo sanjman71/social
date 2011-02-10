@@ -1,2 +1,2 @@
 page["#social-stream-details"].html(render(:partial => 'checkins/whatnow',
-                                           :locals => {:user => @user, :location => @location, :num_todos => @num_todos})).show()
+                                           :locals => {:user => @user, :location => @location, :num_todos => @num_todos})).show('slow')

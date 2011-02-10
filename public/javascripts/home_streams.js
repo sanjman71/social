@@ -318,8 +318,6 @@ $.fn.init_stream_timer = function() {
 
 $.fn.init_stream_user_details = function() {
   $("div#more-details").click(function() {
-    // hide map
-    $("div#social-stream-map").hide();
 
     var wrapper = $(this).closest('li');
 
@@ -327,10 +325,14 @@ $.fn.init_stream_user_details = function() {
       // unmark this
       wrapper.removeClass('selected').find("div#more-details").html(">");
       // hide details
-      $("#social-stream-details").hide();
+      $("#social-stream-details").hide('slow');
       // unpause timer
       unpauseTimer();
+      // show personal stats
+      $("div#personal-stats").show('slow');
     } else {
+      // hide personal stats
+      $("div#personal-stats").hide('slow');
       // pause timer
       pauseTimer();
       // get actions

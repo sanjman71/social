@@ -1,0 +1,9 @@
+#popular-cities.clearfix
+  = render(:partial => 'city_cloud', :locals => {:cities => pop_cities})
+
+%h4#map-city= @city.name
+#map.home
+  -# map is here
+
+#map-side-bar.hide
+  = render(:partial => 'locations/locations_map', :locals => {:locations => objects.collect(&:location)})
