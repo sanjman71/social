@@ -1,4 +1,4 @@
 .full-col{:style => 'font-size: 1.3em; font-weight: bold;'}
-  The '#{I18n.t("user.profile.invite", :name => user.pronoun.titleize)}' button sends a message to #{user.handle}'s friend that somebody on Outlately wants her to join.  We'll let you know when #{user.handle} signs up.
+  The '#{I18n.t("user.profile.invite", :name => user.him_her.titleize)}' button sends a message to #{user.handle}'s friend that somebody on Outlately wants #{user.him_her} to sign up.  We'll let you know when #{user.handle} signs up.
   -#%h4 Shallow Profile
   -#= user.facebook_id
