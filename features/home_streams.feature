@@ -15,6 +15,7 @@ Feature: Home Streams
     And I am logged in as "chicago_guy"
     And sphinx is indexed
     When I go to the home page
+    And I wait for "2" seconds
     Then I should see "Everyone" within "ul#social-stream-nav li.active"
     And I should see "chicago_coffee_gal" within "ul#social-stream"
     And I should see "chicago_coffee_guy" within "ul#social-stream"
@@ -33,6 +34,7 @@ Feature: Home Streams
     And I am logged in as "chicago_guy"
     And sphinx is indexed
     When I go to the home page
+    And I wait for "2" seconds
     Then I should see "Everyone" within "ul#social-stream-nav li.active"
     And I should see "chicago_coffee_gal" within "ul#social-stream"
     And I should not see "chicago_coffee_guy" within "ul#social-stream"
@@ -52,6 +54,7 @@ Feature: Home Streams
     And sphinx is indexed
     When I go to the home page
     And I follow "Ladies" within "ul#social-stream-nav"
+    And I wait for "2" seconds
     Then I should see "Ladies" within "ul#social-stream-nav li.active"
     And I should see "chicago_coffee_gal" within "ul#social-stream"
     And I should not see "chicago_coffee_guy" within "ul#social-stream"
@@ -80,6 +83,7 @@ Feature: Home Streams
     And sphinx is indexed
     When I go to the home page
     And I follow "Friends" within "ul#social-stream-nav"
+    And I wait for "2" seconds
     Then I should see "Friends" within "ul#social-stream-nav li.active"
     And I should see "chicago_friend1" within "ul#social-stream"
     And I should see "chicago_friend2" within "ul#social-stream"

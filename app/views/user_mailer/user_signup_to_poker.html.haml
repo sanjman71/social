@@ -1,3 +1,6 @@
 You wanted #{@invitee.handle} to signup for Outlately, and they did.  We thought you'd want to know.
+%br
+%br
+Click #{link_to('here', user_url(@invitee.id, 'utm_campaign' => 'signup-notify', 'utm_medium' => 'email', 'utm_source' => 'outlately'))} to see #{@invitee.handle}'s profile.
 
-= render(:partial => 'footer')
+= render(:partial => 'footer', :locals => {:campaign => 'signup-notify'})

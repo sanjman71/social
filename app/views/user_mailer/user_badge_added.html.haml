@@ -1,4 +1,6 @@
 You have been awarded the '#{@badge.name}' badge.  Keep up the checkins.
 %br
 %br
-Click #{link_to("here", profile_url, 'utm_campaign' => 'badge-added', 'utm_medium' => 'email', 'utm_source' => 'outlately')} to see your profile.
+Click #{link_to("here", profile_url('utm_campaign' => 'badge-added', 'utm_medium' => 'email', 'utm_source' => 'outlately'))} to see your profile.
+
+= render(:partial => 'footer', :locals => {:campaign => 'badge-added'})

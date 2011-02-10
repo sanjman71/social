@@ -1,4 +1,4 @@
-#{@poker.handle} wants #{@invitee.handle} to join Outlately.  Since you're friends with #{@invitee.handle}, we thought you might personally #{link_to('invite', invite_url)} #{@invitee.possessive_pronoun}.
+#{@poker.handle} wants #{@invitee.handle} to join Outlately.  Since you're friends with #{@invitee.handle}, we thought you might personally #{link_to('invite', invite_url('utm_campaign' => 'invite-poke', 'utm_medium' => 'email', 'utm_source' => 'outlately'))} #{@invitee.him_her}.
 
-= render(:partial => 'footer')
+= render(:partial => 'footer', :locals => {:campaign => 'invite-poke'})
 

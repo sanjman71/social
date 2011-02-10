@@ -18,4 +18,4 @@ Thanks for checking in at #{@checkin.location.try(:name)}. Here's who's out righ
         %br{:style => 'margin: 3px 0;'}
         = location.name
 
-= render(:partial => 'footer')
+= render(:partial => 'footer', :locals => {:campaign => 'realtime-checkins'})

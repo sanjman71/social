@@ -1,3 +1,4 @@
+- campaign = local_assigns[:campaign] || 'general'
 %p
 %p
-See who's out and about - #{link_to('Outlately', root_url)}
+See who's out and about - #{link_to('Outlately', root_url('utm_campaign' => campaign, 'utm_medium' => 'email', 'utm_source' => 'outlately'))}
