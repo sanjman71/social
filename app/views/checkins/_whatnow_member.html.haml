@@ -1,6 +1,13 @@
 .span-11.last#description{:style => 'font-size: 1.1em; line-height: 1.5em;'}
-  #{user.handle} has #{pluralize(user.checkins_count, 'checkin')} and #{pluralize(user.badges.count, 'social dna badge')}.
+  <strong>#{user.handle}</strong> has #{pluralize(user.checkins_count, 'checkin')} and #{pluralize(user.badges.count, 'social dna badge')}.
   %p
   Check out #{user.him_her} profile to send a message or learn more about #{user.handle}
 .span-3#actions{:style => 'margin: 20px 0;'}
   = link_to(I18n.t("home.stream.see_profile", :name => user.him_her.titleize), user_path(user), :id => 'meet_user')
+
+.span-11.last#description{:style => 'font-size: 1.1em; line-height: 1.5em;'}
+  Ask <strong>#{user.handle}</strong> to plan a checkin.
+
+.span-4#actions{:style => 'margin: 20px 0;'}
+  = link_to("Ask #{user.him_her.titleize} To Plan a Checkin", '#')
+
