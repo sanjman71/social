@@ -1,1 +1,0 @@
-page["#social-stream-details"].html(render(:partial => 'users/details', :locals => {:user => @user})).show()

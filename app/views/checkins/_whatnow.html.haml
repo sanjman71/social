@@ -1,0 +1,7 @@
+.span-11.last{:style => 'padding: 10px;'}
+  - if user.member?
+    = render(:partial => 'checkins/whatnow_plan', :locals => {:location => location, :user => user, :num_todos => num_todos})
+  - else
+    = render(:partial => 'checkins/whatnow_invite', :locals => {:location => location, :user => user})
+    = render(:partial => 'checkins/whatnow_plan', :locals => {:location => location, :user => user, :num_todos => num_todos})
+      

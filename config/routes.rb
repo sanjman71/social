@@ -27,6 +27,10 @@ Social::Application.routes.draw do
   match 'accounts/:service/unlink', :to => "accounts#unlink", :as => :unlink_account, :via => [:delete]
   match 'growls', :to => "growls#index"
 
+  resources :checkins, :only => [] do
+    get :whatnow, :on => :member
+  end
+
   # user routes
   match 'users/:geo(/:radius)', :to => 'users#search',
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_users
@@ -44,7 +48,6 @@ Social::Application.routes.draw do
     put :disable, :on => :member
     put :learn, :on => :member
     get :share_drink, :on => :member
-    get :details, :on => :member
   end
 
   # location routes

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:activate, :become, :bucks, :details, :disable, :learn, :share_drink, :show]
+  before_filter :find_user, :only => [:activate, :become, :bucks, :disable, :learn, :share_drink, :show]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -180,11 +180,6 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(redirect_back_path(user_path(@user))) }
     end
-  end
-
-  # GET /users/1/details
-  def details
-
   end
 
   protected

@@ -1,5 +1,6 @@
 class CheckinsController < ApplicationController
-  before_filter       :authenticate_user!, :only => [:index, :search]
+  before_filter       :authenticate_user!, :only => [:whatnow, :index, :search]
+  before_filter       :find_checkin, :only => [:whatnow]
   before_filter       :find_user, :only => [:search]
   respond_to          :html, :json, :js
 
@@ -94,7 +95,21 @@ class CheckinsController < ApplicationController
     end
   end
 
+  # GET /checkins/1/whatnow
+  def whatnow
+    # @checkin initalized in before filter
+
+    @user       = @checkin.user
+    @location   = @checkin.location
+
+    @num_todos  = current_user.planned_checkins.active.count
+  end
+
   protected
+
+  def find_checkin
+    @checkin = Checkin.find(params[:id])
+  end
 
   def find_user
     @user = params[:user_id] ? User.find(params[:user_id]) : current_user

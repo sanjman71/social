@@ -318,22 +318,29 @@ $.fn.init_stream_timer = function() {
 
 $.fn.init_stream_user_details = function() {
   $("div#more-details").click(function() {
-    pauseTimer();
     // hide map
-    $("#social-stream-map").hide();
-    // get details
-    url = $(this).attr('data-url')
-    $.get(url, {}, null, "script");
-    // show reverse arrow
-    $(this).hide().siblings("#less-details").show();
-  })
+    $("div#social-stream-map").hide();
 
-  $("div#less-details").click(function() {
-    // hide details
-    $("#social-stream-details").hide();
-    // show arrow
-    $(this).hide().siblings("#more-details").show();
-    unpauseTimer()
+    var wrapper = $(this).closest('li');
+
+    if (wrapper.hasClass('selected')) {
+      // unmark this
+      wrapper.removeClass('selected').find("div#more-details").html(">");
+      // hide details
+      $("#social-stream-details").hide();
+      // unpause timer
+      unpauseTimer();
+    } else {
+      // pause timer
+      pauseTimer();
+      // get actions
+      url = $(this).attr('data-url')
+      $.get(url, {}, null, "script");
+      // unmark all
+      $("li.selected").removeClass('selected').find("div#more-details").html(">");
+      // mark this
+      wrapper.addClass('selected').find("div#more-details").html("<");
+    }
   })
 }
 
