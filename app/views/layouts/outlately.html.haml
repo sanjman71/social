@@ -77,5 +77,6 @@
     = render :partial => 'layouts/uservoice'
     -# google analytics
     = render :partial => 'layouts/google_analytics'
-    -# gosquare realtime analytics
-    = render :partial => 'layouts/gosquared_analytics'
+    - if Rails.env == 'production'
+      -# gosquare realtime analytics
+      = render :partial => 'layouts/gosquared_analytics'
