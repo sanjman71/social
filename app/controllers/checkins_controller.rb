@@ -102,7 +102,7 @@ class CheckinsController < ApplicationController
     @user       = @checkin.user
     @location   = @checkin.location
 
-    @num_todos  = current_user.planned_checkins.active.count
+    @todos      = current_user.planned_checkins.active
   end
 
   protected

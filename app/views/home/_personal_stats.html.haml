@@ -7,5 +7,10 @@
     %p
     Your last checkin was at <strong>#{last_checkin.location.try(:name)}</strong> #{checkin_time_ago(last_checkin.checkin_at)}.
   %p
-  - num_todos  = current_user.planned_checkins.active.count
-  You have <strong>#{pluralize(num_todos, 'planned checkin')}</strong> on your todo list.
+  - todos = current_user.planned_checkins.active
+  - if false #todos.any?
+    - todo_locations  = todos.collect(&:location)
+    - todo_names      = todo_locations.collect(&:name) rescue []
+    You have <strong>#{todo_names.to_sentence}</strong> on your planned checkin list.
+  - else
+    You don't have any planned checkins.  Add one by clicking on a checkin in the stream to the left and clicking 'Plan To Go Here'.

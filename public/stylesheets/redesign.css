@@ -1067,14 +1067,13 @@ ul#profile-checked-in-at li div.profile-checked-in-at-tags a.profile-add-tags:ho
   box-shadow: 0 0 5px rgba(0,0,0,.4);
   position: absolute;
   z-index: 10000;
-  right: 10px;
-  top: 32px;
+  right: 70px;
   background: #3a2e23;
   min-width: 250px;
 }
 
-#social-stream li .planning-modal h4 {
-  color: #ffab0a;
+.planning-modal h4 {
+  color: #fff;
   font-size: 14px;
   font-weight: bold;
   margin: 0;

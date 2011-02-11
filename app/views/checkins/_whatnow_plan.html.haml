@@ -1,10 +1,16 @@
 .span-11.last#description{:style => 'font-size: 1.1em; line-height: 1.5em;'}
   Planning to go somewhere is a great way to let your friends know where you are going to be, and new people can express interest in buying you a drink or meeting up.
   %p
-  You have #{pluralize(num_todos, 'planned checkin')} on your todo list.
+  - if todos.any?
+    - todo_locations  = todos.collect(&:location)
+    - todo_names      = todo_locations.collect(&:name) rescue []
+    You have #{todo_names.to_sentence} on your planned checkin list.
+  - else
+    Add a planned checkin.
   %p
   Plan a checkin at <strong>#{location.name}</strong>.
 .span-3#actions{:style => 'margin: 20px 0;'}
+  = render(:partial => 'home/todo_pick_date', :locals => {:location => location})
   - plan = local_assigns[:plan] || :plan
   -# todos are always allowed
   - plan_text = (plan == :plan) ? I18n.t("home.stream.plan_todo") : I18n.t("home.stream.join_todo")

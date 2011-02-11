@@ -52,7 +52,7 @@ $.fn.init_stream_invites = function() {
 $.fn.init_stream_todos = function() {
 
   $("a#pick_todo_date").live('click', function() {
-    modal = $(this).closest("li").find("div.planning-modal");
+    modal = $(this).closest("div#actions").find("div.planning-modal");
 
     if ($(this).hasClass('added')) {
       return false;
@@ -67,25 +67,23 @@ $.fn.init_stream_todos = function() {
       // un-dim button, hide dialog, restart timer
       $(this).css('opacity', 1.0);
       modal.hide();
-      unpauseTimer();
     }
 
     return false;
   })
 
-  $("input[name='todo_date']").change(function() {
-    // date was selected
-
+  $("input#today, input#tomorrow").live('change', function() {
+    // today or tomorrow was selected
     // enable submit
-    $(this).closest('li').find("input#add_todo").attr('disabled', '');
+    $(this).closest('div#actions').find("input#add_todo").attr('disabled', '');
     return true;
   })
 
   $("input#add_todo").live('click', function() {
     input   = $(this);
     url     = $(this).attr('data-url');
-    modal   = $(this).closest("li").find("div.planning-modal");
-    abutton = $(this).closest("li").find("a#pick_todo_date");
+    modal   = $(this).closest("div#actions").find("div.planning-modal");
+    abutton = $(this).closest("div#actions").find("a#pick_todo_date");
 
     if (input.hasClass('added')) {
       // already added
@@ -93,7 +91,7 @@ $.fn.init_stream_todos = function() {
     }
 
     // find selected date
-    date = $(this).closest('li').find("input:checked").val();
+    date = $(this).closest('div#actions').find("input:checked").val();
 
     // update interface, disable button
     input.val("Adding ...").addClass('disabled').attr('disabled', '');
@@ -104,9 +102,7 @@ $.fn.init_stream_todos = function() {
       // close dialog
       modal.hide();
       // change link/button opacity
-      abutton.css('opacity', 0.5).addClass('added');
-      // restart timer
-      unpauseTimer();
+      abutton.css('opacity', 1.0).addClass('added');
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);
