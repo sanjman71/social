@@ -127,9 +127,6 @@ class PlannedCheckinTest < ActiveSupport::TestCase
         assert_equal 0, @user.locationships.find_by_location_id(@chi_sbux.id).todo_checkins
         # should add 10 points for a checkin and 50 points for completing a todo
         assert_equal @points+60, @user.reload.points
-        # should send email to user
-        assert_equal 1, match_delayed_jobs(/CheckinMailer/)
-        assert_equal 1, match_delayed_jobs(/todo_completed/)
       end
     end
     
@@ -149,9 +146,6 @@ class PlannedCheckinTest < ActiveSupport::TestCase
         assert_equal 0, @user.locationships.find_by_location_id(@chi_sbux.id).todo_checkins
         # should add 10 points for a checkin and -10 points for an expired todo
         assert_equal @points, @user.reload.points
-        # should send email to user
-        assert_equal 1, match_delayed_jobs(/CheckinMailer/)
-        assert_equal 1, match_delayed_jobs(/todo_expired/)
       end
     end
   end

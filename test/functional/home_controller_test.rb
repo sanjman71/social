@@ -7,7 +7,6 @@ class HomeControllerTest < ActionController::TestCase
     should route(:put, '/stream/daters').to(:controller => 'home', :action => 'stream', :name => 'daters')
     should route(:put, '/city/chicago').to(:controller => 'home', :action => 'city', :name => 'chicago')
     should route(:get, '/about').to(:controller => 'home', :action => 'about')
-    should route(:get, '/welcome').to(:controller => 'home', :action => 'welcome')
   end
 
   def setup
