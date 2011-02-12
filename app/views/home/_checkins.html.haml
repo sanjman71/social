@@ -10,9 +10,8 @@
       = user.handle
       %small= checkin_time_ago(checkin.checkin_at)
     %h3= truncate(location.name, :length => 33)
-    - if @version == 2
-      %div#more-details{"data-url" => whatnow_checkin_path(checkin, :format => 'js')}
-        >
+    - if @version == 0
+      %div.more{"data-url" => whatnow_checkin_path(checkin, :format => 'js')}
     - else
       %div#actions
         = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => checkin})

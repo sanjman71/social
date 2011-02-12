@@ -17,19 +17,14 @@ function unpauseTimer() {
   stream_paused = false;
 }
 
-// deprecated
-/*
 $.fn.init_stream_invites = function() {
   $("a#invite_user").live('click', function() {
     invitee_id  = $(this).attr('data-invitee-id');
     url         = $(this).attr('data-url');
 
-    pauseTimer();
     $(this).css('opacity', 0.5);
 
     $.put(url, {invitee_id: invitee_id}, function(data) {
-      // restart timer
-      unpauseTimer();
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);
@@ -47,7 +42,6 @@ $.fn.init_stream_invites = function() {
     return false;
   })
 }
-*/
 
 $.fn.init_stream_todos = function() {
 
@@ -313,13 +307,14 @@ $.fn.init_stream_timer = function() {
 }
 
 $.fn.init_stream_user_details = function() {
-  $("div#more-details").click(function() {
+  $("div#more-details, div.more").click(function() {
 
     var wrapper = $(this).closest('li');
 
     if (wrapper.hasClass('selected')) {
-      // unmark this
-      wrapper.removeClass('selected').find("div#more-details").html(">");
+      // unmark this object
+      $(this).removeClass('opened');
+      wrapper.removeClass('selected');
       // hide details
       $("#social-stream-details").hide('slow');
       // unpause timer
@@ -335,15 +330,18 @@ $.fn.init_stream_user_details = function() {
       url = $(this).attr('data-url')
       $.get(url, {}, null, "script");
       // unmark all
-      $("li.selected").removeClass('selected').find("div#more-details").html(">");
-      // mark this
-      wrapper.addClass('selected').find("div#more-details").html("<");
+      $("li.selected").removeClass('selected');
+      $("div.more.opened").removeClass('opened');
+      // mark wrapper and this
+      $(this).addClass('opened');
+      wrapper.addClass('selected');
     }
   })
 }
 
 $(document).ready(function() {
   $(document).init_stream_todos();
+  $(document).init_stream_invites();
   $(document).init_stream_map();
   $(document).init_stream_timer();
   $(document).init_stream_user_details();

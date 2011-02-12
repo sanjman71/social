@@ -4,7 +4,7 @@
   - if todos.any?
     - todo_locations  = todos.collect(&:location)
     - todo_names      = todo_locations.collect(&:name) rescue []
-    You have #{todo_names.to_sentence} on your planned checkin list.
+    You have <strong>#{todo_names.to_sentence}</strong> on your planned checkin list.
   - else
     Add a planned checkin.
   %p

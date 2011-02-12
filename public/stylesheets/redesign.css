@@ -594,12 +594,21 @@ ul#social-stream {
   top: 5px;
 }
 
-#social-stream #more-details, #social-stream #less-details {
+#social-stream .more {
   position: absolute;
-  width: 15px;
-  right: 5px;
-  top: 5px;
-  font-size: 15px;
+  width: 25px;
+  height: 25px;
+  right: 3px;
+  top: 7px;
+  background: url(/images/right-arrow.png);
+  background-size: 70%;
+  background-repeat: no-repeat;
+}
+
+#social-stream .more.opened {
+  background: url(/images/left-arrow.png);
+  background-size: 70%;
+  background-repeat: no-repeat;
 }
 
 #social-stream #actions a, #social-stream-details #actions a {

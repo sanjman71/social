@@ -8,7 +8,7 @@
     Your last checkin was at <strong>#{last_checkin.location.try(:name)}</strong> #{checkin_time_ago(last_checkin.checkin_at)}.
   %p
   - todos = current_user.planned_checkins.active
-  - if false #todos.any?
+  - if todos.any?
     - todo_locations  = todos.collect(&:location)
     - todo_names      = todo_locations.collect(&:name) rescue []
     You have <strong>#{todo_names.to_sentence}</strong> on your planned checkin list.

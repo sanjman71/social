@@ -119,7 +119,7 @@ class InvitationsController < ApplicationController
     else
       # invitee is not a friend, find member friend and create invite poke
       @poke     = InvitePoke.find_or_create(@invitee, @poker)
-      @growls   = [{:message => "Thanks, we'll ask them to join the site.", :timeout => 5000}]
+      @growls   = [{:message => "Thanks, we'll ask #{@invitee.him_her} to join the site.", :timeout => 5000}]
       @hash     = {'status' => 'ok', 'poke_id' => @poke.id, 'growls' => @growls}
     end
   rescue Exception => e

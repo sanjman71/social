@@ -27,7 +27,7 @@ class HomeController < ApplicationController
       @version      = params[:version].to_i
 
       # map depends on the version
-      @map          = @version == 2 ? false : true
+      @map          = @version == 1 ?  true : false
     end
 
     # add user city to my_cities list
