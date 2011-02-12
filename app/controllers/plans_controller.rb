@@ -80,6 +80,13 @@ class PlansController < ApplicationController
     end
   end
 
+  # GET /plans/1/whatnow
+  def whatnow
+    @todo       = PlannedCheckin.find(params[:id])
+    @user       = @todo.user
+    @location   = @todo.location
+  end
+
   protected
 
   def find_going

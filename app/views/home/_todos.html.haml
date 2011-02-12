@@ -10,5 +10,9 @@
       = user.handle
       %small= todo.going.downcase
     %h3= truncate(location.name, :length => 35)
-    %div#actions
-      = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => todo, :plan => :join})
+    - if @map
+      %div#actions
+        = render(:partial => 'home/actions', :locals => {:user => user, :location => location, :object => todo, :plan => :join})
+    - else
+      %div.closed{"data-url" => whatnow_todo_path(todo, :format => 'js')}
+

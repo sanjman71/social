@@ -68,6 +68,7 @@ Social::Application.routes.draw do
   match 'plans/join(/:plan_id)', :to => 'plans#join', :via => [:put], :as => :join_todo
   match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_todo_location
   match 'plans', :to => 'plans#index', :via => [:get]
+  match 'plans/:id/whatnow', :to => 'plans#whatnow', :via => [:get], :as => :whatnow_todo
 
   # shouts
   resources :shouts, :only => [:index]

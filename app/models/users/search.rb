@@ -571,8 +571,24 @@ module Users::Search
   #   [sort_expr]
   # end
 
+  # sort objects by utc timestamp_at, upcoming then recent
+  def sort_coming_recent_timestamp_at(options={})
+    dtime1    = 2.days.from_now.utc.to_i
+    dtime2    = 1.day.from_now.utc.to_i
+    dtime3    = Time.now.utc.to_i
+    dtime4    = 1.day.ago.utc.to_i
+    dtime5    = 7.days.ago.utc.to_i
+    dtime6    = 14.days.ago.utc.to_i
+    dtime7    = 30.days.ago.utc.to_i
+    sort_expr = "IF(timestamp_at > #{dtime1}, 7.0, IF(timestamp_at > #{dtime2}, 9.0,
+                 IF(timestamp_at > #{dtime3}, 11.0, IF(timestamp_at > #{dtime4}, 5.0,
+                 IF(timestamp_at > #{dtime5}, 3.0, IF(timestamp_at > #{dtime6}, 2.5,
+                 IF(timestamp_at > #{dtime7}, 2.0, 1.0)))))))"
+    [sort_expr]
+  end
+
   # sort objects by utc timestamp_at, most recent first
-  def sort_timestamp_at(options={})
+  def sort_recent_timestamp_at(options={})
     dtime1    = 1.day.ago.utc.to_i
     dtime2    = 7.days.ago.utc.to_i
     dtime3    = 14.days.ago.utc.to_i

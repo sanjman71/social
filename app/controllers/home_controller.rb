@@ -12,7 +12,7 @@ class HomeController < ApplicationController
       @method       = "search_#{@stream}_data_streams"
       # validate method
       @method       = @user.respond_to?(@method) ? @method : "search_everyone_data_streams"
-      @order        = [:sort_closer_locations, :sort_timestamp_at, :sort_females]
+      @order        = [:sort_closer_locations, :sort_coming_recent_timestamp_at, :sort_females]
       @radius       = 100
       @objects      = @user.send(@method, :limit => checkins_start_count,
                                           :geo_origin => [@city.lat.try(:radians), @city.lng.try(:radians)],
@@ -23,11 +23,8 @@ class HomeController < ApplicationController
       @my_cities    = cities
       @pop_cities   = popular_cities
 
-      # version
-      @version      = params[:version].to_i
-
       # map depends on the version
-      @map          = @version == 1 ?  true : false
+      @map          = params[:map].to_i == 1 ?  true : false
     end
 
     # add user city to my_cities list

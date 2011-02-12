@@ -307,13 +307,13 @@ $.fn.init_stream_timer = function() {
 }
 
 $.fn.init_stream_user_details = function() {
-  $("div#more-details, div.more").click(function() {
+  $("div.closed").click(function() {
 
     var wrapper = $(this).closest('li');
 
     if (wrapper.hasClass('selected')) {
       // unmark this object
-      $(this).removeClass('opened');
+      $(this).removeClass('open');
       wrapper.removeClass('selected');
       // hide details
       $("#social-stream-details").hide('slow');
@@ -329,11 +329,11 @@ $.fn.init_stream_user_details = function() {
       // get actions
       url = $(this).attr('data-url')
       $.get(url, {}, null, "script");
-      // unmark all
+      // unmark all objects
       $("li.selected").removeClass('selected');
-      $("div.more.opened").removeClass('opened');
-      // mark wrapper and this
-      $(this).addClass('opened');
+      $("div.closed.open").removeClass('open');
+      // mark this object
+      $(this).addClass('open');
       wrapper.addClass('selected');
     }
   })

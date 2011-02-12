@@ -25,7 +25,7 @@ module Checkins::Match
   # find dater checkins with matching locations
   def match_exact(options={})
     location_ids = [location.id]
-    options.merge!(:with_location_ids => location_ids, :order => :sort_timestamp_at)
+    options.merge!(:with_location_ids => location_ids, :order => :sort_recent_timestamp_at)
     user.search_daters_checkins(options)
   end
 
@@ -37,14 +37,14 @@ module Checkins::Match
     return [] if tag_ids.blank?
     options.merge!(:with_tag_ids => tag_ids, :order => :sort_similar_locations, :miles => 50,
                    :geo_origin => [location.lat.radians, location.lng.radians],
-                   :order => :sort_timestamp_at)
+                   :order => :sort_recent_timestamp_at)
     user.search_daters_checkins(options)
   end
 
   def match_nearby(options={})
     options.merge!(:order => :sort_similar_locations, :miles => 50,
                    :geo_origin => [location.lat.radians, location.lng.radians],
-                   :order => :sort_timestamp_at)
+                   :order => :sort_recent_timestamp_at)
     user.search_daters_checkins(options)
   end
 end

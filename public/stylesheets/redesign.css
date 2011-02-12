@@ -594,7 +594,7 @@ ul#social-stream {
   top: 5px;
 }
 
-#social-stream .more {
+#social-stream .closed {
   position: absolute;
   width: 25px;
   height: 25px;
@@ -605,7 +605,7 @@ ul#social-stream {
   background-repeat: no-repeat;
 }
 
-#social-stream .more.opened {
+#social-stream .closed.open {
   background: url(/images/left-arrow.png);
   background-size: 70%;
   background-repeat: no-repeat;

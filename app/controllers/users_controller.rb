@@ -167,18 +167,24 @@ class UsersController < ApplicationController
     @sender  = current_user
     @options = {'sender_id' => @sender.id, 'to_id' => @user.id}
     Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
+    @notice  = "We'll send them a note saying you'd like to grab a drink"
 
     # log message
     Message.log("[user:#{@sender.id}] #{@sender.handle} sent share a drink message to:#{@user.handle}")
-
-    flash[:notice] = "We'll send them a note saying you'd like to grab a drink"
 
     # track share drink action
     track_page("/action/share/drink")
     flash[:tracker] = ga_tracker
 
     respond_to do |format|
-      format.html { redirect_to(redirect_back_path(user_path(@user))) }
+      format.html do
+        flash[:notice] = @notice
+        redirect_to(redirect_back_path(user_path(@user))) and return
+      end
+      format.json do
+        @growls = [{:message => @notice, :timeout => 2000}]
+        render(:json => {'status' => 'ok', 'growls' => @growls}.to_json) and return
+      end
     end
   end
 

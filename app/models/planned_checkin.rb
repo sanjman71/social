@@ -31,7 +31,7 @@ class PlannedCheckin < ActiveRecord::Base
     zero = "0"
     has zero, :as => :checkin_ids, :type => :integer
     has zero, :as => :shout_ids, :type => :integer
-    has :planned_at, :as => :timestamp_at
+    has 'IF(going_at, going_at, planned_at)', :as => :timestamp_at, :type => :datetime
     # user
     has user(:id), :as => :user_ids
     indexes user(:handle), :as => :handle
