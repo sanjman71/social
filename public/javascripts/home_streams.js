@@ -335,6 +335,8 @@ $.fn.init_stream_user_details = function() {
       // mark this object
       $(this).addClass('open');
       wrapper.addClass('selected');
+      // track event
+      track_event('Checkin Stream', 'Open')
     }
   })
 }
