@@ -99,7 +99,9 @@ Feature: Home Streams
     When I click "li.checkin div.closed"
     And I wait for "2" seconds
     Then I should see "Ask Her To Plan a Checkin"
+    And I should see "Plan To Go Here"
 
+    # send add_todo_request
     When I follow "Ask Her To Plan a Checkin"
     And I wait for "2" seconds
     Then I should see "We'll send them a note"
@@ -108,6 +110,12 @@ Feature: Home Streams
     Then "chicago_coffee_gal@gmail.com" should receive an email with subject "Outlately: chicago_guy sent you a message..."
     When I open the email with subject "Outlately: chicago_guy sent you a message..."
     Then I should see "He wants you to plan a checkin or two.  Its a great way to meet new people." in the email body
+
+    # plan a checkin
+    When I follow "Plan To Go Here"
+    And I choose "today" within "div#social-stream-details"
+    And I press "add_todo" within "div#social-stream-details"
+    Then I should see "If you go there within 7 days"
 
   @javascript @todos
   Scenario: User should be able to see todo details and do stuff
