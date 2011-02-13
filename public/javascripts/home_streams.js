@@ -137,19 +137,6 @@ $.fn.init_stream_todos = function() {
   })
 }
 
-$.fn.init_stream_map = function() {
-  // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
-  if (stream_map) {
-    $('#map').jMapping({
-      category_icon_options: {
-        'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
-        'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
-        'default': {primaryColor: '#465AE0', height: '32', width: '32'}
-      }
-    });
-  }
-}
-
 $.fn.init_stream_timer = function() {
 
   function startTimer() {
@@ -315,15 +302,15 @@ $.fn.init_stream_user_details = function() {
       // unmark this object
       $(this).removeClass('open');
       wrapper.removeClass('selected');
-      // hide details
-      $("#social-stream-details").hide('slow');
+      // hide whatever is currently showing
+      $("div#personal-stats:visible, div#social-stream-details:visible").hide('slow');
       // unpause timer
       unpauseTimer();
       // show personal stats
       $("div#personal-stats").show('slow');
     } else {
-      // hide personal stats
-      $("div#personal-stats").hide('slow');
+      // hide whatever is currently showing
+      $("div#personal-stats:visible, div#social-stream-details:visible").hide('slow');
       // pause timer
       pauseTimer();
       // get actions
@@ -341,10 +328,23 @@ $.fn.init_stream_user_details = function() {
   })
 }
 
+$.fn.init_stream_map = function() {
+  // google docs: http://gmaps-utility-library.googlecode.com/svn/trunk/mapiconmaker/1.1/docs/reference.html
+  if (stream_map) {
+    $('#map').jMapping({
+      category_icon_options: {
+        'hot': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '40', width: '40'},
+        'async': {primaryColor: '#FF6600', cornerColor: '#EBEBEB', height: '32', width: '32'},
+        'default': {primaryColor: '#465AE0', height: '32', width: '32'}
+      }
+    });
+  }
+}
+
 $(document).ready(function() {
   $(document).init_stream_todos();
   $(document).init_stream_invites();
-  $(document).init_stream_map();
   $(document).init_stream_timer();
   $(document).init_stream_user_details();
+  $(document).init_stream_map();
 })
