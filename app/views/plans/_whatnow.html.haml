@@ -2,12 +2,12 @@
   .span-11.last#description{:style => 'font-size: 1.1em; line-height: 1.5em;'}
     <strong>#{@user.handle}</strong> is planning on going to #{@location.name}.
     %p
-    Make a plan to go there, or offer to share a drink with #{@user.him_her}.
+    Make a plan to go there too, or offer to share a drink with #{@user.him_her}.
   .span-3#actions{:style => 'margin: 20px 0;'}
     = render(:partial => 'home/todo_pick_date', :locals => {:location => @location})
-    -# add plan todo link
+    -# plan todo link
     = link_to(I18n.t("home.stream.plan_todo"), '#', :id => 'pick_todo_date', "data-url" => add_todo_location_path(@location.id))
   .span-3#actions{:style => 'margin: 20px 10px;'}
-    = link_to('Share a Drink', '#', :id => 'share_drink', "data-url" => share_drink_user_path(@user.id))
+    = link_to('Share a Drink', '#', :id => 'share_drink', 'data-url' => share_drink_user_path(@user.id, :format => 'json'))
 
       

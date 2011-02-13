@@ -82,8 +82,8 @@ Feature: Home Streams
     And I should see "chicago_friend2" within "ul#social-stream"
     And I should not see "chicago_guy2" within "ul#social-stream"
 
-  @javascript 
-  Scenario: User should be able to see more details about a checkin and do stuff
+  @javascript @checkins
+  Scenario: User should be able to see checkin details and do stuff
     Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
     And user "chicago_coffee_gal" has email "chicago_coffee_gal@gmail.com"
@@ -108,7 +108,33 @@ Feature: Home Streams
     Then "chicago_coffee_gal@gmail.com" should receive an email with subject "Outlately: chicago_guy sent you a message..."
     When I open the email with subject "Outlately: chicago_guy sent you a message..."
     Then I should see "He wants you to plan a checkin or two.  Its a great way to meet new people." in the email body
-  
+
+  @javascript @todos
+  Scenario: User should be able to see todo details and do stuff
+    Given a user "chicago_guy" exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user "chicago_coffee_gal" exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
+    And user "chicago_coffee_gal" has email "chicago_coffee_gal@gmail.com"
+    And a location "Chicago Starbucks" exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    And a planned_checkin exists with user: user "chicago_coffee_gal", location: location "Chicago Starbucks", planned_at: "#{1.day.ago}", going_at: "#{1.day.from_now}"
+    And I am logged in as "chicago_guy"
+    And sphinx is indexed
+    When I go to the home page
+    Then I should see "Everyone" within "ul#social-stream-nav li.active"
+    And I should see "chicago_coffee_gal" within "ul#social-stream"
+
+    When I click "li.todo div.closed"
+    And I wait for "2" seconds
+    Then I should see "Share a Drink"
+
+    When I follow "Share a Drink"
+    And I wait for "2" seconds
+    Then I should see "We'll send them a note"
+
+    When the resque jobs are processed
+    Then "chicago_coffee_gal@gmail.com" should receive an email with subject "Outlately: chicago_guy wants to share a drink with you..."
+    When I open the email with subject "Outlately: chicago_guy wants to share a drink with you..."
+    Then I should see "Want to have a drink with him?" in the email body
+
   # @javascript
   # Scenario: User sees checkins in the past day in the Today stream
   #   Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"

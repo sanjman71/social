@@ -141,7 +141,7 @@ $.fn.init_stream_user_todos = function() {
 }
 
 $.fn.init_stream_user_add_todo_request = function() {
-  $("a#user_add_todo_request").live('click', function() {
+  $("a#add_todo_request").live('click', function() {
     link  = $(this);
     url   = $(this).attr('data-url');
 
@@ -152,6 +152,28 @@ $.fn.init_stream_user_add_todo_request = function() {
       link.css('opacity', 1.0);
       // track action
       track_page("/action/add_todo_request");
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
+    }, 'json');
+
+    return false;
+  })
+}
+
+$.fn.init_stream_user_share_drink = function() {
+  $("a#share_drink").live('click', function() {
+    link  = $(this);
+    url   = $(this).attr('data-url');
+
+    link.css('opacity', 0.5);
+
+    $.put(url, {}, function(data) {
+      // update interface
+      link.css('opacity', 1.0);
+      // track action
+      track_page("/action/share_drink");
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);
@@ -367,9 +389,10 @@ $.fn.init_stream_map = function() {
 }
 
 $(document).ready(function() {
+  $(document).init_stream_user_invites();
   $(document).init_stream_user_todos();
   $(document).init_stream_user_add_todo_request();
-  $(document).init_stream_user_invites();
+  $(document).init_stream_user_share_drink();
   $(document).init_stream_timer();
   $(document).init_stream_user_details();
   $(document).init_stream_map();

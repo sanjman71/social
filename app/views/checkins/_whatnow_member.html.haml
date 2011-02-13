@@ -9,5 +9,5 @@
   Ask <strong>#{user.handle}</strong> to plan a checkin, and we'll send #{user.him_her} a message with the request.
 
 .span-4#actions{:style => 'margin: 20px 0;'}
-  = link_to("Ask #{user.him_her.titleize} To Plan a Checkin", '#', :id => 'user_add_todo_request', 'data-url' => add_todo_request_user_path(user.id, :format => 'json'))
+  = link_to("Ask #{user.him_her.titleize} To Plan a Checkin", '#', :id => 'add_todo_request', 'data-url' => add_todo_request_user_path(user.id, :format => 'json'))
 
