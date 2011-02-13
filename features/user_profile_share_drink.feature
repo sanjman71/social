@@ -16,9 +16,9 @@ Feature: User Profile Share a Drink
     And I should see "_gaq.push(['_trackPageview', '/action/share/drink'])"
     # And I should see "We'll send them a note saying you'd like to grab a drink"
 
-    And the resque jobs are processed
-    Then "chicago_gal@gmail.com" should receive an email with subject "Outlately: Want to share a drink with..."
-    When I open the email with subject "Outlately: Want to share a drink with..."
-    Then I should see "chicago_guy wants to share a drink with you" in the email body
+    When the resque jobs are processed
+    Then "chicago_gal@gmail.com" should receive an email with subject "Outlately: chicago_guy wants to share a drink with you..."
+    When I open the email with subject "Outlately: chicago_guy wants to share a drink with you..."
+    Then I should see "Want to have a drink with him?" in the email body
     Then I should see "Click" in the email body
   

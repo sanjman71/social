@@ -1,0 +1,5 @@
+#{@sender.he_she.titleize} wants you to plan a checkin or two.  Its a great way to meet new people.
+%p
+Click #{link_to('here', user_url(@sender.id, 'utm_campaign' => 'add-todo-request', 'utm_medium' => 'email', 'utm_source' => 'outlately'))} to respond.
+
+= render(:partial => 'footer', :locals => {:campaign => 'add-todo-request'})

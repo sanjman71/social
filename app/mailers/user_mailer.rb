@@ -121,11 +121,24 @@ class UserMailer < ActionMailer::Base
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
     @email    = @to.email_address
-    @subject  = "Outlately: Want to share a drink with..."
+    @subject  = "Outlately: #{@sender.handle} wants to share a drink with you..."
 
     # log and track
     log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
     track("share_drink")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
+  def user_add_todo_request(options)
+    @sender   = User.find(options['sender_id'])
+    @to       = User.find(options['to_id'])
+    @email    = @to.email_address
+    @subject  = "Outlately: #{@sender.handle} sent you a message..."
+
+    # log and track
+    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    track("add_todo")
 
     mail(:to => @email, :subject => @subject)
   end

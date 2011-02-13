@@ -17,7 +17,7 @@ function unpauseTimer() {
   stream_paused = false;
 }
 
-$.fn.init_stream_invites = function() {
+$.fn.init_stream_user_invites = function() {
   $("a#invite_user").live('click', function() {
     invitee_id  = $(this).attr('data-invitee-id');
     url         = $(this).attr('data-url');
@@ -43,7 +43,7 @@ $.fn.init_stream_invites = function() {
   })
 }
 
-$.fn.init_stream_todos = function() {
+$.fn.init_stream_user_todos = function() {
 
   $("a#pick_todo_date").live('click', function() {
     modal = $(this).closest("div#actions").find("div.planning-modal");
@@ -106,10 +106,12 @@ $.fn.init_stream_todos = function() {
     return false;
   })
 
+  // deprecated
   // join an existing plan
+  /*
   $("a#join_todo").live('click', function() {
     link  = $(this);
-    path  = $(this).attr('data-url');
+    url   = $(this).attr('data-url');
 
     if ($(this).hasClass('added')) {
       // already added
@@ -122,11 +124,34 @@ $.fn.init_stream_todos = function() {
     // update interface
     link.text("Adding ...");
   
-    $.put(path, {}, function(data) {
+    $.put(url, {}, function(data) {
       // update interface
       link.text("Added").css('opacity', 0.5).addClass('added');
       // restart timer
       unpauseTimer();
+      // show any growls
+      if (data['growls']) {
+        show_growls(data['growls']);
+      }
+    }, 'json');
+
+    return false;
+  })
+  */
+}
+
+$.fn.init_stream_user_add_todo_request = function() {
+  $("a#user_add_todo_request").live('click', function() {
+    link  = $(this);
+    url   = $(this).attr('data-url');
+
+    link.css('opacity', 0.5);
+
+    $.put(url, {}, function(data) {
+      // update interface
+      link.css('opacity', 1.0);
+      // track action
+      track_page("/action/add_todo_request");
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);
@@ -342,8 +367,9 @@ $.fn.init_stream_map = function() {
 }
 
 $(document).ready(function() {
-  $(document).init_stream_todos();
-  $(document).init_stream_invites();
+  $(document).init_stream_user_todos();
+  $(document).init_stream_user_add_todo_request();
+  $(document).init_stream_user_invites();
   $(document).init_stream_timer();
   $(document).init_stream_user_details();
   $(document).init_stream_map();

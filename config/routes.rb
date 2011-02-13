@@ -48,6 +48,7 @@ Social::Application.routes.draw do
     put :disable, :on => :member
     put :learn, :on => :member
     get :share_drink, :on => :member
+    put :add_todo_request, :on => :member
   end
 
   # location routes
@@ -67,8 +68,9 @@ Social::Application.routes.draw do
   match 'plans/add(/:location_id)', :to => 'plans#add', :via => [:put], :as => :add_todo_location
   match 'plans/join(/:plan_id)', :to => 'plans#join', :via => [:put], :as => :join_todo
   match 'plans/remove/:location_id', :to => 'plans#remove', :via => [:put], :as => :remove_todo_location
-  match 'plans', :to => 'plans#index', :via => [:get]
   match 'plans/:id/whatnow', :to => 'plans#whatnow', :via => [:get], :as => :whatnow_todo
+
+  resources :plans, :only => [:index]
 
   # shouts
   resources :shouts, :only => [:index]
@@ -93,7 +95,7 @@ Social::Application.routes.draw do
 
   # friends routes
   resources :friends, :only => [:index]
-  
+
   # messages routes
   resources :messages, :only => [:create]
 

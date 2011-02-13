@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  before_filter :find_user, :only => [:activate, :become, :bucks, :disable, :learn, :share_drink, :show]
+  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :learn,
+                                      :share_drink, :show]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -172,12 +173,38 @@ class UsersController < ApplicationController
     # log message
     Message.log("[user:#{@sender.id}] #{@sender.handle} sent share a drink message to:#{@user.handle}")
 
-    # track share drink action
-    track_page("/action/share/drink")
-    flash[:tracker] = ga_tracker
+    respond_to do |format|
+      format.html do
+        # track action
+        track_page("/action/share/drink")
+        flash[:tracker] = ga_tracker
+        # set flash
+        flash[:notice] = @notice
+        redirect_to(redirect_back_path(user_path(@user))) and return
+      end
+      format.json do
+        @growls = [{:message => @notice, :timeout => 2000}]
+        render(:json => {'status' => 'ok', 'growls' => @growls}.to_json) and return
+      end
+    end
+  end
+
+  # PUT /users/1/add_todo_request
+  def add_todo_request
+    # @user initialized in before filter
+
+    # send add_todo message
+    @sender   = current_user
+    @options  = {'sender_id' => @sender.id, 'to_id' => @user.id}
+    Resque.enqueue(UserMailerWorker, :user_add_todo_request, @options)
+    @notice   = "We'll send them a note asking them to plan a checkin"
 
     respond_to do |format|
       format.html do
+        # track action
+        track_page("/action/add_todo_request")
+        flash[:tracker] = ga_tracker
+        # set flash
         flash[:notice] = @notice
         redirect_to(redirect_back_path(user_path(@user))) and return
       end

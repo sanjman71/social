@@ -1,11 +1,13 @@
 Feature: Home Streams
-  As a user I want to see streams of user checkin activity on the home page
+  As a user
+  I want to see checkin streams on the home page and be able to interact with them
 
-  @javascript
-  Scenario: User should see all member and non-member checkins in the default Everyone stream
+  Background:
     Given a city: "Chicago" should exist with name: "Chicago"
     And a state: "IL" should exist with code: "IL"
-    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+
+  Scenario: User should see all member and non-member checkins in the default Everyone stream
+    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
@@ -20,11 +22,8 @@ Feature: Home Streams
     And I should see "chicago_coffee_gal" within "ul#social-stream"
     And I should see "chicago_coffee_guy" within "ul#social-stream"
 
-  @javascript
   Scenario: User should see not see disabled user's checkins in the default Everyone stream
-    Given a city: "Chicago" should exist with name: "Chicago"
-    And a state: "IL" should exist with code: "IL"
-    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1", state: "disabled"
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
@@ -39,11 +38,8 @@ Feature: Home Streams
     And I should see "chicago_coffee_gal" within "ul#social-stream"
     And I should not see "chicago_coffee_guy" within "ul#social-stream"
 
-  @javascript
   Scenario: Male user should see female member checkins in the Ladies stream
-    Given a city: "Chicago" should exist with name: "Chicago"
-    And a state: "IL" should exist with code: "IL"
-    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_coffee_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
@@ -59,12 +55,9 @@ Feature: Home Streams
     And I should see "chicago_coffee_gal" within "ul#social-stream"
     And I should not see "chicago_coffee_guy" within "ul#social-stream"
 
-  @javascript
   Scenario: User should see friend checkins in the Friends stream
-    Given a city: "Chicago" should exist with name: "Chicago"
-    And a state: "IL" should exist with code: "IL"
     # create users
-    And a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
     And a user exists with handle: "chicago_friend1", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
     And a user exists with handle: "chicago_friend2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
     And a user exists with handle: "chicago_guy2", gender: "Male", orientation: "Straight", city: city "Chicago", member: "0"
@@ -88,9 +81,34 @@ Feature: Home Streams
     And I should see "chicago_friend1" within "ul#social-stream"
     And I should see "chicago_friend2" within "ul#social-stream"
     And I should not see "chicago_guy2" within "ul#social-stream"
-    And I should see "Go Here" within "ul#social-stream"
-    And I should see "See His Profile" within "ul#social-stream"
 
+  @javascript 
+  Scenario: User should be able to see more details about a checkin and do stuff
+    Given a user exists with handle: "chicago_guy", gender: "Male", orientation: "Straight", city: city "Chicago", member: "1"
+    And a user exists with handle: "chicago_coffee_gal", gender: "Female", orientation: "Straight", city: city "Chicago", member: "1"
+    And user "chicago_coffee_gal" has email "chicago_coffee_gal@gmail.com"
+    And a location exists with name: "Chicago Starbucks", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    And a location exists with name: "Chicago Lavazza", city: city "Chicago", state: state "IL", lat: "41.8781136", lng: "-87.6297982"
+    And user "chicago_coffee_gal" checked in to "Chicago Starbucks" "15 minutes ago"
+    And I am logged in as "chicago_guy"
+    And sphinx is indexed
+    When I go to the home page
+    Then I should see "Everyone" within "ul#social-stream-nav li.active"
+    And I should see "chicago_coffee_gal" within "ul#social-stream"
+
+    When I click "li.checkin div.closed"
+    And I wait for "2" seconds
+    Then I should see "Ask Her To Plan a Checkin"
+
+    When I follow "Ask Her To Plan a Checkin"
+    And I wait for "2" seconds
+    Then I should see "We'll send them a note"
+
+    When the resque jobs are processed
+    Then "chicago_coffee_gal@gmail.com" should receive an email with subject "Outlately: chicago_guy sent you a message..."
+    When I open the email with subject "Outlately: chicago_guy sent you a message..."
+    Then I should see "He wants you to plan a checkin or two.  Its a great way to meet new people." in the email body
+  
   # @javascript
   # Scenario: User sees checkins in the past day in the Today stream
   #   Given a user "chicago_guy" in "Chicago, IL" who is a "straight" "male"

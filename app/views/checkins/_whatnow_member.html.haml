@@ -6,8 +6,8 @@
   = link_to(I18n.t("home.stream.see_profile", :name => user.him_her.titleize), user_path(user))
 
 .span-11.last#description{:style => 'font-size: 1.1em; line-height: 1.5em;'}
-  Ask <strong>#{user.handle}</strong> to plan a checkin.
+  Ask <strong>#{user.handle}</strong> to plan a checkin, and we'll send #{user.him_her} a message with the request.
 
 .span-4#actions{:style => 'margin: 20px 0;'}
-  = link_to("Ask #{user.him_her.titleize} To Plan a Checkin", '#')
+  = link_to("Ask #{user.him_her.titleize} To Plan a Checkin", '#', :id => 'user_add_todo_request', 'data-url' => add_todo_request_user_path(user.id, :format => 'json'))
 
