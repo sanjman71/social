@@ -409,6 +409,8 @@ module Users::Search
             send(order.to_s)
           when :sort_females, :sort_males
             send(order.to_s)
+          when :sort_members
+            send(order.to_s)
           when /^sort.*_at$/
             send(order.to_s)
           when :sort_checkins_past_day
@@ -605,6 +607,11 @@ module Users::Search
 
   def sort_males(options={})
     sort_expr = "IF(gender = 2, 5.0, 1.0)"
+    [sort_expr]
+  end
+
+  def sort_members(options={})
+    sort_expr = "IF(member = 1, 1.0, 0.5)"
     [sort_expr]
   end
 

@@ -349,6 +349,30 @@ class UserSearchTest < ActiveSupport::TestCase
     end
   end
 
+  context "sort checkins by members" do
+    setup do
+      # 2 male members, 1 female non-member
+      @chicago_female1.update_attribute(:member, 0)
+      @chi_checkin1 = @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 1.day.ago))
+      @chi_checkin2 = @chicago_female1.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                               :location => @chicago_sbux,
+                                                                               :checkin_at => 1.day.ago))
+      @chi_checkin3 = @chicago_male2.checkins.create!(Factory.attributes_for(:foursquare_checkin,
+                                                                             :location => @chicago_sbux,
+                                                                             :checkin_at => 1.day.ago))
+    end
+
+    should "rank members over non-members" do
+      ThinkingSphinx::Test.run do
+        @checkins = @chicago_male1.search_all_checkins(:order => [:sort_members])
+        assert_equal 3, @checkins.size
+        assert_equal [@chi_checkin1, @chi_checkin3, @chi_checkin2], @checkins.collect{ |o| o }
+      end
+    end
+  end
+
   # context "search_now_checkins filter" do
   #   setup do
   #     setup_checkins
@@ -514,14 +538,14 @@ class UserSearchTest < ActiveSupport::TestCase
       # chicago searcher has 1 checkin location in common
       @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
     end
-    
+
     should "find 3 locations filtered by distance, ordered by relevance" do
       ThinkingSphinx::Test.run do
-        @locations = @chicago_male1.search_locations(:miles => 10, :klass => Location)
+        @locations = @chicago_male1.search_locations(:miles => 10)
         assert_equal 3, @locations.size
         assert_equal [@chicago_coffee, @chicago_lous, @chicago_pizza], @locations.collect{ |o| o }.sort_by(&:id)
-        assert_equal [:geo_filter, :geo_filter, :geo_filter], @locations.collect(&:matchby)
-        assert_equal [0.0, 0.0, 0.0], @locations.collect(&:matchvalue)
+        # assert_equal [:geo_filter, :geo_filter, :geo_filter], @locations.collect(&:matchby)
+        # assert_equal [0.0, 0.0, 0.0], @locations.collect(&:matchvalue)
         assert_equal [1, 1, 1], @locations.results[:matches].collect{ |o| o[:weight] }
       end
     end
