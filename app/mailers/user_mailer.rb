@@ -160,9 +160,10 @@ class UserMailer < ActionMailer::Base
   def user_nearby_realtime_checkins(options)
     @user     = User.find(options['user_id'])
     @checkin  = Checkin.find(options['checkin_id'])
+    @location = @checkin.location
     @checkins = Checkin.find(options['checkin_ids']) rescue []
     @email    = @user.email_address
-    @subject  = "Outlately: Who's out and about right now..."
+    @subject  = "Outlately: Who's out and about #{@location.try(:name)} right now..."
 
     # log and track
     log("[email:#{@user.id}]: #{@email} realtime checkins")

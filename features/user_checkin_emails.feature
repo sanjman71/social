@@ -30,10 +30,10 @@ Feature: Import user checkin
     And the resque jobs are processed
 
     # only members should get emails
-    Then "sanjay@outlately.com" should receive an email with subject "Outlately: Who's out and about right now..."
-    And "coffee_gal1@outlately.com" should receive no emails with subject "Outlately: Who's out and about right now..."
-    And "coffee_gal2@outlately.com" should receive no emails with subject "Outlately: Who's out and about right now..."
-    When "sanjay@outlately.com" open the email with subject "Outlately: Who's out and about right now..."
+    Then "sanjay@outlately.com" should receive an email with subject "Outlately: Who's out and about Starbucks right now..."
+    And "coffee_gal1@outlately.com" should receive no emails with subject "Outlately: Who's out and about Starbucks right now..."
+    And "coffee_gal2@outlately.com" should receive no emails with subject "Outlately: Who's out and about Starbucks right now..."
+    When "sanjay@outlately.com" open the email with subject "Outlately: Who's out and about Starbucks right now..."
     Then I should see "Thanks for checking in at Starbucks." in the email body
     And I should see "coffee_gal1" in the email body
     And I should see "coffee_gal2" in the email body
@@ -48,7 +48,7 @@ Feature: Import user checkin
     # process jobs twice
     And the resque jobs are processed
     And the resque jobs are processed
-    Then "sanjay@outlately.com" should receive no emails with subject "Outlately: Who's out and about right now..."
+    Then "sanjay@outlately.com" should receive no emails with subject "Outlately: Who's out and about Starbucks right now..."
 
     # a new checkin within the 'out' window should generate an email
     And user "coffee_gal1" checked in to "Lavazza" "3 minutes ago"
@@ -57,8 +57,8 @@ Feature: Import user checkin
     # process jobs twice
     And the resque jobs are processed
     And the resque jobs are processed
-    Then "sanjay@outlately.com" should receive an email with subject "Outlately: Who's out and about right now..."
-    When I open the email with subject "Outlately: Who's out and about right now..."
+    Then "sanjay@outlately.com" should receive an email with subject "Outlately: Who's out and about Starbucks right now..."
+    When I open the email with subject "Outlately: Who's out and about Starbucks right now..."
     Then I should see "Thanks for checking in at Starbucks." in the email body
     And I should see "coffee_gal1" in the email body
     And I should see "Lavazza" in the email body
@@ -72,7 +72,7 @@ Feature: Import user checkin
     # process jobs twice
     And the resque jobs are processed
     And the resque jobs are processed
-    Then "sanjay@outlately.com" should receive no emails with subject "Outlately: Who's out and about right now..."
+    Then "sanjay@outlately.com" should receive no emails with subject "Outlately: Who's out and about Starbucks right now..."
 
   @checkin @email @daily
   Scenario: Members should receive a daily checkins email the day after they checkin
