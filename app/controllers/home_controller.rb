@@ -98,7 +98,7 @@ class HomeController < ApplicationController
   end
 
   def streams
-    [stream_name_daters(current_user), 'Friends', 'Everyone']
+    [I18n.t("home.stream.name.gals"), I18n.t("home.stream.name.guys"), 'Friends', 'Everyone']
   end
 
   def default_stream
@@ -129,16 +129,17 @@ class HomeController < ApplicationController
     City.find_by_name(session[:current_city].try(:titleize))
   end
 
-  def stream_name_daters(user)
-    case user.gender
-    when 1
-      I18n.t("home.stream.name.guys")
-    when 2
-      I18n.t("home.stream.name.gals")
-    else
-      I18n.t("home.stream.name.daters")
-    end
-  end
+  # deprecated
+  # def stream_name_daters(user)
+  #   case user.gender
+  #   when 1
+  #     I18n.t("home.stream.name.guys")
+  #   when 2
+  #     I18n.t("home.stream.name.gals")
+  #   else
+  #     I18n.t("home.stream.name.daters")
+  #   end
+  # end
 
   # redirect if user does not have a city
   def check_user_has_city
