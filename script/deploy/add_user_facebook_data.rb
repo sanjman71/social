@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.join(File.dirname(__FILE__), '../..', 'config', 'environment'))
 
-# args - 'members'|'users
+# args - 'members'|'users'
 argv0 = ARGV[0]
 
 case argv0
@@ -10,14 +10,14 @@ when 'members'
 when 'users'
   member = 0
 else
-  member = nil
+  puts "usage: members|users"
+  exit
 end
 
 # find users, and add data from facebook profile
 updated = 0
 User.where(:member => member).each do |user|
-  # puts user.inspect
-  oauth = user.find_facebook_oauth
+  oauth = user.find_facebook_oauth(:friend => true)
   next if oauth.blank?
 
   # track changes to each user
