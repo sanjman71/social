@@ -621,7 +621,7 @@ class User < ActiveRecord::Base
   def before_change_birthdate
     if changes[:birthdate]
       # update age
-      self.age = (Date.today - birthdate).to_i/365.242199.to_i
+      self.age = (Date.today - birthdate).to_i/365.242199.to_i rescue 0
     end
   end
 

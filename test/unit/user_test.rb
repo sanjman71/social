@@ -49,6 +49,11 @@ class UserTest < ActiveSupport::TestCase
         @user1 = User.create!(:name => "User 1", :handle => 'user1', :birthdate => Date.today-13.months)
         assert_equal 1, @user1.reload.age
       end
+
+      should "set age to 0 with no birthdate" do
+        @user1 = User.create!(:name => "User 1", :handle => 'user1', :birthdate => nil)
+        assert_equal 0, @user1.reload.age
+      end
     end
 
     context "with an empty nested email address hash" do
