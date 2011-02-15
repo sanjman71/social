@@ -20,9 +20,9 @@ class UsersController < ApplicationController
     @search.build(params[:search] || {})
 
     if @search.search_attributes.values.any?(&:present?)
-     @users = @search.all.paginate(@pagination)
+      @users = @search.all.paginate(@pagination)
     else
-     @users = []
+      @users = []
     end
 
     @members          = User.where(:member => 1).count
