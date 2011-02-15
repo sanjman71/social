@@ -49,7 +49,7 @@ User.where(:member => member).each do |user|
       user.email_addresses.create(:address => email)
       changes += 1
     end
-    if bdate.present? and user.birthdate.blank?
+    if bdate.present? and bdate.match(/\d{4,4}$/) and user.birthdate.blank?
       puts "[user:#{user.id}] setting birthdate to #{bdate}"
       user.birthdate = Chronic.parse(bdate).to_date
       changes       += 1
