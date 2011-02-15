@@ -16,12 +16,15 @@ class UserOauthTest < ActiveSupport::TestCase
       User.find_for_facebook_oauth(credentials, user_data, @user1)
       # should set user facebook id
       assert @user1.facebook_id
-      # should set user member flag
+      # should set user member flag and member_at timestamp
       assert @user1.member?
+      assert @user1.member_at.present?
       # should create user facebook oauth
       assert_equal 1, @user1.oauths.facebook.count
       # should set handle to 'First L'
       assert_equal "Sanjay K.", @user1.reload.handle
+      # should set name
+      assert_equal 'Sanjay Kapoor', @user1.reload.name
       # should create user facebook photo
       assert_equal 1, @user1.photos.facebook.count
       assert_equal [1], @user1.photos.facebook.collect(&:priority)

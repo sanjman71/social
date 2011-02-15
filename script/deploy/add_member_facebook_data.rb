@@ -1,43 +1,66 @@
 #!/usr/bin/env ruby
 require File.expand_path(File.join(File.dirname(__FILE__), '../..', 'config', 'environment'))
 
-# find all members, and add data from facebook profile
-updated = 0
-User.member.each do |user|
-  # find members with no email address
-  if user.email_addresses_count == 0
-    # puts user.inspect
-    oauth = user.find_facebook_oauth
-    next if oauth.blank?
+# args - 'members'|'users
+argv0 = ARGV[0]
 
-    begin
-      rg      = RestGraph.new(:access_token => oauth.access_token)
-      query   = 'SELECT birthday_date,email,name FROM user WHERE uid="' + user.facebook_id + '"'
-      data    = rg.fql(query)
-      hash    = data.first
-      puts "[user:#{user.id}] #{user.handle}:#{hash}"
-      email   = hash['email']
-      name    = hash['name']
-      bdate   = hash['birthday_date']
-      # check handle
-      handle  = User.handle_from_full_name(name)
-      if handle != user.handle
-        puts "[user:#{user.id}] changing handle to #{handle}"
-        user.handle = handle
-      end
-      if email.present? and email != user.email_address
-        puts "[user:#{user.id}] setting email to #{email}"
-        user.email_addresses.create(:address => email)
-      end
-      if bdate.present? and user.birthdate.blank?
-        puts "[user:#{user.id}] setting birthdate to #{bdate}"
-        user.birthdate = Chronic.parse(bdate).to_date
-      end
+case argv0
+when 'members'
+  member = 1
+when 'users'
+  member = 0
+else
+  member = nil
+end
+
+# find users, and add data from facebook profile
+updated = 0
+User.where(:member => member).each do |user|
+  # puts user.inspect
+  oauth = user.find_facebook_oauth
+  next if oauth.blank?
+
+  # track changes to each user
+  changes = 0
+
+  begin
+    rg      = RestGraph.new(:access_token => oauth.access_token)
+    query   = 'SELECT birthday_date,email,name FROM user WHERE uid="' + user.facebook_id + '"'
+    data    = rg.fql(query)
+    hash    = data.first
+    # puts "[user:#{user.id}] #{user.handle}:#{hash}"
+    email   = hash['email']
+    name    = hash['name']
+    bdate   = hash['birthday_date']
+    # check user, handle, email, bdate
+    handle  = User.handle_from_full_name(name)
+    if name != user.name
+      puts "[user:#{user.id}] changing name to #{name}"
+      user.name = name
+      changes  += 1
+    end
+    if handle != user.handle
+      puts "[user:#{user.id}] changing handle to #{handle}"
+      user.handle = handle
+      changes    += 1
+    end
+    if user.email_addresses_count == 0 and email.present?
+      puts "[user:#{user.id}] setting email to #{email}"
+      user.email_addresses.create(:address => email)
+      changes += 1
+    end
+    if bdate.present? and user.birthdate.blank?
+      puts "[user:#{user.id}] setting birthdate to #{bdate}"
+      user.birthdate = Chronic.parse(bdate).to_date
+      changes       += 1
+    end
+    if changes > 0
+      # save changes and increment counter
       user.save
       updated += 1
-    rescue Exception => e
-      puts "[error] #{e.message}"
     end
+  rescue Exception => e
+    puts "[error] #{e.message}"
   end
 end
 

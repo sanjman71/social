@@ -154,6 +154,11 @@ module Users::Oauth
           self.class.log("[user:#{self.id}] set user handle to #{self.handle}")
         end
       end
+      if data['name'] and self.name.blank?
+        # set user name
+        self.name = data['name']
+        self.class.log("[user:#{self.id}] set user name to #{self.name}")
+      end
       if data['id'] and self.facebook_id.blank?
         # add user facebook id
         self.facebook_id = data['id']

@@ -12,10 +12,7 @@ body.admin #page-header { background: #ffffff; }
   color: #0000ff;
 }
 #admin_links a.current { text-decoration: none; }
-#admin-content #users .user {
-  padding: 5px 0;
-  margin: 5px 0;
-}
+#admin-content #users .user { padding: 10px 0; }
 #admin-content #users .user.disabled { background-color: #efefef; }
 #admin-content #users a#link_user_profile { color: #0000ff; }
 #admin-content #users a#toggle_state {
@@ -23,3 +20,4 @@ body.admin #page-header { background: #ffffff; }
   margin-left: 3px;
   font-size: 0.8em;
 }
+#admin-content #users div.user:nth-child(odd) { background-color: #efefef; }

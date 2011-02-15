@@ -14,9 +14,17 @@ class UsersController < ApplicationController
     # check general parameters
     @limit            = params[:limit] ? params[:limit].to_i : 20
     @member           = params[:member].to_i
-
     @pagination       = {:page => params[:page] ? params[:page].to_i : 1, :per_page => @limit}
-    @users            = User.where(:member => @member).order("users.id asc").paginate(@pagination)
+
+    @search = MetaSearch::Builder.new(User, {})
+    @search.build(params[:search] || {})
+
+    if @search.search_attributes.values.any?(&:present?)
+     @users = @search.all.paginate(@pagination)
+    else
+     @users = []
+    end
+
     @members          = User.where(:member => 1).count
     @non_members      = User.where(:member => 0).count
 

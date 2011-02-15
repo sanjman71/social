@@ -674,6 +674,10 @@ class User < ActiveRecord::Base
 
   # oauth added
   def event_oauth_added(oauth)
-    update_attribute(:member, true) if !member?
+    if !member
+      # make user a member
+      update_attribute(:member, true)
+      update_attribute(:member_at, Time.zone.now)
+    end
   end
 end

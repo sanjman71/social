@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110207154207) do
+ActiveRecord::Schema.define(:version => 20110215041649) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -516,9 +516,11 @@ ActiveRecord::Schema.define(:version => 20110207154207) do
     t.string   "invitation_token",      :limit => 20
     t.date     "birthdate"
     t.integer  "age",                                                                  :default => 0
+    t.datetime "member_at"
   end
 
   add_index "users", ["age"], :name => "index_users_on_age"
+  add_index "users", ["created_at"], :name => "index_users_on_created_at"
   add_index "users", ["delta"], :name => "index_users_on_delta"
   add_index "users", ["email_addresses_count"], :name => "index_users_on_email_addresses_count"
   add_index "users", ["facebook_id"], :name => "index_users_on_facebook_id"
@@ -527,10 +529,13 @@ ActiveRecord::Schema.define(:version => 20110207154207) do
   add_index "users", ["handle"], :name => "index_users_on_handle"
   add_index "users", ["invitation_token"], :name => "index_users_on_invitation_token"
   add_index "users", ["member"], :name => "index_users_on_member"
+  add_index "users", ["member_at"], :name => "index_users_on_member_at"
+  add_index "users", ["name"], :name => "index_users_on_name"
   add_index "users", ["phone_numbers_count"], :name => "index_users_on_phone_numbers_count"
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["rpx"], :name => "index_users_on_rpx"
   add_index "users", ["state"], :name => "index_users_on_state"
+  add_index "users", ["updated_at"], :name => "index_users_on_updated_at"
 
   create_table "zipcodes", :force => true do |t|
     t.string  "name",            :limit => 10
