@@ -4,21 +4,24 @@
   .span-24.last
     .span-16
       %h2 My Settings
-    .span-7.last
-      = render(:partial => 'shared/oauth_links')
 
 #content.clearfix
   .span.24.last
     = display_flash(:all)
     = display_alerts
 
-  .span.24.last.newbie
-    %h3
-      Step 1 of 3:
-      %p
-      Outlately is a community for those who like meeting people and checking out new places.
-      %p
-      We'll walk you through the setup process, starting with your profile.
+  - if @newbie
+    .span.24.last.newbie
+      %h3
+        Step 1 of 3:
+        %p
+        Outlately is a community for those who like meeting people and checking out new places.
+        %p
+        We'll walk you through the setup process, starting with your profile.
+
+  .span-24.last
+    -# link foursquare
+    = render(:partial => 'shared/oauth_links')
 
   .span-24.last
     -# initialize nested objects
@@ -58,4 +61,4 @@
         - unless @newbie
           = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
           or
-          %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :class => 'admin', :style => 'font-size: 1.5em;'
+          %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :style => 'font-size: 1.1em; color: #00f;'

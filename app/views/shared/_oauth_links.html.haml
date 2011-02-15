@@ -1,5 +1,6 @@
 - oauth_links = build_missing_oauth_links
 - if oauth_links.any?
-  %h4{:style => 'margin-bottom: 0.7em;'} Link Accounts:
-  - oauth_links.each_with_index do |link, i|
-    %span{:style => 'padding-right: 10px; font-size: 0.9em;'}= link
+  #oauth_links{:style => 'margin: 10px;'}
+    %span{:style => 'font-weight: bold; padding: 0 10px;'} Link your Foursquare account:
+    - oauth_links.each_with_index do |link, i|
+      %span{:style => 'font-size: 0.9em;'}= link

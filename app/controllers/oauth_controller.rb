@@ -97,7 +97,9 @@ class OauthController < Devise::OmniauthCallbacksController
         # check 'user_return_to'
         @goto_path      = session[:user_return_to]
       else
-        flash[:notice] = "Successly linked #{service} account"
+        # redirect to settings page
+        @goto_path      = settings_path
+        flash[:notice]  = "Successly linked #{service} account"
       end
 
       if @user.sign_in_count == 0

@@ -43,10 +43,10 @@
           %br
           = pluralize(user.points, 'point')
         .span-5
-          %span{:style => 'font-size: 0.9em;'} Create: #{user.created_at.to_s(:date_yyyymmdd)}
+          %span{:style => 'font-size: 0.9em;'} Signup On: #{user.created_at.to_s(:date_yyyymmdd)}
           - if user.member?
             %br
-            %span{:style => 'font-size: 0.9em;'} Member: #{user.member_at.try(:to_s, :date_yyyymmdd)}
+            %span{:style => 'font-size: 0.9em;'} Member On: #{user.member_at.try(:to_s, :date_yyyymmdd)}
         .span-5
           = user.state.titleize
           = user.active? ? link_to('Disable', disable_user_path(user, :return_to => request.fullpath), :method => :put, :id => 'toggle_state') : link_to('Enable', activate_user_path(user, :return_to => request.fullpath), :method => :put, :id => 'toggle_state')
