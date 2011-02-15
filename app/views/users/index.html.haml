@@ -20,7 +20,8 @@
         = f.input :created_at_greater_than, :required => false, :label => 'User since', :input_html => {:style => 'width: 150px;', :value => @search.created_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'created_at_datepicker'}, :hint => "e.g. 20110201"
       .span-12.last
         = f.input :city_name_contains, :required => false, :label => 'City', :input_html => {:style => 'width: 150px;'}
-        = f.input :member_equals, :required => false, :label => 'Member', :hint => "1 or true for members; 0 or false otherwise", :input_html => {:style => 'width: 50px;', :value => @search.try(:member_equals) }
+        = f.input :member_is_true, :required => false, :label => 'Member', :hint => "1 or true for members; 0 or false otherwise", :input_html => {:style => 'width: 50px;', :value => @search.try(:member_is_true) }
+        = f.input :foursquare_id_is_present, :required => false, :label => 'Foursquare', :hint => "1 for yes", :input_html => {:style => 'width: 50px;', :value => @search.try(:foursquare_id_is_present) }
       .span-23.last
         = f.submit 'Search', :style => 'margin: 0px;'
 
@@ -38,6 +39,10 @@
           %span{:style => 'font-size: 0.9em; color: #777;'}= user.member? ? "Member" : "User"
           %br
           %span{:style => 'font-size: 0.9em; color: #777;'}= user.city.try(:name)
+        .span-4
+          Age: #{user.age.to_i}
+          %br
+          Foursquare: #{user.foursquare_id}
         .span-3
           = pluralize(user.checkins_count, 'checkin')
           %br
@@ -47,8 +52,6 @@
           - if user.member?
             %br
             %span{:style => 'font-size: 0.9em;'} Member On: #{user.member_at.try(:to_s, :date_yyyymmdd)}
-        .span-5
+        .span-5.last
           = user.state.titleize
           = user.active? ? link_to('Disable', disable_user_path(user, :return_to => request.fullpath), :method => :put, :id => 'toggle_state') : link_to('Enable', activate_user_path(user, :return_to => request.fullpath), :method => :put, :id => 'toggle_state')
-        .span-5.last
-          = pluralize(user.checkin_logs.error.count, 'error')
