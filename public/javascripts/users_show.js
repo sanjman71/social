@@ -90,6 +90,10 @@ $.fn.init_user_message_submit = function() {
       // reset dialog
       $(form).find("#message_send_submit").attr('disabled', '');
       $(form).find("#message_body").val('').trigger('keyup');
+      if (data['track_page']) {
+        // track page
+        track_page(data['track_page']);
+      }
       // show any growls
       if (data['growls']) {
         show_growls(data['growls']);

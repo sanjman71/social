@@ -33,18 +33,20 @@ class MessagesController < ApplicationController
 
     # set redirect path
     @redirect_to = redirect_back_path(root_path)
-    
-    respond_to do |format|
-      format.html { redirect_back_to(@redirect_to) and return }
-      format.json { render :json => Hash[:status => @status, :message => @text, :growls => @growls].to_json }
-    end
+
   rescue Exception => e
     # set status, redirect path
     @status       = 'error'
     @redirect_to  = redirect_back_path(root_path)
+  ensure
     respond_to do |format|
-      format.html { redirect_back_to(@redirect_to) and return }
-      format.json { render :json => Hash[:status => @status, :message => e.message, :growls => @growls].to_json }
+      format.html do
+        # track page
+        flash[:tracker] = track_page("/action/message/sent")
+        redirect_back_to(@redirect_to) and return
+      end
+      format.json { render :json => Hash[:status => @status, :message => @text, :growls => @growls,
+                                         :track_page => "/action/message/sent"].to_json }
     end
   end
   
