@@ -36,10 +36,9 @@
         - location  = checkin.location
         .span-24.last.admin-checkin{:class => cycle('even', 'odd')}
           .span-23.prepend-1.last.user
-            = user.name.present? ? user.name : user.handle
+            = link_to user.name.present? ? user.name : user.handle, user_path(user), :id => 'link_user_profile'
             %br
-            %span{:style => 'font-size: 0.9em; color: #777;'}
-              = [user.member? ? "Member" : "User", user.city.try(:name)].compact.join(":")
+            %span{:style => 'font-size: 0.9em; color: #777;'}= [user.member? ? "Member" : "User", user.city.try(:name)].compact.join(" : ")
           .span-24.last.location
             = render(:partial => 'locations/location',
                      :locals => {:location => location, :tag_link => true, :edit_link => true})

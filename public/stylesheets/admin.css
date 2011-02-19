@@ -31,3 +31,4 @@ body.admin #page-header { background: #ffffff; }
   color: #ffffff;
   font-weight: bold;
 }
+#admin-checkins a { color: #0000ff; }

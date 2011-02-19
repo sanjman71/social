@@ -3,7 +3,7 @@
 
 .span-10.prepend-1
   - if edit_link
-    %span.name= link_to location.name, edit_location_path(location), :class => :admin
+    %span.name= link_to location.name, edit_location_path(location)
   - else
     %span.name= location.name
   %br
