@@ -57,9 +57,22 @@ class PlansController < ApplicationController
     @redirect_to = redirect_back_path(root_path)
 
     respond_with(@location) do |format|
-      format.html { redirect_back_to(@redirect_to) and return }
-      format.js { render(:update) { |page| page.redirect_to(@redirect_to) } }
-      format.json { render :json => Hash[:status => @status, :message => @message, :growls => @growls].to_json }
+      format.html do
+        # track todo created
+        flash[:tracker] = track_page("/todo/created") if @status == 'ok'
+        redirect_back_to(@redirect_to) and return
+      end
+      format.js do
+        # track todo created
+        flash[:tracker] = track_page("/todo/created") if @status == 'ok'
+        render(:update) { |page| page.redirect_to(@redirect_to) }
+      end
+      format.json do
+        # track todo created
+        @track_page = "/todo/created" if @status == 'ok'
+        render(:json => Hash[:status => @status, :message => @message, :growls => @growls,
+                             :track_page => @track_page].to_json)
+      end
     end
   end
 

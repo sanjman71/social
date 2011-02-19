@@ -20,6 +20,7 @@ Feature: Add plans
 
     Then I should be on the plans page
     And I should see "We added Paramount Room to your todo list"
+    And I should see "_gaq.push(['_trackPageview', '/todo/created'])"
 
   # deprecated
   # @javascript

@@ -97,8 +97,12 @@ $.fn.init_stream_user_todos = function() {
       modal.hide();
       // change link/button opacity
       abutton.css('opacity', 1.0).addClass('added');
-      // show any growls
+      if (data['track_page']) {
+        // track page
+        track_page(data['track_page']);
+      }
       if (data['growls']) {
+        // show growls
         show_growls(data['growls']);
       }
     }, 'json');
