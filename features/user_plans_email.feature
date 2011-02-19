@@ -31,9 +31,7 @@ Feature: User's planned checkins
     And user "chicago_guy" checked in to "Chicago Starbucks" "3 hours ago"
     And the delayed jobs are processed
     And the resque jobs are processed
-    # user should receive 2 emails, 1 for checking in and 1 for completing the planned checkin
-    Then "chicago_guy@outlately.com" should receive 3 emails
-    And "chicago_guy@outlately.com" should receive an email with subject "Outlately: Your planned checkin at Chicago Starbucks was completed!"
+    Then "chicago_guy@outlately.com" should receive an email with subject "Outlately: Your planned checkin at Chicago Starbucks was completed!"
     When I open the email with subject "Outlately: Your planned checkin at Chicago Starbucks was completed!"
     Then I should see "You said you'd checkin at Chicago Starbucks and you did. That checkin got you 50 points." in the email body
 

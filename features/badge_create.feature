@@ -29,6 +29,7 @@ Feature: Create badges
     And I select the option containing "snickers" in the autocomplete list
     And I follow "Apply"
     And the delayed jobs are processed
+    And the resque jobs are processed
 
     # reload the page
     And I go to path "/admin/badges"

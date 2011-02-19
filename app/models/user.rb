@@ -89,8 +89,7 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :availability, :allow_destroy => true
 
   # Preferences
-  serialized_hash           :preferences, {:provider_email_text => '', :provider_email_daily_schedule => '0',
-                                           :phone => 'optional', :email => 'optional'}
+  serialized_hash           :preferences, {:import_checkin_emails => '0'}
 
   before_save               :before_save_callback
   after_create              :manage_user_roles
@@ -103,7 +102,7 @@ class User < ActiveRecord::Base
                             :facebook_id, :city, :city_id, :member, :birthdate, :age,
                             :email_addresses_attributes, :phone_numbers_attributes, :photos_attributes,
                             :city_attributes, :availability_attributes, :tag_ids,
-                            :preferences_phone, :preferences_email
+                            :preferences_import_checkin_emails
 
   # BEGIN acts_as_state_machine
   include AASM

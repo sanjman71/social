@@ -1,9 +1,10 @@
 Feature: Import user checkin
-  As a user I want to receive notifications when I check in using facebook or foursquare
+  As a user
+  I want to receive notifications when I check in using facebook or foursquare
 
   @checkin @email @realtime
-  Scenario: Member should receive an email after a recent checkin is imported
-    Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
+  Scenario: Members who have opted in should receive an email after a recent checkin is imported
+    Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight", preferences_import_checkin_emails: "1"
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
     And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"

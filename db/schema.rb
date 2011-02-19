@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110215041649) do
+ActiveRecord::Schema.define(:version => 20110219045304) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -517,6 +517,7 @@ ActiveRecord::Schema.define(:version => 20110215041649) do
     t.date     "birthdate"
     t.integer  "age",                                                                  :default => 0
     t.datetime "member_at"
+    t.text     "preferences"
   end
 
   add_index "users", ["age"], :name => "index_users_on_age"
