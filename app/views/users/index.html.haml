@@ -3,13 +3,13 @@
 - javascript('admin')
 
 #page-header
-  .span-23.prepend-1.last
-    %h2 Users
+  .span-24.last
+    = render(:partial => 'admin/admin_links')
 
 #admin-content.clearfix
   .span.24.last
     = display_flash(:all)
-  .span-23.prepend-1.last
+  .span-24.last
     - if @members.present? and @non_members.present?
       %h4
         = [pluralize(@members, 'member'), pluralize(@non_members, 'non-members')].join(', ')

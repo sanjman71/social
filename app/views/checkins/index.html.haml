@@ -1,17 +1,45 @@
+- title('Checkins')
 - stylesheet('admin')
+- javascript('admin')
 
 #page-header
   .span-24.last
     = render(:partial => 'admin/admin_links')
 
-.clearfix
-  .span-24.last#admin_checkins
-    - @checkins.each do |checkin|
-      - user      = checkin.user
-      - location  = checkin.location
-      .span-24.last.admin_checkin{:class => cycle('even', 'odd')}
-        .span-23.prepend-1.last.user
-          #{user.handle} @ #{checkin.checkin_at.to_s(:datetime_dow)}
-        .span-24.last.location
-          = render(:partial => 'locations/location',
-                   :locals => {:location => location, :tag_link => true, :edit_link => true})
+#admin-content.clearfix
+  .span-24.last
+    = simple_form_for(@search, :url => admin_checkins_path) do |f|
+      .span-10
+        = f.input :location_name_contains, :required => false, :label => 'Location', :input_html => {:style => 'width: 150px;'}
+        = f.input :checkin_at_greater_than, :required => false, :label => 'Checkin since', :input_html => {:style => 'width: 150px;', :value => @search.checkin_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'checkin_at_datepicker'}, :hint => "e.g. 20110201"
+        -#= f.input :created_at_greater_than, :required => false, :label => 'User since', :input_html => {:style => 'width: 150px;', :value => @search.created_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'created_at_datepicker'}, :hint => "e.g. 20110201"
+      .span-12.last
+        = f.input :user_name_contains, :required => false, :label => 'User Name', :input_html => {:style => 'width: 150px;'}
+        = f.input :user_handle_contains, :required => false, :label => 'User Handle', :input_html => {:style => 'width: 150px;'}
+        -#= f.input :member_is_true, :required => false, :label => 'Member', :hint => "1 or true for members; 0 or false otherwise", :input_html => {:style => 'width: 50px;', :value => @search.try(:member_is_true) }
+        -#= f.input :foursquare_id_is_present, :required => false, :label => 'Foursquare', :hint => "1 for yes", :input_html => {:style => 'width: 50px;', :value => @search.try(:foursquare_id_is_present) }
+      .span-23.last
+        = f.submit 'Search', :style => 'margin: 0px;'
+  
+  .span-24.last#admin-checkins
+    - if @checkins.respond_to?(:total_pages)
+      .span-24#pagination{:style => 'margin: 20px 0;'}
+        = will_paginate(@checkins, :page_links => true, :inner_window => 1, :outer_window => 1)
+    
+    - @checkins.group_by { |checkin| checkin.checkin_at.to_s(:date_dow_ddmmyyyy) }.each do |date, checkins|
+      .span-24.last.checkin-date
+        -# checkin date
+        = date
+      
+      - checkins.each do |checkin|
+        - user      = checkin.user
+        - location  = checkin.location
+        .span-24.last.admin-checkin{:class => cycle('even', 'odd')}
+          .span-23.prepend-1.last.user
+            = user.name.present? ? user.name : user.handle
+            %br
+            %span{:style => 'font-size: 0.9em; color: #777;'}
+              = [user.member? ? "Member" : "User", user.city.try(:name)].compact.join(":")
+          .span-24.last.location
+            = render(:partial => 'locations/location',
+                     :locals => {:location => location, :tag_link => true, :edit_link => true})

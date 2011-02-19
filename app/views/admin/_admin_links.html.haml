@@ -1,14 +1,14 @@
 #admin_links
   .span-24.last
     %h2 Admin
-  -#%h4{:style => 'float: left; margin-left: 10px; margin-top: 20px;'}
   .span-24.last
-    %h4
+    %h4{:style => 'font-size: 0.9em;'}
       = link_to 'Checkins Chart', admin_checkins_chart_path, :class => params['action'] == 'checkins' ? ['current'] : []
+      = link_to 'Emails Chart', admin_emails_chart_path, :class => params['action'] == 'emails' ? ['current'] : []
       = link_to 'Invites Chart', admin_invites_chart_path, :class => params['action'] == 'invites' ? ['current'] : []
       = link_to 'Tags Chart', admin_tags_chart_path, :class => params['action'] == 'tags' ? ['current'] : []
       = link_to 'Users Chart', admin_users_chart_path, :class => params['action'] == 'users' ? ['current'] : []
       = link_to 'Badges', admin_badges_path, :class => params['action'] == 'users' ? ['current'] : []
       = link_to 'Checkins', admin_checkins_path(:member => 1, :limit => 100, :page => 1), :class => params['action'] == 'checkins' ? ['current'] : []
-      = link_to 'Users', admin_users_path(:member => 1, :limit => 100, :page => 1), :class => params['action'] == 'users' ? ['current'] : []
+      = link_to 'Users', admin_users_path, :class => params['action'] == 'users' ? ['current'] : []
       = link_to 'Resque', "/resque"

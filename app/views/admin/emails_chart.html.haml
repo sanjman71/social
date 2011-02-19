@@ -1,0 +1,15 @@
+- javascript("highcharts")
+- javascript('admin_charts')
+- javascript('admin_emails')
+- stylesheet('admin')
+
+#page-header
+  .span-24.last
+    = render(:partial => 'admin_links')
+
+#admin-content.clearfix
+  #invitations{:style => 'width: 900px; height: 300px;'}
+
+:javascript
+  var dtime1  = #{@dtime1};
+  var invites = #{@invites};

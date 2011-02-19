@@ -21,3 +21,13 @@ body.admin #page-header { background: #ffffff; }
   font-size: 0.8em;
 }
 #admin-content #users div.user:nth-child(odd) { background-color: #efefef; }
+#admin-content #users div.admin_checkin:nth-child(odd) { background-color: #efefef; }
+#admin-checkins .admin-checkin { padding: 10px 0; }
+#admin-checkins .admin-checkin:nth-child(even) { background-color: #efefef; }
+#admin-checkins .checkin-date {
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #333333;
+  color: #ffffff;
+  font-weight: bold;
+}
