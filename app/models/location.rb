@@ -270,8 +270,8 @@ class Location < ActiveRecord::Base
   # called after location tagged
   def event_location_tagged
     users.each do |user|
-      # add badges for each user linked to this location
-      user.delay.async_add_badges
+      # add badges for each associated user
+      Resque.enqueue(BadgeWorker, :async_badge_discovery, 'user_id' => user.id)
       # propagate to user
       user.delay.event_location_tagged(self)
     end

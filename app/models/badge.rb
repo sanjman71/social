@@ -67,15 +67,8 @@ class Badge < ActiveRecord::Base
 
   def event_badge_saved
     if changes[:regex]
-      # trigger badge discovery
-      self.delay.async_badge_discovery
-    end
-  end
-
-  def async_badge_discovery
-    # add any missing badges to members
-    User.member.each do |user|
-      user.async_add_badges
+      # queue badge discovery
+      Resque.enqueue(BadgeWorker, :async_badge_discovery)
     end
   end
 
