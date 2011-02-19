@@ -11,7 +11,7 @@
     %span.street= location.street_city
     %br
   - if has_role?('admin')
-    %span.latlng== #{location.lat}, #{location.lng}
+    %span.latlng== [#{location.lat}, #{location.lng}]
     %br
 
 .span-5.last

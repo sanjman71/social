@@ -32,3 +32,4 @@ body.admin #page-header { background: #ffffff; }
   font-weight: bold;
 }
 #admin-checkins a { color: #0000ff; }
+#admin-checkins .location .latlng { color: #999999; }

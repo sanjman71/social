@@ -1,6 +1,8 @@
+- title = local_assigns[:title] || 'Admin'
+
 #admin_links
   .span-24.last
-    %h2 Admin
+    %h2= title
   .span-24.last
     %h4{:style => 'font-size: 0.9em;'}
       = link_to 'Checkins Chart', admin_checkins_chart_path, :class => params['action'] == 'checkins' ? ['current'] : []

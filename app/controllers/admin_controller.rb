@@ -56,10 +56,22 @@ class AdminController < ApplicationController
 
   # GET /admin/users_chart
   def users_chart
-    @mem_females      = User.member.where(:gender => 1).count
-    @mem_males        = User.member.where(:gender => 2).count
-    @non_females      = User.non_member.where(:gender => 1).count
-    @non_males        = User.non_member.where(:gender => 2).count
+    @mem_females    = User.member.where(:gender => 1).count
+    @mem_males      = User.member.where(:gender => 2).count
+    @non_females    = User.non_member.where(:gender => 1).count
+    @non_males      = User.non_member.where(:gender => 2).count
   end
 
+  # GET /admin/emails_chart
+  def emails_chart
+    @redis      = RedisSocket.new
+    @redis_keys = @redis.keys("2011*emails").sort
+
+    # parse first date, convert to msec
+    @dtime1     = DateTime.parse(@redis_keys.first.match(/(\d+):emails/)[1]).to_i * 1000
+
+    @redis_keys.each do |key|
+      hash = @redis.hgetall(key)
+    end
+  end
 end

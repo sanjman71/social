@@ -4,14 +4,14 @@
 
 #page-header
   .span-24.last
-    = render(:partial => 'admin/admin_links')
+    = render(:partial => 'admin/admin_links', :locals => {:title => 'Admin Checkins'})
 
 #admin-content.clearfix
   .span-24.last
     = simple_form_for(@search, :url => admin_checkins_path) do |f|
       .span-10
         = f.input :location_name_contains, :required => false, :label => 'Location', :input_html => {:style => 'width: 150px;'}
-        = f.input :checkin_at_greater_than, :required => false, :label => 'Checkin since', :input_html => {:style => 'width: 150px;', :value => @search.checkin_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'checkin_at_datepicker'}, :hint => "e.g. 20110201"
+        = f.input :checkin_at_greater_than, :required => false, :label => 'Checkin after', :input_html => {:style => 'width: 150px;', :value => @search.checkin_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'checkin_at_datepicker'}, :hint => "e.g. 20110201"
         -#= f.input :created_at_greater_than, :required => false, :label => 'User since', :input_html => {:style => 'width: 150px;', :value => @search.created_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'created_at_datepicker'}, :hint => "e.g. 20110201"
       .span-12.last
         = f.input :user_name_contains, :required => false, :label => 'User Name', :input_html => {:style => 'width: 150px;'}
@@ -34,11 +34,10 @@
       - checkins.each do |checkin|
         - user      = checkin.user
         - location  = checkin.location
-        .span-24.last.admin-checkin{:class => cycle('even', 'odd')}
+        .span-24.last.admin-checkin
           .span-23.prepend-1.last.user
             = link_to user.name.present? ? user.name : user.handle, user_path(user), :id => 'link_user_profile'
-            %br
-            %span{:style => 'font-size: 0.9em; color: #777;'}= [user.member? ? "Member" : "User", user.city.try(:name)].compact.join(" : ")
+            %span{:style => 'font-size: 0.9em; color: #777; margin-left: 5px;'}= [user.member? ? "Member" : "User", user.city.try(:name)].compact.join(" : ")
           .span-24.last.location
             = render(:partial => 'locations/location',
                      :locals => {:location => location, :tag_link => true, :edit_link => true})
