@@ -13,7 +13,7 @@ module Users::Search
     # filter checkins by females
     options.update(:with_gender => [1]) unless options[:with_gender]
     # exclude checkins by me and my friends
-    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
+    options.update(:without_user_ids => [self.id] + friend_set) unless options[:without_user_ids]
     search_data_streams(options)
   end
 
@@ -21,15 +21,15 @@ module Users::Search
     # filter checkins by males
     options.update(:with_gender => [2]) unless options[:with_gender]
     # exclude checkins by me and my friends
-    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
+    options.update(:without_user_ids => [self.id] + friend_set) unless options[:without_user_ids]
     search_data_streams(options)
   end
 
   def search_friends_data_streams(options={})
     # include only friend checkins
     unless options[:with_user_ids]
-      return [] if friend_ids.blank?
-      options.update(:with_user_ids => friend_ids)
+      return [] if friend_set.blank?
+      options.update(:with_user_ids => friend_set)
     end
     search_data_streams(options)
   end
@@ -74,8 +74,8 @@ module Users::Search
   def search_friends_checkins(options={})
     # include only friend checkins
     unless options[:with_user_ids]
-      return [] if friend_ids.blank?
-      options.update(:with_user_ids => friend_ids)
+      return [] if friend_set.blank?
+      options.update(:with_user_ids => friend_set)
     end
     search_checkins(options)
   end
@@ -98,7 +98,7 @@ module Users::Search
 
   def search_daters_checkins(options={})
     # exclude checkins by me and my friends
-    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
+    options.update(:without_user_ids => [self.id] + friend_set) unless options[:without_user_ids]
     # filter checkins by my gender orientation
     options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     search_checkins(options)
@@ -150,8 +150,8 @@ module Users::Search
   def search_friends_todos(options={})
     # filter todos by friends
     unless options[:with_user_ids]
-      return [] if friend_ids.blank?
-      options.update(:with_user_ids => friend_ids)
+      return [] if friend_set.blank?
+      options.update(:with_user_ids => friend_set)
     end
     search_todos(options)
   end
@@ -172,7 +172,7 @@ module Users::Search
     # filter users by my gender orientation
     options.update(:with_gender => my_gender_orientation) unless options[:with_gender]
     # exclude user and friends
-    options.update(:without_user_ids => [self.id] + friend_ids) unless options[:without_user_ids]
+    options.update(:without_user_ids => [self.id] + friend_set) unless options[:without_user_ids]
     search(options)
   end
 
@@ -184,7 +184,7 @@ module Users::Search
     loc_ids = locationships.friend_checkins.collect(&:location_id)
     options.update(:with_location_ids => [loc_ids]) unless options[:with_location_ids]
     # filter by common friends
-    options.update(:with_user_ids => friend_ids) unless options[:with_user_ids]
+    options.update(:with_user_ids => friend_set) unless options[:with_user_ids]
     # exclude user
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
     search(options)
@@ -229,7 +229,7 @@ module Users::Search
     add_geo_params(options)
     options.update(:klass => User)
     options.update(:without_user_ids => [self.id]) unless options[:without_user_ids]
-    options.update(:with_user_ids => friend_ids) unless options[:with_user_ids]
+    options.update(:with_user_ids => friend_set) unless options[:with_user_ids]
     search(options)
   end
 

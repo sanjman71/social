@@ -147,6 +147,7 @@ class User < ActiveRecord::Base
     has member, :as => :member
     has availability.now, :as => :now
     has tag_ids, :as => :tag_ids, :type => :multi
+    has friend_set_ids, :as => :friend_ids, :type => :multi
     # checkins
     has checkins(:id), :as => :checkin_ids
     has checkins_count, :as => :checkins_count
@@ -246,9 +247,7 @@ class User < ActiveRecord::Base
 
   # find common friends among specified users
   def self.common_friends(user1, user2)
-    friend1_ids = user1.friendships.select(:friend_id).collect(&:friend_id) + user1.inverse_friendships.select(:user_id).collect(&:user_id)
-    friend2_ids = user2.friendships.select(:friend_id).collect(&:friend_id) + user2.inverse_friendships.select(:user_id).collect(&:user_id)
-    common_ids  = (friend1_ids & friend2_ids).sort
+    common_ids = (user1.friend_set & user2.friend_set).sort
     User.find(common_ids) rescue []
   end
 
@@ -385,9 +384,9 @@ class User < ActiveRecord::Base
     write_attribute(:tag_ids, nil)
   end
 
-  def friend_ids
-    ids = friendships.select(:friend_id).collect(&:friend_id) + inverse_friendships.select(:user_id).collect(&:user_id)
-    ids.sort
+  # map friend_set_ids string to a collection
+  def friend_set
+    (self.friend_set_ids || '').split(',').map(&:to_i)
   end
 
   def rpx?
@@ -679,4 +678,5 @@ class User < ActiveRecord::Base
       update_attribute(:member_at, Time.zone.now)
     end
   end
+
 end

@@ -207,9 +207,12 @@ class UserSearchTest < ActiveSupport::TestCase
   context "search_friends_checkins filter" do
     setup do
       setup_checkins
+      Resque.reset!
       # add friends
       @chicago_male1.friendships.create!(:friend => @chicago_female1)
       @chicago_male1.friendships.create!(:friend => @chicago_male2)
+      Resque.run!
+      @chicago_male1.reload
     end
 
     should "find 2 checkins by friends, filtered by distance, ordered by similar locations" do
@@ -237,8 +240,11 @@ class UserSearchTest < ActiveSupport::TestCase
     end
     
     should "find 0 checkins by a female, filtered by distance, ordered by similar locations" do
+      Resque.reset!
       # add female as friend, which should exclude her as a dater
       @chicago_male1.friendships.create!(:friend => @chicago_female1)
+      Resque.run!
+      @chicago_male1.reload
       ThinkingSphinx::Test.run do
         @checkins = @chicago_male1.search_daters_checkins(:miles => 50,
                                                           :order => :sort_similar_locations)
@@ -272,7 +278,6 @@ class UserSearchTest < ActiveSupport::TestCase
       end
     end
   end
-
 
   context "sort todos before checkins" do
     should "rank todos higher than today's checkins" do
@@ -449,8 +454,11 @@ class UserSearchTest < ActiveSupport::TestCase
 
   context "search_friends filter" do
     setup do
+      Resque.reset!
       @chicago_male1.friendships.create!(:friend => @chicago_female1)
       @chicago_male1.friendships.create!(:friend => @chicago_male2)
+      Resque.run!
+      @chicago_male1.reload
     end
 
     should "find 2 users filtered by friends" do

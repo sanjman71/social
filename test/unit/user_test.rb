@@ -353,14 +353,36 @@ class UserTest < ActiveSupport::TestCase
       end
     end
 
-    context "common friends" do
-      should "find 0 common friends" do
+    context "friend_set" do
+      should "update friend_set after adding/removing friends" do
+        Resque.reset!
         @user1    = User.create!(:name => "User 1", :handle => 'user1')
         @user2    = User.create!(:name => "User 2", :handle => 'user2')
+        @friend1  = User.create!(:name => "Friend 1", :handle => 'friend1')
+        @friend2  = User.create!(:name => "Friend 2", :handle => 'friend2')
+        @friend3  = User.create!(:name => "Friend 3", :handle => 'friend3')
+        @fship1   = @user1.friendships.create!(:friend => @friend1)
+        Resque.run!
+        assert_equal [@friend1.id], @user1.reload.friend_set
+        assert_equal [@user1.id], @friend1.reload.friend_set
+        @fship1.destroy
+        Resque.run!
+        assert_equal [], @user1.reload.friend_set
+        assert_equal [], @friend1.reload.friend_set
+      end
+    end
+
+    context "common friends" do
+      should "find 0 common friends" do
+        Resque.reset!
+        @user1    = User.create!(:name => "User 1", :handle => 'user1')
+        @user2    = User.create!(:name => "User 2", :handle => 'user2')
+        Resque.run!
         assert_equal [], User.common_friends(@user1, @user2)
       end
 
       should "find 1 common friend" do
+        Resque.reset!
         @user1    = User.create!(:name => "User 1", :handle => 'user1')
         @user2    = User.create!(:name => "User 2", :handle => 'user2')
         @friend1  = User.create!(:name => "Friend 1", :handle => 'friend1')
@@ -371,7 +393,8 @@ class UserTest < ActiveSupport::TestCase
         # friend 3 is common
         @user1.friendships.create!(:friend => @friend3)
         @user2.friendships.create!(:friend => @friend3)
-        assert_equal [@friend3], User.common_friends(@user1, @user2)
+        Resque.run!
+        assert_equal [@friend3], User.common_friends(@user1.reload, @user2.reload)
       end
     end
 
