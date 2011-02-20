@@ -32,8 +32,8 @@ class AdminController < ApplicationController
     @non_guy_checkins   = @drange.map { |date| @non_guy_checkins[date.to_s].to_i }
 
     # find planned checkins per day
-    @todos          = PlannedCheckin.where(:planned_at.gte => @dstart).count(:group => "DATE(planned_at)")
-    @todos          = @drange.map { |date| @todos[date.to_s].to_i }
+    @todos              = PlannedCheckin.where(:planned_at.gte => @dstart).count(:group => "DATE(planned_at)")
+    @todos              = @drange.map { |date| @todos[date.to_s].to_i }
   end
 
   # GET /admin/invites_chart
@@ -67,11 +67,24 @@ class AdminController < ApplicationController
     @redis      = RedisSocket.new
     @redis_keys = @redis.keys("2011*emails").sort
 
-    # parse first date, convert to msec
-    @dtime1     = DateTime.parse(@redis_keys.first.match(/(\d+):emails/)[1]).to_i * 1000
+    # parse first date, e.g. "20110201"
+    @dstart     = Date.parse(@redis_keys.first.match(/(\d+):emails/)[1])
+    @drange     = Range.new(@dstart, Date.today)
 
-    @redis_keys.each do |key|
-      hash = @redis.hgetall(key)
+    @email_keys = ['badge_added', 'daily_checkins', 'imported_checkin', 'invite', 'message', 'realtime_checkins',
+                   'share_drink', 'todo_added', 'todo_expired']
+    @email_hash = {}
+
+    @drange.each do |date|
+      # convert date format "2011-02-01" to "20110201"
+      date = date.to_s.gsub("-",'')
+      # get hash for the date
+      hash = @redis.hgetall("#{date}:emails")
+      Rails.logger.debug("hash: #{hash.inspect}")
+      @email_keys.each do |key|
+        @email_hash[key] ||= []
+        @email_hash[key].push(hash[key].to_i)
+      end
     end
   end
 end

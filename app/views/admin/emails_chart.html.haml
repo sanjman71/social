@@ -8,8 +8,8 @@
     = render(:partial => 'admin_links')
 
 #admin-content.clearfix
-  #invitations{:style => 'width: 900px; height: 300px;'}
+  #emails{:style => 'width: 900px; height: 300px;'}
 
 :javascript
-  var dtime1  = #{@dtime1};
-  var invites = #{@invites};
+  var dstart      = #{@dstart.to_datetime.to_i * 1000};
+  var email_hash  = #{@email_hash.to_json};
