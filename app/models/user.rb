@@ -667,7 +667,9 @@ class User < ActiveRecord::Base
 
   # badging added
   def event_badging_added(badging)
-    UserMailer.delay.user_badge_added(:badging_id => badging.id)
+    if member? and email_addresses_count?
+      Resque.enqueue(UserMailerWorker, :user_badge_added, 'badging_id' => badging.id)
+    end
   end
 
   # oauth added

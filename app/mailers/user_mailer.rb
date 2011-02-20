@@ -144,7 +144,7 @@ class UserMailer < ActionMailer::Base
   end
 
   def user_badge_added(options)
-    @badging  = Badging.find(options[:badging_id])
+    @badging  = Badging.find(options['badging_id'])
     @user     = @badging.user
     @badge    = @badging.badge
     @email    = @user.email_address
