@@ -72,8 +72,10 @@ Feature: Home Streams
     # add friends
     And "chicago_friend1" is friends with "chicago_guy"
     And "chicago_friend2" is friends with "chicago_guy"
-    And I am logged in as "chicago_guy"
     And sphinx is indexed
+    And the resque jobs are processed
+    And I am logged in as "chicago_guy"
+
     When I go to the home page
     And I follow "Friends" within "ul#social-stream-nav"
     And I wait for "2" seconds
@@ -92,6 +94,7 @@ Feature: Home Streams
     And user "chicago_coffee_gal" checked in to "Chicago Starbucks" "15 minutes ago"
     And I am logged in as "chicago_guy"
     And sphinx is indexed
+
     When I go to the home page
     Then I should see "Everyone" within "ul#social-stream-nav li.active"
     And I should see "chicago_coffee_gal" within "ul#social-stream"
