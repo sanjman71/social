@@ -10,6 +10,21 @@ class CheckinWorker
     AppLogger.log(s, nil, level)
   end
 
+  def self.send_realtime_friend_checkin(options={})
+    checkin = Checkin.find(options['checkin_id'])
+    user    = checkin.user
+
+    # find member friends
+    members = User.where(:member => 1, :id => user.friend_set)
+    members.each do |member|
+      # check preferences
+      next unless member.preferences_realtime_friend_checkin_emails.to_i == 1
+      # send email
+      Resque.enqueue(UserMailerWorker, :user_friend_realtime_checkin,
+                     'user_id' => member.id, 'checkin_id' => checkin.id)
+    end
+  end
+
   def self.search_realtime_checkin_matches(options={})
     # find users who are out
     values = Realtime.find_users_out

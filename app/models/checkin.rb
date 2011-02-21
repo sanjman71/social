@@ -67,6 +67,10 @@ class Checkin < ActiveRecord::Base
       # search for learn matches
       Resque.enqueue(CheckinWorker, :search_learn_matches, 'checkin_id' => self.id)
     end
+    if checkin_since?(12.hours.ago)
+      # send checkin to friends
+      Resque.enqueue(CheckinWorker, :send_realtime_friend_checkin, 'checkin_id' => self.id)
+    end
     if checkin_since?(1.hour.ago) && user.member?
       # mark member with a recent checkin as out
       Realtime.mark_user_as_out(user, self)

@@ -7,11 +7,27 @@ Feature: Import user checkin
     Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight", preferences_import_checkin_emails: "1"
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
-    And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
+    And user "sanjay" checked in to "Starbucks" "3 hours ago"
+    # And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
     And the resque jobs are processed
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: You checked in at Starbucks"
     When I open the email
     Then I should see "Good work. That checkin got you 10 points." in the email body
+
+  @checkin @email @realtime
+  Scenario: Members who have opted in should receive an email after a friend's checkin is imported
+    Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight", preferences_realtime_friend_checkin_emails: "1"
+    And user "sanjay" has email "sanjay@outlately.com"
+    And a user "adam" exists with handle: "adam", member: "1", gender: "Male", orientation: "Straight"
+    And "adam" is friends with "sanjay"
+    And a location "Starbucks" exists with name: "Starbucks", street_address: "200 N State St.", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
+    And user "adam" checked in to "Starbucks" "5 minutes ago"
+    And the resque jobs are processed
+    And the resque jobs are processed again
+
+    Then "sanjay@outlately.com" should receive an email with subject "Outlately: adam checked in at Starbucks..."
+    When I open the email with subject "Outlately: adam checked in at Starbucks..."
+    Then I should see "Just wanted to let you know that adam checked in at Starbucks, 200 N State St." in the email body
 
   @checkin @email @realtime
   Scenario: Members who are marked as 'out' should receive an email with other realtime checkins
@@ -28,7 +44,7 @@ Feature: Import user checkin
     And the realtime checkin matches job is queued
     # process jobs twice
     And the resque jobs are processed
-    And the resque jobs are processed
+    And the resque jobs are processed again
 
     # only members should get emails
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: Who's out and about Starbucks right now..."
@@ -46,18 +62,16 @@ Feature: Import user checkin
     And a clear email queue
     And sphinx is indexed
     And the realtime checkin matches job is queued
-    # process jobs twice
     And the resque jobs are processed
-    And the resque jobs are processed
+    And the resque jobs are processed again
     Then "sanjay@outlately.com" should receive no emails with subject "Outlately: Who's out and about Starbucks right now..."
 
     # a new checkin within the 'out' window should generate an email
     And user "coffee_gal1" checked in to "Lavazza" "3 minutes ago"
     And sphinx is indexed
     And the realtime checkin matches job is queued
-    # process jobs twice
     And the resque jobs are processed
-    And the resque jobs are processed
+    And the resque jobs are processed again
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: Who's out and about Starbucks right now..."
     When I open the email with subject "Outlately: Who's out and about Starbucks right now..."
     Then I should see "Thanks for checking in at Starbucks." in the email body
@@ -70,9 +84,8 @@ Feature: Import user checkin
     And a clear email queue
     And sphinx is indexed
     And the realtime checkin matches job is queued
-    # process jobs twice
     And the resque jobs are processed
-    And the resque jobs are processed
+    And the resque jobs are processed again
     Then "sanjay@outlately.com" should receive no emails with subject "Outlately: Who's out and about Starbucks right now..."
 
   @checkin @email @daily
@@ -87,7 +100,7 @@ Feature: Import user checkin
     And user "sanjay" checked in to "Starbucks" "10 minutes ago"
     And sphinx is indexed
     And the resque jobs are processed
-    And the resque jobs are processed
+    And the resque jobs are processed again
     Then "sanjay@outlately.com" should receive no emails with subject "Outlately: Your daily checkin email..."
 
     # the daily checkin email should be sent the following day
@@ -102,7 +115,7 @@ Feature: Import user checkin
     And I should see "coffee_gal1" in the email body
     And I should see "coffee_gal2" in the email body
 
-  Scenario: Member should not receive an email when a older checkin is imported
+  Scenario: Member should not receive an email when an old checkin is imported
     Given a user "sanjay" exists with handle: "sanjay", member: "1"
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
@@ -111,7 +124,7 @@ Feature: Import user checkin
     Then "sanjay@outlately.com" should have no emails
 
   @checkin @email
-  Scenario: Non-member should not receive emails for imported checkins
+  Scenario: Non-members should not receive emails for imported checkins
     Given a user "sanjay" exists with handle: "sanjay", member: "0"
     And user "sanjay" has email "sanjay@outlately.com"
     And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"

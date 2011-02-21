@@ -157,6 +157,20 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
+  def user_friend_realtime_checkin(options)
+    @user     = User.find(options['user_id'])
+    @checkin  = Checkin.find(options['checkin_id'])
+    @email    = @user.email_address
+
+    @subject  = "Outlately: #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}..."
+
+    # log and track
+    log("[email:#{@user.id}]: #{@email} friend #{@checkin.user.try(:handle)} realtime checkin")
+    track("friend_realtime_checkin")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
   def user_nearby_realtime_checkins(options)
     @user     = User.find(options['user_id'])
     @checkin  = Checkin.find(options['checkin_id'])

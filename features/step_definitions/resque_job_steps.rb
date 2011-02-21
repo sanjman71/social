@@ -1,4 +1,4 @@
-When /^the resque jobs are processed$/ do
+When /^the resque jobs are processed(?: again)?$/ do
   Resque.run!
 end
 

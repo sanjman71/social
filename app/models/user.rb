@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :availability, :allow_destroy => true
 
   # Preferences
-  serialized_hash           :preferences, {:import_checkin_emails => '0'}
+  serialized_hash           :preferences, {:import_checkin_emails => '0', :realtime_friend_checkin_emails => '0'}
 
   before_save               :before_save_callback
   after_create              :manage_user_roles
