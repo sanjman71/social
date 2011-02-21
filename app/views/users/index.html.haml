@@ -36,7 +36,7 @@
       .span-24.last.user{:class => klasses}
         .span-5.prepend-1.name
           %h4.bottom= link_to user.name.present? ? user.name : user.handle, user_path(user), :id => 'link_user_profile'
-          %span{:style => 'font-size: 0.9em; color: #777;'}= [user.member? ? "Member" : "User", user.city.try(:name)].compact.join(" : ")
+          %span{:style => 'font-size: 0.9em; color: #777;'}= [user.id, user.member? ? "Member" : "User", user.city.try(:name)].compact.join(" : ")
         .span-4
           Age: #{user.age.to_i}
           %br

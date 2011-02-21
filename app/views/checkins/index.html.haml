@@ -37,7 +37,7 @@
         .span-24.last.admin-checkin
           .span-23.prepend-1.last.user
             = link_to user.name.present? ? user.name : user.handle, user_path(user), :id => 'link_user_profile'
-            %span{:style => 'font-size: 0.9em; color: #777; margin-left: 5px;'}= [user.member? ? "Member" : "User", user.city.try(:name)].compact.join(" : ")
+            %span{:style => 'font-size: 0.9em; color: #777; margin-left: 5px;'}= [user.member? ? "Member" : "User", user.id, user.city.try(:name)].compact.join(" : ")
           .span-24.last.location
             = render(:partial => 'locations/location',
                      :locals => {:location => location, :tag_link => true, :edit_link => true})

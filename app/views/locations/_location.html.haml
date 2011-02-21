@@ -3,7 +3,10 @@
 
 .span-10.prepend-1
   - if edit_link
-    %span.name= link_to location.name, edit_location_path(location)
+    %span.name
+      = link_to location.name, edit_location_path(location)
+      - if has_role?('admin')
+        %span{:style => 'font-size: 0.9em; color: #777; margin-left: 5px;'}= ["Location", location.id].compact.join(" : ")
   - else
     %span.name= location.name
   %br
