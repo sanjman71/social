@@ -1,6 +1,5 @@
 #page-header
-  #profile-header
-    %h3 Message
+  %h3{:style => 'padding: 10px; color: #fff;'}= @sender.try(:handle)
 
 #content.clearfix
   .span.24.last

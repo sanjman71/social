@@ -165,9 +165,9 @@ class UsersController < ApplicationController
     end
   end
 
-  # GET /users/1/re/checkins/5/message/bts - 'be there soon'
-  # GET /users/1/re/checkins/5/message/sad - 'share a drink?'
-  # GET /users/1/re/todo/1/message/sad - 'share a drink?'
+  # GET /users/1/re/checkin/5/message/bts - 'be there soon'
+  # GET /users/1/re/checkin/5/message/sad - 'share a drink?'
+  # PUT /users/1/re/todo/1/message/sad - 'share a drink?'
   def message
     # @user initialized in before filter
 
@@ -217,36 +217,6 @@ class UsersController < ApplicationController
     end
   rescue Exception => e
     Rails.logger.debug("user#message exception: #{e.message}")
-  end
-
-  # GET /users/1/share_drink
-  def share_drink
-    # @user initialized in before filter
-
-    # send message
-    @sender  = current_user
-    @options = {'sender_id' => @sender.id, 'to_id' => @user.id}
-    Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
-    @notice  = "We'll send them a note saying you'd like to grab a drink"
-
-    # log message
-    Message.log("[user:#{@sender.id}] #{@sender.handle} sent share a drink message to:#{@user.handle}")
-
-    respond_to do |format|
-      format.html do
-        # track action
-        track_page("/action/share/drink")
-        flash[:tracker] = ga_tracker
-        # set flash
-        flash[:notice]  = @notice
-        redirect_to(redirect_back_path(user_path(@user))) and return
-      end
-      format.json do
-        @growls     = [{:message => @notice, :timeout => 2000}]
-        @track_page = "/action/share/drink"
-        render(:json => {'status' => 'ok', 'growls' => @growls, 'track_page' => @track_page}.to_json) and return
-      end
-    end
   end
 
   # PUT /users/1/add_todo_request
