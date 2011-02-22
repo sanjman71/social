@@ -136,7 +136,18 @@ class UserMailer < ActionMailer::Base
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
     @email    = @to.email_address
-    @subject  = "Outlately: #{@sender.handle} wants to share a drink with you..."
+
+    if options['checkin_id']
+      @checkin  = Checkin.find(options['checkin_id'])
+    elsif options['todo_id']
+      @todo     = PlannedCheckin.find(options["todo_id"])
+    end
+
+    if @checkin
+      @subject  = "Outlately: from #{@sender.handle}, re: your checkin at #{@checkin.location.try(:name)}..."
+    elsif @todo
+      @subject  = "Outlately: from #{@sender.handle}, re: your planned checkin at #{@todo.location.try(:name)}..."
+    end
 
     # log and track
     log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
@@ -192,7 +203,9 @@ class UserMailer < ActionMailer::Base
     @checkin  = Checkin.find(options['checkin_id'])
     @location = @checkin.location
     @checkins = Checkin.find(options['checkin_ids']) rescue []
+
     @email    = @user.email_address
+    @token    = @user.oauths.facebook.first.try(:access_token).to_s
     @subject  = "Outlately: Who's out and about #{@location.try(:name)} right now..."
 
     # log and track

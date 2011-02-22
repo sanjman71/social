@@ -139,12 +139,13 @@ Feature: Home Streams
 
     When I follow "Share a Drink"
     And I wait for "2" seconds
-    Then I should see "We'll send them a note"
+    Then I should see "We'll send them a message saying you'd like to grab a drink"
 
     When the resque jobs are processed
-    Then "chicago_coffee_gal@gmail.com" should receive an email with subject "Outlately: chicago_guy wants to share a drink with you..."
-    When I open the email with subject "Outlately: chicago_guy wants to share a drink with you..."
-    Then I should see "Want to have a drink with him?" in the email body
+    Then "chicago_coffee_gal@gmail.com" should receive an email with subject "Outlately: from chicago_guy, re: your planned checkin at Chicago Starbucks..."
+    When I open the email with subject "Outlately: from chicago_guy, re: your planned checkin at Chicago Starbucks..."
+    Then I should see "chicago_guy wants to share a drink..." in the email body
+    Then I should see "So what do you think? Want to have a drink with him?" in the email body
 
   # @javascript
   # Scenario: User sees checkins in the past day in the Today stream

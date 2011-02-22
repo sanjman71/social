@@ -3,6 +3,6 @@ Just wanted to let you know that #{@checkin.user.try(:handle)} checked in at #{@
 %p
 Send a message:
 %p
-= link_to 'Be There Soon', message_user_url(:id => @checkin.user.try(:id), :checkin_id => @checkin.id, :message => 'bts', :token => @token)
+= link_to 'Be There Soon', message_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin', :object_id => @checkin.id, :message => 'bts', :token => @token, 'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email', 'utm_source' => 'outlately')
 
 = render(:partial => 'footer', :locals => {:campaign => 'friend-realtime-checkin'})

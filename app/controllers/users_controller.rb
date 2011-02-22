@@ -167,14 +167,24 @@ class UsersController < ApplicationController
 
   # GET /users/1/re/checkins/5/message/bts - 'be there soon'
   # GET /users/1/re/checkins/5/message/sad - 'share a drink?'
+  # GET /users/1/re/todo/1/message/sad - 'share a drink?'
   def message
     # @user initialized in before filter
 
-    # send message
+    # set sender and options
     @sender   = current_user || User.find_by_oauth_token(params[:token].to_s)
-    @checkin  = Checkin.find(params['checkin_id'])
-    @options  = {'sender_id' => @sender.id, 'to_id' => @user.id, 'checkin_id' => @checkin.id}
-    
+    @options  = {'sender_id' => @sender.id, 'to_id' => @user.id}
+
+    case params[:object_type]
+    when 'checkin'
+      @object = Checkin.find(params['object_id'])
+      @options.merge!('checkin_id' => @object.id)
+    when 'todo'
+      @object = PlannedCheckin.find(params['object_id'])
+      @options.merge!('todo_id' => @object.id)
+    end
+
+    # send message
     case params[:message]
     when 'bts'
       Resque.enqueue(UserMailerWorker, :user_be_there_soon_message, @options)
@@ -198,9 +208,15 @@ class UsersController < ApplicationController
           render and return
         end
       end
+      format.json do
+        # track action and send growl message
+        @growls     = [{:message => @notice, :timeout => 2000}]
+        @track_page = "/action/message/#{params[:message]}"
+        render(:json => {'status' => 'ok', 'growls' => @growls, 'track_page' => @track_page}.to_json) and return
+      end
     end
   rescue Exception => e
-    
+    Rails.logger.debug("user#message exception: #{e.message}")
   end
 
   # GET /users/1/share_drink
