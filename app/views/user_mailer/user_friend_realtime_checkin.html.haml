@@ -1,3 +1,8 @@
 Just wanted to let you know that #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}, #{@checkin.location.try(:street_address)}, at #{@checkin.checkin_at.to_s(:time)}.
+%p
+%p
+Send a message:
+%p
+= link_to 'Be There Soon', message_user_url(:id => @checkin.user.try(:id), :checkin_id => @checkin.id, :message => 'bts', :token => @token)
 
 = render(:partial => 'footer', :locals => {:campaign => 'friend-realtime-checkin'})

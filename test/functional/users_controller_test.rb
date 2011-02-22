@@ -22,10 +22,13 @@ class UsersControllerTest < ActionController::TestCase
       to(:controller => 'users', :action => 'activate', :id => '1')
     should route(:put, "/users/1/disable").
       to(:controller => 'users', :action => 'disable', :id => '1')
+    should route(:put, "/users/1/re/checkin/1/message/bts").
+      to(:controller => 'users', :action => 'message', :id => '1', :checkin_id => '1', :message => 'bts')
   end
 
   def setup
     ThinkingSphinx::Test.init
+    @us         = countries(:us)
     @il         = states(:il)
     @chicago    = cities(:chicago)
     # use these coordinates for distance calcs below
@@ -237,6 +240,40 @@ class UsersControllerTest < ActionController::TestCase
         assert_equal 'ok', @json['status']
         assert_false @json['added']
         assert_equal ["user:#{@user2.id}"], @user1.learns_get
+      end
+    end
+  end
+
+  context "message" do
+    setup do
+      @user1 = Factory.create(:user, :handle => 'user1')
+      assert @user1.active?
+      @user2 = Factory.create(:user, :handle => 'user2')
+      assert @user2.active?
+      @chicago_sbux = Location.create!(:name => "Chicago Starbucks", :country => @us, :city => @chicago,
+                                       :lat => 41.89248300, :lng => -87.6281306000)
+      @checkin1 = @user1.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @chicago_sbux))
+    end
+
+    context "html request by authenticated user" do
+      should "send be there soon message" do
+        sign_in @user2
+        get :message, :id => @user1.id, :checkin_id => @checkin1.id, :message => 'bts'
+        assert_equal @user2, assigns(:sender)
+        assert_equal @checkin1, assigns(:checkin)
+        assert flash[:notice]
+        assert_redirected_to "/users/#{@user1.id}"
+      end
+    end
+
+    context "token request by non-authenticated user" do
+      should "send be there soon message" do
+        User.stubs(:find_by_oauth_token).returns(@user2)
+        get :message, :id => @user1.id, :checkin_id => @checkin1.id, :message => 'bts', :token => "123"
+        assert_equal @user2, assigns(:sender)
+        assert_equal @checkin1, assigns(:checkin)
+        assert flash[:notice]
+        assert_template "message"
       end
     end
   end

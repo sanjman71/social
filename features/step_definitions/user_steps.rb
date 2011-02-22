@@ -28,9 +28,9 @@ Given /^user "([^"]*)" has birthdate "([^"]*)"$/ do |handle, birthdate|
 end
 
 # add user oauth
-Given /^user "([^"]*)" has oauth "([^"]*)"$/ do |handle, provider|
+Given /^user "([^"]*)" has oauth "([^"]*)" "([^"]*)"$/ do |handle, provider, token|
   user  = User.find_by_handle!(handle)
-  oauth = user.oauths.create(:provider => provider, :access_token => "111222333")
+  oauth = user.oauths.create!(:provider => provider, :access_token => token)
 end
 
 # add user friend

@@ -117,6 +117,21 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
+  def user_be_there_soon_message(options)
+    @sender   = User.find(options['sender_id'])
+    @to       = User.find(options['to_id'])
+    @checkin  = Checkin.find(options['checkin_id'])
+
+    @email    = @to.email_address
+    @subject  = "Outlately: from #{@sender.handle}, re: your checkin at #{@checkin.location.try(:name)}..."
+
+    # log and track
+    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    track("be_there_soon")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
   def user_share_drink_message(options)
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
@@ -160,8 +175,9 @@ class UserMailer < ActionMailer::Base
   def user_friend_realtime_checkin(options)
     @user     = User.find(options['user_id'])
     @checkin  = Checkin.find(options['checkin_id'])
-    @email    = @user.email_address
 
+    @email    = @user.email_address
+    @token    = @user.oauths.facebook.first.try(:access_token).to_s
     @subject  = "Outlately: #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}..."
 
     # log and track

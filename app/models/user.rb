@@ -123,6 +123,7 @@ class User < ActiveRecord::Base
   scope                     :member, where(:member => 1)
   scope                     :non_member, where(:member => 0)
   scope                     :with_oauths, joins(:oauths).where("oauths.id is not null").select("distinct users.id")
+  scope                     :with_oauth, lambda { |s| joins(:oauths).where({:oauths => [:access_token => s]}) }
   scope                     :with_emails, where(:email_addresses_count.gt => 0)
   scope                     :no_emails, where(:email_addresses_count => 0)
   scope                     :with_email, lambda { |s| { :include => :email_addresses, :conditions => ["email_addresses.address = ?", s] } }
@@ -200,6 +201,10 @@ class User < ActiveRecord::Base
     users = self.with_email(email)
     users = self.with_phone(phone) if users.empty?
     users 
+  end
+
+  def self.find_by_oauth_token(s)
+    User.with_oauth(s).first
   end
 
   # find users in the specified states

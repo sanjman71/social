@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :except => [:message]
   before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :learn,
-                                      :share_drink, :show]
+                                      :message, :share_drink, :show]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -86,9 +86,6 @@ class UsersController < ApplicationController
     @badges = @user.badges.order("badges.name asc")
     @badges += [Badge.default] if @badges.size < Badge.default_min
 
-    # always show meetup button
-    @meetup = true
-
     if @viewer == @user
       # deprecated: show matching user profiles
       # @matches = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
@@ -168,6 +165,44 @@ class UsersController < ApplicationController
     end
   end
 
+  # GET /users/1/re/checkins/5/message/bts - 'be there soon'
+  # GET /users/1/re/checkins/5/message/sad - 'share a drink?'
+  def message
+    # @user initialized in before filter
+
+    # send message
+    @sender   = current_user || User.find_by_oauth_token(params[:token].to_s)
+    @checkin  = Checkin.find(params['checkin_id'])
+    @options  = {'sender_id' => @sender.id, 'to_id' => @user.id, 'checkin_id' => @checkin.id}
+    
+    case params[:message]
+    when 'bts'
+      Resque.enqueue(UserMailerWorker, :user_be_there_soon_message, @options)
+      @notice = "We'll send them a message saying you'll be there soon"
+    when 'sad'
+      Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
+      @notice = "We'll send them a message saying you'd like to grab a drink"
+    end
+
+    respond_to do |format|
+      format.html do
+        # track action
+        track_page("/action/message/#{params[:message]}")
+        if user_signed_in?
+          flash[:tracker] = ga_tracker
+          flash[:notice]  = @notice
+          redirect_to(redirect_back_path(user_path(@user))) and return
+        else
+          flash.now[:tracker] = ga_tracker
+          flash.now[:notice]  = @notice
+          render and return
+        end
+      end
+    end
+  rescue Exception => e
+    
+  end
+
   # GET /users/1/share_drink
   def share_drink
     # @user initialized in before filter
@@ -187,12 +222,13 @@ class UsersController < ApplicationController
         track_page("/action/share/drink")
         flash[:tracker] = ga_tracker
         # set flash
-        flash[:notice] = @notice
+        flash[:notice]  = @notice
         redirect_to(redirect_back_path(user_path(@user))) and return
       end
       format.json do
-        @growls = [{:message => @notice, :timeout => 2000}]
-        render(:json => {'status' => 'ok', 'growls' => @growls}.to_json) and return
+        @growls     = [{:message => @notice, :timeout => 2000}]
+        @track_page = "/action/share/drink"
+        render(:json => {'status' => 'ok', 'growls' => @growls, 'track_page' => @track_page}.to_json) and return
       end
     end
   end

@@ -18,7 +18,9 @@ Feature: Import user checkin
   Scenario: Members who have opted in should receive an email after a friend's checkin is imported
     Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight", preferences_realtime_friend_checkin_emails: "1"
     And user "sanjay" has email "sanjay@outlately.com"
+    And user "sanjay" has oauth "facebook" "123"
     And a user "adam" exists with handle: "adam", member: "1", gender: "Male", orientation: "Straight"
+    And user "adam" has email "adam@outlately.com"
     And "adam" is friends with "sanjay"
     And a location "Starbucks" exists with name: "Starbucks", street_address: "200 N State St.", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
     And user "adam" checked in to "Starbucks" "5 minutes ago"
@@ -28,6 +30,16 @@ Feature: Import user checkin
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: adam checked in at Starbucks..."
     When I open the email with subject "Outlately: adam checked in at Starbucks..."
     Then I should see "Just wanted to let you know that adam checked in at Starbucks, 200 N State St." in the email body
+    And I should see "Be There Soon" in the email body
+
+    When I follow "Be There Soon" in the email
+    Then I should see "We'll send them a message"
+    And I should see "_gaq.push(['_trackPageview', '/action/message/bts'])"
+
+    When the resque jobs are processed
+    Then "adam@outlately.com" should receive an email with subject "Outlately: from sanjay, re: your checkin at Starbucks..."
+    When I open the email with subject "Outlately: from sanjay, re: your checkin at Starbucks..."
+    Then I should see "I'll be there soon" in the email body
 
   @checkin @email @realtime
   Scenario: Members who are marked as 'out' should receive an email with other realtime checkins
