@@ -4,3 +4,5 @@ when 'production'
 else
   GOOGLE_ACCOUNT = 'UA-21006913-z'
 end
+
+GOOGLE_SHORTENER_API_KEY = "AIzaSyATWzpi75R75m5sURzLoQS1j_CeYLtGcLw"
