@@ -33,7 +33,7 @@ Feature: Import user checkin
     And I should see "Be There Soon" in the email body
 
     When I follow "Be There Soon" in the email
-    Then I should see "We'll send them a message"
+    Then I should see "We'll send adam a message"
     And I should see "_gaq.push(['_trackPageview', '/action/message/bts'])"
 
     When the resque jobs are processed

@@ -129,6 +129,7 @@ Feature: Home Streams
     And a planned_checkin exists with user: user "chicago_coffee_gal", location: location "Chicago Starbucks", planned_at: "#{1.day.ago}", going_at: "#{1.day.from_now}"
     And I am logged in as "chicago_guy"
     And sphinx is indexed
+
     When I go to the home page
     Then I should see "Everyone" within "ul#social-stream-nav li.active"
     And I should see "chicago_coffee_gal" within "ul#social-stream"
@@ -139,7 +140,7 @@ Feature: Home Streams
 
     When I follow "Share a Drink"
     And I wait for "2" seconds
-    Then I should see "We'll send them a message saying you'd like to grab a drink"
+    Then I should see "We'll send chicago_coffee_gal a message saying you'd like to grab a drink"
 
     When the resque jobs are processed
     Then "chicago_coffee_gal@gmail.com" should receive an email with subject "Outlately: from chicago_guy, re: your planned checkin at Chicago Starbucks..."

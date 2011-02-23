@@ -188,21 +188,23 @@ class UsersController < ApplicationController
     case params[:message]
     when 'bts'
       Resque.enqueue(UserMailerWorker, :user_be_there_soon_message, @options)
-      @notice = "We'll send them a message saying you'll be there soon"
+      @notice = "We'll send #{@user.handle} a message saying you'll be there soon"
     when 'sad'
       Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
-      @notice = "We'll send them a message saying you'd like to grab a drink"
+      @notice = "We'll send #{@user.handle} a message saying you'd like to grab a drink"
     end
 
     respond_to do |format|
       format.html do
         # track action
         track_page("/action/message/#{params[:message]}")
-        if user_signed_in?
+        if false #user_signed_in?
+          # skip this for now
           flash[:tracker] = ga_tracker
           flash[:notice]  = @notice
           redirect_to(redirect_back_path(user_path(@user))) and return
         else
+          # always show simple message page
           flash.now[:tracker] = ga_tracker
           flash.now[:notice]  = @notice
           render and return
