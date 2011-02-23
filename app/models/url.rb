@@ -12,6 +12,8 @@ class Url
     else
       nil
     end
+  rescue Exception => e
+    nil
   end
 
 end

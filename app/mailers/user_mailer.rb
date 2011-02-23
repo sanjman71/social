@@ -191,6 +191,15 @@ class UserMailer < ActionMailer::Base
     @token    = @user.oauths.facebook.first.try(:access_token).to_s
     @subject  = "Outlately: #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}..."
 
+    @message_url = message_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
+                                    :object_id => @checkin.id, :message => 'bts', :token => @token,
+                                    'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
+                                    'utm_source' => 'outlately')
+    unless Rails.env == 'test'
+      # shorten url
+      @short_url = Url.shorten(@message_url)
+    end
+
     # log and track
     log("[email:#{@user.id}]: #{@email} friend #{@checkin.user.try(:handle)} realtime checkin")
     track("friend_realtime_checkin")
