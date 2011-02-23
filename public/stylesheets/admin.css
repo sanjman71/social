@@ -26,7 +26,7 @@ body.admin #page-header { background: #ffffff; }
 #admin-checkins .admin-checkin:nth-child(even) { background-color: #efefef; }
 #admin-checkins .checkin-date {
   padding: 10px;
-  margin-bottom: 10px;
+  margin: 10px 0;
   background: #333333;
   color: #ffffff;
   font-weight: bold;
