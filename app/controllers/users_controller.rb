@@ -166,8 +166,8 @@ class UsersController < ApplicationController
   end
 
   # GET /users/1/re/checkin/5/message/bts - 'be there soon'
-  # GET /users/1/re/checkin/5/message/sad - 'share a drink?'
-  # PUT /users/1/re/todo/1/message/sad - 'share a drink?'
+  # PUT /users/1/re/checkin/5/message/sad - 'share a drink?'
+  # GET /users/1/re/checkin/5/message/ltp - 'love that place'
   def message
     # @user initialized in before filter
 
@@ -189,6 +189,9 @@ class UsersController < ApplicationController
     when 'bts'
       Resque.enqueue(UserMailerWorker, :user_be_there_soon_message, @options)
       @notice = "We'll send #{@user.handle} a message saying you'll be there soon"
+    when 'ltp'
+      Resque.enqueue(UserMailerWorker, :user_love_that_place_message, @options)
+      @notice = "We'll let #{@user.handle} know that"
     when 'sad'
       Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
       @notice = "We'll send #{@user.handle} a message saying you'd like to grab a drink"
