@@ -7,7 +7,8 @@
 }
 
 body {
-  background: #ff6d00 url(/images/body.png);
+  /* background: #ff6d00 url(/images/body.png); orig */
+  background: #fff;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 12px;
   margin: 0;
@@ -123,7 +124,9 @@ body.plans ul#nav li#nav-plans a {
   width: 345px;
   height: 80px;
   padding: 5px 200px 5px 90px;
-  background: rgba(0,0,0,.15);
+  /* background: rgba(0xff,0x6d,0,.15); orig */
+  background: #ff6d00;
+  opacity: 0.8;
   -webkit-box-shadow:    0 1px 0 #ffa700, inset 0 1px 3px rgba(0,0,0,.44);
   -moz-box-shadow:       0 1px 0 #ffa700, inset 0 1px 3px rgba(0,0,0,.44);
   box-shadow:            0 1px 0 #ffa700, inset 0 1px 3px rgba(0,0,0,.44);
@@ -484,7 +487,8 @@ a#get-more-points:hover {
   -moz-border-radius-bottomright: 5px;
   border-radius-bottomleft: 5px;
   border-radius-bottomright: 5px;
-  background: #fff0e6;
+  /* background: #fff0e6; orig */
+  background: #f9f9f9;
   padding: 10px;
   -webkit-box-shadow: 0 2px 3px rgba(42,27,0,.5);
   -moz-box-shadow:    0 2px 3px rgba(42,27,0,.5);
