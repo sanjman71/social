@@ -132,6 +132,21 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
+  def user_love_that_place_message(options)
+    @sender   = User.find(options['sender_id'])
+    @to       = User.find(options['to_id'])
+    @checkin  = Checkin.find(options['checkin_id'])
+
+    @email    = @to.email_address
+    @subject  = "Outlately: #{@sender.handle} commented on your checkin at #{@checkin.location.try(:name)}..."
+
+    # log and track
+    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    track("love_that_place")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
   def user_share_drink_message(options)
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
@@ -191,14 +206,17 @@ class UserMailer < ActionMailer::Base
     @token    = @user.oauths.facebook.first.try(:access_token).to_s
     @subject  = "Outlately: #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}..."
 
-    @message_url = message_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
-                                    :object_id => @checkin.id, :message => 'bts', :token => @token,
-                                    'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
-                                    'utm_source' => 'outlately')
-    unless Rails.env == 'test'
-      # shorten url
-      @short_url = Url.shorten(@message_url)
-    end
+    # build link urls
+
+    @bts_url  = message_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
+                                 :object_id => @checkin.id, :message => 'bts', :token => @token,
+                                 'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
+                                 'utm_source' => 'outlately')
+
+    @ltp_url  = message_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
+                                 :object_id => @checkin.id, :message => 'ltp', :token => @token,
+                                 'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
+                                 'utm_source' => 'outlately')
 
     # log and track
     log("[email:#{@user.id}]: #{@email} friend #{@checkin.user.try(:handle)} realtime checkin")

@@ -31,15 +31,24 @@ Feature: Import user checkin
     When I open the email with subject "Outlately: adam checked in at Starbucks..."
     Then I should see "Just wanted to let you know that adam checked in at Starbucks, 200 N State St." in the email body
     And I should see "Be There Soon" in the email body
+    And I should see "Love That Place" in the email body
 
     When I follow "Be There Soon" in the email
     Then I should see "We'll send adam a message"
     And I should see "_gaq.push(['_trackPageview', '/action/message/bts'])"
 
+    When I follow "Love That Place" in the email
+    Then I should see "We'll let adam know"
+    And I should see "_gaq.push(['_trackPageview', '/action/message/ltp'])"
+
     When the resque jobs are processed
     Then "adam@outlately.com" should receive an email with subject "Outlately: from sanjay, re: your checkin at Starbucks..."
     When I open the email with subject "Outlately: from sanjay, re: your checkin at Starbucks..."
     Then I should see "I'll be there soon" in the email body
+
+    And "adam@outlately.com" should receive an email with subject "Outlately: sanjay commented on your checkin at Starbucks..."
+    When I open the email with subject "Outlately: sanjay commented on your checkin at Starbucks..."
+    Then I should see "I love that place" in the email body
 
   @checkin @email @realtime
   Scenario: Members who are marked as 'out' should receive an email with other realtime checkins
