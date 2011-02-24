@@ -1,0 +1,56 @@
+- javascript 'http://www.google.com/jsapi'
+
+
+%hr.space
+
+.span-10.last
+  #chart
+
+.span-24.last
+  #map-canvas
+
+
+:javascript
+  google.load('visualization', '1', {packages: ['geomap', 'corechart']});
+  google.setOnLoadCallback(drawMap);
+
+  function drawMap() {
+    var data = new google.visualization.DataTable();
+    data.addRows(3);
+    data.addColumn('string', 'City');
+    data.addColumn('number', 'Popularity');
+    data.setValue(0, 0, 'New York');
+    data.setValue(0, 1, 200);
+    data.setValue(1, 0, 'Boston');
+    data.setValue(1, 1, 300);
+    data.setValue(2, 0, 'Chicago');
+    data.setValue(2, 1, 500);
+
+    var options = {};
+    options['region'] = 'US';
+    options['colors'] = [0xFF6C00, 0xFFB581, 0xc06000]; //orange colors
+    options['dataMode'] = 'markers';
+
+    var container = document.getElementById('map-canvas');
+    var geomap    = new google.visualization.GeoMap(container);
+    geomap.draw(data, options);
+  };
+
+  // chart
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Checkins');
+    data.addColumn('number', 'City');
+    data.addRows(3);
+    data.setValue(0, 0, 'San Francisco');
+    data.setValue(0, 1, 11);
+    data.setValue(1, 0, 'Chicago');
+    data.setValue(1, 1, 5);
+    data.setValue(2, 0, 'Boston');
+    data.setValue(2, 1, 3);
+
+    var chart = new google.visualization.PieChart(document.getElementById('chart'));
+    chart.draw(data, {width: 450, height: 300, title: '', pieSliceText: 'value'});
+  }

@@ -95,7 +95,9 @@ Social::Application.routes.draw do
   end
 
   # friends routes
-  resources :friends, :only => [:index]
+  resources :friends, :only => [:index] do
+    get :map, :on => :collection
+  end
 
   # messages routes
   resources :messages, :only => [:create]
