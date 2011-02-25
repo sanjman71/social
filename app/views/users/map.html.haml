@@ -1,0 +1,46 @@
+- javascript 'http://www.google.com/jsapi'
+
+#page-header
+  %h2 #{@user.handle} Data Visualization
+
+.span-24.last{:style => 'margin: 20px 0;'}
+  .span-10.colborder
+    %h2 My Favorite Spots
+    - locations = @user.checkin_locations.order("my_checkins desc").limit(5)
+    - locations.each do |location|
+      .user-location{:style => 'margin: 10px 0;'}
+        %h4.bottom= location.name
+        %span.small= location.street_city
+
+  .span-13.last
+    %h2 Checkin Velocity
+    #chart
+
+.span-24.last{:style => 'margin-bottom: 20px;'}
+  .span-10.colborder
+    %h2 My Social DNA
+  
+:javascript
+  var checkins_by_month = #{@checkins_by_month.to_json};
+
+  google.load('visualization', '1', {packages: ['corechart']});
+  google.setOnLoadCallback(drawChart);
+
+  // scatter chart
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Date');
+    data.addColumn('number', 'Checkins');
+
+    data.addRows(checkins_by_month.length);
+    for (i=0; i < checkins_by_month.length; i++) {
+      // add date and checkins columns
+      data.setValue(i, 0, checkins_by_month[i][0]);
+      data.setValue(i, 1, checkins_by_month[i][1]);
+    }
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart'));
+    chart.draw(data, {width: 500, height: 240, title: '', legend:'none'});
+  }

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!, :except => [:message]
   before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :learn,
-                                      :message, :share_drink, :show]
+                                      :map, :message, :share_drink, :show]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -247,6 +247,21 @@ class UsersController < ApplicationController
         @growls = [{:message => @notice, :timeout => 2000}]
         render(:json => {'status' => 'ok', 'growls' => @growls}.to_json) and return
       end
+    end
+  end
+
+  # GET /users/13/map
+  def map
+    # @user initialized in before filter
+
+    # checkins over the past 6 months
+    @checkins_by_month = @user.checkins.where(:checkin_at.gt => 6.months.ago).count(:group => "DATE_FORMAT(checkin_at, '%Y%m')").to_a.map do |tuple|
+      # map date from "201101" to "Jan 2011"
+      match     = tuple[0].match(/(\d{4,4})(\d{2,2})/)
+      year      = match[1]
+      monthname = Date::ABBR_MONTHNAMES[match[2].to_i]
+      tuple[0]  = "#{monthname} #{year}"
+      tuple
     end
   end
 
