@@ -264,6 +264,9 @@ class UsersController < ApplicationController
       tuple
     end
 
+    # favorite spots
+    @favorite_spots = @user.checkin_locations.order("my_checkins desc").limit(5)
+
     # badges
     @badges_count = @user.badges.count
     @badges_total = Badge.count
@@ -296,6 +299,9 @@ class UsersController < ApplicationController
       hash[checkin.user].push(checkin)
       hash
     end
+
+    # friends favorite spots
+    @favorite_spots = @user.checkin_locations.order("friend_checkins desc").limit(5)
   end
 
   protected

@@ -28,8 +28,11 @@
         - else
           %dfn Looks like your friends haven't been very active recently
 
-.span-24.last{:style => 'margin: 30px 0;'}
+.span-24.last{:style => 'margin: 50px 0;'}
   .span-12
     .inner{:style => 'padding-left: 10px;'}
       %h2 Friends Favorite Spots
-      %dfn show spots for each favorite city
+      - @favorite_spots.each do |location|
+        .user-location{:style => 'margin: 10px 0;'}
+          %h4.bottom= location.name
+          %span.small= location.street_city

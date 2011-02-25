@@ -7,8 +7,7 @@
   .span-10.colborder
     .inner{:style => 'padding-left: 10px;'}
       %h2 Favorite Spots
-      - locations = @user.checkin_locations.order("my_checkins desc").limit(5)
-      - locations.each do |location|
+      - @favorite_spots.each do |location|
         .user-location{:style => 'margin: 10px 0;'}
           %h4.bottom= location.name
           %span.small= location.street_city
