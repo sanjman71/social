@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!, :except => [:message]
   before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :learn,
-                                      :map, :message, :share_drink, :show]
+                                      :message, :share_drink, :show, :visual]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -250,8 +250,8 @@ class UsersController < ApplicationController
     end
   end
 
-  # GET /users/13/map
-  def map
+  # GET /users/13/visual
+  def visual
     # @user initialized in before filter
 
     # checkins over the past 6 months
@@ -267,6 +267,9 @@ class UsersController < ApplicationController
     # badges
     @badges_count = @user.badges.count
     @badges_total = Badge.count
+    
+    # following
+    @following    = User.find(@user.friend_set.sort_by{rand}.slice(0,10))
   end
 
   protected

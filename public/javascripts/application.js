@@ -89,4 +89,11 @@ $.fn.init_shared_dialogs = function() {
 $(document).ready(function() {
   $(document).init_get_points();
   $(document).init_shared_dialogs();
+
+  // tooltip
+  $('.following a').tipsy({
+    gravity: 'n',
+    fade: true
+  });
+
 })

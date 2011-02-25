@@ -17,6 +17,13 @@
     %h2 Checkin Velocity
     #checkins-chart
 
+.span-24{:style => 'margin-bottom: 20px;'}
+  .inner{:style => 'padding-left: 10px;'}
+    %h2 Following
+    .following
+      - @following.each do |user|
+        = link_to image_tag(user.primary_photo_url, :size => '40x40'), visual_user_path(user), :style => 'margin: 0 2px;', :title => user.handle
+
 .span-24.last{:style => 'margin-bottom: 20px;'}
   .span-10.colborder
     .inner{:style => 'padding-left: 10px;'}
@@ -36,9 +43,6 @@
   google.load('visualization', '1', {packages: ['corechart', 'gauge']});
   google.setOnLoadCallback(drawCheckinsChart);
   google.setOnLoadCallback(drawSocialGauge);
-
-  // scatter chart
-  google.setOnLoadCallback(drawChart);
 
   function drawCheckinsChart() {
     var data = new google.visualization.DataTable();
