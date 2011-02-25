@@ -20,19 +20,19 @@
 .span-24{:style => 'margin-bottom: 20px;'}
   .inner{:style => 'padding-left: 10px;'}
     %h2 Following
-    .following
+    .following.tipsy
       - @following.each do |user|
         = link_to image_tag(user.primary_photo_url, :size => '40x40'), visual_user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
-.span-24.last{:style => 'margin-bottom: 20px;'}
+.span-24.last{:style => 'margin: 30px 0;'}
   .span-10.colborder
     .inner{:style => 'padding-left: 10px;'}
       %h2 Social DNA
       Social DNA badges go here
   
   .span-13.last
-    %h2.bottom Social Coolness Meter
-    %dfn.small checkin more to up your coolness factor
+    %h2.bottom Outlately Meter
+    %dfn.small checkin more to boost your outlately factor
     #social-gauge{:style => 'margin: 20px 0;'}
 
 :javascript

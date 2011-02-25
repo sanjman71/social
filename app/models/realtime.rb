@@ -8,7 +8,7 @@ class Realtime
     "users:out"
   end
 
-  # mark user as out based on the specified checkin
+  # mark user as out because of the specified checkin
   def self.mark_user_as_out(user, checkin)
     @redis  = RedisSocket.new
     @score  = checkin.checkin_at.utc.to_i
@@ -16,14 +16,30 @@ class Realtime
     @redis.zadd(key, @score, @value) rescue -1
   end
 
+  # unmark user as out
   def self.unmark_user_as_out(member)
     @redis  = RedisSocket.new
     @redis.zrem(key, member) rescue -1
   end
 
-  def self.find_users_out
+  # find list of users out
+  def self.find_users_out(options={})
     @redis = RedisSocket.new
-    @redis.zrange(key, 0, -1, :with_scores => true)
+    scores = options.has_key?(:scores) ? options[:scores] : true
+    scores = false if options[:map_ids]
+    data   = @redis.zrange(key, 0, -1, :with_scores => scores)
+    if options[:map_ids]
+      data = data.inject(ActiveSupport::OrderedHash.new) do |hash, value|
+        # each value looks like "user:id:checkin:id"
+        match       = value.match(/user:(\d+):checkin:(\d+)/)
+        user_id     = match[1].to_i
+        checkin_id  = match[2].to_i
+        hash[user_id] ||= []
+        hash[user_id].push(checkin_id)
+        hash
+      end
+    end
+    data
   end
 
   def self.add_checkins_sent_while_out(user, checkins)

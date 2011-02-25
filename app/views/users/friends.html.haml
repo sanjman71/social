@@ -1,0 +1,35 @@
+- javascript 'http://www.google.com/jsapi'
+
+#page-header
+  %h2 #{@user.handle} Friend Data Visualization
+
+.span-24.last{:style => 'margin: 20px 0;'}
+  .span-12
+    .inner{:style => 'padding-left: 10px;'}
+      %h2 Friends Out Now
+      .friends-out-now.tipsy
+        - if @friends_out_now.any?
+          - @friends_out_now.keys.each do |user|
+            - checkins = @friends_out_now[user]
+            - location = checkins.first.location
+            = link_to image_tag(user.primary_photo_url, :size => '40x40'), visual_user_path(user), :style => 'margin: 0 2px;', :title => "#{user.handle} @ #{location.try(:name)}"
+        - else
+          %dfn.large No friends currently out ... invite them or tell them to check in
+
+  .span-12.last
+    .inner
+      %h2 Friends Out Recently
+      .friends-out-recently.tipsy
+        - if @friends_out_recently.any?
+          - @friends_out_recently.keys.each do |user|
+            - checkins = @friends_out_recently[user]
+            - location = checkins.first.location
+            = link_to image_tag(user.primary_photo_url, :size => '40x40'), visual_user_path(user), :style => 'margin: 0 2px;', :title => "#{user.handle} @ #{location.try(:name)}"
+        - else
+          %dfn Looks like your friends haven't been very active recently
+
+.span-24.last{:style => 'margin: 30px 0;'}
+  .span-12
+    .inner{:style => 'padding-left: 10px;'}
+      %h2 Friends Favorite Spots
+      %dfn show spots for each favorite city

@@ -91,7 +91,7 @@ $(document).ready(function() {
   $(document).init_shared_dialogs();
 
   // tooltip
-  $('.following a').tipsy({
+  $('.tipsy a').tipsy({
     gravity: 'n',
     fade: true
   });

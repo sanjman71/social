@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!, :except => [:message]
-  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :learn,
+  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :friends, :learn,
                                       :message, :share_drink, :show, :visual]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
@@ -267,9 +267,35 @@ class UsersController < ApplicationController
     # badges
     @badges_count = @user.badges.count
     @badges_total = Badge.count
-    
+
     # following
     @following    = User.find(@user.friend_set.sort_by{rand}.slice(0,10))
+  end
+
+  # GET /users/13/friends
+  def friends
+    # find users out now
+    @users_out_now        = Realtime.find_users_out(:map_ids => true)
+    # find friends out using intersection of users out now and user friends
+    @friends_out_now      = @users_out_now.keys & @user.friend_set
+    @friends_out_now      = @friends_out_now.inject(ActiveSupport::OrderedHash.new) do |hash, user_id|
+      user     = User.find(user_id)
+      checkins = Checkin.find(@users_out_now[user_id])
+      hash[user] ||= []
+      hash[user].concat(checkins)
+      hash
+    end
+
+    # friends out recently, exclude checkins from friends out now
+    @timestamp_recent     = 2.day.ago
+    @friends_checkins     = Checkin.where(:checkin_at.gt => @timestamp_recent).joins(:user).
+                            where(:user => {:id => @user.friend_set}).order("checkin_at desc")
+    # map friends to checkins
+    @friends_out_recently = @friends_checkins.inject(ActiveSupport::OrderedHash.new) do |hash, checkin|
+      hash[checkin.user] ||= []
+      hash[checkin.user].push(checkin)
+      hash
+    end
   end
 
   protected
