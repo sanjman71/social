@@ -263,6 +263,10 @@ class UsersController < ApplicationController
       tuple[0]  = "#{monthname} #{year}"
       tuple
     end
+
+    # badges
+    @badges_count = @user.badges.count
+    @badges_total = Badge.count
   end
 
   protected

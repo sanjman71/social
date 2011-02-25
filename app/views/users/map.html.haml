@@ -5,31 +5,42 @@
 
 .span-24.last{:style => 'margin: 20px 0;'}
   .span-10.colborder
-    %h2 My Favorite Spots
-    - locations = @user.checkin_locations.order("my_checkins desc").limit(5)
-    - locations.each do |location|
-      .user-location{:style => 'margin: 10px 0;'}
-        %h4.bottom= location.name
-        %span.small= location.street_city
+    .inner{:style => 'padding-left: 10px;'}
+      %h2 Favorite Spots
+      - locations = @user.checkin_locations.order("my_checkins desc").limit(5)
+      - locations.each do |location|
+        .user-location{:style => 'margin: 10px 0;'}
+          %h4.bottom= location.name
+          %span.small= location.street_city
 
   .span-13.last
     %h2 Checkin Velocity
-    #chart
+    #checkins-chart
 
 .span-24.last{:style => 'margin-bottom: 20px;'}
   .span-10.colborder
-    %h2 My Social DNA
+    .inner{:style => 'padding-left: 10px;'}
+      %h2 Social DNA
+      Social DNA badges go here
   
+  .span-13.last
+    %h2.bottom Social Coolness Meter
+    %dfn.small checkin more to up your coolness factor
+    #social-gauge{:style => 'margin: 20px 0;'}
+
 :javascript
   var checkins_by_month = #{@checkins_by_month.to_json};
+  var badges_count      = #{@badges_count};
+  var badges_total      = #{@badges_total};
 
-  google.load('visualization', '1', {packages: ['corechart']});
-  google.setOnLoadCallback(drawChart);
+  google.load('visualization', '1', {packages: ['corechart', 'gauge']});
+  google.setOnLoadCallback(drawCheckinsChart);
+  google.setOnLoadCallback(drawSocialGauge);
 
   // scatter chart
   google.setOnLoadCallback(drawChart);
 
-  function drawChart() {
+  function drawCheckinsChart() {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'Date');
     data.addColumn('number', 'Checkins');
@@ -41,6 +52,20 @@
       data.setValue(i, 1, checkins_by_month[i][1]);
     }
 
-    var chart = new google.visualization.LineChart(document.getElementById('chart'));
+    var chart = new google.visualization.LineChart(document.getElementById('checkins-chart'));
     chart.draw(data, {width: 500, height: 240, title: '', legend:'none'});
+  }
+
+  function drawSocialGauge() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Label');
+    data.addColumn('number', 'Value');
+    data.addRows(1);
+    data.setValue(0, 0, 'Coolness');
+    data.setValue(0, 1, badges_count);
+
+    var chart   = new google.visualization.Gauge(document.getElementById('social-gauge'));
+    var options = {width: 400, height: 120, redFrom: 90, redTo: 100, yellowFrom:75, yellowTo: 90, minorTicks: 5,
+                   max: badges_total};
+    chart.draw(data, options);
   }
