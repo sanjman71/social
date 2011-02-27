@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!, :except => [:message]
-  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :friends, :learn,
-                                      :message, :share_drink, :show, :visual]
+  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :learn,
+                                      :message, :share_drink, :show]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -68,23 +68,41 @@ class UsersController < ApplicationController
   def show
     # @user, @viewer initialized in before filter
 
-    self.class.benchmark("*** benchmark [user:#{@user.id}] #{@user.handle} profile data") do
-      # find user checkins and locations, most recent checkins first
-      @checkins   = @user.checkins.order("checkin_at desc").includes(:location)
-      @locations  = @checkins.collect(&:location)
+    # following
+    @following = User.find(@user.friend_set, :order => 'member desc, member_at asc')
 
-      # sort checkin locations by city (city.id => {name, count})
-      @geo_cloud  = @locations.inject(ActiveSupport::OrderedHash.new) do |hash, location|
-        hash[location.city_id] ||= {:count => 0, :name => location.city.try(:name)}
-        hash[location.city_id][:count] +=1
-        hash
-      end.sort_by { |k, v| -1 * v[:count] }
-      @city_id    = @geo_cloud.any? ? @geo_cloud.first[0] : nil
-    end # benchmark
+    # find users out now
+    @users_out_now        = Realtime.find_users_out(:map_ids => true)
+    # find friends out using intersection of users out now and user friends
+    @friends_out_now      = @users_out_now.keys & @user.friend_set
+    @friends_out_now      = @friends_out_now.inject(ActiveSupport::OrderedHash.new) do |hash, user_id|
+      user     = User.find(user_id)
+      checkins = Checkin.find(@users_out_now[user_id])
+      hash[user] ||= []
+      hash[user].concat(checkins)
+      hash
+    end
+
+    # friends out recently, exclude checkins from friends out now
+    @timestamp_recent     = 2.day.ago
+    @friends_checkins     = Checkin.where(:checkin_at.gt => @timestamp_recent).joins(:user).
+                            where(:user => {:id => @user.friend_set}).order("checkin_at desc")
+    # map friends to checkins
+    @friends_out_recently = @friends_checkins.inject(ActiveSupport::OrderedHash.new) do |hash, checkin|
+      hash[checkin.user] ||= []
+      hash[checkin.user].push(checkin)
+      hash
+    end
+
+    # my favorite spots
+    @my_spots       = @user.member ? @user.checkin_locations.order("my_checkins desc").limit(5) : []
+
+    # friends favorite spots
+    @friend_spots   = @user.member ? @user.checkin_locations.order("friend_checkins desc").limit(5) : []
 
     # find user badges; add default badge if necessary
-    @badges = @user.badges.order("badges.name asc")
-    @badges += [Badge.default] if @badges.size < Badge.default_min
+    @badges         = @user.badges.order("badges.name asc")
+    @badges         += [Badge.default] if @badges.size < Badge.default_min
 
     if @viewer == @user
       # deprecated: show matching user profiles
@@ -255,28 +273,18 @@ class UsersController < ApplicationController
     # @user initialized in before filter
 
     # checkins over the past 6 months
-    @checkins_by_month = @user.checkins.where(:checkin_at.gt => 6.months.ago).count(:group => "DATE_FORMAT(checkin_at, '%Y%m')").to_a.map do |tuple|
-      # map date from "201101" to "Jan 2011"
-      match     = tuple[0].match(/(\d{4,4})(\d{2,2})/)
-      year      = match[1]
-      monthname = Date::ABBR_MONTHNAMES[match[2].to_i]
-      tuple[0]  = "#{monthname} #{year}"
-      tuple
-    end
-
-    # favorite spots
-    @favorite_spots = @user.checkin_locations.order("my_checkins desc").limit(5)
-
-    # badges
-    @badges_count = @user.badges.count
-    @badges_total = Badge.count
+    # @checkins_by_month = @user.checkins.where(:checkin_at.gt => 6.months.ago).count(:group => "DATE_FORMAT(checkin_at, '%Y%m')").to_a.map do |tuple|
+    #   # map date from "201101" to "Jan 2011"
+    #   match     = tuple[0].match(/(\d{4,4})(\d{2,2})/)
+    #   year      = match[1]
+    #   monthname = Date::ABBR_MONTHNAMES[match[2].to_i]
+    #   tuple[0]  = "#{monthname} #{year}"
+    #   tuple
+    # end
 
     # following
-    @following    = User.find(@user.friend_set.sort_by{rand}.slice(0,10))
-  end
+    @following = User.find(@user.friend_set.sort_by{rand}.slice(0,100))
 
-  # GET /users/13/friends
-  def friends
     # find users out now
     @users_out_now        = Realtime.find_users_out(:map_ids => true)
     # find friends out using intersection of users out now and user friends
@@ -300,8 +308,50 @@ class UsersController < ApplicationController
       hash
     end
 
+    # my favorite spots
+    @my_spots       = @user.checkin_locations.order("my_checkins desc").limit(5)
+
     # friends favorite spots
-    @favorite_spots = @user.checkin_locations.order("friend_checkins desc").limit(5)
+    @friend_spots   = @user.checkin_locations.order("friend_checkins desc").limit(5)
+
+    # badges
+    @badges_count   = @user.badges.count
+    @badges_total   = Badge.count
+  end
+
+  # GET /users/1
+  def show1
+    # @user, @viewer initialized in before filter
+
+    self.class.benchmark("*** benchmark [user:#{@user.id}] #{@user.handle} profile data") do
+      # find user checkins and locations, most recent checkins first
+      @checkins   = @user.checkins.order("checkin_at desc").includes(:location)
+      @locations  = @checkins.collect(&:location)
+
+      # sort checkin locations by city (city.id => {name, count})
+      @geo_cloud  = @locations.inject(ActiveSupport::OrderedHash.new) do |hash, location|
+        hash[location.city_id] ||= {:count => 0, :name => location.city.try(:name)}
+        hash[location.city_id][:count] +=1
+        hash
+      end.sort_by { |k, v| -1 * v[:count] }
+      @city_id    = @geo_cloud.any? ? @geo_cloud.first[0] : nil
+    end # benchmark
+
+    # find user badges; add default badge if necessary
+    @badges = @user.badges.order("badges.name asc")
+    @badges += [Badge.default] if @badges.size < Badge.default_min
+
+    if @viewer == @user
+      # deprecated: show matching user profiles
+      # @matches = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
+    else
+      # subtract points and add growl message
+      @points = @viewer.subtract_points_for_viewing_profile(@user)
+      flash.now[:growls] = [{:message => I18n.t("currency.view_profile.growl", :points => @points), :timeout => 2000}]
+    end
+
+    # track profile viewer
+    flash.now[:tracker] = track_page("/users/#{@user.id}/by/#{@viewer.id}")
   end
 
   protected

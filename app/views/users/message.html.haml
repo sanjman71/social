@@ -1,6 +1,9 @@
 #page-header
-  %h3{:style => 'padding: 10px; color: #fff;'}= @sender.try(:handle)
+  #profile-header
+    = image_tag(@sender.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
+    %h3= @sender.try(:handle)
 
-#content.clearfix
-  .span.24.last
-    = display_flash(:all)
+%hr.space
+
+.span.24.last
+  = display_flash(:all)

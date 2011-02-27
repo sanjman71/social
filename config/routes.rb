@@ -50,8 +50,6 @@ Social::Application.routes.draw do
     put :disable, :on => :member
     put :learn, :on => :member
     put :add_todo_request, :on => :member
-    get :visual, :on => :member
-    get :friends, :on => :member
   end
 
   # location routes

@@ -121,7 +121,7 @@ body.plans ul#nav li#nav-plans a {
 }
 
 #me {
-  width: 345px;
+  width: 100px;
   height: 80px;
   padding: 5px 200px 5px 90px;
   /* background: rgba(0xff,0x6d,0,.15); orig */
@@ -703,7 +703,7 @@ ul#social-stream {
 #profile-header h4 {
   clear: both;
   font-size: 12px;
-  margin: 0;
+  margin: 5px 0 0;
   padding: 0;
   color: #ff8100;
 }

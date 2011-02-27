@@ -1,62 +1,81 @@
-- title("#{@user.try(:handle)} Profile")
-- stylesheet('map')
-- javascript ('users_show')
-- javascript('jquery.autoresize.min')
-
-- if @checkins.try(:any?) and @user.member?
-  - javascript "http://maps.google.com/maps?file=api&v=2&key=#{GOOGLE_MAPS_KEY}"
-  - javascript 'mapiconmaker', 'markermanager'
-  - javascript 'jquery.metadata'
-  - javascript 'jquery.jmapping.min'
-  :javascript
-    var map = true;
-- else
-  :javascript
-    var map = false;
+- javascript 'http://www.google.com/jsapi'
 
 #page-header
   #profile-header
     = image_tag(@user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
     %h3= @user.handle
     %h4= @user.city.try(:name)
-  %ul#profile-nav
-    - if @user.member?
-      %li= link_to(I18n.t("user.profile.message"), '#dialog-profile-meetup', :id => 'profile-meetup')
-      %li= link_to(I18n.t("user.profile.learn"), '#dialog-profile-learn-more', :id => 'profile-learn-more')
-    - else
-      %li= link_to(I18n.t("user.profile.invite", :name => @user.pronoun.titleize), '#', :id => 'profile-invite', "data-invitee-id" => @user.id, "data-url" => invite_poke_path(:format => 'json'))
 
-#content.clearfix
-  .span.24.last
-    = display_flash(:all)
 
-  - if @user.member?
-    -##profile-photos
-      -# todo
-    .half-col
-      %h4
-        My Social DNA
-        = link_to("What is this?", '#dialog-whatis-social-dna', :id => 'whatis-social-dna')
-      %ul#profile-social-dna
-        = render(:partial => 'badges', :locals => {:user => @user, :badges => @badges})
 
-    .half-col.right
-      %h4 Where I've Been
-      #map.user_profile
-        -# map here
-      #map-side-bar.hide
-        = render(:partial => 'locations/locations_map', :locals => {:locations => @locations, :city_id => @city_id})
+- if @user.member?
+  -# show following
 
-    .full-col.clearfix
-      %h4 Recently Checked In At
-      #profile-label-tags Tags
-      #profile-label-dna Social DNA
+  -# calculate margin based on following size
+  - rows   = @following.size / 20
+  - margin = 60 + (rows*40);
+  .span-24{:style => "margin: 10px 0 #{margin}px;"}
+    .inner{:style => 'padding-left: 10px;'}
+      %h2 Following
+      .following.tipsy
+        - @following.each do |user|
+          = link_to image_tag(user.primary_photo_url, :size => '40x40'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
-      %ul#profile-checked-in-at
-        = render(:partial => 'checkins', :locals => {:checkins => @checkins})
-  - else
-    = render(:partial => 'show_user', :locals => {:user => @user})
+  .span-24.last{:style => 'margin: 20px 0 60px;'}
+    .span-12
+      .inner{:style => 'padding-left: 10px;'}
+        %h2 Friends Out Now
+        .friends-out-now.tipsy
+          - if @friends_out_now.any?
+            - @friends_out_now.keys.each do |user|
+              - checkins = @friends_out_now[user]
+              - location = checkins.first.location
+              = link_to image_tag(user.primary_photo_url, :size => '40x40'), user_path(user), :style => 'margin: 0 2px;', :title => "#{user.handle} @ #{location.try(:name)}"
+          - else
+            %dfn.large No friends currently out ... invite them or tell them to check in
 
-= render(:partial => 'users/dialog_profile_message', :locals => {:user => @user})
-= render(:partial => 'users/dialog_profile_learn_more', :locals => {:user => @user})
-= render(:partial => 'users/dialog_whatis_social_dna')
+    .span-12.last
+      .inner
+        %h2 Friends Out Recently
+        .friends-out-recently.tipsy
+          - if @friends_out_recently.any?
+            - @friends_out_recently.keys.each do |user|
+              - checkins = @friends_out_recently[user]
+              - location = checkins.first.location
+              = link_to image_tag(user.primary_photo_url, :size => '40x40'), user_path(user), :style => 'margin: 0 2px;', :title => "#{user.handle} @ #{location.try(:name)}"
+          - else
+            %dfn Looks like your friends haven't been very active recently
+
+- else
+  .span-24.last{:style => "margin: 10px 0;"}
+    .inner{:style => 'padding-left: 10px;'}
+      %h2 Invite #{@user.him_her.titleize}
+      %em #{link_to('Invite', invite_path)} #{current_user.friend_set.include?(@user.id) ? 'your friend' : ''} #{@user.handle} to join Outlately.
+
+.span-24.last{:style => 'margin: 20px 0;'}
+  - if @my_spots.present? and @my_spots.any?
+    .span-12
+      .inner{:style => 'padding-left: 10px;'}
+        %h2 Favorite Spots
+        - @my_spots.each do |location|
+          .user-location{:style => 'margin: 10px 0;'}
+            %h4.bottom= location.name
+            %span.small= location.street_city
+
+  - if @friend_spots.present? and @friend_spots.any?
+    .span-12.last
+      %h2 Friends Favorite Spots
+      - @friend_spots.each do |location|
+        .user-location{:style => 'margin: 10px 0;'}
+          %h4.bottom= location.name
+          %span.small= location.street_city
+
+- if @user.member?
+  .span-24.last{:style => 'margin: 10px 0;'}
+    .inner{:style => 'padding-left: 10px;'}
+      .half-col
+        %h4
+          Social DNA
+          = link_to("What is this?", '#dialog-whatis-social-dna', :id => 'whatis-social-dna')
+        %ul#profile-social-dna
+          = render(:partial => 'badges', :locals => {:user => @user, :badges => @badges})
