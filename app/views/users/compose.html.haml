@@ -1,0 +1,26 @@
+#page-header
+  #profile-header
+    = image_tag(@sender.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
+    %h3= @sender.try(:handle)
+
+%hr.space
+
+.span.24.last
+  = display_flash(:all)
+
+.span-24{:style => "margin: 10px 0 10px;"}
+  .inner{:style => 'padding-left: 10px;'}
+    - if @object.is_a?(Checkin)
+      %h4 Re: Checkin at '#{@object.location.name}'
+    - elsif @object.is_a?(PlannedCheckin)
+      %h4 Re: Planned checkin at '#{@object.location.name}'
+      
+    - message = Message.new
+    - message.to = @user.try(:handle)
+    = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
+      %h3 Message:
+      = text_area_tag 'message[body]', '', :id => 'message_body', :style => 'height: 30px;'
+      = hidden_field_tag 'message[to]', @user.try(:handle)
+      %br
+      %span#message_count 140
+      %span#message_send= submit_tag 'Send', :id => 'message_send_submit'

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!, :except => [:message]
-  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable, :learn,
-                                      :message, :share_drink, :show]
+  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :compose, :disable,
+                                      :learn, :message, :share_drink, :show]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -180,6 +180,21 @@ class UsersController < ApplicationController
       format.json do
         render(:json => {'status' => @status, 'added' => @added, 'message' => @message, 'growls' => @growls}.to_json)
       end
+    end
+  end
+
+  # GET /users/1/re/checkin/5/compose
+  def compose
+    # @user initialized in before filter
+
+    # find sender
+    @sender   = current_user || User.find_by_oauth_token(params[:token].to_s)
+
+    case params[:object_type]
+    when 'checkin'
+      @object = Checkin.find(params['object_id'])
+    when 'todo'
+      @object = PlannedCheckin.find(params['object_id'])
     end
   end
 
