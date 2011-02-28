@@ -58,10 +58,10 @@ every 15.minutes do
 end
 
 # times are utc
-every 1.day, :at => '1:00 pm' do
-  # send daily checkin emails
-  command "cd /usr/apps/outlately/current && thor checkins:send_daily >> /usr/apps/outlately/shared/log/checkin_send_daily.log"
-end
+# every 1.day, :at => '1:00 pm' do
+#   # send daily checkin emails
+#   command "cd /usr/apps/outlately/current && thor checkins:send_daily >> /usr/apps/outlately/shared/log/checkin_send_daily.log"
+# end
 
 every 1.day, :at => '11:00 am' do
   # send reports
