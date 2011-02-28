@@ -8,6 +8,7 @@ en:
     body:
       "Hey, I want to make it easier for us to meet up.  Join me on Outlately!
       \n
+      \n
       Sign up and you’ll know when I am out and about!"
     subject0: "Outlately: %{name} invited you to Outlately!"
     body0:
