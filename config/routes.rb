@@ -1,6 +1,6 @@
 Social::Application.routes.draw do
 
-  root :to => "home#index"
+  root :to => "users#show"
 
   # devise
   devise_for :users, :controllers => {:omniauth_callbacks => "oauth" }
@@ -42,7 +42,6 @@ Social::Application.routes.draw do
   match 'users/:id/re/:object_type/:object_id/message/:message', :to => "users#message", :as => :message_user,
     :constraints => {:object_type => /checkin|todo/}, :via => [:get, :put]
 
-  match 'profile', :to => 'users#show', :via => :get
   match 'settings', :to => 'settings#show', :via => :get
   match 'settings', :to => 'settings#update', :via => :put
 

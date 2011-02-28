@@ -1,10 +1,11 @@
 - javascript 'http://www.google.com/jsapi'
 
-#page-header
-  #profile-header
-    = image_tag(@user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
-    %h3= @user.handle
-    %h4= @user.city.try(:name)
+- unless @me
+  #page-header
+    #profile-header
+      = image_tag(@user.try(:primary_photo_url), :size => '50x50', :alt => 'profile-avatar')
+      %h3= @user.handle
+      %h4= @user.city.try(:name)
 
 - if @user.member?
   -# show friends out now and recently
@@ -71,7 +72,8 @@
           %h4.bottom= location.name
           %span.small= location.street_city
 
-- if @user.member?
+-# deprecated: social dna badges
+- if false
   .span-24.last{:style => 'margin: 10px 0;'}
     .inner{:style => 'padding-left: 10px;'}
       .half-col

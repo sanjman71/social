@@ -64,12 +64,16 @@ class UsersController < ApplicationController
     end
   end
 
+  # GET /
   # GET /users/1
   def show
     # @user, @viewer initialized in before filter
 
+    # set me if its the home path
+    @me         = request.path == '/' ? true : false
+
     # following
-    @following = User.find(@user.friend_set, :order => 'member desc, member_at asc')
+    @following  = User.find(@user.friend_set, :order => 'member desc, member_at asc')
 
     # find users out now
     @users_out_now        = Realtime.find_users_out(:map_ids => true)
@@ -104,14 +108,12 @@ class UsersController < ApplicationController
     @badges         = @user.badges.order("badges.name asc")
     @badges         += [Badge.default] if @badges.size < Badge.default_min
 
-    if @viewer == @user
-      # deprecated: show matching user profiles
-      # @matches = @user.search_users(:limit => 20, :miles => @user.radius, :order => :sort_similar_locations)
-    else
-      # subtract points and add growl message
-      @points = @viewer.subtract_points_for_viewing_profile(@user)
-      flash.now[:growls] = [{:message => I18n.t("currency.view_profile.growl", :points => @points), :timeout => 2000}]
-    end
+    # deprecated
+    # if @viewer != @user
+    #   # subtract points and add growl message
+    #   @points = @viewer.subtract_points_for_viewing_profile(@user)
+    #   flash.now[:growls] = [{:message => I18n.t("currency.view_profile.growl", :points => @points), :timeout => 2000}]
+    # end
 
     # track profile viewer
     flash.now[:tracker] = track_page("/users/#{@user.id}/by/#{@viewer.id}")
