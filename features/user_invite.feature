@@ -9,7 +9,7 @@ Feature: User sends signup invitations
     And I am logged in as "chicago_guy"
     And the resque jobs are reset
 
-  @javascript @invite @email
+  @invite @email
   Scenario: User sends an invite and the invitation is accepted
     When I go to the invite page
     Then I should see "Invite Friends"
@@ -20,9 +20,9 @@ Feature: User sends signup invitations
     And the resque jobs are processed
     And I go to the logout page
 
-    Then "invitee@outlately.com" should receive an email with subject "Outlately: chicago_guy invited you to Outlately!"
+    Then "invitee@outlately.com" should receive an email with subject "Follow me on Outlate.ly!"
     And I open the email
-    Then I should see "Outlately is a community" in the email body
+    Then I should see "Hey, I want to make it easier for us to meet up" in the email body
     And I follow "here" in the email
     Then I should be on the login page
 
@@ -37,7 +37,7 @@ Feature: User sends signup invitations
     And I open the email with subject "Outlately: Your invitation was accepted!"
     Then I should see "You invited First L. and they signed up." in the email body
 
-  @javascript @invite @email
+  @invite @email
   Scenario: User sends an invite because they were poked and the invitation is accepted
     Given a user "chicago_hottie" exists with handle: "chicago_hottie", gender: "Female", orientation: "Straight", member: "0", points: "0", facebook_id: "88888"
     And user "chicago_hottie" has email "chicago_hottie@outlately.com"
@@ -57,9 +57,9 @@ Feature: User sends signup invitations
     And the resque jobs are processed
     And I go to the logout page
 
-    Then "chicago_hottie@outlately.com" should receive an email with subject "Outlately: chicago_guy invited you to Outlately!"
-    And I open the email with subject "Outlately: chicago_guy invited you to Outlately!"
-    Then I should see "Outlately is a community" in the email body
+    Then "chicago_hottie@outlately.com" should receive an email with subject "Follow me on Outlate.ly!"
+    And I open the email with subject "Follow me on Outlate.ly!"
+    Then I should see "Hey, I want to make it easier for us to meet up" in the email body
     And I follow "here" in the email
     Then I should be on the login page
 
@@ -74,7 +74,7 @@ Feature: User sends signup invitations
     And "chicago_guy1@outlately.com" should receive an email with subject "Outlately: You might be interested in this user signup..."
     And "chicago_guy2@outlately.com" should receive an email with subject "Outlately: You might be interested in this user signup..."
 
-  @javascript @invitations
+  @invite
   Scenario: User tries to invite an existing outlately member
     When I go to the invite page
     Then I should see "Invite Friends"

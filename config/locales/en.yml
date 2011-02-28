@@ -4,8 +4,13 @@
 en:
   points: "Spending Cash : $%{points}"
   invite:
-    subject: "Outlately: %{name} invited you to Outlately!"
+    subject: "Follow me on Outlate.ly!"
     body:
+      "Hey, I want to make it easier for us to meet up.  Join me on Outlately!
+      \n
+      Sign up and you’ll know when I am out and about!"
+    subject0: "Outlately: %{name} invited you to Outlately!"
+    body0:
       "Outlately is a community for those who like *meeting people* and *checking out new places*.
       \n
       For those of you looking to meet new people and check out what places are hot,the
