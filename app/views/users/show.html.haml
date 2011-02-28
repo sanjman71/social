@@ -7,19 +7,11 @@
     %h4= @user.city.try(:name)
 
 - if @user.member?
-  -# show following
-
-  -# calculate margin based on following size
-  - rows   = @following.size / 20
+  -# show friends out now and recently
+  -# calculate margin based on max(friends_out_now, friends_out_recently)
+  - rows   = [@friends_out_now.size, @friends_out_recently.size].max / 10
   - margin = 60 + (rows*40);
-  .span-24{:style => "margin: 10px 0 #{margin}px;"}
-    .inner{:style => 'padding-left: 10px;'}
-      %h2 Following
-      .following.tipsy
-        - @following.each do |user|
-          = link_to image_tag(user.primary_photo_url, :size => '40x40'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
-
-  .span-24.last{:style => 'margin: 20px 0 60px;'}
+  .span-24.last{:style => "margin: 20px 0 #{margin}px;"}
     .span-12
       .inner{:style => 'padding-left: 10px;'}
         %h2 Friends Out Now
@@ -43,6 +35,17 @@
               = link_to image_tag(user.primary_photo_url, :size => '40x40'), user_path(user), :style => 'margin: 0 2px;', :title => "#{user.handle} @ #{location.try(:name)}"
           - else
             %dfn Looks like your friends haven't been very active recently
+
+  -# show following
+  -# calculate margin based on following size
+  - rows   = @following.size / 20
+  - margin = 60 + (rows*45);
+  .span-24{:style => "margin: 10px 0 #{margin}px;"}
+    .inner{:style => 'padding-left: 10px;'}
+      %h2 Following
+      .following.tipsy
+        - @following.each do |user|
+          = link_to image_tag(user.primary_photo_url, :size => '40x40'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
 - else
   .span-24.last{:style => "margin: 10px 0;"}
