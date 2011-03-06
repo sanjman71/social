@@ -86,14 +86,18 @@ $.fn.init_shared_dialogs = function() {
   $("a#points-info").fancybox();
 }
 
+$.fn.init_tooltips = function() {
+  try {
+    // tooltip
+    $('.tipsy a').tipsy({
+      gravity: 'n',
+      fade: true
+    });
+  } catch(e) {}
+}
+
 $(document).ready(function() {
   $(document).init_get_points();
   $(document).init_shared_dialogs();
-
-  // tooltip
-  $('.tipsy a').tipsy({
-    gravity: 'n',
-    fade: true
-  });
-
+  $(document).init_tooltips();
 })
