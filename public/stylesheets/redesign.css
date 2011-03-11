@@ -130,6 +130,7 @@ body #nav li#logo a {
   border: 0;
 }
 body #content {
+  position: relative;
   margin: 0 auto;
   width: 620px;
   border: 10px solid #f0f0f0;
@@ -138,8 +139,181 @@ body #content {
   -webkit-box-shadow: 0 0 2px #000000, 0 0 25px #246676;
   -moz-box-shadow: 0 0 2px #000000, 0 0 25px #246676;
   box-shadow: 0 0 2px #000000, 0 0 25px #246676;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+}
+body #content #member-title {
+  position: absolute;
+  text-indent: -9999px;
+  width: 76px;
+  height: 27px;
+  background: url(/images/member-title.png);
+  top: -16px;
+  left: 5px;
+}
+body #content #home-checkins {
+  list-style-type: none;
+  padding: 0;
+  width: 640px;
+  margin: 0 -10px -10px;
+}
+body #content #home-checkins li {
+  height: 42px;
+  border-bottom: 1px solid #f0f0f0;
+}
+body #content #home-checkins li:last-child { border: 0; }
+body #content #home-checkins li .member {
+  margin: 15px 20px 0 25px;
+  width: 36px;
+  height: 12px;
+  float: left;
+}
+body #content #home-checkins li .member.yes { background: url(/images/member-yes-no.png); }
+body #content #home-checkins li .member.no { background: url(/images/member-yes-no.png) 0 -12px; }
+body #content #home-checkins li a img {
+  float: left;
+  margin: 5px 10px 0 0;
+}
+body #content #home-checkins li .user-info {
+  float: left;
+  margin: 5px 0;
+  width: 190px;
+  padding: 0 10px 0 0;
+}
+body #content #home-checkins li .user-info h4 {
+  font-size: 15px;
+  margin: 0;
+  padding: 0;
+  width: 190px;
+  overflow: hidden;
+}
+body #content #home-checkins li .user-info h4 a {
+  width: 190px;
+  display: block;
+  text-decoration: none;
+  color: #363636;
+}
+body #content #home-checkins li .user-info h4 a:hover { text-decoration: underline; }
+body #content #home-checkins li .user-info h5 {
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+  width: 190px;
+}
+body #content #home-checkins li .user-info h5 a {
+  width: 190px;
+  display: block;
+  text-decoration: none;
+  color: #999999;
+  font-weight: normal;
+  font-style: italic;
+}
+body #content #home-checkins li .user-info h5 a:hover { text-decoration: underline; }
+body #content #home-checkins li h3 {
+  float: left;
+  font-size: 15px;
+  margin: 0;
+  padding: 13px 0 5px 0;
+  width: 250px;
+}
+body #content #home-checkins li h3 a {
+  width: 250px;
+  display: block;
+  text-decoration: none;
+  color: #5c96b5;
+}
+body #content #home-checkins li h3 a:hover { text-decoration: underline; }
+body #content #home-checkins li .actions {
+  float: right;
+  padding: 3px;
+  margin: 8px 10px 0 0;
+  cursor: pointer;
+  position: relative;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background: -webkit-linear-gradient(#f3f3f3, #eeeeee);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f3f3f3), color-stop(100%, #eeeeee));
+  background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
+  border: 1px solid #cccccc;
+}
+body #content #home-checkins li .actions img { margin: 0; }
+body #content #home-checkins li .actions:hover {
+  background: -webkit-linear-gradient(#ff9c0a, #f29000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9c0a), color-stop(100%, #f29000));
+  background: -moz-linear-gradient(top, #ff9c0a, #f29000);
+  border-color: #e28600;
+}
+body #content #home-checkins li .actions ul {
+  display: none;
+  position: absolute;
+  top: 26px;
+  background: #000000;
+  width: 100px;
+  list-style-type: none;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 0;
+  border: 1px solid #000000;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+body #content #home-checkins li .actions ul li {
+  color: #bce3f8;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: bold;
+  height: 25px;
+  line-height: 25px;
+  border-top: 1px solid #3c3c3c;
+  background: -webkit-linear-gradient(#252525, #000000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
+  background: -moz-linear-gradient(top, #252525, #000000);
+  border-bottom: 0;
+}
+body #content #home-checkins li .actions ul li:first-child { text-indent: 5px; }
+body #content #home-checkins li .actions ul li a {
+  color: #ffffff;
+  font-weight: normal;
+  font-size: 12px;
+  text-transform: none;
+  text-decoration: none;
+  height: 25px;
+  line-height: 25px;
+  display: block;
+  padding: 0 5px;
+  background: -webkit-linear-gradient(#252525, #000000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
+  background: -moz-linear-gradient(top, #252525, #000000);
+}
+body #content #home-checkins li .actions ul li a:hover { color: #ff9c0a; }
+body #content #home-checkins li .actions.open ul { display: block; }
+body #content #home-checkins li a.invite {
+  float: right;
+  color: #888888;
+  font-weight: bold;
+  text-decoration: none;
+  display: block;
+  font-size: 11px;
+  padding: 5px;
+  margin: 9px 10px 0 0;
+  background: -webkit-linear-gradient(#f3f3f3, #eeeeee);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f3f3f3), color-stop(100%, #eeeeee));
+  background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #cccccc;
+}
+body #content #home-checkins li a.invite img {
+  float: left;
+  margin: 0 3px 0 0;
+}
+body #content #home-checkins li a.invite:hover {
+  background: -webkit-linear-gradient(#ff9c0a, #f29000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9c0a), color-stop(100%, #f29000));
+  background: -moz-linear-gradient(top, #ff9c0a, #f29000);
+  color: #ffffff;
+  border-color: #e28600;
 }
 body #footer {
   padding: 10px 0 0;
