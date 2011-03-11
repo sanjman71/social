@@ -4,6 +4,7 @@
 }
 .gradient(@start: #000, @stop: #fff) {
     background: -webkit-linear-gradient(@start, @stop);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@start), color-stop(100%,@stop));
     background: -moz-linear-gradient(top, @start, @stop);
 }
 
@@ -164,6 +165,7 @@ body {
     }
   }
   #content {
+    position: relative;
     margin: 0 auto;
     width: 620px;
     border: 10px solid #f0f0f0;
@@ -172,7 +174,187 @@ body {
     -webkit-box-shadow: 0 0 2px #000, 0 0 25px #246676;
     -moz-box-shadow:    0 0 2px #000, 0 0 25px #246676;
     box-shadow:         0 0 2px #000, 0 0 25px #246676;
-    .rounded(10px);
+    .rounded(20px);
+    #member-title {
+      position: absolute;
+      text-indent: -9999px;
+      width: 76px;
+      height: 27px;
+      background: url(/images/member-title.png);
+      top: -16px;
+      left: 5px;
+    }
+    #home-checkins {
+      list-style-type: none;
+      padding: 0;
+      width: 640px;
+      margin: 0 -10px -10px;
+      li {
+        height: 42px;
+        border-bottom: 1px solid #f0f0f0;
+        :last-child {
+          border: 0;
+        }
+        .member {
+          margin: 15px 20px 0 25px;
+          width: 36px;
+          height: 12px;
+          float: left;
+        }
+        .member.yes {
+          background: url(/images/member-yes-no.png);
+        }
+        .member.no {
+          background: url(/images/member-yes-no.png) 0 -12px;
+        }
+        a img {
+          float: left;
+          margin: 5px 10px 0 0;
+        }
+        .user-info {
+          float: left;
+          margin: 5px 0;
+          width: 190px;
+          padding: 0 10px 0 0;
+          h4 {
+            font-size: 15px;
+            margin: 0;
+            padding: 0;
+            width: 190px;
+            overflow: hidden;
+            a {
+              width: 190px;
+              display: block;
+              text-decoration: none;
+              color: #363636;
+              :hover {
+                text-decoration: underline;
+              }
+            }
+          }
+          h5 {
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+            width: 190px;
+            a {
+              width: 190px;
+              display: block;
+              text-decoration: none;
+              color: #999;
+              font-weight: normal;
+              font-style: italic;
+              :hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+        h3 {
+          float: left;
+          font-size: 15px;
+          margin: 0;
+          padding: 13px 0 5px 0;
+          width: 250px;
+          a {
+            width: 250px;
+            display: block;
+            text-decoration: none;
+            color: @blue;
+            :hover {
+              text-decoration: underline;
+            }
+          }
+        }
+        .actions {
+          float: right;
+          padding: 3px;
+          margin: 8px 10px 0 0;
+          cursor: pointer;
+          position: relative;
+          .rounded(3px);
+          .gradient(#f3f3f3, #eee);
+          border: 1px solid #ccc;
+          img {
+            margin: 0;
+          }
+          :hover {
+            .gradient(@lightorange,@orange);
+            border-color: @darkorange;
+          }
+          ul {
+            display: none;
+            position: absolute;
+            top: 26px;
+            background: #000;
+            width: 100px;
+            list-style-type: none;
+            .rounded(5px);
+            padding: 0;
+            border: 1px solid #000;
+            -webkit-box-shadow: 0 0 5px rgba(0,0,0,.6);
+            -moz-box-shadow:    0 0 5px rgba(0,0,0,.6);
+            box-shadow:         0 0 5px rgba(0,0,0,.6);
+            li {
+              color: @lightblue;
+              text-transform: uppercase;
+              font-size: 10px;
+              font-weight: bold;
+              height: 25px;
+              line-height: 25px;
+              border-top: 1px solid #3c3c3c;
+              .gradient(#252525,#000);
+              border-bottom: 0;
+              :first-child {
+                text-indent: 5px;
+              }
+              a {
+                color: #fff;
+                font-weight: normal;
+                font-size: 12px;
+                text-transform: none;
+                text-decoration: none;
+                height: 25px;
+                line-height: 25px;
+                display: block;
+                padding: 0 5px;
+                .gradient(#252525,#000);
+                :hover {
+                  color: @lightorange;
+                }
+              }
+            }
+          }
+        }
+        .actions.open {
+          ul {
+            display: block;
+          }
+        }
+        a.invite {
+          float: right;
+          color: #888;
+          font-weight: bold;
+          text-decoration: none;
+          display: block;
+          font-size: 11px;
+          padding: 5px;
+          margin: 9px 10px 0 0;
+          .gradient(#f3f3f3, #eee);
+          .rounded(3px);
+          border: 1px solid #ccc;
+          img {
+            float: left;
+            margin: 0 3px 0 0;
+          }
+          :hover {
+            .gradient(@lightorange,@orange);
+            color: #fff;
+            border-color: @darkorange;
+          }
+        }
+      }
+    }
   }
   #footer {
     padding: 10px 0 0;
