@@ -7,55 +7,27 @@
     <title>OutLately</title>
     <%= stylesheet_link_tag 'redesign', :media => 'screen' %>
   </head>
-  <body class="home">
-    <div id="header">
-      <div class="wrapper">
-        <h1><%= link_to("Outlately", '#') %></h1>
-        <ul id="nav">
-          <li id="nav-home"><%= link_to("Home", '#') %></li>
-          <li id="nav-my-profile"><%= link_to("My Profile", '#') %></li>
-          <li id="nav-friends"><%= link_to("Friends", '#') %></li>
-          <li id="nav-plans"><%= link_to("Plans", '#') %></li>
-          <li id="nav-sign-out"><%= link_to("Sign Out", '#') %></li>
-        </ul>
+  <body>
+    <div id="header" class="wrapper clearfix">
+      <a href="#" id="invite-friends"><img src="/images/plus.png" alt="invite friends" />Invite Friends</a>
+      <div id="top-right">
+        Welcome, <a href="#">Fred Yates</a>. <a href="#">sign out</a>
       </div>
     </div>
-    <div id="sub-header" class="wrapper clearfix">
-      <div id="me">
-        <%= image_tag("/images/temp-avatar.png", :alt => 'my avatar') %>
-        <h2>Fred Yates</h2>
-        <div id="city-menu">
-          Boston
-          <span><%= image_tag("/images/city-menu-arrow.png", :alt => 'city menu arrow') %></span>
-          <ul>
-            <li><a href="#">Boston</a></li>
-            <li><a href="#">Chicago</a></li>
-            <li><a href="#">San Francisco</a></li>
-          </ul>
-        </div>
-        <div id="my-points">
-          <div id="points">
-            <div id="points-top">
-              <%= link_to("?", '#', :id => "points-info") %>
-              <div id="screen">1,337</div>
-              <span>Points</span>
-            </div>
-          </div>
-          <%= link_to("Get More Points", '#', :id => 'get-more-points' )%>
-        </div>
-      </div>
-      <%= link_to("What is Outlately?", '#', :id => 'what-is-outlately') %>
-    </div>
-    <div id="main" class="wrapper">
+    <ul id="nav" class="clearfix">
+      <li id="home"><a href="#">Home</a></li>
+      <li id="profile"><a href="#">Profile</a></li>
+      <li id="logo"><a href="/"><h1>Outlately</h1></a></li>
+      <li id="nav-stem-left"></li>
+      <li id="nav-stem-right"></li>
+      <li id="activity"><a href="#">Activity</a></li>
+      <li id="settings"><a href="#">Settings</a></li>
+    </ul>
+    <div id="content">
       <%= yield %>
     </div>
     <div id="footer" class="wrapper">
-      <span>&copy; 2011 Outlately</span>
-      <ul>
-        <li><a href="#">Footer Link</a></li>
-        <li><a href="#">Footer Link</a></li>
-        <li><a href="#">Footer Link</a></li>
-      </ul>
+        &copy; 2011 Outlately
     </div>
   </body>
 </html>
