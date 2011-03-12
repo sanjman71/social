@@ -35,41 +35,6 @@ $.fn.init_user_dialogs = function() {
   $("a#whatis-social-dna").fancybox();
 }
 
-$.fn.init_user_message_autoresize = function() {
-  $('textarea#message_body').autoResize({
-      // On resize:
-      onResize : function() {
-        $(this).css({opacity:0.8});
-      },
-      // After resize:
-      animateCallback : function() {
-        $(this).css({opacity:1});
-      },
-      // Quite slow animation:
-      animateDuration : 300,
-      // Extra space in pixels:
-      extraSpace : 10,
-      limit: 200
-  });
-}
-
-$.fn.init_user_message_counter = function() {
-  function textCounting(field, limit) {
-    if (field.value.length > limit) {
-      // over the limit, truncate field
-      field.value = field.value.substring(0, limit);
-    } else {
-      // update counter
-      $(field).siblings("#message_count").text(limit-field.value.length);
-    }
-  }
-
-  // test character counter
-  $('textarea#message_body').keyup(function() {
-    textCounting(this, 140);
-  });
-}
-
 $.fn.init_user_message_submit = function() {
   $("form#new_message").submit(function() {
     form  = $(this);
@@ -173,8 +138,6 @@ $.fn.init_growls = function() {
 $(document).ready(function() {
   $(document).init_user_invite();
   $(document).init_user_dialogs();
-  $(document).init_user_message_autoresize();
-  $(document).init_user_message_counter();
   $(document).init_user_message_submit();
   $(document).init_user_learn_more();
   $(document).init_checkin_map();

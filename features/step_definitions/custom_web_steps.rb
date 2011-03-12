@@ -3,7 +3,7 @@ When(/^I select the option containing "([^\"]*)" in the autocomplete list$/) do 
 end
 
 When /^I click "([^"]*)"$/ do |id|
-  page.find(id).click
+  find(id).click
 end
 
 Then /^the "([^"]*)" field(?: within "([^\"]*)")? should(not )? equal "([^"]*)"$/ do |field, selector, negate, value|

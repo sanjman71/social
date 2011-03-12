@@ -3,18 +3,14 @@
 
 .span-24{:style => "margin: 10px 0 10px;"}
   .inner{:style => 'padding-left: 10px;'}
-    %h4 To: #{@user.try(:handle)}
-    - if @object.is_a?(Checkin)
-      %h4 Re: Checkin at '#{@object.location.name}'
-    - elsif @object.is_a?(PlannedCheckin)
-      %h4 Re: Planned checkin at '#{@object.location.name}'
-      
+    %h4 Post to Wall: #{@object.location.try(:name)}
+
     - message = Message.new
-    - message.to = @user.try(:handle)
     = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
       %h3 Message:
       = text_area_tag 'message[body]', '', :id => 'message_body', :class => 'autoresize countdown', :style => 'height: 30px;'
-      = hidden_field_tag 'message[to]', @user.try(:id)
+      = hidden_field_tag 'message[to_id]', @object.try(:id)
+      = hidden_field_tag 'message[to_type]', @object.try(:class).to_s.downcase
       %br
       %span#message_count 140
       %span#message_send= submit_tag 'Send', :id => 'message_send_submit'

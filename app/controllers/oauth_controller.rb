@@ -30,7 +30,6 @@ class OauthController < Devise::OmniauthCallbacksController
       flash[:error] = "User has a valid oauth"
     else
       sign_in(@user)
-      flash[:notice] = "Welcome back #{@user.handle}"
     end
 
     redirect_to root_path and return

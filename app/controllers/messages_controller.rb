@@ -2,6 +2,18 @@ class MessagesController < ApplicationController
   respond_to    :html, :json
   before_filter :authenticate_user!
 
+  # GET /checkins/1/wall/compose
+  def wall_compose
+    @sender = current_user
+
+    case params[:object_type]
+    when 'checkin'
+      @object = Checkin.find(params['object_id'])
+    when 'todo'
+      @object = PlannedCheckin.find(params['object_id'])
+    end
+  end
+
   # POST /messages
   def create
     @sender = current_user

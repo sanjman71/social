@@ -96,8 +96,45 @@ $.fn.init_tooltips = function() {
   } catch(e) {}
 }
 
+$.fn.init_textarea_autoresize = function() {
+  $('textarea.autoresize').autoResize({
+      // On resize:
+      onResize : function() {
+        $(this).css({opacity:0.8});
+      },
+      // After resize:
+      animateCallback : function() {
+        $(this).css({opacity:1});
+      },
+      // Quite slow animation:
+      animateDuration : 300,
+      // Extra space in pixels:
+      extraSpace : 10,
+      limit: 200
+  });
+}
+
+$.fn.init_character_counter = function() {
+  function textCounting(field, limit) {
+    if (field.value.length > limit) {
+      // over the limit, truncate field
+      field.value = field.value.substring(0, limit);
+    } else {
+      // update counter
+      $(field).siblings("#message_count").text(limit-field.value.length);
+    }
+  }
+
+  // character counter
+  $('textarea.countdown').keyup(function() {
+    textCounting(this, 140);
+  });
+}
+
 $(document).ready(function() {
   $(document).init_get_points();
   $(document).init_shared_dialogs();
   $(document).init_tooltips();
+  $(document).init_textarea_autoresize();
+  $(document).init_character_counter();
 })
