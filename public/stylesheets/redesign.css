@@ -315,6 +315,23 @@ body #content #home-checkins li a.invite:hover {
   color: #ffffff;
   border-color: #e28600;
 }
+body #content #home-following {
+  padding: 50px 0 0 0;
+  position: relative;
+}
+body #content #home-following #home-following-title {
+  position: absolute;
+  text-indent: -9999px;
+  width: 141px;
+  height: 32px;
+  background: url(/images/home-following-title.png);
+  left: -29px;
+  top: 25px;
+}
+body #content #home-following a {
+  float: left;
+  margin: 2px 2px 0 0;
+}
 body #footer {
   padding: 10px 0 0;
   color: #367199;
