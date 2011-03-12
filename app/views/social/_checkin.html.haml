@@ -3,8 +3,9 @@
 - if user.member?
   %li.span-16.last
     .member.yes
-    -# user profile link
-    = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), user_path(user)
+    .picture
+      -# user profile link
+      = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), user_path(user)
     .user-info
       %h4= link_to user.handle, '#'
       %h5= link_to checkin_time_ago(checkin.checkin_at), '#'
@@ -26,13 +27,14 @@
   -# non-member
   %li.span-16.last
     .member.no
-    -# user profile link
-    = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '40x40'), user_path(user)
+    .picture
+      -# user profile link
+      = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '40x40'), user_path(user)
     .user-info
       %h4= link_to user.handle, user_path(user)
       %h5
     %h3= link_to location.try(:name), '#'
     -# invite link
-    = link_to '#', :class => 'invite' do
+    = link_to invite_path, :class => 'invite' do
       = image_tag("/images/plus.png", :alt => 'invite')
       Invite

@@ -172,6 +172,10 @@ body #content #home-checkins li .member {
 }
 body #content #home-checkins li .member.yes { background: url(/images/member-yes-no.png); }
 body #content #home-checkins li .member.no { background: url(/images/member-yes-no.png) 0 -12px; }
+body #content #home-checkins li .picture {
+  width: 50px;
+  float: left;
+}
 body #content #home-checkins li a img {
   float: left;
   margin: 5px 10px 0 0;
