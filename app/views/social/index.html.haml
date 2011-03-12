@@ -1,0 +1,52 @@
+- javascript('social')
+
+#member-title Member?
+
+.span.24.last
+  = display_flash(:all)
+
+%ul#home-checkins
+  - @friends_out_now.keys.each do |user|
+    - checkins = @friends_out_now[user]
+    - checkin  = checkins[0]
+    - location = checkins.first.location
+
+    - if user.member?
+      %li
+        .member.yes
+        -# user profile link
+        = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), '#'
+        .user-info
+          %h4= link_to user.handle, '#'
+          %h5= link_to checkin_time_ago(checkin.checkin_at), '#'
+        %h3= link_to checkin.location.try(:name), '#'
+        .actions
+          -#<!-- click to show menu, not hover. add class .open to this div to show menu -->
+          = image_tag("/images/actions.png", :alt => 'actions menu')
+          %span
+            %ul
+              %li= user.handle
+              %li= link_to 'Send Message', compose_message_user_path(user.id, 'checkin', checkin.id)
+              -#%li= link_to 'View Profile', '#'
+              -#%li= link_to 'Unfollow', '#'
+    - else
+      -# non-member
+      %li
+        .member.no
+        -# user profile link
+        = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '40x40'), '#'
+        .user-info
+          %h4= link_to user.handle, '#'
+          %h5
+        %h3= link_to checkins[0].location.try(:name), '#'
+        -# invite link
+        = link_to '#', :class => 'invite' do
+          = image_tag("/images/plus.png", :alt => 'invite')
+          Invite
+
+#home-following.tipsy{:style => 'margin: 30px 0;'}
+  #home-following-title Friends I&apos;m Following
+  - @following.each do |user|
+    = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
+
+  

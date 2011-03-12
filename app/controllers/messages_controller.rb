@@ -5,7 +5,7 @@ class MessagesController < ApplicationController
   # POST /messages
   def create
     @sender = current_user
-    @to     = User.find_by_handle(params[:message][:to])
+    @to     = User.find_by_id(params[:message][:to])
     @body   = params[:message][:body]
 
     # validate 'to' has an email
@@ -28,7 +28,7 @@ class MessagesController < ApplicationController
 
     # set status
     @status   = 'ok'
-    @text     = "Sent message!"
+    @text     = "Sent message to #{@user.handle}!"
     @growls   = [{:message => @text, :timeout => 5000}]
 
     # set redirect path
@@ -43,6 +43,7 @@ class MessagesController < ApplicationController
       format.html do
         # track page
         flash[:tracker] = track_page("/action/message/sent")
+        flash[:notice]  = @text
         redirect_back_to(@redirect_to) and return
       end
       format.json { render :json => Hash[:status => @status, :message => @text, :growls => @growls,

@@ -1,6 +1,6 @@
 Social::Application.routes.draw do
 
-  root :to => "users#show"
+  root :to => "social#index"
 
   # devise
   devise_for :users, :controllers => {:omniauth_callbacks => "oauth" }
