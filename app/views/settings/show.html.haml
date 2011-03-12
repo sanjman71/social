@@ -1,64 +1,63 @@
 - javascript('users_settings')
 
-#page-header
-  .span-24.last
-    .span-16
-      %h2 My Settings
+.span-24.last
+  .span-16
+    %h2 My Settings
 
-#content.clearfix
-  .span.24.last
-    = display_flash(:all)
-    = display_alerts
+.span.24.last
+  = display_flash(:all)
+  = display_alerts
 
-  - if @newbie
-    .span.24.last.newbie
-      %h3
-        Step 1 of 3:
-        %p
-        Outlately is a community for those who like meeting people and checking out new places.
-        %p
-        We'll walk you through the setup process, starting with your profile.
+- if @newbie
+  .span.24.last.newbie
+    %h3
+      Step 1 of 3:
+      %p
+      Outlately is a community for those who like meeting people and checking out new places.
+      %p
+      We'll walk you through the setup process, starting with your profile.
 
-  .span-24.last
-    -# link foursquare
-    = render(:partial => 'shared/oauth_links')
+.span-24.last
+  -# link foursquare
+  = render(:partial => 'shared/oauth_links')
 
-  .span-24.last
-    -# initialize nested objects
-    - @user.email_addresses.build if @user.email_addresses_count == 0
-    - @user.city ||= City.new
-    - @user.build_availability if @user.availability.blank?
+.span-15.last
+  -# initialize nested objects
+  - @user.email_addresses.build if @user.email_addresses_count == 0
+  - @user.city ||= City.new
+  - @user.build_availability if @user.availability.blank?
 
-    = simple_form_for(@user, :url => settings_path(:return_to => @goto_path || root_path)) do |f|
-      -# handle is not editable
-      -#.span-24.last
-        -# handle
-        -#= f.input :handle, :hint => 'your name on the site'
-      -# gender and orientation
-      .span-24.last
-        = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name, :required => true
-      .span-24.last
-        = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name, :required => true
-      -# birthdate
-      .span-24.last
-        = f.input :birthdate, :as => :date, :start_year => Date.today.year - 60, :end_year => Date.today.year - 15, :order => [:month, :day, :year], :required => true
-      -# email address
-      .span-24.last
-        = f.simple_fields_for :email_addresses do |email_form|
-          = email_form.input :address, :label => 'Email Address', :required => true, :hint => 'used for notifications + reminders', :input_html => {:class => 'required email', :id => 'user_email'}
-      -# location
-      .span-24.last
-        = f.simple_fields_for :city do |city_form|
-          -# city
-          = city_form.input :name, :label => 'Location', :hint => 'your default city', :required => true, :input_html => {'data-url' => search_locations_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
-        = hidden_field_tag :location_changed, 0
-      -#.span-24.last
-        -#= f.simple_fields_for :availability do |avail_form|
-          -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
-      .span-19.prepend-1.last{:style => 'margin-bottom: 20px;'}
-        - if @newbie
-          = f.submit 'Next', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
-        - unless @newbie
-          = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
+  = simple_form_for(@user, :url => settings_path(:return_to => @goto_path || root_path)) do |f|
+    -# handle is not editable
+    -#.span-24.last
+      -# handle
+      -#= f.input :handle, :hint => 'your name on the site'
+    -# gender and orientation
+    .span-15.last
+      = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name, :required => true
+    .span-15.last
+      = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name, :required => true
+    -# birthdate
+    .span-15.last
+      = f.input :birthdate, :as => :date, :start_year => Date.today.year - 60, :end_year => Date.today.year - 15, :order => [:month, :day, :year], :required => true
+    -# email address
+    .span-15.last
+      = f.simple_fields_for :email_addresses do |email_form|
+        = email_form.input :address, :label => 'Email Address', :required => true, :input_html => {:class => 'required email', :id => 'user_email'}
+    -# location
+    .span-15.last
+      = f.simple_fields_for :city do |city_form|
+        -# city
+        = city_form.input :name, :label => 'Location', :required => true, :input_html => {'data-url' => search_locations_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
+      = hidden_field_tag :location_changed, 0
+    -#.span-24.last
+      -#= f.simple_fields_for :availability do |avail_form|
+        -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
+    .span-15.prepend-1.last{:style => 'margin-bottom: 20px;'}
+      - if @newbie
+        = f.submit 'Next', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
+      - unless @newbie
+        = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
+        %span{:style => 'padding: 5px 0 0 5px;'}
           or
-          %span{:style => 'padding-left: 3px;'}= link_to 'No Changes', root_path, :style => 'font-size: 1.1em; color: #00f;'
+          = link_to 'No Changes', root_path, :style => 'font-size: 1.1em; color: #00f;'
