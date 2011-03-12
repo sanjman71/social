@@ -25,6 +25,14 @@ body {
   a img {
     border: 0;
   }
+  .left-col {
+    float: left;
+    width: 380px;
+  }
+  .right-col {
+    float: right;
+    width: 230px;
+  }
   .wrapper {
     width: 660px;
     margin: 0 auto;
@@ -273,72 +281,6 @@ body {
             }
           }
         }
-        .actions {
-          float: right;
-          padding: 3px;
-          margin: 8px 10px 0 0;
-          cursor: pointer;
-          position: relative;
-          .rounded(3px);
-          .gradient(#f3f3f3, #eee);
-          border: 1px solid #ccc;
-          img {
-            margin: 0;
-          }
-          :hover {
-            .gradient(@lightorange,@orange);
-            border-color: @darkorange;
-          }
-          ul {
-            display: none;
-            position: absolute;
-            top: 26px;
-            left: -1px;
-            background: #000;
-            width: 100px;
-            list-style-type: none;
-            .rounded(5px);
-            padding: 0;
-            border: 1px solid #000;
-            -webkit-box-shadow: 0 0 5px rgba(0,0,0,.6);
-            -moz-box-shadow:    0 0 5px rgba(0,0,0,.6);
-            box-shadow:         0 0 5px rgba(0,0,0,.6);
-            li {
-              color: @lightblue;
-              text-transform: uppercase;
-              font-size: 10px;
-              font-weight: bold;
-              height: 25px;
-              line-height: 25px;
-              border-top: 1px solid #3c3c3c;
-              .gradient(#252525,#000);
-              border-bottom: 0;
-              :first-child {
-                text-indent: 5px;
-              }
-              a {
-                color: #fff;
-                font-weight: normal;
-                font-size: 12px;
-                text-transform: none;
-                text-decoration: none;
-                height: 25px;
-                line-height: 25px;
-                display: block;
-                padding: 0 5px;
-                .gradient(#252525,#000);
-                :hover {
-                  color: @lightorange;
-                }
-              }
-            }
-          }
-        }
-        .actions.open {
-          ul {
-            display: block;
-          }
-        }
         a.invite {
           float: right;
           color: #888;
@@ -380,6 +322,222 @@ body {
         margin: 2px 2px 0 0;
         img {
           
+        }
+      }
+    }
+    .actions {
+      float: right;
+      padding: 3px;
+      margin: 8px 10px 0 0;
+      cursor: pointer;
+      position: relative;
+      .rounded(3px);
+      .gradient(#f3f3f3, #eee);
+      border: 1px solid #ccc;
+      img {
+        margin: 0;
+      }
+      :hover {
+        .gradient(@lightorange,@orange);
+        border-color: @darkorange;
+      }
+      ul {
+        display: none;
+        position: absolute;
+        top: 26px;
+        left: -1px;
+        background: #000;
+        width: 100px;
+        list-style-type: none;
+        .rounded(5px);
+        padding: 0;
+        border: 1px solid #000;
+        -webkit-box-shadow: 0 0 5px rgba(0,0,0,.6);
+        -moz-box-shadow:    0 0 5px rgba(0,0,0,.6);
+        box-shadow:         0 0 5px rgba(0,0,0,.6);
+        li {
+          color: @lightblue;
+          text-transform: uppercase;
+          font-size: 10px;
+          font-weight: bold;
+          height: 25px;
+          line-height: 25px;
+          border-top: 1px solid #3c3c3c;
+          .gradient(#252525,#000);
+          border-bottom: 0;
+          :first-child {
+            text-indent: 5px;
+          }
+          a {
+            color: #fff;
+            font-weight: normal;
+            font-size: 12px;
+            text-transform: none;
+            text-decoration: none;
+            height: 25px;
+            line-height: 25px;
+            display: block;
+            padding: 0 5px;
+            .gradient(#252525,#000);
+            :hover {
+              color: @lightorange;
+            }
+          }
+        }
+      }
+    }
+    .actions.open {
+      ul {
+        display: block;
+      }
+    }
+    #profile-info {
+      padding: 9px;
+      height: 75px;
+      background: #f0f0f0;
+      border: 1px solid #e0e0e0;
+      .rounded(5px);
+      img#user-avatar {
+        float: left;
+        margin: 0 10px 0 0;
+        .rounded(3px);
+      }
+      #profile-user-info {
+        float: left;
+        padding: 10px 0 0 0;
+        h2 {
+          margin: 0;
+          padding: 0 0 3px 0;
+          color: #363636;
+          font-size: 20px;
+        }
+        h3 {
+          margin: 0;
+          padding: 0 0 3px 0;
+          color: @blue;
+          font-size: 14px;
+        }
+        h4 {
+          margin: 0;
+          padding: 0 0 3px 0;
+          color: #aaa;
+          font-size: 12px;
+        }
+      }
+      .actions {
+        top: 18px;
+      }
+    }
+    #out-now {
+      position: relative;
+      padding: 18px 10px;
+      border: 5px solid #95c4dd;
+      background: #bce3f8 url(/images/out-now.png) 18px 10px no-repeat;
+      font-size: 14px;
+      text-indent: 30px;
+      margin: 10px;
+      color: #363636;
+      text-align: left;
+      font-weight: bold;
+      -webkit-box-shadow: inset 0 1px 0 #fff;
+      -moz-box-shadow:    inset 0 1px 0 #fff;
+      box-shadow:         inset 0 1px 0 #fff;
+      a {
+        color: @blue;
+      }
+      div {
+        width: 27px;
+        height: 27px;
+        position: absolute;
+        background: url(/images/out-now-corners.png);
+      }
+      .tl {
+        top: -7px;
+        left: -7px;
+        background-position: 0 0;
+      }
+      .bl {
+        bottom: -7px;
+        left: -7px;
+        background-position: 0 -81px;
+      }
+      .tr {
+        top: -7px;
+        right: -7px;
+        background-position: 0 -27px;
+      }
+      .br {
+        bottom: -7px;
+        right: -7px;
+        background-position: 0 -54px;
+      }
+    }
+    #favorite-places,
+    #friends-favorite-places {
+      margin: 35px 0 0 0;
+      float: left;
+      position: relative;
+      #favorite-places-title,
+      #friends-favorite-places-title {
+        position: absolute;
+        right: -28px;
+        top: -25px;
+        height: 32px;
+        text-indent: -9999px;
+      }
+      #favorite-places-title {
+        width: 108px;
+        background: url(/images/favorite-places-title.png);
+      }
+      #friends-favorite-places-title {
+        width: 155px;
+        background: url(/images/friends-favorite-places-title.png);
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        li {
+          margin: 0 0 5px 0;
+          .rounded(5px);
+          background: #f0f0f0;
+          border: 1px solid #e0e0e0;
+          padding: 5px 8px;
+          width: 214px;
+          float: left;
+          a {
+            padding: 7px 0 0 0;
+            display: block;
+            color: @blue;
+            width: 160px;
+            float: left;
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: bold;
+            :hover {
+              text-decoration: underline
+            }
+          }
+          div {
+            text-align: center;
+            width: 50px;
+            float: right;
+            em {
+              color: #363636;
+              font-size: 18px;
+              width: 50px;
+              display: block;
+              font-weight: bold;
+              font-style: normal;
+            }
+            small {
+              display: block;
+              width: 50px;
+              font-size: 9px;
+              color: #aaa;
+              font-style: normal;
+            }
+          }
         }
       }
     }

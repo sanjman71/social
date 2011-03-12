@@ -7,6 +7,14 @@ body {
   padding: 0;
 }
 body a img { border: 0; }
+body .left-col {
+  float: left;
+  width: 380px;
+}
+body .right-col {
+  float: right;
+  width: 230px;
+}
 body .wrapper {
   width: 660px;
   margin: 0 auto;
@@ -230,72 +238,6 @@ body #content #home-checkins li h3 a {
   color: #5c96b5;
 }
 body #content #home-checkins li h3 a:hover { text-decoration: underline; }
-body #content #home-checkins li .actions {
-  float: right;
-  padding: 3px;
-  margin: 8px 10px 0 0;
-  cursor: pointer;
-  position: relative;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  background: -webkit-linear-gradient(#f3f3f3, #eeeeee);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f3f3f3), color-stop(100%, #eeeeee));
-  background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
-  border: 1px solid #cccccc;
-}
-body #content #home-checkins li .actions img { margin: 0; }
-body #content #home-checkins li .actions:hover {
-  background: -webkit-linear-gradient(#ff9c0a, #f29000);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9c0a), color-stop(100%, #f29000));
-  background: -moz-linear-gradient(top, #ff9c0a, #f29000);
-  border-color: #e28600;
-}
-body #content #home-checkins li .actions ul {
-  display: none;
-  position: absolute;
-  top: 26px;
-  left: -1px;
-  background: #000000;
-  width: 100px;
-  list-style-type: none;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  padding: 0;
-  border: 1px solid #000000;
-  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-}
-body #content #home-checkins li .actions ul li {
-  color: #bce3f8;
-  text-transform: uppercase;
-  font-size: 10px;
-  font-weight: bold;
-  height: 25px;
-  line-height: 25px;
-  border-top: 1px solid #3c3c3c;
-  background: -webkit-linear-gradient(#252525, #000000);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
-  background: -moz-linear-gradient(top, #252525, #000000);
-  border-bottom: 0;
-}
-body #content #home-checkins li .actions ul li:first-child { text-indent: 5px; }
-body #content #home-checkins li .actions ul li a {
-  color: #ffffff;
-  font-weight: normal;
-  font-size: 12px;
-  text-transform: none;
-  text-decoration: none;
-  height: 25px;
-  line-height: 25px;
-  display: block;
-  padding: 0 5px;
-  background: -webkit-linear-gradient(#252525, #000000);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
-  background: -moz-linear-gradient(top, #252525, #000000);
-}
-body #content #home-checkins li .actions ul li a:hover { color: #ff9c0a; }
-body #content #home-checkins li .actions.open ul { display: block; }
 body #content #home-checkins li a.invite {
   float: right;
   color: #888888;
@@ -339,6 +281,297 @@ body #content #home-following #home-following-title {
 body #content #home-following a {
   float: left;
   margin: 2px 2px 0 0;
+}
+body #content .actions {
+  float: right;
+  padding: 3px;
+  margin: 8px 10px 0 0;
+  cursor: pointer;
+  position: relative;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background: -webkit-linear-gradient(#f3f3f3, #eeeeee);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f3f3f3), color-stop(100%, #eeeeee));
+  background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
+  border: 1px solid #cccccc;
+}
+body #content .actions img { margin: 0; }
+body #content .actions:hover {
+  background: -webkit-linear-gradient(#ff9c0a, #f29000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9c0a), color-stop(100%, #f29000));
+  background: -moz-linear-gradient(top, #ff9c0a, #f29000);
+  border-color: #e28600;
+}
+body #content .actions ul {
+  display: none;
+  position: absolute;
+  top: 26px;
+  left: -1px;
+  background: #000000;
+  width: 100px;
+  list-style-type: none;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 0;
+  border: 1px solid #000000;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+body #content .actions ul li {
+  color: #bce3f8;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: bold;
+  height: 25px;
+  line-height: 25px;
+  border-top: 1px solid #3c3c3c;
+  background: -webkit-linear-gradient(#252525, #000000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
+  background: -moz-linear-gradient(top, #252525, #000000);
+  border-bottom: 0;
+}
+body #content .actions ul li:first-child { text-indent: 5px; }
+body #content .actions ul li a {
+  color: #ffffff;
+  font-weight: normal;
+  font-size: 12px;
+  text-transform: none;
+  text-decoration: none;
+  height: 25px;
+  line-height: 25px;
+  display: block;
+  padding: 0 5px;
+  background: -webkit-linear-gradient(#252525, #000000);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
+  background: -moz-linear-gradient(top, #252525, #000000);
+}
+body #content .actions ul li a:hover { color: #ff9c0a; }
+body #content .actions.open ul { display: block; }
+body #content #profile-info {
+  padding: 9px;
+  height: 75px;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+body #content #profile-info img#user-avatar {
+  float: left;
+  margin: 0 10px 0 0;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+body #content #profile-info #profile-user-info {
+  float: left;
+  padding: 10px 0 0 0;
+}
+body #content #profile-info #profile-user-info h2 {
+  margin: 0;
+  padding: 0 0 3px 0;
+  color: #363636;
+  font-size: 20px;
+}
+body #content #profile-info #profile-user-info h3 {
+  margin: 0;
+  padding: 0 0 3px 0;
+  color: #5c96b5;
+  font-size: 14px;
+}
+body #content #profile-info #profile-user-info h4 {
+  margin: 0;
+  padding: 0 0 3px 0;
+  color: #aaaaaa;
+  font-size: 12px;
+}
+body #content #profile-info .actions { top: 18px; }
+body #content #out-now {
+  position: relative;
+  padding: 18px 10px;
+  border: 5px solid #95c4dd;
+  background: #bce3f8 url(/images/out-now.png) 18px 10px no-repeat;
+  font-size: 14px;
+  text-indent: 30px;
+  margin: 10px;
+  color: #363636;
+  text-align: left;
+  font-weight: bold;
+  -webkit-box-shadow: inset 0 1px 0 #ffffff;
+  -moz-box-shadow: inset 0 1px 0 #ffffff;
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+body #content #out-now a { color: #5c96b5; }
+body #content #out-now div {
+  width: 27px;
+  height: 27px;
+  position: absolute;
+  background: url(/images/out-now-corners.png);
+}
+body #content #out-now .tl {
+  top: -7px;
+  left: -7px;
+  background-position: 0 0;
+}
+body #content #out-now .bl {
+  bottom: -7px;
+  left: -7px;
+  background-position: 0 -81px;
+}
+body #content #out-now .tr {
+  top: -7px;
+  right: -7px;
+  background-position: 0 -27px;
+}
+body #content #out-now .br {
+  bottom: -7px;
+  right: -7px;
+  background-position: 0 -54px;
+}
+body #content #favorite-places {
+  margin: 35px 0 0 0;
+  float: left;
+  position: relative;
+}
+body #content #favorite-places #favorite-places-title {
+  position: absolute;
+  right: -28px;
+  top: -25px;
+  height: 32px;
+  text-indent: -9999px;
+}
+body #content #favorite-places #friends-favorite-places-title {
+  position: absolute;
+  right: -28px;
+  top: -25px;
+  height: 32px;
+  text-indent: -9999px;
+}
+body #content #favorite-places #favorite-places-title {
+  width: 108px;
+  background: url(/images/favorite-places-title.png);
+}
+body #content #favorite-places #friends-favorite-places-title {
+  width: 155px;
+  background: url(/images/friends-favorite-places-title.png);
+}
+body #content #favorite-places ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+body #content #favorite-places ul li {
+  margin: 0 0 5px 0;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  padding: 5px 8px;
+  width: 214px;
+  float: left;
+}
+body #content #favorite-places ul li a {
+  padding: 7px 0 0 0;
+  display: block;
+  color: #5c96b5;
+  width: 160px;
+  float: left;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+}
+body #content #favorite-places ul li a:hover { text-decoration: underline; }
+body #content #favorite-places ul li div {
+  text-align: center;
+  width: 50px;
+  float: right;
+}
+body #content #favorite-places ul li div em {
+  color: #363636;
+  font-size: 18px;
+  width: 50px;
+  display: block;
+  font-weight: bold;
+  font-style: normal;
+}
+body #content #favorite-places ul li div small {
+  display: block;
+  width: 50px;
+  font-size: 9px;
+  color: #aaaaaa;
+  font-style: normal;
+}
+body #content #friends-favorite-places {
+  margin: 35px 0 0 0;
+  float: left;
+  position: relative;
+}
+body #content #friends-favorite-places #favorite-places-title {
+  position: absolute;
+  right: -28px;
+  top: -25px;
+  height: 32px;
+  text-indent: -9999px;
+}
+body #content #friends-favorite-places #friends-favorite-places-title {
+  position: absolute;
+  right: -28px;
+  top: -25px;
+  height: 32px;
+  text-indent: -9999px;
+}
+body #content #friends-favorite-places #favorite-places-title {
+  width: 108px;
+  background: url(/images/favorite-places-title.png);
+}
+body #content #friends-favorite-places #friends-favorite-places-title {
+  width: 155px;
+  background: url(/images/friends-favorite-places-title.png);
+}
+body #content #friends-favorite-places ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+body #content #friends-favorite-places ul li {
+  margin: 0 0 5px 0;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  padding: 5px 8px;
+  width: 214px;
+  float: left;
+}
+body #content #friends-favorite-places ul li a {
+  padding: 7px 0 0 0;
+  display: block;
+  color: #5c96b5;
+  width: 160px;
+  float: left;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+}
+body #content #friends-favorite-places ul li a:hover { text-decoration: underline; }
+body #content #friends-favorite-places ul li div {
+  text-align: center;
+  width: 50px;
+  float: right;
+}
+body #content #friends-favorite-places ul li div em {
+  color: #363636;
+  font-size: 18px;
+  width: 50px;
+  display: block;
+  font-weight: bold;
+  font-style: normal;
+}
+body #content #friends-favorite-places ul li div small {
+  display: block;
+  width: 50px;
+  font-size: 9px;
+  color: #aaaaaa;
+  font-style: normal;
 }
 body #footer {
   padding: 10px 0 0;
