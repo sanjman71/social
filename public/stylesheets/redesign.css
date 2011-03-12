@@ -124,6 +124,8 @@ body #nav li#logo h1 {
   font-size: 24px;
   margin: 0;
   padding: 0;
+  color: #ffffff;
+  line-height: 48px;
 }
 body #nav li#logo a {
   width: 244px;
@@ -182,6 +184,7 @@ body #content #home-checkins li .user-info {
 }
 body #content #home-checkins li .user-info h4 {
   font-size: 15px;
+  font-weight: bold;
   margin: 0;
   padding: 0;
   width: 190px;
