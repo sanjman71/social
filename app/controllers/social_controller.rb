@@ -30,7 +30,8 @@ class SocialController < ApplicationController
     end
 
     # following
-    @following  = User.find(@user.friend_set, :order => 'member desc, member_at asc')
+    @following      = User.find(@user.friend_set, :order => 'member desc, member_at asc')
+    @following_ids  = @following.collect(&:id)
   end
 
   def find_user

@@ -1,7 +1,7 @@
 - location = checkin.location
 
 - if user.member?
-  %li
+  %li.span-16.last
     .member.yes
     -# user profile link
     = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), user_path(user)
@@ -16,16 +16,15 @@
         %ul
           %li= user.handle
           %li= link_to 'Send Message', compose_message_user_path(user.id, 'checkin', checkin.id)
-          %li= link_to 'Post to Wall', compose_wall_post_path('checkin', checkin.id)
-          - if @following.include?(user)
-            %li= link_to 'Follow', '#'
-          - else
-            %li= link_to 'Unfollow', '#'
+          -#%li= link_to 'Post to Wall', compose_wall_post_path('checkin', checkin.id)
           %li= link_to 'View Profile', user_path(user)
-          -#%li= link_to 'Unfollow', '#'
+          - if @following_ids.include?(user.id)
+            %li= link_to 'Unfollow', '#'
+          - else
+            %li= link_to 'Follow', '#'
 - else
   -# non-member
-  %li
+  %li.span-16.last
     .member.no
     -# user profile link
     = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '40x40'), user_path(user)
