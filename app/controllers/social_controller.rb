@@ -19,7 +19,7 @@ class SocialController < ApplicationController
     end
 
     # friends out recently, exclude checkins from friends out now
-    @timestamp_recent     = 10.days.ago
+    @timestamp_recent     = 2.days.ago
     @friends_checkins     = Checkin.where(:checkin_at.gt => @timestamp_recent).joins(:user).
                             where(:user => {:id => @user.friend_set}).order("checkin_at desc")
     # map friends to checkins
@@ -30,7 +30,7 @@ class SocialController < ApplicationController
     end
 
     # following
-    @following      = User.find(@user.friend_set, :order => 'member desc, member_at asc')
+    @following      = User.find(@user.following, :order => 'member desc, member_at asc')
     @following_ids  = @following.collect(&:id)
   end
 

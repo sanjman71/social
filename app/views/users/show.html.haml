@@ -1,0 +1,62 @@
+- javascript 'social'
+
+#profile-info.clearfix
+  = image_tag(@user.try(:primary_photo_url), :size => '75x75', :id => 'user-avatar')
+  #profile-user-info
+    %h2= @user.handle
+    %h3= @user.city.try(:name)
+    %h4= pluralize(@user.followers_count, "Follower")
+  .actions
+    = image_tag("/images/actions.png", :alt => 'actions menu')
+    %span
+      %ul
+        %li= @user.handle
+        %li= link_to 'Send Message', '#'
+        - unless @user == current_user
+          -# check if I'm following this user
+          - if current_user.following_ids.include?(@user.id)
+            %li= link_to 'Unfollow', unfollow_user_path(@user, :return_to => request.fullpath), :method => :put
+          - else
+            %li= link_to 'Follow', follow_user_path(@user, :return_to => request.fullpath), :method => :put
+
+.span-16.last
+  = display_flash(:all)
+
+- if @users_out.keys.include?(@user.id)
+  .span-16.last
+    #out-now
+      .tl
+      .bl
+      .tr
+      .br
+      #{@user.handle} is out now at
+
+.left-col
+  #profile-recent-checkins.clearfix
+    #recent-checkins-title Recent Checkins
+    %ul
+      - @checkins.each do |checkin|
+        %li
+          = link_to checkin.location.name, '#'
+          %small= checkin_time_ago(checkin.checkin_at)
+
+  #profile-following
+    #profile-following-title Friends I&apos;m Following
+    - @following.each do |user|
+      = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
+
+.right-col
+  #favorite-places
+    #favorite-places-title Favorite Places
+    %ul
+      - @my_spots.each do |location|
+        %li
+          = link_to location.name, '#'
+
+  #friends-favorite-places
+    #friends-favorite-places-title Friends&apos; Favorite Places
+    %ul
+      - @friend_spots.each do |location|
+        %li
+          = link_to location.name, '#'
+    

@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   # Badges for authorization
   badges_authorized_user
 
+  include Users::Follow
   include Users::Oauth
   include Users::Points
   include Users::Search

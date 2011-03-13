@@ -52,7 +52,7 @@
 
       %ul#nav.clearfix
         %li#home= link_to 'Home', root_path
-        %li#profile= link_to 'Profile', '#'
+        %li#profile= link_to 'Profile', user_path(current_user)
         %li#logo= link_to raw("<h1>Outlate.ly</h1>"), '/'
         %li#nav-stem-left
         %li#nav-stem-right

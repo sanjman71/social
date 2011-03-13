@@ -20,9 +20,9 @@
           -#%li= link_to 'Post to Wall', compose_wall_post_path('checkin', checkin.id)
           %li= link_to 'View Profile', user_path(user)
           - if @following_ids.include?(user.id)
-            %li= link_to 'Unfollow', '#'
+            %li= link_to 'Unfollow', unfollow_user_path(user, :return_to => request.fullpath), :method => :put
           - else
-            %li= link_to 'Follow', '#'
+            %li= link_to 'Follow', follow_user_path(user, :return_to => request.fullpath), :method => :put
 - else
   -# non-member
   %li.span-16.last

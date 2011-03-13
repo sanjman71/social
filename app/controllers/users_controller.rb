@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!, :except => [:message]
   before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :compose, :disable,
-                                      :learn, :message, :share_drink, :show]
+                                      :follow, :learn, :message, :share_drink, :show, :unfollow]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -69,34 +69,15 @@ class UsersController < ApplicationController
   def show
     # @user, @viewer initialized in before filter
 
-    # set me if its the home path
-    @me         = request.path == '/' ? true : false
+     # following
+    @following      = User.find(@user.following, :order => 'member desc, member_at asc')
+    @following_ids  = @following.collect(&:id)
 
-    # following
-    @following  = User.find(@user.friend_set, :order => 'member desc, member_at asc')
+    # check if @user is out
+    @users_out      = Realtime.find_users_out(:map_ids => true)
 
-    # find users out now
-    @users_out_now        = Realtime.find_users_out(:map_ids => true)
-    # find friends out using intersection of users out now and user friends
-    @friends_out_now      = @users_out_now.keys & @user.friend_set
-    @friends_out_now      = @friends_out_now.inject(ActiveSupport::OrderedHash.new) do |hash, user_id|
-      user     = User.find(user_id)
-      checkins = Checkin.find(@users_out_now[user_id])
-      hash[user] ||= []
-      hash[user].concat(checkins)
-      hash
-    end
-
-    # friends out recently, exclude checkins from friends out now
-    @timestamp_recent     = 2.day.ago
-    @friends_checkins     = Checkin.where(:checkin_at.gt => @timestamp_recent).joins(:user).
-                            where(:user => {:id => @user.friend_set}).order("checkin_at desc")
-    # map friends to checkins
-    @friends_out_recently = @friends_checkins.inject(ActiveSupport::OrderedHash.new) do |hash, checkin|
-      hash[checkin.user] ||= []
-      hash[checkin.user].push(checkin)
-      hash
-    end
+    # recent checkins
+    @checkins       = @user.checkins.order("checkin_at desc").limit(5)
 
     # my favorite spots
     @my_spots       = @user.member ? @user.checkin_locations.order("my_checkins desc").limit(5) : []
@@ -139,6 +120,22 @@ class UsersController < ApplicationController
         render :json => Hash[:points => @user.points, :growls => @growls].to_json
       end
     end
+  end
+
+  # PUT /users/1/follow
+  def follow
+    # @user initialized in before filter
+    current_user.follow(@user)
+    flash[:notice] = "You are now following #{@user.handle}"
+    redirect_to(redirect_back_path(root_path))
+  end
+
+  # PUT /users/1/unfollow
+  def unfollow
+    # @user initialized in before filter
+    current_user.unfollow(@user)
+    flash[:notice] = "You are no longer following #{@user.handle}"
+    redirect_to(redirect_back_path(root_path))
   end
 
   # PUT /users/1/activate
