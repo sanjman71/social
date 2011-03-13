@@ -35,7 +35,7 @@ body #header a#invite-friends {
 }
 body #header a#invite-friends img {
   float: left;
-  margin: 0 3px 0 0;
+  margin: 2px 3px 0 0;
 }
 body #header a#invite-friends:hover { background: rgba(0, 0, 0, 0.5); }
 body #header #top-right {
@@ -130,6 +130,7 @@ body #nav li#logo {
 }
 body #nav li#logo h1 {
   font-size: 24px;
+  font-weight: bold;
   margin: 0;
   padding: 0;
   color: #ffffff;
@@ -295,7 +296,10 @@ body #content .actions {
   background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
   border: 1px solid #cccccc;
 }
-body #content .actions img { margin: 0; }
+body #content .actions img {
+  margin: 0;
+  float: left;
+}
 body #content .actions:hover {
   background: -webkit-linear-gradient(#ff9c0a, #f29000);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9c0a), color-stop(100%, #f29000));
@@ -324,13 +328,13 @@ body #content .actions ul li {
   text-transform: uppercase;
   font-size: 10px;
   font-weight: bold;
-  height: 25px;
-  line-height: 25px;
+  height: 25px !important;
+  line-height: 25px !important;
   border-top: 1px solid #3c3c3c;
   background: -webkit-linear-gradient(#252525, #000000);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
   background: -moz-linear-gradient(top, #252525, #000000);
-  border-bottom: 0;
+  border-bottom: 0 !important;
 }
 body #content .actions ul li:first-child { text-indent: 5px; }
 body #content .actions ul li a {

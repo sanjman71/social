@@ -10,6 +10,7 @@
       %h4= link_to user.handle, '#'
       %h5= link_to checkin_time_ago(checkin.checkin_at), '#'
     %h3= link_to location.try(:name), '#'
+
     
     - if true
       -# profile link
@@ -19,17 +20,16 @@
       .actions
         -# click to show menu, not hover. add class .open to this div to show menu
         = image_tag("/images/actions.png", :alt => 'actions menu')
-        %span
-          %ul
-            %li= user.handle
-            %li= link_to 'Send Message', compose_message_user_path(user.id, 'checkin', checkin.id)
-            -#%li= link_to 'Post to Wall', compose_wall_post_path('checkin', checkin.id)
-            %li= link_to 'View Profile', user_path(user)
-            - if @following_ids.include?(user.id)
-              %li= link_to 'Unfollow', unfollow_user_path(user, :return_to => request.fullpath), :method => :put
-            - elsif current_user.friend_set.include?(user.id)
-              -# users can follow friends
-              %li= link_to 'Follow', follow_user_path(user, :return_to => request.fullpath), :method => :put
+        %ul
+          %li= user.handle
+          %li= link_to 'Send Message', compose_message_user_path(user.id, 'checkin', checkin.id)
+          -#%li= link_to 'Post to Wall', compose_wall_post_path('checkin', checkin.id)
+          %li= link_to 'View Profile', user_path(user)
+          - if @following_ids.include?(user.id)
+            %li= link_to 'Unfollow', unfollow_user_path(user, :return_to => request.fullpath), :method => :put
+          - elsif current_user.friend_set.include?(user.id)
+            -# users can follow friends
+            %li= link_to 'Follow', follow_user_path(user, :return_to => request.fullpath), :method => :put
 - else
   -# non-member
   %li.span-16.last
