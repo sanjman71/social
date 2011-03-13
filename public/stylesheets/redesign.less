@@ -472,6 +472,74 @@ body {
         background-position: 0 -54px;
       }
     }
+    #profile-recent-checkins {
+      position: relative;
+      padding: 35px 0 0 0;
+      #recent-checkins-title {
+        position: absolute;
+        text-indent: -9999px;
+        left: -29px;
+        top: 10px;
+        width: 118px;
+        height: 32px;
+        background: url(/images/recent-checkins-title.png);
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        li {
+          border-bottom: 1px solid #f0f0f0;
+          float: left;
+          :last-child {
+            border: 0;
+          }
+          a {
+            font-size: 14px;
+            display: block;
+            color: @blue;
+            text-decoration: none;
+            font-weight: bold;
+            width: 280px;
+            height: 46px;
+            line-height: 46px;
+            float: left;
+            :hover {
+              text-decoration: underline
+            }
+          }
+          small {
+            float: right;
+            width: 90px;
+            font-size: 11px;
+            font-style: italic;
+            color: #777;
+            height: 46px;
+            line-height: 46px;
+          }
+        }
+      }
+    }
+    #profile-following {
+      padding: 40px 0 0 0;
+      position: relative;
+      #profile-following-title {
+        position: absolute;
+        text-indent: -9999px;
+        width: 141px;
+        height: 32px;
+        background: url(/images/home-following-title.png);
+        left: -29px;
+        top: 15px;
+      }
+      a {
+        float: left;
+        margin: 2px 2px 0 0;
+        img {
+          
+        }
+      }
+    }
     #favorite-places,
     #friends-favorite-places {
       margin: 35px 0 0 0;
@@ -543,7 +611,7 @@ body {
     }
   }
   #footer {
-    padding: 10px 0 0;
+    padding: 10px 0 100px;
     color: @darkblue;
     font-size: 11px;
   }

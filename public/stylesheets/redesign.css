@@ -427,6 +427,67 @@ body #content #out-now .br {
   right: -7px;
   background-position: 0 -54px;
 }
+body #content #profile-recent-checkins {
+  position: relative;
+  padding: 35px 0 0 0;
+}
+body #content #profile-recent-checkins #recent-checkins-title {
+  position: absolute;
+  text-indent: -9999px;
+  left: -29px;
+  top: 10px;
+  width: 118px;
+  height: 32px;
+  background: url(/images/recent-checkins-title.png);
+}
+body #content #profile-recent-checkins ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+body #content #profile-recent-checkins ul li {
+  border-bottom: 1px solid #f0f0f0;
+  float: left;
+}
+body #content #profile-recent-checkins ul li:last-child { border: 0; }
+body #content #profile-recent-checkins ul li a {
+  font-size: 14px;
+  display: block;
+  color: #5c96b5;
+  text-decoration: none;
+  font-weight: bold;
+  width: 280px;
+  height: 46px;
+  line-height: 46px;
+  float: left;
+}
+body #content #profile-recent-checkins ul li a:hover { text-decoration: underline; }
+body #content #profile-recent-checkins ul li small {
+  float: right;
+  width: 90px;
+  font-size: 11px;
+  font-style: italic;
+  color: #777777;
+  height: 46px;
+  line-height: 46px;
+}
+body #content #profile-following {
+  padding: 40px 0 0 0;
+  position: relative;
+}
+body #content #profile-following #profile-following-title {
+  position: absolute;
+  text-indent: -9999px;
+  width: 141px;
+  height: 32px;
+  background: url(/images/home-following-title.png);
+  left: -29px;
+  top: 15px;
+}
+body #content #profile-following a {
+  float: left;
+  margin: 2px 2px 0 0;
+}
 body #content #favorite-places {
   margin: 35px 0 0 0;
   float: left;
@@ -574,7 +635,7 @@ body #content #friends-favorite-places ul li div small {
   font-style: normal;
 }
 body #footer {
-  padding: 10px 0 0;
+  padding: 10px 0 100px;
   color: #367199;
   font-size: 11px;
 }
