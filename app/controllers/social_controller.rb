@@ -21,7 +21,13 @@ class SocialController < ApplicationController
     # friends out recently, exclude checkins from friends out now
     @timestamp_recent     = 2.days.ago
     @friends_checkins     = Checkin.where(:checkin_at.gt => @timestamp_recent).joins(:user).
-                            where(:user => {:id => @user.friend_set}).order("checkin_at desc")
+                                    where(:user => {:id => @user.friend_set}).order("checkin_at desc")
+    if @friends_checkins.empty? and enabled(:fill_home_checkins)
+      @friends_checkins = Checkin.joins(:user).
+                                  where(:user => {:id => @user.friend_set}).order("checkin_at desc").
+                                  limit(5)
+    end
+
     # map friends to checkins
     @friends_out_recently = @friends_checkins.inject(ActiveSupport::OrderedHash.new) do |hash, checkin|
       hash[checkin.user] ||= []
