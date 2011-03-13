@@ -23,9 +23,13 @@ class SocialController < ApplicationController
     @friends_checkins     = Checkin.where(:checkin_at.gt => @timestamp_recent).joins(:user).
                                     where(:user => {:id => @user.friend_set}).order("checkin_at desc")
     if @friends_checkins.empty? and enabled(:fill_home_checkins)
+      # try with less restrictive set of friend checkin constraints
       @friends_checkins = Checkin.joins(:user).
-                                  where(:user => {:id => @user.friend_set}).order("checkin_at desc").
-                                  limit(5)
+                                  where(:user => {:id => @user.friend_set}).order("checkin_at desc").limit(5)
+    end
+    if @friends_checkins.empty? and enabled(:fill_home_checkins)
+      # try with less restrictive set of general checkin constraints
+      @friends_checkins = Checkin.order("checkin_at desc").limit(5)
     end
 
     # map friends to checkins
