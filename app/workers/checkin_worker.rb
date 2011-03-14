@@ -14,18 +14,21 @@ class CheckinWorker
     checkin = Checkin.find(options['checkin_id'])
     user    = checkin.user
 
-    # find member friends
-    members = User.where(:member => 1, :id => user.friend_set)
-    members.each do |member|
-      # check preferences
-      next unless member.preferences_realtime_friend_checkin_emails.to_i == 1
+    # find member followers
+    followers = User.find(user.followers)
+    followers.each do |follower|
+      # should always be members, but check anyway
+      next unless follower.member?
       # send email
       Resque.enqueue(UserMailerWorker, :user_friend_realtime_checkin,
-                     'user_id' => member.id, 'checkin_id' => checkin.id)
+                     'user_id' => follower.id, 'checkin_id' => checkin.id)
     end
   end
 
   def self.search_realtime_checkin_matches(options={})
+    # check feature
+    return unless enabled(:realtime_checkin_matches)
+
     # find users who are out
     values = Realtime.find_users_out
 
@@ -63,6 +66,9 @@ class CheckinWorker
   end
 
   def self.search_daily_checkin_matches(options={})
+    # check feature
+    return unless enabled(:daily_checkin_matches)
+
     tstart              = (Time.zone.now-1.day).beginning_of_day
     tend                = tstart.end_of_day
     checkins_per_email  = 3

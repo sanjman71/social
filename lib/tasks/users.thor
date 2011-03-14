@@ -10,6 +10,24 @@ class Users < Thor
     end
   end
 
+  desc "follow_all_friends", "set members to follow all of their friends"
+  def follow_all_friends
+    User.member.each do |user|
+      user.friend_set.each do |friend_id|
+        user.follow(friend_id)
+      end
+      puts "#{Time.now}:*** user #{user.handle} is following all #{user.friend_set.size} friends"
+    end
+  end
+
+  desc "unfollow_all", "set members to unfollow all current followers"
+  def unfollow_all
+    User.member.each do |user|
+      user.unfollow_all
+      puts "#{Time.now}:*** user #{user.handle} is not following anyone"
+    end
+  end
+
   desc "add_location_tags", "tag users with checkin and todo location tags"
   def add_location_tags
     puts "#{Time.now}: adding location tags to users"
