@@ -126,7 +126,8 @@ class UsersController < ApplicationController
   def follow
     # @user initialized in before filter
     current_user.follow(@user)
-    flash[:notice] = "You are now following #{@user.handle}"
+    flash[:notice]  = "You are now following #{@user.handle}"
+    flash[:tracker] = track_page("/action/follow")
     redirect_to(redirect_back_path(root_path))
   end
 
@@ -134,7 +135,8 @@ class UsersController < ApplicationController
   def unfollow
     # @user initialized in before filter
     current_user.unfollow(@user)
-    flash[:notice] = "You are no longer following #{@user.handle}"
+    flash[:notice]  = "You are no longer following #{@user.handle}"
+    flash[:tracker] = track_page("/action/unfollow")
     redirect_to(redirect_back_path(root_path))
   end
 
