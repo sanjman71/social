@@ -11,7 +11,7 @@
       %h5= link_to checkin_time_ago(checkin.checkin_at), '#'
     %h3= link_to location.try(:name), '#'
     .actions
-      -#<!-- click to show menu, not hover. add class .open to this div to show menu -->
+      -# click to show menu, not hover. add class .open to this div to show menu
       = image_tag("/images/actions.png", :alt => 'actions menu')
       %span
         %ul
@@ -21,7 +21,8 @@
           %li= link_to 'View Profile', user_path(user)
           - if @following_ids.include?(user.id)
             %li= link_to 'Unfollow', unfollow_user_path(user, :return_to => request.fullpath), :method => :put
-          - else
+          - elsif current_user.friend_set.include?(user.id)
+            -# users can follow friends
             %li= link_to 'Follow', follow_user_path(user, :return_to => request.fullpath), :method => :put
 - else
   -# non-member

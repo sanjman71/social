@@ -69,9 +69,12 @@ class UsersController < ApplicationController
   def show
     # @user, @viewer initialized in before filter
 
-     # following
+    # following
     @following      = User.find(@user.following, :order => 'member desc, member_at asc')
     @following_ids  = @following.collect(&:id)
+
+    # friends - following
+    @friends        = User.find(@user.friend_set) - @following
 
     # check if @user is out
     @users_out      = Realtime.find_users_out(:map_ids => true)

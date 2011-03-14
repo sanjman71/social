@@ -19,7 +19,8 @@
           -# check if I'm following this user
           - if current_user.following_ids.include?(@user.id)
             %li= link_to 'Unfollow', unfollow_user_path(@user, :return_to => request.fullpath), :method => :put
-          - else
+          - elsif current_user.friend_set.include?(@user.id)
+            -# users can follow friends
             %li= link_to 'Follow', follow_user_path(@user, :return_to => request.fullpath), :method => :put
 
 .span-16.last
@@ -46,6 +47,11 @@
   #profile-following
     #profile-following-title Friends I&apos;m Following
     - @following.each do |user|
+      = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
+
+  #profile-following
+    #profile-following-title Friends
+    - @friends.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
 .right-col
