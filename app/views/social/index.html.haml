@@ -14,7 +14,7 @@
 
 .span-16.last
   #home-following.tipsy
-    #home-following-title.titlebar.left Friends I&apos;m Following
+    #home-following-title.titlebar.left Following
     - @following.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
