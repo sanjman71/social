@@ -3,18 +3,21 @@
 - if user.member?
   %li.span-16.last
     .member.yes
+    = link_to 'Unfollow', "#", :class => 'follow-action'
     .picture
       -# user profile link
       = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), user_path(user)
     .user-info
       %h4= link_to user.handle, '#'
       %h5= link_to checkin_time_ago(checkin.checkin_at), '#'
-    %h3= link_to location.try(:name), '#'
+    %h3
+      = link_to location.try(:name), '#'
+      = link_to '3 comments', "#", :class => 'location-comment-count'
 
     
     - if true
       -# profile link
-      = link_to 'Profile', user_path(user), :class => 'invite'
+      = link_to 'Message', user_path(user), :class => 'invite'
     - else
       -# gears menu that doesn't work very well
       .actions
