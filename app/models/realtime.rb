@@ -4,6 +4,11 @@ class Realtime
     puts find_users_out.inspect
   end
 
+  # the time window after a checkin the user is considered out
+  def self.window_out
+    2.hours
+  end
+
   def self.key
     "users:out"
   end
