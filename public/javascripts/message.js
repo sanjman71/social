@@ -9,7 +9,7 @@ $.fn.init_message_overlay = function() {
   });
   
   $(".message.modal-trigger").click(function() {
-    var modal = $("div.modal#message_overlay");
+    var modal = $("#message_overlay");
     modal.find("#header_to").text("To: " + $(this).attr('data-handle')); 
     modal.find("input#message_to").val($(this).attr('data-id')); 
     return true;
@@ -21,7 +21,7 @@ $.fn.init_message_overlay = function() {
     url   = $(form).attr('data-url');
 
     if (body == '') {
-      alert("Please enter a message");
+      // alert("Please enter a message");
       return false;
     }
 
