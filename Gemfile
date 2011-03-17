@@ -48,7 +48,7 @@ gem 'whenever',               '>= 0.5.0'
 group :development, :test do
   gem 'capistrano'
   gem 'capybara'
-  gem 'cucumber'
+  gem 'cucumber',               '>= 0.10.0'
   gem 'cucumber-rails'
   gem 'database_cleaner'
   gem 'email_spec',             '>= 1.0.0', :require => nil
