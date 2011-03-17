@@ -1,0 +1,10 @@
+%div.modal#message_overlay{:style => 'display: none;'}
+  %h3#header_to To: #{sender.try(:handle)}
+  = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
+    %h3 Message:
+    = text_area_tag 'message[body]', '', :id => 'message_body', :style => 'height: 30px;', :class => 'textarea countdown autoresize'
+    = hidden_field_tag 'message[to]', ''
+    %br
+    %span#message_count 140
+    %span#message_send= submit_tag 'Send', :id => 'message_send_submit'
+    %div.close

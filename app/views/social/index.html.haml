@@ -1,4 +1,4 @@
-- javascript('social')
+- javascript('message')
 
 #member-title Member?
 
@@ -18,4 +18,5 @@
     - @following.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
-  
+-# message overlay
+= render(:partial => 'shared/message_overlay', :locals => {:sender => current_user})

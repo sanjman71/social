@@ -1,11 +1,11 @@
 $.fn.init_action_menus = function() {
+
   $("div.actions").click(function() {
     $(this).addClass('open');
   });
-  
-  $("div.actions ul").mouseleave(function() {
-    console.log("mouseleave");
-    $(this).parents("div").removeClass('open');
+
+  $("div.actions").mouseleave(function() {
+    $(this).removeClass('open');
   });
 }
 

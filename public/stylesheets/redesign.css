@@ -336,7 +336,7 @@ body #content .actions ul {
   display: none;
   position: absolute;
   z-index: 1;
-  top: 26px;
+  top: 24px;
   left: -1px;
   background: #000000;
   width: 100px;

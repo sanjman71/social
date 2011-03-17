@@ -16,7 +16,7 @@
     %h3
       = link_to location.try(:name), '#'
       = link_to '3 comments', "#", :class => 'location-comment-count'
-    = link_to 'Message', user_path(user), :class => 'invite'
+    = link_to 'Message', '#', :class => 'invite message modal-trigger', :rel => '#message_overlay', 'data-id' => user.id, 'data-handle' => user.handle
 - else
   -# non-member
   %li.span-16.last
