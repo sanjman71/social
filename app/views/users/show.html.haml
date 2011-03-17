@@ -28,13 +28,15 @@
   = display_flash(:all)
 
 - if @users_out.keys.include?(@user.id)
+  - checkin_ids = @users_out[@user.id]
+  - checkin     = Checkin.find_by_id(checkin_ids[0])
   .span-16.last
     #out-now
       .tl
       .bl
       .tr
       .br
-      #{@user.handle} is out now at
+      #{@user.handle} is out now at #{checkin.try(:location).try(:name)}
 
 .left-col
   #profile-recent-checkins.clearfix
