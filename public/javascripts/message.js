@@ -42,6 +42,11 @@ $.fn.init_message_overlay = function() {
       if (data['growls']) {
         show_growls(data['growls']);
       }
+      /// show any flash message
+      if (data['message']) {
+        console.log("message: " + data['message']);
+        $("div#flash").append("<div class='notice'>" + data['message'] + "</div>");
+      }
     }, 'json');
 
     return false;

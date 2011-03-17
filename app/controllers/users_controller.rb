@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_filter :authenticate_user_with_token, :only => [:message]
   before_filter :authenticate_user!, :except => [:message]
   before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :compose, :disable,
                                       :follow, :learn, :message, :share_drink, :show, :unfollow]
@@ -205,11 +206,12 @@ class UsersController < ApplicationController
   # GET /users/1/re/checkin/5/message/bts - 'be there soon'
   # PUT /users/1/re/checkin/5/message/sad - 'share a drink?'
   # GET /users/1/re/checkin/5/message/ltp - 'love that place'
+  # GET /users/1/re/checkin/5/message/compose
   def message
     # @user initialized in before filter
 
     # set sender and options
-    @sender   = current_user || User.find_by_oauth_token(params[:token].to_s)
+    @sender   = current_user
     @options  = {'sender_id' => @sender.id, 'to_id' => @user.id}
 
     case params[:object_type]
@@ -232,6 +234,9 @@ class UsersController < ApplicationController
     when 'sad'
       Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
       @notice = "We'll send #{@user.handle} a message saying you'd like to grab a drink"
+    when 'compose'
+      # compose a message
+      render(:action => 'compose') and return
     end
 
     respond_to do |format|
@@ -252,9 +257,10 @@ class UsersController < ApplicationController
       end
       format.json do
         # track action and send growl message
-        @growls     = [{:message => @notice, :timeout => 2000}]
         @track_page = "/action/message/#{params[:message]}"
-        render(:json => {'status' => 'ok', 'growls' => @growls, 'track_page' => @track_page}.to_json) and return
+        @growls     = [{:message => @notice, :timeout => 2000}]
+        @json       = {'status' => 'ok', 'growls' => @growls, 'track_page' => @track_page}.to_json
+        render(:json => @json) and return
       end
     end
   rescue Exception => e

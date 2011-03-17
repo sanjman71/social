@@ -14,7 +14,7 @@ Thanks for checking in at #{@location.try(:name)}. Here's who's nearby right now
         = user.handle
         == &nbsp;
         - if user.member?
-          = link_to('Share a Drink', message_user_url(:id => user.id, :object_type => 'checkin', :object_id => checkin.id, :message => 'sad', :token => @token, 'utm_campaign' => 'realtime-checkins', 'utm_medium' => 'email', 'utm_source' => 'outlately'))
+          = link_to('Share a Drink', reply_user_url(:id => user.id, :object_type => 'checkin', :object_id => checkin.id, :message => 'sad', :token => @token, 'utm_campaign' => 'realtime-checkins', 'utm_medium' => 'email', 'utm_source' => 'outlately'))
         %br{:style => 'margin: 3px 0;'}
         = location.name
 

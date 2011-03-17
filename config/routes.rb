@@ -39,10 +39,9 @@ Social::Application.routes.draw do
   match 'users/:id/bucks/:points', :to => "users#bucks", :as => :add_bucks_user
   match 'users/:id/follow', :to => "users#follow", :as => :follow_user, :via => :put
   match 'users/:id/unfollow', :to => "users#unfollow", :as => :unfollow_user, :via => :put
-  match 'users/:id/re/:object_type/:object_id/message/compose', :to => "users#compose", :as => :compose_message_user,
+  match 'users/:id/re/:object_type/:object_id/message/:message', :to => "users#message", :as => :reply_user,
     :constraints => {:object_type => /checkin|todo/}, :via => [:get, :put]
-  match 'users/:id/re/:object_type/:object_id/message/:message', :to => "users#message", :as => :message_user,
-    :constraints => {:object_type => /checkin|todo/}, :via => [:get, :put]
+  match 'users/:id/message/:message', :to => "users#message", :as => :message_user, :via => [:get, :put]
 
   match ':object_type/:object_id/wall/compose', :to => "messages#wall_compose", :as => :compose_wall_post,
     :constraints => {:object_type => /checkin|todo/}, :via => [:get, :put]

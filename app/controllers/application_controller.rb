@@ -45,6 +45,14 @@ class ApplicationController < ActionController::Base
     current_user.try(:has_role?, role_name, authorizable)
   end
 
+  def authenticate_user_with_token
+    if params[:token].present? and (user = User.find_by_remember_token(params[:token]))
+      sign_in(:user, user)
+      Rails.logger.info("[user:#{user.id}] #{user.handle} signed in with token")
+    end
+    true
+  end
+
   protected
 
   # find city using params[:city]

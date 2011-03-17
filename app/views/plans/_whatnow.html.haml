@@ -8,6 +8,6 @@
     -# plan todo link
     = link_to(I18n.t("home.stream.plan_todo"), '#', :id => 'pick_todo_date', "data-url" => add_todo_location_path(@location.id))
   .span-3#actions{:style => 'margin: 20px 10px;'}
-    = link_to('Share a Drink', '#', :id => 'share_drink', 'data-url' => message_user_url(:id => @user.id, :object_type => 'todo', :object_id => todo.id, :message => 'sad', :token => @token, :format => 'json'))
+    = link_to('Share a Drink', '#', :id => 'share_drink', 'data-url' => reply_user_url(:id => @user.id, :object_type => 'todo', :object_id => todo.id, :message => 'sad', :token => @token, :format => 'json'))
 
       

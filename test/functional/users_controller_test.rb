@@ -7,7 +7,6 @@ class UsersControllerTest < ActionController::TestCase
   self.use_transactional_fixtures = false
 
   context "routes" do
-    should route(:get, "/profile").to(:controller => 'users', :action => 'show')
     should route(:get, "/users/geo:1.23..-77.89/radius:50").
       to(:controller => 'users', :action => 'search', :geo => 'geo:1.23..-77.89', :radius => 'radius:50')
     should route(:get, "/users/city:chicago/radius:75").
@@ -23,7 +22,13 @@ class UsersControllerTest < ActionController::TestCase
     should route(:put, "/users/1/disable").
       to(:controller => 'users', :action => 'disable', :id => '1')
     should route(:put, "/users/1/re/checkin/1/message/bts").
-      to(:controller => 'users', :action => 'message', :id => '1', :checkin_id => '1', :message => 'bts')
+      to(:controller => 'users', :action => 'message', :id => '1', :object_type => 'checkin', :object_id => '1',
+         :message => 'bts')
+    should route(:put, "/users/1/re/checkin/3/message/compose").
+      to(:controller => 'users', :action => 'message', :id => '1', :object_type => 'checkin', :object_id => '3',
+         :message => 'compose')
+    should route(:put, "/users/1/message/compose").
+      to(:controller => 'users', :action => 'message', :id => '1')
   end
 
   def setup
@@ -258,9 +263,9 @@ class UsersControllerTest < ActionController::TestCase
     context "html request by authenticated user" do
       should "send be there soon message" do
         sign_in @user2
-        get :message, :id => @user1.id, :checkin_id => @checkin1.id, :message => 'bts'
+        get :message, :id => @user1.id, :object_type => 'checkin', :object_id => @checkin1.id, :message => 'bts'
         assert_equal @user2, assigns(:sender)
-        assert_equal @checkin1, assigns(:checkin)
+        assert_equal @checkin1, assigns(:object)
         assert flash[:notice]
         assert_redirected_to "/users/#{@user1.id}"
       end
@@ -269,9 +274,10 @@ class UsersControllerTest < ActionController::TestCase
     context "token request by non-authenticated user" do
       should "send be there soon message" do
         User.stubs(:find_by_oauth_token).returns(@user2)
-        get :message, :id => @user1.id, :checkin_id => @checkin1.id, :message => 'bts', :token => "123"
+        get :message, :id => @user1.id, :object_type => 'checkin', :object_id => @checkin1.id, :message => 'bts',
+            :token => "123"
         assert_equal @user2, assigns(:sender)
-        assert_equal @checkin1, assigns(:checkin)
+        assert_equal @checkin1, assigns(:object)
         assert flash[:notice]
         assert_template "message"
       end

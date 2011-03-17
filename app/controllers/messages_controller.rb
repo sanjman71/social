@@ -40,7 +40,7 @@ class MessagesController < ApplicationController
 
     # set status
     @status   = 'ok'
-    @text     = "Sent message to #{@user.handle}!"
+    @text     = "Sent message to #{@sender.handle}!"
     @growls   = [{:message => @text, :timeout => 5000}]
 
     # set redirect path
@@ -49,6 +49,7 @@ class MessagesController < ApplicationController
   rescue Exception => e
     # set status, redirect path
     @status       = 'error'
+    @text         = e.message
     @redirect_to  = redirect_back_path(root_path)
   ensure
     respond_to do |format|
@@ -58,8 +59,8 @@ class MessagesController < ApplicationController
         flash[:notice]  = @text
         redirect_back_to(@redirect_to) and return
       end
-      format.json { render :json => Hash[:status => @status, :message => @text, :growls => @growls,
-                                         :track_page => "/action/message/sent"].to_json }
+      format.json { render :json => {:status => @status, :message => @text, :growls => @growls,
+                                     :track_page => "/action/message/sent"}.to_json }
     end
   end
   

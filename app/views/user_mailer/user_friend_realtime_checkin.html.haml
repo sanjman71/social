@@ -3,13 +3,20 @@ Just wanted to let you know that #{@checkin.user.try(:handle)} checked in at #{@
 %p
 Send a message:
 %p
-= link_to 'Be There Soon', Url.shorten_except_env(@bts_url, 'test')
+= link_to 'Be There Soon', Url.shorten(@bts_url)
 -#%span{:style => 'margin: 0 10px;'} or
--#= link_to "Sorry, Can't Make It", Url.shorten_except_env(@cmi_url, 'test')
+-#= link_to "Sorry, Can't Make It", Url.shorten(@cmi_url, 'test')
+
 %p
 %p
 Comment on the checkin:
 %p
-= link_to "Love That Place", Url.shorten_except_env(@ltp_url, 'test')
+= link_to "Love That Place", Url.shorten(@ltp_url)
+
+%p
+%p
+Send a Message:
+%p
+= link_to "New Message", Url.shorten(@compose_url)
 
 = render(:partial => 'footer', :locals => {:campaign => 'friend-realtime-checkin'})

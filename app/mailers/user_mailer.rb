@@ -202,21 +202,31 @@ class UserMailer < ActionMailer::Base
     @user     = User.find(options['user_id'])
     @checkin  = Checkin.find(options['checkin_id'])
 
+    if !@user.remember_token.present?
+      # create user remember_token
+      @user.remember_me!
+    end
+
     @email    = @user.email_address
-    @token    = @user.oauths.facebook.first.try(:access_token).to_s
+    @token    = @user.remember_token
     @subject  = "Outlately: #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}..."
 
-    # build link urls
+    # build message urls
 
-    @bts_url  = message_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
-                                 :object_id => @checkin.id, :message => 'bts', :token => @token,
-                                 'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
-                                 'utm_source' => 'outlately')
+    @bts_url      = reply_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
+                                   :object_id => @checkin.id, :message => 'bts', :token => @token,
+                                   'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
+                                   'utm_source' => 'outlately')
 
-    @ltp_url  = message_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
-                                 :object_id => @checkin.id, :message => 'ltp', :token => @token,
-                                 'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
-                                 'utm_source' => 'outlately')
+    @ltp_url      = reply_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
+                                   :object_id => @checkin.id, :message => 'ltp', :token => @token,
+                                   'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
+                                   'utm_source' => 'outlately')
+
+    @compose_url  = reply_user_url(:id => @checkin.user.try(:id), :object_type => 'checkin',
+                                   :object_id => @checkin.id, :message => 'compose', :token => @token,
+                                   'utm_campaign' => 'friend-realtime-checkin', 'utm_medium' => 'email',
+                                   'utm_source' => 'outlately')
 
     # log and track
     log("[email:#{@user.id}]: #{@email} friend #{@checkin.user.try(:handle)} realtime checkin")
