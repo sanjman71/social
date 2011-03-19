@@ -1,23 +1,15 @@
 - javascript('users_settings')
 
-.span-24.last
-  .span-16
-    %h2 My Settings
+.span-16.last
+  %h2 My Settings
 
-.span.24.last
+%hr.space
+
+.span.16.last
   = display_flash(:all)
   = display_alerts
 
-- if @newbie
-  .span.24.last.newbie
-    %h3
-      Step 1 of 3:
-      %p
-      Outlately is a community for those who like meeting people and checking out new places.
-      %p
-      We'll walk you through the setup process, starting with your profile.
-
-.span-24.last
+.span-16.last
   -# link foursquare
   = render(:partial => 'shared/oauth_links')
 
@@ -54,10 +46,7 @@
       -#= f.simple_fields_for :availability do |avail_form|
         -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
     .span-15.prepend-1.last{:style => 'margin-bottom: 20px;'}
-      - if @newbie
-        = f.submit 'Next', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
-      - unless @newbie
-        = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
-        %span{:style => 'padding: 5px 0 0 5px;'}
-          or
-          = link_to 'No Changes', root_path, :style => 'font-size: 1.1em; color: #00f;'
+      = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
+      %span{:style => 'margin: 3px; display: block;'}
+        &nbsp;or
+        = link_to 'No Changes', root_path, :style => 'font-size: 1.1em; color: #00f;'
