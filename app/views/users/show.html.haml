@@ -57,20 +57,21 @@
     - @friends.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
-.right-col
-  #favorite-places
-    #favorite-places-title.titlebar.right Favorite Places
-    %ul
-      - @my_spots.each do |location|
-        %li
-          = link_to location.name, '#'
+- if @user.member?
+  .right-col
+    #favorite-places
+      #favorite-places-title.titlebar.right Favorite Places
+      %ul
+        - @my_spots.each do |location|
+          %li
+            = link_to location.name, '#'
 
-  #friends-favorite-places
-    #friends-favorite-places-title.titlebar.right Friends&apos; Favorite Places
-    %ul
-      - @friend_spots.each do |location|
-        %li
-          = link_to location.name, '#'
+    #friends-favorite-places
+      #friends-favorite-places-title.titlebar.right Friends&apos; Favorite Places
+      %ul
+        - @friend_spots.each do |location|
+          %li
+            = link_to location.name, '#'
 
 -# message overlay
 = render(:partial => 'shared/message_overlay', :locals => {:sender => current_user})
