@@ -111,10 +111,13 @@ class Checkin < ActiveRecord::Base
   # trigger polling of user checkins
   def self.event_poll_checkins
     # find users with oauths, with checkin logs that haven't been checked in poll_interval
-    @users = User.with_oauths.joins(:checkin_logs).
-                  where(:"checkin_logs.last_check_at".lt => poll_interval.ago).select("users.*")
+    # use different poll intervals for members and non-members
+    @members = User.member.with_oauths.joins(:checkin_logs).
+                    where(:"checkin_logs.last_check_at".lt => poll_interval_member.ago).select("users.*")
+    @users   = User.non_member.with_oauths.joins(:checkin_logs).
+                    where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).select("users.*")
     
-    @users.each do |user|
+    (@members+@users).each do |user|
       user.checkin_logs.each do |log|
         # use delayed job to import these checkins
         case log.source
@@ -133,7 +136,21 @@ class Checkin < ActiveRecord::Base
     @users
   end
 
-  def self.poll_interval
+  def self.poll_interval(user=nil)
+    begin
+      user.member? ? poll_interval_member : poll_interval_default
+    rescue
+      poll_interval_default
+    end
+  end
+
+  # different poll interval for members vs non-members
+
+  def self.poll_interval_member
+    30.minutes
+  end
+
+  def self.poll_interval_default
     60.minutes
   end
 

@@ -16,7 +16,7 @@ class FoursquareCheckin
 
     # compare last check timestamp + check interval vs current timestamp
     last_check_at   = checkin_log.last_check_at
-    last_check_mins = options[:minutes_since] ? options.delete(:minutes_since).to_i.minutes : Checkin.poll_interval
+    last_check_mins = options[:minutes_since] ? options.delete(:minutes_since).to_i.minutes : Checkin.poll_interval(user)
 
     case
     when last_check_at.blank?
