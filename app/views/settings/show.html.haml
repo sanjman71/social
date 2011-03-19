@@ -1,7 +1,8 @@
 - javascript('users_settings')
 
-.span-16.last
-  %h2 My Settings
+.left-col
+  #profile-recent-checkins.clearfix
+    #recent-checkins-title.titlebar.left My Settings
 
 %hr.space
 
@@ -45,7 +46,7 @@
     -#.span-24.last
       -#= f.simple_fields_for :availability do |avail_form|
         -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
-    .span-15.prepend-1.last{:style => 'margin-bottom: 20px;'}
+    .span-15.prepend-1.last{:style => 'margin: 20px 0;'}
       = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
       %span{:style => 'margin: 3px; display: block;'}
         &nbsp;or
