@@ -33,9 +33,17 @@ Feature: New home page
     And I fill in "message_body" with "Hey there"
     And I press "Send"
     And I wait for "2" seconds
+    Then I should see "Sent message to Chicago A."
 
-    And the resque jobs are processed
-    And "chicago.a@gmail.com" should receive an email with subject "Outlately: Chicago M. sent you a message..."
+    # logout
+    When I go to the logout page
+
+    When the resque jobs are processed
+    Then "chicago.a@gmail.com" should receive an email with subject "Outlate.ly: Chicago M. sent you a message..."
     And I open the email
     Then I should see "Hey there" in the email body
+    
+    When I follow "here" in the email
+    Then I should see "Chicago A."
+    And I should see "To: Chicago M."
     

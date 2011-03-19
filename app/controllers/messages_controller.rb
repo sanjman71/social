@@ -40,7 +40,7 @@ class MessagesController < ApplicationController
 
     # set status
     @status   = 'ok'
-    @text     = "Sent message to #{@sender.handle}!"
+    @text     = "Sent message to #{@to.handle}!"
     @growls   = [{:message => @text, :timeout => 5000}]
 
     # set redirect path

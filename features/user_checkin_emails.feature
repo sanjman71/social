@@ -31,10 +31,10 @@ Feature: Import user checkin
     And user "adam" checked in to "Starbucks" "5 minutes ago"
     And the resque jobs are processed until empty
 
-    Then "friendly@gmail.com" should receive no emails with subject "Outlately: adam checked in at Starbucks..."
+    Then "friendly@gmail.com" should receive no emails with subject "Outlate.ly: adam checked in at Starbucks..."
 
-    And "sanjay@outlately.com" should receive an email with subject "Outlately: adam checked in at Starbucks..."
-    When I open the email with subject "Outlately: adam checked in at Starbucks..."
+    And "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Starbucks..."
+    When I open the email with subject "Outlate.ly: adam checked in at Starbucks..."
     Then I should see "Just wanted to let you know that adam checked in at Starbucks, 200 N State St." in the email body
     And I should see "Be There Soon" in the email body
     And I should see "Love That Place" in the email body
@@ -56,16 +56,16 @@ Feature: Import user checkin
 
     When the resque jobs are processed
 
-    Then "adam@outlately.com" should receive an email with subject "Outlately: from sanjay, re: your checkin at Starbucks..."
-    When I open the email with subject "Outlately: from sanjay, re: your checkin at Starbucks..."
+    Then "adam@outlately.com" should receive an email with subject "Outlate.ly: from sanjay, re: your checkin at Starbucks..."
+    When I open the email with subject "Outlate.ly: from sanjay, re: your checkin at Starbucks..."
     Then I should see "I'll be there soon" in the email body
 
-    And "adam@outlately.com" should receive an email with subject "Outlately: sanjay commented on your checkin at Starbucks..."
-    When I open the email with subject "Outlately: sanjay commented on your checkin at Starbucks..."
+    And "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay commented on your checkin at Starbucks..."
+    When I open the email with subject "Outlate.ly: sanjay commented on your checkin at Starbucks..."
     Then I should see "I love that place" in the email body
 
-    And "adam@outlately.com" should receive an email with subject "Outlately: sanjay sent you a message..."
-    When I open the email with subject "Outlately: sanjay sent you a message..."
+    And "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay sent you a message..."
+    When I open the email with subject "Outlate.ly: sanjay sent you a message..."
     Then I should see "Hey there!" in the email body
 
   # deprecated feature

@@ -1,5 +1,5 @@
 = @text
 %p
-Click #{link_to('here', user_url(@sender.id, 'utm_campaign' => 'user-message', 'utm_medium' => 'email', 'utm_source' => 'outlately'))} to respond.
+Click #{link_to('here', Url.shorten(@compose_url))} to respond.
 
 = render(:partial => 'footer', :locals => {:campaign => 'user-message'})
