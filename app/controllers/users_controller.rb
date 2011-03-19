@@ -65,7 +65,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # GET /
   # GET /users/1
   def show
     # @user, @viewer initialized in before filter
