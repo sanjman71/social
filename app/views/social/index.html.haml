@@ -9,7 +9,10 @@
   %ul#home-checkins
     - if @friends_out_now.empty?
       %div{:style => 'padding: 10px;'}
-        %h4 You don't have any friends out right now ... #{link_to('Invite', invite_path)} them to sign up and check in.
+        %h4
+          You don't have any friends out right now.  We'll show you friends who are out when they checkin.  If you're also following them, then we'll send you an email when they checkin, so you'll know where and when your friends are out in realtime.
+          %p
+          #{link_to('Invite', invite_path)} your friends to sign up and follow you.
 
     - @friends_out_now.each_pair do |user, checkins|
       = render(:partial => 'checkin', :locals => {:user => user, :checkin => checkins[0]})
