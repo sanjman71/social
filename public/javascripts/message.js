@@ -1,17 +1,29 @@
 $.fn.init_message_overlay = function() {
-  $(".modal-trigger").overlay({
+  $("a.modal-trigger").overlay({
     mask: {
-      color: '#efefef',
+      color: '#eee',
       loadSpeed: 200,
       opacity: 0.9
     },
-    closeOnClick: false
+    closeOnClick: false,
+    onBeforeClose: function() {
+       $("div.titlebar, a.tile").css('opacity', 1.0);
+    }
   });
-  
-  $(".message.modal-trigger").click(function() {
+
+  $("a.message.modal-trigger").click(function() {
     var modal = $("#message_overlay");
-    modal.find("#header_to").text("To: " + $(this).attr('data-handle')); 
-    modal.find("input#message_to").val($(this).attr('data-id')); 
+    modal.find("#header_to").text("To: " + $(this).attr('data-handle'));
+    modal.find("input#message_to").val($(this).attr('data-id'));
+    $("div.titlebar, a.tile").css('opacity', 0.1);
+    return true;
+  })
+
+  $("a.wall-message.modal-trigger").click(function() {
+    var modal = $("#wall-message-overlay");
+    modal.find("#header_to").text("To: The Wall @ " + $(this).attr('data-name'));
+    modal.find("input#wall_id").val($(this).attr('data-id'));
+    $("div.titlebar, a.tile").css('opacity', 0.1);
     return true;
   })
 
