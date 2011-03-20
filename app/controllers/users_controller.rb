@@ -76,6 +76,9 @@ class UsersController < ApplicationController
     # friends - following
     @friends        = User.find(@user.friend_set) - @following
 
+    # followers
+    @followers      = User.find(@user.followers, :order => 'member desc, member_at asc')
+
     # check if @user is out
     @users_out      = Realtime.find_users_out(:map_ids => true)
 
