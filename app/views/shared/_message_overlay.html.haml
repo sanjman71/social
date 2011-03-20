@@ -1,7 +1,7 @@
 %div.overlay#message_overlay
   %p
     %em This Outlate.ly message will be sent to 1 person.
-  %h3#header_to To: #{sender.try(:handle)}
+  %h3#header_to To:
   = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
     = hidden_field_tag 'message[to]', ''
     %h3 Message:

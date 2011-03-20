@@ -52,6 +52,10 @@ module Users::Follow
     redis.smembers(follower_key)
   end
 
+  def follower_ids
+    followers.map(&:to_i)
+  end
+
   # return number of followers
   def followers_count
     redis = RedisSocket.new
