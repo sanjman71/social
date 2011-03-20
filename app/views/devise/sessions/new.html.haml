@@ -1,18 +1,19 @@
 - title('Welcome')
 
-%h2 Welcome To Outlately
-
 .span.24.last
   = display_flash(:all)
+#welcome-header
+  %h2 Welcome To Outlately
+  %h3 Find out where your friends are and meet up!
 
-%h3{:style => 'margin-top: 10px;'} Find out where your friends are and meet up!
-%h3{:style => 'line-height: 1.5em;'}
+#welcome-left
   Outlate.ly helps you and your Facebook friends connect in person.  Just sign up and instantly you’ll start knowing when your friends are at fun places, and you can let them know you are coming too!
   %p
   Want to start an instant party?  Ask you friends to follow you and they’ll know when you are out and about. 
   %p
   No more sending out hundreds of texts, or calling people if you are going to the next bar.  Just check in and instantly they’ll know where to meet up!
+#welcome-right
   %p
-  Ready to start? Login using your Facebook account.
-  #oauth{:style => 'margin-top: 20px;'}
+  Ready to get started?
+  #oauth
     = render :partial => 'devise/sessions/signin_oauths'

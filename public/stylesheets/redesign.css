@@ -660,6 +660,55 @@ body #footer {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
+#welcome-header {
+  height: 270px;
+  width: 620px;
+  margin: 0 0 10px 0;
+  position: relative;
+  background: url(/images/welcome-map.jpg);
+}
+#welcome-header h2 {
+  color: #ffffff;
+  font-size: 24px;
+  text-shadow: 0 -1px 1px #000000;
+  font-weight: bold;
+  height: 52px;
+  text-indent: 10px;
+  line-height: 52px;
+}
+#welcome-header h3 {
+  position: absolute;
+  margin: 0;
+  bottom: 5px;
+  left: -23px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 5px 10px;
+  color: #ffffff;
+  font-size: 15px;
+  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+  -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+#welcome-left {
+  float: left;
+  width: 340px;
+  padding: 0 0 15px 0;
+}
+#welcome-left p {
+  font-size: 12px;
+  color: #555555;
+  line-height: 16px;
+}
+#welcome-right {
+  float: right;
+  width: 200px;
+  padding: 0 10px;
+  text-align: center;
+  font-weight: bold;
+  margin: 25px 0 0 0;
+  font-size: 14px;
+  color: #363636;
+}
 .clearfix:after {
   content: ".";
   display: block;
