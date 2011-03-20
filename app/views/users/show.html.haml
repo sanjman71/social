@@ -2,7 +2,7 @@
 - javascript 'message'
 
 #profile-info.clearfix
-  = image_tag(@user.try(:primary_photo_url), :size => '75x75', :id => 'user-avatar')
+  = image_tag(@user.try(:primary_photo_url), :size => '50x50', :id => 'user-avatar')
   #profile-user-info
     %h2= @user.handle
     %h3= @user.city.try(:name)
@@ -48,12 +48,12 @@
           %small= checkin_time_ago(checkin.checkin_at)
 
   #profile-following.clearfix
-    #profile-following-title.titlebar.left Following
+    #profile-following-title.titlebar.left Outlate.ly Following
     - @following.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
   #profile-following.clearfix
-    #profile-following-title.titlebar.left Followers
+    #profile-following-title.titlebar.left Outlate.ly Followers
     - if @followers.any?
       - @followers.each do |user|
         = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
@@ -61,7 +61,7 @@
       %h4{:style => 'margin: 10px;'} No Followers
 
   #profile-following.clearfix
-    #profile-following-title.titlebar.left Friends
+    #profile-following-title.titlebar.left Facebook Friends
     - @friends.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 

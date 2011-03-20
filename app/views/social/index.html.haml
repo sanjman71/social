@@ -13,8 +13,6 @@
 
     - @friends_out_now.each_pair do |user, checkins|
       = render(:partial => 'checkin', :locals => {:user => user, :checkin => checkins[0]})
-    -#- @friends_out_recently.each_pair do |user, checkins|
-      -#= render(:partial => 'checkin', :locals => {:user => user, :checkin => checkins[0]})
 
 .span-16.last
   #home-following.tipsy
@@ -25,13 +23,13 @@
 
 .span-16.last
   #home-following.tipsy
-    #home-following-title.titlebar.left Following
+    #home-following-title.titlebar.left Outlate.ly Following
     - @following.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
 .span-16.last
   #home-following.tipsy
-    #home-following-title.titlebar.left Followers
+    #home-following-title.titlebar.left Outlate.ly Followers
     - @followers.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
