@@ -10,7 +10,7 @@
     - if @friends_out_now.empty?
       %div{:style => 'padding: 10px;'}
         %h4
-          You don't have any friends out right now.  We'll show you friends who are out when they checkin.  If you're also following them, then we'll send you an email when they checkin, so you'll know where and when your friends are out in realtime.
+          You don't have any friends out right now.
           %p
           #{link_to('Invite', invite_path)} your friends to sign up and follow you.
 
@@ -27,12 +27,20 @@
 .span-16.last
   #home-following.tipsy
     #home-following-title.titlebar.left Outlate.ly Following
+    - if @following.empty?
+      %div{:style => 'padding: 10px;'}
+        %h4{:style => 'font-size: 1.5em;'} You're not following anyone.  When you follow someone, you'll get an email as soon as they check-in somewhere.  They check-in and you know right away - it's that easy.
+
     - @following.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle, :class => 'tile'
 
 .span-16.last
   #home-following.tipsy
     #home-following-title.titlebar.left Outlate.ly Followers
+    - if @followers.empty?
+      %div{:style => 'padding: 10px;'}
+        %h4{:style => 'font-size: 1.5em;'} You don't have any followers.  When your friends follow you, they'll get an email when you check-in somewhere.  Get your friends to follow you so they know when you're out and about.
+
     - @followers.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle, :class => 'tile'
 
