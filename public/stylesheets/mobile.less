@@ -1,0 +1,90 @@
+.rounded(@radius: 5px) {
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+}
+.gradient(@start: #000, @stop: #fff) {
+    background: -webkit-linear-gradient(@start, @stop);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@start), color-stop(100%,@stop));
+    background: -moz-linear-gradient(top, @start, @stop);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  background: #bde3fa;
+}
+
+#header {
+  .gradient(#3b3b3b,#272727);
+  -webkit-box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
+  -moz-box-shadow:    inset 0 0 0 1px rgba(255,255,255,.3);
+  box-shadow:         inset 0 0 0 1px rgba(255,255,255,.3);
+  border-bottom: 1px solid #000;
+  height: 50px;
+  text-shadow: 0 -1px 1px #000;
+  h1 {
+    height: 50px;
+    line-height: 50px; 
+    float: left;
+    color: #fff;
+    font-size: 18px;
+    margin: 0 0 0 10px;
+    padding: 0;
+  }
+  h2 {
+    color: #aaa;
+    float: right;
+    font-size: 12px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 10px 0 0;
+    padding: 0;
+  }
+}
+
+#message {
+  border-top: 1px solid #bddfe8;
+  .gradient(#9bccec,#bde3fa);
+  padding: 10px;
+  #textarea {
+    .rounded(5px);
+    border: 1px solid #777;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,.4), 0 1px 0 #fff;
+    -moz-box-shadow:    inset 0 1px 3px rgba(0,0,0,.4), 0 1px 0 #fff;
+    box-shadow:         inset 0 1px 3px rgba(0,0,0,.4), 0 1px 0 #fff;
+    background: #fff;
+    padding: 5px;
+    >div {
+      background: rgba(0,0,0,.1);
+      .rounded(3px);
+      padding: 10px;
+      margin: 0 0 5px 0;
+      color: #999;
+      font-size: 11px; 
+    }
+    textarea {
+      border: 0;
+      width: 99%;
+      height: 200px;
+      resize: none;
+      font-size: 13px;
+      color: #363636;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+  }
+  input[type="submit"] {
+    width: 100%;
+    margin: 10px 0 0 0;
+    font-family: Helvetica, Arial, sans-serif;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 0 -1px 1px #2d4d64;
+    .rounded(7px);
+    padding: 15px 0;
+    border: 1px solid #2d4d64;
+    .gradient(#4193c3,#326ea0);
+    -webkit-box-shadow: inset 0 1px 0 #69c7e0;
+  }
+}

@@ -5,29 +5,11 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <title>OutLately</title>
-    <%= stylesheet_link_tag 'redesign', :media => 'screen' %>
+    <%= stylesheet_link_tag 'mobile', :media => 'screen' %>
   </head>
   <body>
-    <div id="header" class="wrapper clearfix">
-      <a href="#" id="invite-friends"><img src="/images/plus.png" alt="invite friends" />Invite Friends</a>
-      <div id="top-right">
-        Welcome, <a href="#">Fred Yates</a>. <a href="#">sign out</a>
-      </div>
-    </div>
-    <ul id="nav" class="clearfix">
-      <li id="home"><a href="#">Home</a></li>
-      <li id="profile"><a href="#">Profile</a></li>
-      <li id="logo"><a href="/"><h1>Outlate.ly</h1></a></li>
-      <li id="nav-stem-left"></li>
-      <li id="nav-stem-right"></li>
-      <li id="activity"><a href="#">Activity</a></li>
-      <li id="settings"><a href="#">Settings</a></li>
-    </ul>
-    <div id="content" class="clearfix">
-      <%= yield %>
-    </div>
-    <div id="footer" class="wrapper">
-        &copy; 2011 Outlately
-    </div>
+
+    <%= yield %>
+
   </body>
 </html>

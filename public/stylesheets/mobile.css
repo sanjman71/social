@@ -1,0 +1,87 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  background: #bde3fa;
+}
+#header {
+  background: -webkit-linear-gradient(#3b3b3b, #272727);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #3b3b3b), color-stop(100%, #272727));
+  background: -moz-linear-gradient(top, #3b3b3b, #272727);
+  -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  -moz-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid #000000;
+  height: 50px;
+  text-shadow: 0 -1px 1px #000000;
+}
+#header h1 {
+  height: 50px;
+  line-height: 50px;
+  float: left;
+  color: #ffffff;
+  font-size: 18px;
+  margin: 0 0 0 10px;
+  padding: 0;
+}
+#header h2 {
+  color: #aaaaaa;
+  float: right;
+  font-size: 12px;
+  height: 50px;
+  line-height: 50px;
+  margin: 0 10px 0 0;
+  padding: 0;
+}
+#message {
+  border-top: 1px solid #bddfe8;
+  background: -webkit-linear-gradient(#9bccec, #bde3fa);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #9bccec), color-stop(100%, #bde3fa));
+  background: -moz-linear-gradient(top, #9bccec, #bde3fa);
+  padding: 10px;
+}
+#message #textarea {
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #777777;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 0 #ffffff;
+  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 0 #ffffff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 0 #ffffff;
+  background: #ffffff;
+  padding: 5px;
+}
+#message #textarea > div {
+  background: rgba(0, 0, 0, 0.1);
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding: 10px;
+  margin: 0 0 5px 0;
+  color: #999999;
+  font-size: 11px;
+}
+#message #textarea textarea {
+  border: 0;
+  width: 99%;
+  height: 200px;
+  resize: none;
+  font-size: 13px;
+  color: #363636;
+  font-family: Helvetica, Arial, sans-serif;
+}
+#message input[type="submit"] {
+  width: 100%;
+  margin: 10px 0 0 0;
+  font-family: Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 -1px 1px #2d4d64;
+  -moz-border-radius: 7px;
+  border-radius: 7px;
+  padding: 15px 0;
+  border: 1px solid #2d4d64;
+  background: -webkit-linear-gradient(#4193c3, #326ea0);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #4193c3), color-stop(100%, #326ea0));
+  background: -moz-linear-gradient(top, #4193c3, #326ea0);
+  -webkit-box-shadow: inset 0 1px 0 #69c7e0;
+}
