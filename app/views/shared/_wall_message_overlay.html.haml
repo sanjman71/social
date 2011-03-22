@@ -1,9 +1,10 @@
-%div.overlay#message_overlay
+.overlay.clearfix#wall-message-overlay
+  .close
   %p
-    %em This Outlate.ly message will be sent to 1 person.
+    %em This Outlate.ly message posted to a wall and sent to many people.
   %h3#header_to To:
   = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
-    = hidden_field_tag 'message[to]', ''
+    = hidden_field_tag 'message[wall_id]', ''
     %h3 Message:
     = text_area_tag 'message[body]', '', :id => 'message_body', :style => 'height: 30px;', :class => 'textarea countdown autoresize', :placeholder => 'e.g. hey there'
     %br

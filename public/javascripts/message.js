@@ -3,7 +3,7 @@ $.fn.init_message_overlay = function() {
     mask: {
       color: '#eee',
       loadSpeed: 200,
-      opacity: 0.9
+      opacity: 0.8
     },
     closeOnClick: false,
     onBeforeClose: function() {
@@ -12,9 +12,9 @@ $.fn.init_message_overlay = function() {
   });
 
   $("a.message.modal-trigger").click(function() {
-    var modal = $("#message_overlay");
+    var modal = $("#user-message-overlay");
     modal.find("#header_to").text("To: " + $(this).attr('data-handle'));
-    modal.find("input#message_to").val($(this).attr('data-id'));
+    modal.find("input#message_to_id").val($(this).attr('data-id'));
     $("div.titlebar, a.tile").css('opacity', 0.1);
     return true;
   })
@@ -22,7 +22,7 @@ $.fn.init_message_overlay = function() {
   $("a.wall-message.modal-trigger").click(function() {
     var modal = $("#wall-message-overlay");
     modal.find("#header_to").text("To: The Wall @ " + $(this).attr('data-name'));
-    modal.find("input#wall_id").val($(this).attr('data-id'));
+    modal.find("input#message_wall_id").val($(this).attr('data-id'));
     $("div.titlebar, a.tile").css('opacity', 0.1);
     return true;
   })

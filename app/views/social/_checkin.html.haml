@@ -15,8 +15,9 @@
       %h5= link_to checkin_time_ago(checkin.checkin_at), '#'
     %h3
       = link_to location.try(:name), '#'
-      = link_to '3 comments', "#", :class => 'location-comment-count'
-    = link_to 'Message', '#', :class => 'invite message modal-trigger', :rel => '#message_overlay', 'data-id' => user.id, 'data-handle' => user.handle
+      - wall = Wall.find_or_create(:checkin => checkin)
+      = link_to 'Post Wall Message', "#", :class => 'location-comment-count wall-message modal-trigger', :rel => '#wall-message-overlay', 'data-id' => wall.try(:id).to_i, 'data-name' => location.name, 'data-members-count' => 5
+    = link_to 'Message', '#', :class => 'invite message modal-trigger', :rel => '#user-message-overlay', 'data-id' => user.id, 'data-handle' => user.handle
 - else
   -# non-member
   %li.span-16.last

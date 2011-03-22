@@ -1,0 +1,15 @@
+- javascript('message')
+
+#header
+  %h1 Outlately
+  %h2 Send Message
+
+= form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
+  = hidden_field_tag 'message[to_id]', @user.try(:id)
+  #message
+    #textarea
+      #to To: #{@user.handle}
+      - if @subject
+        #subject Re: your checkin @ somewhere
+      = text_area_tag 'message[body]', '', :id => 'message_body',:placeholder => 'your message here'
+      = submit_tag 'Send Message', :id => 'message_send_submit'

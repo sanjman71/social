@@ -1,0 +1,12 @@
+%div.overlay#user-message-overlay
+  %p
+    %em This Outlate.ly message will be sent to 1 person.
+  %h3#header_to To:
+  = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
+    = hidden_field_tag 'message[to_id]', ''
+    %h3 Message:
+    = text_area_tag 'message[body]', '', :id => 'message_body', :style => 'height: 30px;', :class => 'textarea countdown autoresize', :placeholder => 'e.g. hey there'
+    %br
+    %span#message_count 140
+    %span#message_send= submit_tag 'Send', :id => 'message_send_submit'
+    %div.close

@@ -1,0 +1,33 @@
+!!! 5
+%html
+  %head
+    %meta{:"http-equiv" => 'Content-Type', :content => 'text/html; charset=utf-8'}
+    %title= yield(:title).to_s + " | Outlate.ly"
+    = csrf_meta_tag
+    %link{:rel => "icon", :href =>"/favicon.ico", :type => "image/x-icon"}
+    = stylesheet_link_tag 'mobile'
+    = stylesheet_link_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/black-tie/jquery-ui.css'
+    = stylesheet_link_tag 'tipsy'
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="/stylesheets/blueprint/ie.css" type="text/css" media="screen, projection">
+    <![endif]-->
+    = yield :stylesheet
+    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js'
+    -# include jquery tools before jquery ui
+    = javascript_include_tag 'http://cdn.jquerytools.org/1.2.5/tiny/jquery.tools.min.js'
+    = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'
+    = javascript_include_tag 'rails' # jquery-ujs implementation, supports jquery 1.4.4
+    = javascript_include_tag 'jquery.validate.min'
+    = javascript_include_tag 'jquery.tipsy'
+    = javascript_include_tag 'jquery.autoresize.min'
+    = javascript_include_tag 'overlay'
+    = javascript_include_tag 'hash'
+    = javascript_include_tag 'less'
+    = javascript_include_tag 'application'
+    = yield :javascript
+    = yield :head
+
+  %body
+    #content.clearfix
+      = yield
+

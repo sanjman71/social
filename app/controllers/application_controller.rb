@@ -102,4 +102,34 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # returns true if the user agent is considered a mobile device or session is set as mobile
+  def mobile_device?
+    if session[:mobile_view]
+      session[:mobile_view] == "1"
+    else
+      # note: we can probably do better detection here
+      (request.user_agent =~ /Mobile|webOS/) or params[:mobile].present?
+    end
+  end
+
+  helper_method :mobile_device?
+
+  # set the request format to mobile if its a mobile request
+  def detect_mobile_request
+    if mobile_device? and !['json', 'js'].include?(params[:format])
+      # set request to mobile format if its not a json, or js request
+      request.format = :mobile
+    end
+  end
+
+  # set the request format to mobile if its a mobile session
+  def detect_mobile_session
+    # force session to be mobile if explictly requested
+    session[:mobile_view] = params[:mobile] if params[:mobile]
+    if mobile_device? and !['json', 'js'].include?(params[:format])
+      # set request to mobile format if its not a json, or js request
+      request.format = :mobile
+    end
+  end
+
 end

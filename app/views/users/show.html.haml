@@ -13,7 +13,7 @@
       %ul
         %li= @user.handle
         - if @user.member?
-          %li= link_to 'Send Message', '#', :class => 'message modal-trigger', :rel => '#message_overlay', 'data-id' => @user.id, 'data-handle' => @user.handle
+          %li= link_to 'Send Message', '#', :class => 'message modal-trigger', :rel => '#user-message-overlay', 'data-id' => @user.id, 'data-handle' => @user.handle
         - else
           %li= link_to "Invite #{@user.him_her}", invite_path
         - unless @user == current_user
@@ -81,5 +81,5 @@
           %li
             = link_to location.name, '#'
 
--# message overlay
-= render(:partial => 'shared/message_overlay', :locals => {:sender => current_user})
+-# user message overlay
+= render(:partial => 'shared/user_message_overlay', :locals => {:sender => current_user})

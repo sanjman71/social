@@ -1,8 +1,7 @@
 class UsersController < ApplicationController
-  before_filter :authenticate_user_with_token, :only => [:message]
-  before_filter :authenticate_user!, :except => [:message]
-  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :compose, :disable,
-                                      :follow, :learn, :message, :share_drink, :show, :unfollow]
+  before_filter :authenticate_user
+  before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable,
+                                      :follow, :learn, :show, :unfollow]
   before_filter :find_viewer, :only => [:show]
   respond_to    :html, :js, :json
 
@@ -188,85 +187,6 @@ class UsersController < ApplicationController
         render(:json => {'status' => @status, 'added' => @added, 'message' => @message, 'growls' => @growls}.to_json)
       end
     end
-  end
-
-  # GET /users/1/re/checkin/5/compose
-  def compose
-    # @user initialized in before filter
-
-    # find sender
-    @sender   = current_user || User.find_by_oauth_token(params[:token].to_s)
-
-    case params[:object_type]
-    when 'checkin'
-      @object = Checkin.find(params['object_id'])
-    when 'todo'
-      @object = PlannedCheckin.find(params['object_id'])
-    end
-  end
-
-  # GET /users/1/re/checkin/5/message/bts - 'be there soon'
-  # PUT /users/1/re/checkin/5/message/sad - 'share a drink?'
-  # GET /users/1/re/checkin/5/message/ltp - 'love that place'
-  # GET /users/1/re/checkin/5/message/compose
-  def message
-    # @user initialized in before filter
-
-    # set sender and options
-    @sender   = current_user
-    @options  = {'sender_id' => @sender.id, 'to_id' => @user.id}
-
-    case params[:object_type]
-    when 'checkin'
-      @object = Checkin.find(params['object_id'])
-      @options.merge!('checkin_id' => @object.id)
-    when 'todo'
-      @object = PlannedCheckin.find(params['object_id'])
-      @options.merge!('todo_id' => @object.id)
-    end
-
-    # send message
-    case params[:message]
-    when 'bts'
-      Resque.enqueue(UserMailerWorker, :user_be_there_soon_message, @options)
-      @notice = "We'll send #{@user.handle} a message saying you'll be there soon"
-    when 'ltp'
-      Resque.enqueue(UserMailerWorker, :user_love_that_place_message, @options)
-      @notice = "We'll let #{@user.handle} know that"
-    when 'sad'
-      Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
-      @notice = "We'll send #{@user.handle} a message saying you'd like to grab a drink"
-    when 'compose'
-      # compose a message
-      render(:action => 'compose') and return
-    end
-
-    respond_to do |format|
-      format.html do
-        # track action
-        track_page("/action/message/#{params[:message]}")
-        if false #user_signed_in?
-          # skip this for now
-          flash[:tracker] = ga_tracker
-          flash[:notice]  = @notice
-          redirect_to(redirect_back_path(user_path(@user))) and return
-        else
-          # always show simple message page
-          flash.now[:tracker] = ga_tracker
-          flash.now[:notice]  = @notice
-          render and return
-        end
-      end
-      format.json do
-        # track action and send growl message
-        @track_page = "/action/message/#{params[:message]}"
-        @growls     = [{:message => @notice, :timeout => 2000}]
-        @json       = {'status' => 'ok', 'growls' => @growls, 'track_page' => @track_page}.to_json
-        render(:json => @json) and return
-      end
-    end
-  rescue Exception => e
-    Rails.logger.debug("user#message exception: #{e.message}")
   end
 
   # PUT /users/1/add_todo_request

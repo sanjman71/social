@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110219185033) do
+ActiveRecord::Schema.define(:version => 20110319130654) do
 
   create_table "alerts", :force => true do |t|
     t.integer "user_id",                  :null => false
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(:version => 20110219185033) do
   add_index "availabilities", ["user_id"], :name => "index_availabilities_on_user_id"
 
   create_table "badges", :force => true do |t|
-    t.string   "regex",      :limit => 200, :null => false
+    t.string   "regex",      :limit => 200
     t.string   "name",       :limit => 50,  :null => false
     t.string   "tag_ids"
     t.string   "tagline"
@@ -538,6 +538,32 @@ ActiveRecord::Schema.define(:version => 20110219185033) do
   add_index "users", ["rpx"], :name => "index_users_on_rpx"
   add_index "users", ["state"], :name => "index_users_on_state"
   add_index "users", ["updated_at"], :name => "index_users_on_updated_at"
+
+  create_table "wall_messages", :force => true do |t|
+    t.integer  "wall_id"
+    t.string   "message"
+    t.integer  "sender_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "wall_messages", ["created_at"], :name => "index_wall_messages_on_created_at"
+  add_index "wall_messages", ["sender_id"], :name => "index_wall_messages_on_sender_id"
+  add_index "wall_messages", ["wall_id"], :name => "index_wall_messages_on_wall_id"
+
+  create_table "walls", :force => true do |t|
+    t.integer  "checkin_id"
+    t.integer  "location_id"
+    t.text     "member_set_ids"
+    t.integer  "messages_count"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "walls", ["checkin_id"], :name => "index_walls_on_checkin_id"
+  add_index "walls", ["created_at"], :name => "index_walls_on_created_at"
+  add_index "walls", ["location_id"], :name => "index_walls_on_location_id"
+  add_index "walls", ["messages_count"], :name => "index_walls_on_messages_count"
 
   create_table "zipcodes", :force => true do |t|
     t.string  "name",            :limit => 10
