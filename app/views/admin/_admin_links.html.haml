@@ -15,4 +15,5 @@
       = link_to 'Badges', admin_badges_path, :class => params['action'] == 'users' ? ['current'] : []
       = link_to 'Checkins', admin_checkins_path(:member => 1, :limit => 100, :page => 1), :class => params['action'] == 'checkins' ? ['current'] : []
       = link_to 'Users', admin_users_path, :class => params['action'] == 'users' ? ['current'] : []
+      = link_to 'All Member Emails', admin_user_emails_path, :class => params['action'] == 'users' ? ['current'] : []
       = link_to 'Resque', "/resque"

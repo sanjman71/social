@@ -1,0 +1,7 @@
+#page-header{:style => 'background: #fff;'}
+  .span-24.last
+    = render(:partial => 'admin_links')
+
+
+#admin-content.clearfix
+  = @emails.join(', ')

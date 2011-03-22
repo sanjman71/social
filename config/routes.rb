@@ -143,6 +143,7 @@ Social::Application.routes.draw do
     match 'badges', :to => 'badges#index', :as => :admin_badges
     match 'checkins', :to => 'checkins#index', :as => :admin_checkins
     match 'users', :to => 'users#index', :as => :admin_users
+    match 'user_emails', :to => 'admin#user_emails', :as => :admin_user_emails
   end
 
   # pages routes

@@ -62,6 +62,12 @@ class AdminController < ApplicationController
     @non_males      = User.non_member.where(:gender => 2).count
   end
 
+  # GET /admin/user_emails
+  def user_emails
+    # find all member email addresses
+    @emails         = User.member.includes(:email_addresses).collect{ |o| o.primary_email_address.try(:address) }.compact
+  end
+
   # GET /admin/emails_chart
   def emails_chart
     @redis      = RedisSocket.new
