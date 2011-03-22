@@ -23,8 +23,8 @@
     = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'
     = javascript_include_tag 'rails' # jquery-ujs implementation, supports jquery 1.4.4
     = javascript_include_tag 'jquery.growl'
-    = javascript_include_tag 'jquery.fancybox-1.3.4.pack.js'
     = javascript_include_tag 'jquery.validate.min.js'
+    = javascript_include_tag 'jquery.autoresize.min'
     = javascript_include_tag 'hash'
     = javascript_include_tag 'application'
     = yield :javascript
@@ -34,13 +34,8 @@
     -# show query reviewer if enabled in dev environment
     - if Rails.env == 'development' and respond_to?(:query_review_output)
       = query_review_output
-    #header
-      .wrapper
-        %h1= link_to("Outlately", '#')
-        %ul#nav
-          %li#nav-home= link_to("Home", root_path)
-          %li#nav-admin= link_to("Admin", admin_path)
-          %li#nav-sign-out= link_to("Sign Out", logout_path)
 
-    #main.wrapper.container
+    #header
+
+    .container.clearfix
       = yield

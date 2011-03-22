@@ -2,7 +2,9 @@
 
 #admin_links
   .span-24.last
-    %h2= title
+    %h2
+      = title
+      %span{:style => 'font-size: 11px;'}= link_to 'Home', root_path
   .span-24.last
     %h4{:style => 'font-size: 0.9em;'}
       = link_to 'Checkins Chart', admin_checkins_chart_path, :class => params['action'] == 'checkins' ? ['current'] : []

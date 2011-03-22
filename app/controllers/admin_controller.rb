@@ -68,7 +68,7 @@ class AdminController < ApplicationController
     @redis_keys = @redis.keys("2011*emails").sort
 
     # parse first date, e.g. "20110201"
-    @dstart     = Date.parse(@redis_keys.first.match(/(\d+):emails/)[1])
+    @dstart     = Date.parse(@redis_keys.first.match(/(\d+):emails/)[1]) rescue Date.today
     @drange     = Range.new(@dstart, Date.today)
 
     @email_keys = ['badge_added', 'daily_checkins', 'imported_checkin', 'invite', 'message', 'realtime_checkins',

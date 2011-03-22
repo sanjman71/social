@@ -16,12 +16,12 @@
     = simple_form_for(@search, :url => admin_users_path) do |f|
       .span-10
         = f.input :name_contains, :required => false, :input_html => {:style => 'width: 150px;'}
-        = f.input :member_at_greater_than, :required => false, :label => 'Member since', :input_html => {:style => 'width: 150px;', :value => @search.member_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'member_at_datepicker'}, :hint => "e.g. 20110201"
-        = f.input :created_at_greater_than, :required => false, :label => 'User since', :input_html => {:style => 'width: 150px;', :value => @search.created_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'created_at_datepicker'}, :hint => "e.g. 20110201"
+        = f.input :member_at_greater_than, :required => false, :label => 'Member since', :input_html => {:style => 'width: 150px;', :value => @search.member_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'member_at_datepicker', :placeholder => "e.g. 20110201"}
+        = f.input :created_at_greater_than, :required => false, :label => 'User since', :input_html => {:style => 'width: 150px;', :value => @search.created_at_greater_than.try(:to_s, :date_yyyymmdd), :id => 'created_at_datepicker', :placeholder => "e.g. 20110201"}
       .span-12.last
         = f.input :city_name_contains, :required => false, :label => 'City', :input_html => {:style => 'width: 150px;'}
-        = f.input :member_is_true, :required => false, :label => 'Member', :hint => "1 or true for members; 0 or false otherwise", :input_html => {:style => 'width: 50px;', :value => @search.try(:member_is_true) }
-        = f.input :foursquare_id_is_present, :required => false, :label => 'Foursquare', :hint => "1 for yes", :input_html => {:style => 'width: 50px;', :value => @search.try(:foursquare_id_is_present) }
+        = f.input :member_is_true, :required => false, :label => 'Member', :input_html => {:style => 'width: 50px;', :value => @search.try(:member_is_true), :placeholder => "e.g. 1"}
+        = f.input :foursquare_id_is_present, :required => false, :label => 'Foursquare', :input_html => {:style => 'width: 50px;', :value => @search.try(:foursquare_id_is_present), :placeholder => "e.g. 1"}
       .span-23.last
         = f.submit 'Search', :style => 'margin: 0px;'
 
