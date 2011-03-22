@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :authenticate_user
+  before_filter :authenticate_user!
   before_filter :find_user, :only => [:activate, :add_todo_request, :become, :bucks, :disable,
                                       :follow, :learn, :show, :unfollow]
   before_filter :find_viewer, :only => [:show]
