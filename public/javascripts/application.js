@@ -81,10 +81,12 @@ $.fn.init_get_points = function() {
   }
 }
 
+/*
 $.fn.init_shared_dialogs = function() {
   $("a#what-is-outlately").fancybox();
   $("a#points-info").fancybox();
 }
+*/
 
 $.fn.init_tooltips = function() {
   try {
@@ -133,7 +135,6 @@ $.fn.init_character_counter = function() {
 
 $(document).ready(function() {
   $(document).init_get_points();
-  $(document).init_shared_dialogs();
   $(document).init_tooltips();
   $(document).init_textarea_autoresize();
   $(document).init_character_counter();
