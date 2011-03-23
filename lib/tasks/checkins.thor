@@ -77,10 +77,7 @@ class Checkins < Thor
   def poll
     puts "#{Time.now}: polling user checkins"
     users = Checkin.event_poll_checkins
-    users.each do |user|
-      puts "#{Time.now}: [user:#{user.id}] #{user.handle} polling checkins"
-    end
-    puts "#{Time.now}: completed"
+    puts "#{Time.now}: triggered polling for #{users.size} users"
   end
 
   desc "send_planned_checkin_reminders", "send planned checkin reminders"

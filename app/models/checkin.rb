@@ -79,7 +79,7 @@ class Checkin < ActiveRecord::Base
 
   # user checkins were imported
   def self.event_checkins_imported(user, new_checkins, source)
-    log("[user:#{user.id}] #{user.handle} imported #{new_checkins.size} #{source} #{new_checkins.size == 1 ? 'checkin' : 'checkins'}")
+    log("[user:#{user.id}] #{user.handle} imported #{new_checkins.size} #{source} checkin(s)")
 
     # trigger friend checkins
     trigger_event_friend_checkins(user, source)
@@ -97,10 +97,11 @@ class Checkin < ActiveRecord::Base
   # trigger checking friend checkins
   def self.trigger_event_friend_checkins(user, source)
     if source == 'facebook'
-      # import checkins for friends without facebook oauths
-      user.friends.select{ |o| o.facebook_oauth.nil? }.each do |friend|
+      # import checkins for non-member friends, not recently checked (without facebook oauths)
+      user.friends.non_member.active.joins(:checkin_logs).
+           where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).each do |friend|
         # priority 0 is highest and default; import checkins at a lower priority
-        log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
+        # log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
         FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => friend.id, :since => :last,
                                                                      :limit => 250,
                                                                      :oauth_id => user.facebook_oauth.try(:id)})
@@ -110,16 +111,16 @@ class Checkin < ActiveRecord::Base
 
   # trigger polling of user checkins
   def self.event_poll_checkins
-    # find users with oauths, with checkin logs that haven't been checked in poll_interval
-    # use different poll intervals for members and non-members
-    @members = User.member.with_oauths.joins(:checkin_logs).
+    # find members (with oauths), with checkin logs that haven't been checked in poll_interval
+    @members = User.member.active.with_oauths.joins(:checkin_logs).
                     where(:"checkin_logs.last_check_at".lt => poll_interval_member.ago).select("users.*")
-    @users   = User.non_member.with_oauths.joins(:checkin_logs).
-                    where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).select("users.*")
-    
-    (@members+@users).each do |user|
+    # @users   = User.non_member.with_oauths.joins(:checkin_logs).
+    #                 where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).select("users.*")
+  
+    @members.each do |user|
       user.checkin_logs.each do |log|
         # use delayed job to import these checkins
+        log("[user:#{user.id}] #{user.handle} polling #{log.source} checkins")
         case log.source
         when 'facebook'
           # priority 0 is highest and default; import checkins at a lower priority
@@ -132,8 +133,8 @@ class Checkin < ActiveRecord::Base
         end
       end
     end
-    
-    @users
+
+    @members
   end
 
   def self.poll_interval(user=nil)
