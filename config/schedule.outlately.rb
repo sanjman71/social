@@ -21,7 +21,7 @@ every :reboot do
   command "monit" # might require path to be set in crontab
 end
 
-every 7.minutes do
+every 5.minutes do
   # poll checkins
   command "cd /usr/apps/outlately/current && thor checkins:poll >> /usr/apps/outlately/shared/log/checkins.log"
 end

@@ -19,6 +19,7 @@ class CheckinWorker
     followers.each do |follower|
       # should always be members, but check anyway
       next unless follower.member?
+      log("[user:#{user.id}] #{user.handle} sending checkin email to follower:#{follower.id}:#{follower.handle}")
       # send email
       Resque.enqueue(UserMailerWorker, :user_friend_realtime_checkin,
                      'user_id' => follower.id, 'checkin_id' => checkin.id)
