@@ -46,13 +46,18 @@ class Users < Thor
     puts "#{Time.now}: unmarked users: #{unmarked}"
   end
 
-  desc "follow_all_friends", "set members to follow all of their friends"
+  desc "follow_all_friends", "set members to follow all of their friends who are memebers"
   def follow_all_friends
     User.member.each do |user|
+      added = 0
       user.friend_set.each do |friend_id|
-        user.follow(friend_id)
+        friend = User.find(friend_id)
+        # check if friend is a member
+        next unless friend.member?
+        user.follow(friend)
+        added += 1
       end
-      puts "#{Time.now}:*** user #{user.handle} is following all #{user.friend_set.size} friends"
+      puts "#{Time.now}:*** user #{user.handle} is following #{added} friends"
     end
   end
 
