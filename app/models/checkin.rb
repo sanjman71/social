@@ -124,7 +124,7 @@ class Checkin < ActiveRecord::Base
         case log.source
         when 'facebook'
           # queue job
-          Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => :last)
+          Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => 'last')
         when 'foursquare'
           # priority 0 is highest and default; import checkins at a lower priority
           FoursquareCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :sinceid => :last,

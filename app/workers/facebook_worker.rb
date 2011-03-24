@@ -53,7 +53,7 @@ class FacebookWorker
       if options['since'].present?
         # get checkins since a timestamp
         case options['since']
-        when :last
+        when 'last'
           # find last facebok checkin's timestamp as utc, and use as 'since' option
           options['since'] = user.checkins.facebook.recent.limit(1).first.try(:checkin_at).utc.to_s(:datetime_schedule) rescue default_checkin_since_timestamp
           # log("[user:#{user.id}] #{user.handle} importing since #{options['since']}")
