@@ -5,12 +5,12 @@ arg = ARGV[0]
 case arg
 when 'start'
   env = ENV["RAILS_ENV"] || "development"
-  cmd = "RAILS_ENV=#{env} QUEUE=critical VVERBOSE=1 nohup rake environment resque:work >> log/resque_worker.log &"
+  cmd = "RAILS_ENV=#{env} PIDFILE=./tmp/pids/resque_worker.pid QUEUE=critical,normal VVERBOSE=1 nohup rake environment resque:work >> log/resque_worker.log &"
   puts "*** starting resque worker"
   system cmd
 when 'pid'
   # write pid file
-  system "pidof 'resque-1.10.0: Waiting for critical' > tmp/pids/resque_worker.pid"
+  # system "pidof 'resque-1.10.0: Waiting for critical' > tmp/pids/resque_worker.pid"
   system "more tmp/pids/resque_worker.pid"
 when 'stop'
   if File.exists?("tmp/pids/resque_worker.pid")
