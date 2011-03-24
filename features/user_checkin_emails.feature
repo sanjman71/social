@@ -35,7 +35,7 @@ Feature: Import user checkin
 
     And "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Starbucks..."
     When I open the email with subject "Outlate.ly: adam checked in at Starbucks..."
-    Then I should see "Just wanted to let you know that adam checked in at Starbucks, 200 N State St." in the email body
+    Then I should see "Just wanted to let you know that adam checked in at Starbucks, 200 N State St., Chicago, IL" in the email body
     And I should see "Be There Soon" in the email body
     And I should see "Love That Place" in the email body
     And I should see "Send a Message" in the email body

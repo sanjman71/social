@@ -1,4 +1,4 @@
-Just wanted to let you know that #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}, #{@checkin.location.try(:street_address)}, at #{@checkin.checkin_at.to_s(:time)}.
+Just wanted to let you know that #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}, #{@checkin.location.try(:street_city_state)}, at #{@checkin.checkin_at.to_s(:time)}.
 %p
 %p
 Send a message:
