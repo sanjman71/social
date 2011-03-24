@@ -60,7 +60,7 @@ class FacebookWorker
         end
       end
 
-      log("[user:#{user.id}] #{user.handle} importing #{source} checkins options:#{options.inspect}, last checked about #{mm} minutes ago")
+      log("[user:#{user.id}] #{user.handle} importing #{source} checkins with options:#{options.inspect}, last checked about #{mm} minutes ago")
 
       # get checkins, handle and log exceptions
       checkins = facebook.checkins(user.facebook_id, options)

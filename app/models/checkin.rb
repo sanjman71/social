@@ -114,8 +114,6 @@ class Checkin < ActiveRecord::Base
     # find members (with oauths), with checkin logs that haven't been checked in poll_interval
     @members = User.member.active.with_oauths.joins(:checkin_logs).
                     where(:"checkin_logs.last_check_at".lt => poll_interval_member.ago).select("users.*")
-    # @users   = User.non_member.with_oauths.joins(:checkin_logs).
-    #                 where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).select("users.*")
   
     @members.each do |user|
       user.checkin_logs.each do |log|
@@ -126,9 +124,8 @@ class Checkin < ActiveRecord::Base
           # queue job
           Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => 'last')
         when 'foursquare'
-          # priority 0 is highest and default; import checkins at a lower priority
-          FoursquareCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :sinceid => :last,
-                                                                         :limit => 250})
+          # queue job
+          Resque.enqueue(FoursquareWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'sinceid' => 'last')
         end
       end
     end
