@@ -44,7 +44,7 @@ class Oauth < ActiveRecord::Base
       Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250)
       if enabled(:import_friends)
         # import friends
-        FacebookFriend.delay.async_import_friends(user)
+        Resque.enqueue(FacebookWorker, :import_friends, 'user_id' => user.id)
       end
     end
   end
