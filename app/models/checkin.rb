@@ -102,9 +102,9 @@ class Checkin < ActiveRecord::Base
            where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).each do |friend|
         # priority 0 is highest and default; import checkins at a lower priority
         # log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
-        FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => friend.id, :since => :last,
-                                                                     :limit => 250,
-                                                                     :oauth_id => user.facebook_oauth.try(:id)})
+        # FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => friend.id, :since => :last,
+        #                                                              :limit => 250,
+        #                                                              :oauth_id => user.facebook_oauth.try(:id)})
       end
     end
   end
@@ -123,9 +123,8 @@ class Checkin < ActiveRecord::Base
         log("[user:#{user.id}] #{user.handle} polling #{log.source} checkins")
         case log.source
         when 'facebook'
-          # priority 0 is highest and default; import checkins at a lower priority
-          FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :since => :last,
-                                                                       :limit => 250})
+          # queue job
+          Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => :last)
         when 'foursquare'
           # priority 0 is highest and default; import checkins at a lower priority
           FoursquareCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :sinceid => :last,

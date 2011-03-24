@@ -42,8 +42,7 @@ class Oauth < ActiveRecord::Base
       FoursquareCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :limit => 250})
     when 'facebook'
       # import all checkins, max of 250
-      # priority 0 is highest and default; import checkins at a lower priority
-      FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => user.id, :limit => 250})
+      Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250)
       if enabled(:import_friends)
         # import friends
         FacebookFriend.delay.async_import_friends(user)

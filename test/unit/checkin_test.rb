@@ -137,9 +137,9 @@ class CheckinTest < ActiveSupport::TestCase
     should "skip check if last check was within x minutes" do
       # create user oauth token
       @oauth        = @user.oauths.create(:provider => 'foursquare', :access_token => '12345')
-      # create checkin 30 minutes ago
+      # timestamp checkin log 5 minutes ago
       @checkin_log1 = @user.checkin_logs.create(:source => 'foursquare', :state => 'success', :checkins => 1,
-                                                :last_check_at => Time.zone.now-30.minutes)
+                                                :last_check_at => Time.zone.now-5.minutes)
       # should not change checkin log timestamp
       @checkin_log2 = FoursquareCheckin.async_import_checkins(:user_id => @user.id)
       assert_equal @checkin_log1.last_check_at.to_i, @checkin_log2.last_check_at.to_i
@@ -155,7 +155,7 @@ class CheckinTest < ActiveSupport::TestCase
                    "application"=>nil, "created_time"=>"2010-08-28T22:33:53+0000"
                   ]
       ThinkingSphinx::Test.run do
-        @checkin  = FacebookCheckin.import_checkin(@user, @hash)
+        @checkin  = FacebookWorker.import_checkin(@user, @hash)
         assert @checkin.valid?
         assert_equal '461630895812', @checkin.source_id
         assert_equal 'facebook', @checkin.source_type
@@ -169,7 +169,7 @@ class CheckinTest < ActiveSupport::TestCase
         assert_equal 1, @location.reload.checkins.count
         assert_equal 1, @location.reload.checkins_count
         # should use same checkin if we try it again
-        @checkin2 = FacebookCheckin.import_checkin(@user, @hash)
+        @checkin2 = FacebookWorker.import_checkin(@user, @hash)
         assert_nil @checkin2
         assert_equal 1, Checkin.count
         assert_equal 1, Location.count
@@ -212,12 +212,12 @@ class CheckinTest < ActiveSupport::TestCase
                     ]
     end
 
-    should "create checkin log, add checkin, create checkin alert, add delay sphinx rebuild" do
+    should "create checkin log, add checkin, add delay sphinx rebuild" do
       Delayed::Job.delete_all
       ThinkingSphinx::Test.run do
         # stub facebook client calls
         FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [@hash]])
-        @checkin_log = FacebookCheckin.async_import_checkins(:user_id => @user.id)
+        @checkin_log = FacebookWorker.import_checkins('user_id' => @user.id)
         assert @checkin_log.valid?
         # should have 1 checkin
         assert_equal 1, @checkin_log.checkins
@@ -229,22 +229,22 @@ class CheckinTest < ActiveSupport::TestCase
       end
     end
     
-    should "add delayed job to import friend checkins" do
-      Delayed::Job.delete_all
-      ThinkingSphinx::Test.run do
-        # create user friendship
-        @friend   = Factory.create(:user)
-        @fship    = @user.friendships.create!(:friend => @friend)
-        # should add delayed job to update locationships
-        assert_equal 1, match_delayed_jobs(/async_update_locationships/)
-        # stub facebook client calls
-        FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [@hash]])
-        @checkin_log = FacebookCheckin.async_import_checkins(:user_id => @user.id)
-        assert @checkin_log.valid?
-        # should add delayed job to import friend checkins
-        assert_equal 1, match_delayed_jobs(/async_import_checkins/)
-      end
-    end
+    # should "add delayed job to import friend checkins" do
+    #   Delayed::Job.delete_all
+    #   ThinkingSphinx::Test.run do
+    #     # create user friendship
+    #     @friend   = Factory.create(:user)
+    #     @fship    = @user.friendships.create!(:friend => @friend)
+    #     # should add delayed job to update locationships
+    #     assert_equal 1, match_delayed_jobs(/async_update_locationships/)
+    #     # stub facebook client calls
+    #     FacebookClient.any_instance.stubs(:checkins).returns(Hash['data' => [@hash]])
+    #     @checkin_log = FacebookCheckin.async_import_checkins(:user_id => @user.id)
+    #     assert @checkin_log.valid?
+    #     # should add delayed job to import friend checkins
+    #     assert_equal 1, match_delayed_jobs(/async_import_checkins/)
+    #   end
+    # end
   end
 
 end
