@@ -112,10 +112,19 @@ class UserMailer < ActionMailer::Base
       @to.remember_me!
     end
 
+    if options['checkin_id'].present?
+      @checkin = Checkin.find(options['checkin_id'])
+    end
+
     @email    = @to.email_address
     @token    = @to.remember_token
     @text     = options['body']
-    @subject  = "Outlate.ly: #{@sender.handle} sent you a message..."
+
+    if @checkin.present?
+      @subject  = "Outlate.ly: #{@sender.handle} sent you a message about your checkin at #{@checkin.location.try(:name)}..."
+    else
+      @subject  = "Outlate.ly: #{@sender.handle} sent you a message..."
+    end
 
     @compose_url = message_user_url(:id => @sender.try(:id), :message => 'compose', :token => @token,
                                     'utm_campaign' => 'user-message', 'utm_medium' => 'email',

@@ -47,6 +47,13 @@ Given /^"([^"]*)" is following "([^"]*)"$/ do |handle1, handle2|
   user1.follow(user2)
 end
 
+# set user preference
+Given /^user "([^"]*)" has preference "([^"]*)" "([^"]*)"$/ do |handle, preference, value|
+  user = User.find_by_handle!(handle)
+  user.send(preference+"=", value)
+  user.save
+end
+
 # add user learn
 Given /^"([^"]*)" want to learn more about "([^"]*)"$/ do |handle1, handle2|
   user1 = User.find_by_handle!(handle1)

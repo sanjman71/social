@@ -8,6 +8,8 @@
 
 = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
   = hidden_field_tag 'message[to_id]', @user.try(:id)
+  - if @object.present?
+    = hidden_field_tag 'message[checkin_id]', @object.try(:id)
   #message
     #textarea
       #to To: #{@user.handle}

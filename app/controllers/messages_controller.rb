@@ -22,42 +22,32 @@ class MessagesController < ApplicationController
       @object  = Checkin.find(params['object_id'])
       @options.merge!('checkin_id' => @object.id)
       @subject = "Re: your checkin at #{@object.location.name}"
-    when 'todo'
-      @object  = PlannedCheckin.find(params['object_id'])
-      @options.merge!('todo_id' => @object.id)
-      @subject = "Re: your planned checkin at #{@object.location.name}"
+    # when 'todo'
+    #   @object  = PlannedCheckin.find(params['object_id'])
+    #   @options.merge!('todo_id' => @object.id)
+    #   @subject = "Re: your planned checkin at #{@object.location.name}"
     end
+
+    # compose a message
+    @compose = true
 
     # send message
     case params[:message]
-    when 'bts'
-      Resque.enqueue(UserMailerWorker, :user_be_there_soon_message, @options)
-      @notice = "We'll send #{@user.handle} a message saying you'll be there soon"
-    when 'ltp'
-      Resque.enqueue(UserMailerWorker, :user_love_that_place_message, @options)
-      @notice = "We'll let #{@user.handle} know that"
-    when 'sad'
-      Resque.enqueue(UserMailerWorker, :user_share_drink_message, @options)
-      @notice = "We'll send #{@user.handle} a message saying you'd like to grab a drink"
+    when 'bts', 'ltp', 'sad'
+      @body = I18n.t("user.message.#{params[:message]}")
     when 'compose'
       # compose a message
-      @compose = true
     end
 
     respond_to do |format|
       format.html do
         # track action
         track_page("/action/message/#{params[:message]}")
-        # if false #user_signed_in?
-        #   # skip this for now
-        #   flash[:tracker] = ga_tracker
-        #   flash[:notice]  = @notice
-        #   redirect_to(redirect_back_path(user_path(@user))) and return
-        if !@compose
-          # always show simple message page
-          flash.now[:tracker] = ga_tracker
-          flash.now[:notice]  = @notice
-        end
+        # if !@compose
+        #   # always show simple message page
+        #   flash.now[:tracker] = ga_tracker
+        #   flash.now[:notice]  = @notice
+        # end
       end
       format.json do
         # track action and send growl message
@@ -87,9 +77,9 @@ class MessagesController < ApplicationController
 
   # POST /messages
   def create
-    @sender = current_user
-    @to     = User.find_by_id(params[:message][:to_id])
-    @body   = params[:message][:body]
+    @sender   = current_user
+    @to       = User.find_by_id(params[:message][:to_id])
+    @body     = params[:message][:body]
 
     # validate 'to' has an email
     if @to.try(:primary_email_address).blank?
@@ -104,6 +94,9 @@ class MessagesController < ApplicationController
 
     # send message
     @options = {'sender_id' => @sender.id, 'to_id' => @to.id, 'body' => @body}
+    if params[:message][:checkin_id].present?
+      @options.merge!('checkin_id' => params[:message][:checkin_id])
+    end
     Resque.enqueue(UserMailerWorker, :user_message, @options)
 
     # log message

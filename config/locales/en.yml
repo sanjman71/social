@@ -64,6 +64,10 @@ en:
     linked_account: "We linked your account."
     need_bucks: "You are out of bucks.  Click 'Get more bucks' to get some more."
   user:
+    message:
+      bts: "I'll be there soon."
+      ltp: "I love that place."
+      sad: "Let's share a drink."
     spots: "Show %{pronoun} Spots"
     matchby:
       checkin: 'Sighting'

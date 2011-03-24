@@ -1,38 +1,43 @@
 Feature: Import user checkin
   As a user
-  I want to receive notifications when I check in using facebook or foursquare
+  I want to receive notifications when I checkin using facebook or foursquare
+
+  Background:
+    Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
+    And user "sanjay" has email "sanjay@outlately.com"
+    And user "sanjay" has oauth "facebook" "123"
+
+    And a user "adam" exists with handle: "adam", member: "1", gender: "Male", orientation: "Straight"
+    And user "adam" has email "adam@outlately.com"
+
+    And a user "friendly" exists with handle: "friendly", member: "1", gender: "Male", orientation: "Straight"
+    And user "friendly" has email "friendly@gmail.com"
+
+    And a location "Starbucks" exists with name: "Starbucks", street_address: "200 N State St.", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
 
   @checkin @email @realtime
   Scenario: Members who have opted in should receive an email after a recent checkin is imported
-    Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight", preferences_import_checkin_emails: "1"
-    And user "sanjay" has email "sanjay@outlately.com"
-    And a location "Starbucks" exists with name: "Starbucks", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
+    Given user "sanjay" has preference "preferences_import_checkin_emails" "1"
     And user "sanjay" checked in to "Starbucks" "3 hours ago"
-    # And a checkin exists with user: user "sanjay", location: location "Starbucks", checkin_at: "#{3.hours.ago}", source_id: "1", source_type: "foursquare"
     And the resque jobs are processed
+
     Then "sanjay@outlately.com" should receive an email with subject "Outlately: You checked in at Starbucks"
     When I open the email
     Then I should see "Good work. That checkin got you 10 points." in the email body
 
   @checkin @email @realtime
   Scenario: Followers should receive an email after a user checkin is imported
-    Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
-    And user "sanjay" has email "sanjay@outlately.com"
-    And user "sanjay" has oauth "facebook" "123"
-    And a user "adam" exists with handle: "adam", member: "1", gender: "Male", orientation: "Straight"
-    And user "adam" has email "adam@outlately.com"
-    And a user "friendly" exists with handle: "friendly", member: "1", gender: "Male", orientation: "Straight"
-    And user "friendly" has email "friendly@gmail.com"
-    And "adam" is friends with "sanjay"
+    Given "adam" is friends with "sanjay"
     And "adam" is friends with "friendly"
     And "sanjay" is following "adam"
-    And a location "Starbucks" exists with name: "Starbucks", street_address: "200 N State St.", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
 
     And user "adam" checked in to "Starbucks" "5 minutes ago"
     And the resque jobs are processed until empty
 
+    # friends shouldn't receive emails
     Then "friendly@gmail.com" should receive no emails with subject "Outlate.ly: adam checked in at Starbucks..."
 
+    # followers should receive emails
     And "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Starbucks..."
     When I open the email with subject "Outlate.ly: adam checked in at Starbucks..."
     Then I should see "Just wanted to let you know that adam checked in at Starbucks, 200 N State St., Chicago, IL" in the email body
@@ -40,32 +45,59 @@ Feature: Import user checkin
     And I should see "Love That Place" in the email body
     And I should see "Send a Message" in the email body
 
-    When I follow "Be There Soon" in the email
-    Then I should see "We'll send adam a message"
-    And I should see "_gaq.push(['_trackPageview', '/action/message/bts'])"
+  @checkin @email @realtime
+  Scenario: Users should be able to respond to a checkin email with 'be there soon'
+    Given "sanjay" is following "adam"
+    And user "adam" checked in to "Starbucks" "5 minutes ago"
+    And the resque jobs are processed until empty
+    Then "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Starbucks..."
 
-    When I follow "Love That Place" in the email
-    Then I should see "We'll let adam know"
-    And I should see "_gaq.push(['_trackPageview', '/action/message/ltp'])"
-
-    When I follow "New Message" in the email
-    And I fill in "message_body" with "Hey there!"
+    When I open the email with subject "Outlate.ly: adam checked in at Starbucks..."
+    And I follow "Be There Soon" in the email
+    Then I should see "_gaq.push(['_trackPageview', '/action/message/bts'])"
     And I press "Send"
-    # And I wait for "3" seconds
-    # Then I should see "Sent message to adam!"
+    Then I should see "Sent message"
 
     When the resque jobs are processed
-
-    Then "adam@outlately.com" should receive an email with subject "Outlate.ly: from sanjay, re: your checkin at Starbucks..."
-    When I open the email with subject "Outlate.ly: from sanjay, re: your checkin at Starbucks..."
+    Then "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
+    When I open the email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
     Then I should see "I'll be there soon" in the email body
 
-    And "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay commented on your checkin at Starbucks..."
-    When I open the email with subject "Outlate.ly: sanjay commented on your checkin at Starbucks..."
-    Then I should see "I love that place" in the email body
+  @checkin @email @realtime
+  Scenario: Users should be able to respond to a checkin email with 'love that place'
+    Given "sanjay" is following "adam"
+    And user "adam" checked in to "Starbucks" "5 minutes ago"
+    And the resque jobs are processed until empty
+    Then "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Starbucks..."
 
-    And "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay sent you a message..."
-    When I open the email with subject "Outlate.ly: sanjay sent you a message..."
+    When I open the email with subject "Outlate.ly: adam checked in at Starbucks..."
+    And I follow "Love That Place" in the email
+    Then I should see "_gaq.push(['_trackPageview', '/action/message/ltp'])"
+    And I press "Send"
+    Then I should see "Sent message"
+
+    When the resque jobs are processed
+    Then "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
+    When I open the email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
+    Then I should see "I love that place" in the email body
+  
+  @checkin @email @realtime
+  Scenario: Users should be able to respond to a checkin email with free form text
+    Given "sanjay" is following "adam"
+    And user "adam" checked in to "Starbucks" "5 minutes ago"
+    And the resque jobs are processed until empty
+    Then "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Starbucks..."
+
+    When I open the email with subject "Outlate.ly: adam checked in at Starbucks..."
+    When I follow "Compose Message" in the email
+    Then I should see "_gaq.push(['_trackPageview', '/action/message/compose'])"
+    And I fill in "message_body" with "Hey there!"
+    And I press "Send"
+    Then I should see "Sent message"
+
+    When the resque jobs are processed
+    Then "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
+    When I open the email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
     Then I should see "Hey there!" in the email body
 
   # deprecated feature
@@ -155,6 +187,7 @@ Feature: Import user checkin
   #   And I should see "coffee_gal1" in the email body
   #   And I should see "coffee_gal2" in the email body
 
+  @checkin @email
   Scenario: Member should not receive an email when an old checkin is imported
     Given a user "sanjay" exists with handle: "sanjay", member: "1"
     And user "sanjay" has email "sanjay@outlately.com"
