@@ -77,8 +77,8 @@ class AdminController < ApplicationController
     @dstart     = Date.parse(@redis_keys.first.match(/(\d+):emails/)[1]) rescue Date.today
     @drange     = Range.new(@dstart, Date.today)
 
-    @email_keys = ['badge_added', 'daily_checkins', 'imported_checkin', 'invite', 'message', 'realtime_checkins',
-                   'share_drink', 'todo_added', 'todo_expired']
+    @email_keys = ['badge_added', 'friend_realtime_checkin', 'imported_checkin', 'invite', 'message',
+                   'share_drink']
     @email_hash = {}
 
     @drange.each do |date|
