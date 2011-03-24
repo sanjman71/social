@@ -15,5 +15,5 @@
       #to To: #{@user.handle}
       - if @subject
         #subject Re: your checkin @ somewhere
-      = text_area_tag 'message[body]', '', :id => 'message_body',:placeholder => 'your message here'
+      = text_area_tag 'message[body]', @body, :id => 'message_body', :placeholder => 'your message here'
       = submit_tag 'Send Message', :id => 'message_send_submit'
