@@ -73,11 +73,46 @@ class Checkins < Thor
     end
   end
   
-  desc "poll", "poll for recent user checkins"
-  def poll
-    puts "#{Time.now}: polling user checkins"
-    users = Checkin.event_poll_checkins
-    puts "#{Time.now}: triggered polling for #{users.size} users"
+  desc "poll_members", "poll members for recent checkins"
+  def poll_members
+    puts "#{Time.now}: polling member checkins"
+
+    # find members (with oauths), with checkin logs that haven't been checked in poll_interval
+    members = User.member.active.with_oauths.joins(:checkin_logs).
+                where(:"checkin_logs.last_check_at".lt => Checkin.poll_interval_member.ago).select("users.*")
+    members.each do |user|
+      user.checkin_logs.each do |log|
+        case log.source
+        when 'facebook'
+          # queue job
+          Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => 'last')
+        when 'foursquare'
+          # queue job
+          Resque.enqueue(FoursquareWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'sinceid' => 'last')
+        end
+      end
+    end
+
+    puts "#{Time.now}: triggered checkin polling for #{members.size} users"
+  end
+
+  desc "poll_users", "poll users for recent facebook checkins"
+  def poll_users
+    puts "#{Time.now}: polling non-member checkins"
+
+    users = User.non_member.active.joins(:checkin_logs).
+              where(:"checkin_logs.last_check_at".lt => Checkin.poll_interval_default.ago)
+    users.each do |user|
+      # find user's friend who has an oauth
+      member = user.friends.member.first
+      next if member.blank?
+      oauth  = member.facebook_oauth
+      next if oauth.blank?
+      Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => 'last',
+                     'oauth_id' => oauth.id)
+    end
+
+    puts "#{Time.now}: triggered facebook checkin polling for #{users.size} users"
   end
 
   desc "send_planned_checkin_reminders", "send planned checkin reminders"

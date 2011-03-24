@@ -23,7 +23,7 @@ end
 
 every 5.minutes do
   # poll checkins
-  command "cd /usr/apps/outlately/current && thor checkins:poll >> /usr/apps/outlately/shared/log/checkins.log"
+  command "cd /usr/apps/outlately/current && thor checkins:poll_members >> /usr/apps/outlately/shared/log/checkins.log"
 end
 
 every 10.minutes do

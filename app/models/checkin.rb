@@ -82,7 +82,7 @@ class Checkin < ActiveRecord::Base
     log("[user:#{user.id}] #{user.handle} imported #{new_checkins.size} #{source} checkin(s)")
 
     # trigger friend checkins
-    trigger_event_friend_checkins(user, source)
+    # trigger_event_friend_checkins(user, source)
 
     if enabled(:user_suggestions) and user.reload.suggestionable?
       # cap the number of suggestions until this is fixed
@@ -95,43 +95,19 @@ class Checkin < ActiveRecord::Base
   end
 
   # trigger checking friend checkins
-  def self.trigger_event_friend_checkins(user, source)
-    if source == 'facebook'
-      # import checkins for non-member friends, not recently checked (without facebook oauths)
-      user.friends.non_member.active.joins(:checkin_logs).
-           where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).each do |friend|
-        # priority 0 is highest and default; import checkins at a lower priority
-        # log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
-        # FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => friend.id, :since => :last,
-        #                                                              :limit => 250,
-        #                                                              :oauth_id => user.facebook_oauth.try(:id)})
-      end
-    end
-  end
-
-  # trigger polling of user checkins
-  def self.event_poll_checkins
-    # find members (with oauths), with checkin logs that haven't been checked in poll_interval
-    @members = User.member.active.with_oauths.joins(:checkin_logs).
-                    where(:"checkin_logs.last_check_at".lt => poll_interval_member.ago).select("users.*")
-  
-    @members.each do |user|
-      user.checkin_logs.each do |log|
-        # use delayed job to import these checkins
-        log("[user:#{user.id}] #{user.handle} polling #{log.source} checkins")
-        case log.source
-        when 'facebook'
-          # queue job
-          Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => 'last')
-        when 'foursquare'
-          # queue job
-          Resque.enqueue(FoursquareWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'sinceid' => 'last')
-        end
-      end
-    end
-
-    @members
-  end
+  # def self.trigger_event_friend_checkins(user, source)
+  #   if source == 'facebook'
+  #     # import checkins for non-member friends, not recently checked (without facebook oauths)
+  #     user.friends.non_member.active.joins(:checkin_logs).
+  #          where(:"checkin_logs.last_check_at".lt => poll_interval_default.ago).each do |friend|
+  #       # priority 0 is highest and default; import checkins at a lower priority
+  #       log("[user:#{user.id}] #{user.handle} triggering import of facebook checkins for friend #{friend.handle}")
+  #       FacebookCheckin.delay(:priority => 5).async_import_checkins({:user_id => friend.id, :since => :last,
+  #                                                                    :limit => 250,
+  #                                                                    :oauth_id => user.facebook_oauth.try(:id)})
+  #     end
+  #   end
+  # end
 
   def self.poll_interval(user=nil)
     begin
@@ -144,7 +120,7 @@ class Checkin < ActiveRecord::Base
   # different poll interval for members vs non-members
 
   def self.poll_interval_member
-    15.minutes
+    10.minutes
   end
 
   def self.poll_interval_default
