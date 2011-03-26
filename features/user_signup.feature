@@ -36,6 +36,21 @@ Feature: User Signup
     And I should not see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should not see "_gaq.push(['_trackPageview', '/signup/invited'])"
 
+
+  @signup @goal
+  Scenario: Friend signup should auto follow member(s) and send email
+    Given a user "facebook_guy" exists with handle: "facebook_guy", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
+    And a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
+    And user "sanjay" has email "sanjay@outlately.com"
+    And "sanjay" is friends with "facebook_guy"
+
+    Given I login with facebook as "facebook_guy"
+    Then I should be on path "/newbie/settings"
+
+    When the resque jobs are processed until empty
+    And "sanjay@outlately.com" should receive an email with subject "Outlate.ly: First L. is following you"
+
+
   @signup @email
   Scenario: New user signup should send email to site admins
     Given I login with facebook as "facebook_guy"

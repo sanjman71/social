@@ -647,13 +647,15 @@ class User < ActiveRecord::Base
   # send email after member signup
   def after_member_signup
     if changes[:member] and changes[:member][1] == true
+      self.class.log("[user:#{id}] #{handle} member signup")
       # send email to all users who poked a friend to invite user
       pokes = InvitePoke.where(:invitee_id => self.id)
       pokes.each do |poke|
         Resque.enqueue(UserMailerWorker, :user_signup_to_poker, 'poke_id' => poke.id)
       end
+      Resque.enqueue(UserWorker, :member_signup, 'user_id' => id)
       # send email to admins user re: new member signup
-      Resque.enqueue(UserMailerWorker, :user_signup, 'user_id' => self.id)
+      Resque.enqueue(UserMailerWorker, :user_signup, 'user_id' => id)
     end
   end
 

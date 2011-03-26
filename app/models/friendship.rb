@@ -32,8 +32,9 @@ class Friendship < ActiveRecord::Base
   # user friends were imported
   def self.event_friends_imported(user, source)
     log("[user:#{user.id}] #{user.handle} imported #{(user.friends + user.inverse_friends).size} #{source} friends")
+    # deprecated
     # trigger friend checkins
-    Checkin.trigger_event_friend_checkins(user, source)
+    # Checkin.trigger_event_friend_checkins(user, source)
   end
 
   def self.log(s, level = :info)

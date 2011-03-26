@@ -25,6 +25,7 @@ Feature: Import user checkin
     When I open the email
     Then I should see "Good work. That checkin got you 10 points." in the email body
 
+
   @checkin @email @realtime
   Scenario: Followers should receive an email after a user checkin is imported
     Given "adam" is friends with "sanjay"
@@ -45,6 +46,7 @@ Feature: Import user checkin
     And I should see "Love That Place" in the email body
     And I should see "Send a Message" in the email body
 
+
   @checkin @email @realtime
   Scenario: Users should be able to respond to a checkin email with 'be there soon'
     Given "sanjay" is following "adam"
@@ -63,6 +65,7 @@ Feature: Import user checkin
     When I open the email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
     Then I should see "I'll be there soon" in the email body
 
+
   @checkin @email @realtime
   Scenario: Users should be able to respond to a checkin email with 'love that place'
     Given "sanjay" is following "adam"
@@ -80,7 +83,8 @@ Feature: Import user checkin
     Then "adam@outlately.com" should receive an email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
     When I open the email with subject "Outlate.ly: sanjay sent you a message about your checkin at Starbucks..."
     Then I should see "I love that place" in the email body
-  
+
+
   @checkin @email @realtime
   Scenario: Users should be able to respond to a checkin email with free form text
     Given "sanjay" is following "adam"

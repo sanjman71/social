@@ -100,7 +100,7 @@ class MessagesController < ApplicationController
     Resque.enqueue(UserMailerWorker, :user_message, @options)
 
     # log message
-    Message.log("[user:#{@sender.id}] #{@sender.handle} sent message to:#{@to.handle}, body:#{@body}")
+    Message.log("[user:#{@sender.id}] #{@sender.handle} sent message to:#{@to.handle}, body:#{@body}, email:#{@to.email_address}")
 
     # set status
     @status   = 'ok'

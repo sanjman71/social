@@ -55,11 +55,12 @@ class Checkin < ActiveRecord::Base
   # user checkin was added
   def event_checkin_added
     # log data
-    self.class.log("[user:#{user.id}] #{user.handle} added checkin:#{self.id} to #{location.name}:#{location.id}")
+    self.class.log("[user:#{user.id}] #{user.handle} imported checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
     self.delay.async_update_locationships
     if checkin_since?(12.hours.ago) && user.member? && user.email_addresses_count?
       if user.preferences_import_checkin_emails.to_i == 1
+        self.class.log("[user:#{user.id}] #{user.handle} sending checkin email to #{user.email_address}")
         # send imported checkin email
         Resque.enqueue(CheckinMailerWorker, :imported_checkin, 'checkin_id' => self.id,
                                             'points' => Currency.points_for_checkin(user, self))

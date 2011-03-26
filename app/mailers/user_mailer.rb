@@ -19,12 +19,21 @@ class UserMailer < ActionMailer::Base
     @user     = User.find(options['user_id'])
     @emails   = admin_emails
 
-    log("[email:admin]: user signup #{@user.handle}:#{@user.id}")
-
     mail(:to => @emails, :subject => "Outlate.ly: member signup #{@user.handle}:#{@user.id}")
   end
 
-  # send email to poked user's friend that somebody wants them signing up
+  def user_following(options)
+    @follower       = User.find(options['follower_id'])
+    @following    = User.find(options['following_id'])
+
+    track("user_following")
+
+    @email        = @following.email_address
+    @subject      = "Outlate.ly: #{@follower.handle} is following you..."
+    mail(:to => @email, :subject => @subject)
+  end
+
+  # send email to poked user's friend that somebody wants them to sign up
   def user_invite_poke(options)
     @invite_poke  = InvitePoke.find(options['invite_poke_id'])
     @friend       = @invite_poke.friend
@@ -40,7 +49,7 @@ class UserMailer < ActionMailer::Base
     end
 
     # log and track
-    log("[email:#{@friend.id}]: #{@email} re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
+    # log("[email:#{@friend.id}]: #{@email} re:#{@invitee.handle}:#{@invitee.id}, poker:#{@poker.handle}:#{@poker.id}")
     track("invite_poke")
 
     mail(:to => @email, :subject => @subject)
@@ -54,7 +63,7 @@ class UserMailer < ActionMailer::Base
     @message    = @invitation.body
 
     # log and track
-    log("[email:#{@sender.id}]: #{@email} invited by #{@sender.handle}")
+    # log("[email:#{@sender.id}]: #{@email} invited by #{@sender.handle}")
     track("invite")
 
     mail(:to => @email, :subject => @subject)
@@ -69,7 +78,7 @@ class UserMailer < ActionMailer::Base
     @subject    = "Outlate.ly: Your invitation was accepted!"
 
     # log and track
-    log("[email:#{@inviter.id}]: #{@email} invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
+    # log("[email:#{@inviter.id}]: #{@email} invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
     track("invite_accepted")
 
     mail(:to => @email, :subject => @subject)
@@ -83,7 +92,7 @@ class UserMailer < ActionMailer::Base
     @subject  = "Outlate.ly: You might be interested in this user signup..."
 
     # log and track
-    log("[email:#{@poker.id}]: #{@email} signup:#{@invitee.id}:#{@invitee.handle}")
+    # log("[email:#{@poker.id}]: #{@email} signup:#{@invitee.id}:#{@invitee.handle}")
     track("signup_poker")
 
     mail(:to => @email, :subject => @subject)
@@ -97,7 +106,7 @@ class UserMailer < ActionMailer::Base
     @subject        = "Outlate.ly: You wanted to know more about #{@about_user.handle}..."
 
     # log and track
-    log("[email:#{@user.id}]: #{@email} user_learn_more:#{@about_user.handle}")
+    # log("[email:#{@user.id}]: #{@email} user_learn_more:#{@about_user.handle}")
     track("learn_more")
 
     mail(:to => @email, :subject => @subject)
@@ -131,7 +140,7 @@ class UserMailer < ActionMailer::Base
                                     'utm_source' => 'outlately')
 
     # log and track
-    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    # log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
     track("message")
 
     mail(:to => @email, :subject => @subject)
@@ -146,7 +155,7 @@ class UserMailer < ActionMailer::Base
     @subject  = "Outlate.ly: from #{@sender.handle}, re: your checkin at #{@checkin.location.try(:name)}..."
 
     # log and track
-    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    # log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
     track("be_there_soon")
 
     mail(:to => @email, :subject => @subject)
@@ -161,7 +170,7 @@ class UserMailer < ActionMailer::Base
     @subject  = "Outlate.ly: #{@sender.handle} commented on your checkin at #{@checkin.location.try(:name)}..."
 
     # log and track
-    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    # log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
     track("love_that_place")
 
     mail(:to => @email, :subject => @subject)
@@ -185,7 +194,7 @@ class UserMailer < ActionMailer::Base
     end
 
     # log and track
-    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    # log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
     track("share_drink")
 
     mail(:to => @email, :subject => @subject)
@@ -198,7 +207,7 @@ class UserMailer < ActionMailer::Base
     @subject  = "Outlate.ly: #{@sender.handle} sent you a message..."
 
     # log and track
-    log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
+    # log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
     track("add_todo")
 
     mail(:to => @email, :subject => @subject)
@@ -212,7 +221,7 @@ class UserMailer < ActionMailer::Base
     @subject  = "Outlate.ly: Your Social DNA has been updated with a new badge..."
 
     # log and track
-    log("[email:#{@user.id}]: #{@email} new social dna badge")
+    # log("[email:#{@user.id}]: #{@email} new social dna badge")
     track("badge_added")
 
     mail(:to => @email, :subject => @subject)
@@ -249,7 +258,7 @@ class UserMailer < ActionMailer::Base
                                    'utm_source' => 'outlately')
 
     # log and track
-    log("[email:#{@user.id}]: #{@email} friend #{@checkin.user.try(:handle)} realtime checkin")
+    # log("[email:#{@user.id}]: #{@email} friend #{@checkin.user.try(:handle)} realtime checkin")
     track("friend_realtime_checkin")
 
     mail(:to => @email, :subject => @subject)
@@ -288,7 +297,7 @@ class UserMailer < ActionMailer::Base
     end
 
     # log and track
-    log("[email:#{@user.id}]: #{@email} daily checkins")
+    # log("[email:#{@user.id}]: #{@email} daily checkins")
     track("daily_checkins")
 
     mail(:to => @email, :subject => @subject)

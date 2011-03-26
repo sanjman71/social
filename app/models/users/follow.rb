@@ -8,6 +8,9 @@ module Users::Follow
     redis.sadd(following_key, user_id)
     # add me to user's followers list
     redis.sadd(follower_key(user_id), id)
+    # send email
+    self.class.log("[user:#{id}] #{handle} is following #{user.handle}:#{user.id}")
+    Resque.enqueue(UserMailerWorker, :user_following, 'follower_id' => id, 'following_id' => user.id)
   end
 
   # unfollow the specified user
@@ -18,8 +21,10 @@ module Users::Follow
     redis.srem(following_key, user_id)
     # remove me from user's followers list
     redis.srem(follower_key(user_id), id)
+    self.class.log("[user:#{id}] #{handle} unfollowed #{user.handle}:#{user.id}")
   end
 
+  # unfollow all users the user is currently following
   def unfollow_all
     redis = RedisSocket.new
     redis.smembers(following_key).each do |user_id|
