@@ -24,7 +24,6 @@ gem 'haml-rails',             '>= 0.3.4'
 gem 'high_voltage'
 gem 'jquery-rails',           '>= 0.2.6'
 gem 'juggernaut'
-gem 'less',                   '>= 1.2.21'
 gem 'meta_where',             '>= 0.9.6'
 gem 'meta_search',            '>= 0.9.8'
 gem 'oa-oauth',               :require => "omniauth/oauth"

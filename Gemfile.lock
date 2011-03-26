@@ -148,9 +148,6 @@ GEM
     launchy (0.3.7)
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
-    less (1.2.21)
-      mutter (>= 0.4.2)
-      treetop (>= 1.4.2)
     linecache19 (0.5.11)
       ruby_core_source (>= 0.1.4)
     mail (2.2.15)
@@ -173,7 +170,6 @@ GEM
     multi_json (0.0.5)
     multi_xml (0.2.0)
     multipart-post (1.0.1)
-    mutter (0.5.3)
     net-ldap (0.1.1)
     net-scp (1.0.3)
       net-ssh (>= 1.99.1)
@@ -370,7 +366,6 @@ DEPENDENCIES
   jquery-rails (>= 0.2.6)
   juggernaut
   launchy
-  less (>= 1.2.21)
   linecache19
   meta_search (>= 0.9.8)
   meta_where (>= 0.9.6)
