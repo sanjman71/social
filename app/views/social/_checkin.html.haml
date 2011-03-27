@@ -14,8 +14,8 @@
       %h4= link_to user.handle, user_path(user)
       %h5= link_to checkin_time_ago(checkin.checkin_at), '#'
     %h3
-      = link_to location.try(:name), '#'
       - wall = Wall.find_or_create(:checkin => checkin)
+      = link_to location.try(:name), board_path(wall)
       = link_to 'Write On Chalkboard', "#", :class => 'location-comment-count wall-message modal-trigger', :rel => '#wall-message-overlay', 'data-id' => wall.try(:id).to_i, 'data-name' => location.name, 'data-members-count' => wall.member_set.size
     = link_to 'Message', '#', :class => 'invite message modal-trigger', :rel => '#user-message-overlay', 'data-id' => user.id, 'data-handle' => user.handle
 - else
