@@ -24,7 +24,7 @@
             -# users can follow friends
             %li= link_to 'Follow', follow_user_path(@user, :return_to => request.fullpath), :method => :put
 
-.span-16.last
+.span-16.last.mask
   = display_flash(:all)
 
 - if @users_out.keys.include?(@user.id)
@@ -38,7 +38,7 @@
       .br
       #{@user.handle} is out now at #{checkin.try(:location).try(:name)}
 
-.left-col
+.left-col.mask
   #profile-recent-checkins.clearfix
     #recent-checkins-title.titlebar.left Recent Checkins
     %ul
@@ -66,7 +66,7 @@
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle
 
 - if @user.member?
-  .right-col
+  .right-col.mask
     #favorite-places
       #favorite-places-title.titlebar.right Favorite Places
       %ul

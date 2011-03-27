@@ -1,13 +1,14 @@
 $.fn.init_message_overlay = function() {
   $("a.modal-trigger").overlay({
     mask: {
-      color: '#eee',
+      color: '#666',
       loadSpeed: 200,
-      opacity: 0.8
+      closeSpeed: 0,
+      opacity: 0.5
     },
     closeOnClick: false,
     onBeforeClose: function() {
-       $("div.titlebar, a.tile").css('opacity', 1.0);
+       $("div.mask").css('opacity', 1.0);
     }
   });
 
@@ -15,15 +16,15 @@ $.fn.init_message_overlay = function() {
     var modal = $("#user-message-overlay");
     modal.find("#header_to").text("To: " + $(this).attr('data-handle'));
     modal.find("input#message_to_id").val($(this).attr('data-id'));
-    $("div.titlebar, a.tile").css('opacity', 0.1);
+    $("div.mask").css('opacity', 0.1);
     return true;
   })
 
   $("a.wall-message.modal-trigger").click(function() {
     var modal = $("#wall-message-overlay");
-    modal.find("#header_to").text("To: The Wall @ " + $(this).attr('data-name'));
+    modal.find("#header_to").text("To: The Chalkboard @ " + $(this).attr('data-name'));
     modal.find("input#message_wall_id").val($(this).attr('data-id'));
-    $("div.titlebar, a.tile").css('opacity', 0.1);
+    $("div.mask").css('opacity', 0.1);
     return true;
   })
 
@@ -49,6 +50,9 @@ $.fn.init_message_overlay = function() {
       if (data['track_page']) {
         // track page
         track_page(data['track_page']);
+      }
+      if (data['goto']) {
+        window.location = data['goto'];
       }
       // show any growls
       if (data['growls']) {

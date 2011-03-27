@@ -1,7 +1,8 @@
 class Wall < ActiveRecord::Base
   belongs_to    :checkin
   belongs_to    :location
-  has_many      :wall_messages
+  has_many      :wall_messages, :dependent => :destroy
+  has_many      :messages, :class_name => 'WallMessage', :foreign_key => :wall_id
   validates     :checkin_id, :presence => true
   before_create :set_members
 
@@ -12,9 +13,28 @@ class Wall < ActiveRecord::Base
     nil
   end
 
+  def self.find_all_by_member(user)
+    user_id = user.id rescue user
+    Wall.find(:all, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "created_at desc")
+  end
+
+  def self.find_by_member(user)
+    user_id = user.id rescue user
+    Wall.find(:first, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "created_at desc")
+    # Wall.select(:find_in_set[:member_set_ids, user_id])
+  end
+
+  def name
+    location.present? ? location.name : "Chalkboard #{id}"
+  end
+
   # map member_set_ids string to a collection
   def member_set
     (self.member_set_ids || '').split(',').map(&:to_i)
+  end
+
+  def member_handles
+    User.find(member_set, :select => 'handle').collect(&:handle)
   end
 
   protected

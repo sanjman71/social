@@ -23,11 +23,21 @@ class WallTest < ActiveSupport::TestCase
     assert_equal @wall, Wall.find_or_create(:checkin => @checkin)
   end
 
+  should "use location name as wall name" do
+    @wall = Wall.find_or_create(:checkin => @checkin)
+    assert_equal "Chicago Starbucks", @wall.name
+  end
+
   should "set member_set based on followers" do
     @wall = Wall.create!(:checkin => @checkin, :location => @checkin.location)
     assert_equal [@user1.id, @user2.id, @user3.id], @wall.member_set
+    # should find member handles
+    assert_equal [@user1.handle, @user2.handle, @user3.handle], @wall.member_handles
+    # should link user to wall
+    assert_equal [@wall], Wall.find_all_by_member(@user1)
+    assert_equal @wall, Wall.find_by_member(@user1)
   end
-  
+
   should "post message to wall" do
     @wall = Wall.create!(:checkin => @checkin, :location => @checkin.location)
     @msg  = @wall.wall_messages.create!(:sender => @user1, :message => "message 1")

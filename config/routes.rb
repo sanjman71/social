@@ -61,6 +61,9 @@ Social::Application.routes.draw do
     put :add_todo_request, :on => :member
   end
 
+  # chalkboard routes
+  resources :boards
+
   # location routes
   match 'locations/:geo(/:radius)', :to => 'locations#index',
     :constraints => {:geo => /geo:\d+\.\d+\.\.-{0,1}\d+\.\d+/, :radius => /radius:\d+/}, :as => :geo_locations

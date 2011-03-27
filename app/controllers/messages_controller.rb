@@ -78,11 +78,19 @@ class MessagesController < ApplicationController
   # POST /messages
   def create
     @sender   = current_user
-    @to       = User.find_by_id(params[:message][:to_id])
-    @body     = params[:message][:body]
+    @message  = params[:message]
+    @body     = @message[:body]
+    
+    if @message[:to_id].present?
+      # user message
+      @to = User.find_by_id(@message[:to_id])
+    elsif @message[:wall_id].present?
+      # wall message
+      @wall = Wall.find_by_id(@message[:wall_id])
+    end
 
     # validate 'to' has an email
-    if @to.try(:primary_email_address).blank?
+    if @to.present? and @to.try(:primary_email_address).blank?
       # no user or email to send to
       raise Exception, "no recipient email address"
     end
@@ -92,20 +100,26 @@ class MessagesController < ApplicationController
     # @message.to     = @to.handle
     # @message.body   = @body
 
-    # send message
-    @options = {'sender_id' => @sender.id, 'to_id' => @to.id, 'body' => @body}
-    if params[:message][:checkin_id].present?
-      @options.merge!('checkin_id' => params[:message][:checkin_id])
+    # send user message
+    if @to.present?
+      @options = {'sender_id' => @sender.id, 'to_id' => @to.id, 'body' => @body}
+      if @message[:checkin_id].present?
+        @options.merge!('checkin_id' => @message[:checkin_id])
+      end
+      Resque.enqueue(UserMailerWorker, :user_message, @options)
+      # log message
+      Message.log("[user:#{@sender.id}] #{@sender.handle} sent message to:#{@to.handle}, body:#{@body}, email:#{@to.email_address}")
+    elsif @wall.present?
+      @wall.wall_messages.create!(:sender => @sender, :message => @body)
+      # log message
+      Message.log("[wall:#{@wall.id}] #{@sender.handle} wrote on chalkboard")
     end
-    Resque.enqueue(UserMailerWorker, :user_message, @options)
-
-    # log message
-    Message.log("[user:#{@sender.id}] #{@sender.handle} sent message to:#{@to.handle}, body:#{@body}, email:#{@to.email_address}")
 
     # set status
     @status   = 'ok'
-    @text     = "Sent message to #{@to.handle}!"
+    @text     = @to.present? ? "Sent message to #{@to.handle}!" : "Wrote on chalkboard!"
     @growls   = [{:message => @text, :timeout => 5000}]
+    @goto     = params[:return_to]
 
     # set redirect path
     @redirect_to = redirect_back_path(root_path)
@@ -124,7 +138,7 @@ class MessagesController < ApplicationController
         redirect_back_to(@redirect_to) and return
       end
       format.json do
-        render :json => {:status => @status, :message => @text, :growls => @growls,
+        render :json => {:status => @status, :message => @text, :growls => @growls, :goto => @goto,
                          :track_page => "/action/message/sent"}.to_json
       end
       format.mobile do

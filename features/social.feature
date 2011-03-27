@@ -28,10 +28,10 @@ Feature: New home page
     
     When I go to the home page
     Then I should see "Chicago A."
-    
+
     When I follow "Message"
-    And I fill in "message_body" with "Hey there"
-    And I press "Send"
+    And I fill in "message_body" with "Hey there" within "#user-message-overlay"
+    And I press "Send" within "#user-message-overlay"
     And I wait for "2" seconds
     Then I should see "Sent message to Chicago A."
 
@@ -48,5 +48,33 @@ Feature: New home page
     And I should see "To: Chicago M."
 
   @javascript
-  Scenario: User posts a wall message to a friend who's out
-  
+  Scenario: User writes on chalkboard
+    # add checkins
+    Given user "Chicago A." checked in to "Chicago Starbucks" "5 minutes ago"
+    
+    # add follows
+    And "Chicago M." is friends with "Chicago A."
+    And "Chicago M." is following "Chicago A."
+    And the resque jobs are processed
+    And I am logged in as "Chicago M."
+
+    When I go to the home page
+    Then I should see "Chicago A."
+    When I follow "Write On Chalkboard"
+    And I fill in "message_body" with "I wrote on the chalkboard" within "#wall-message-overlay"
+    And I press "Send" within "#wall-message-overlay"
+    And I wait for "2" seconds
+    Then I should see "Wrote on chalkboard"
+
+    When I follow "Activity"
+    Then I should see "Chicago Starbucks"
+    And I should see "checked in"
+    And I should see "I wrote on the chalkboard"
+
+    When I follow "Add"
+    And I fill in "message_body" with "Another chalkboard message" within "#wall-message-overlay"
+    And I press "Send" within "#wall-message-overlay"
+    And I wait for "2" seconds
+    Then I should see "Another chalkboard message"
+
+    

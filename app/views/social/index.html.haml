@@ -1,14 +1,12 @@
-- javascript('message')
-
 #member-title Member?
 
-.span-16.last
+.span-16.last.mask
   = display_flash(:all)
 
-.span-16.last
+.span-16.last.mask
   %ul#home-checkins
     - if @friends_out_now.empty?
-      %div{:style => 'padding: 10px;'}
+      %div{:style => 'padding: 10px; background-color: #FFFBE0;'}
         %h4
           You don't have any friends out right now.
           %p
@@ -17,28 +15,28 @@
     - @friends_out_now.each_pair do |user, checkins|
       = render(:partial => 'checkin', :locals => {:user => user, :checkin => checkins[0]})
 
-.span-16.last
+.span-16.last.mask
   #home-following.tipsy
     #home-following-title.titlebar.left Friends Out Recently
     - @friends_out_recently.each_pair do |user, checkins|
       - checkin = checkins.first
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => "#{user.handle} @ #{checkin.location.try(:name)}", :class => 'tile'
 
-.span-16.last
+.span-16.last.mask
   #home-following.tipsy
     #home-following-title.titlebar.left Outlate.ly Following
     - if @following.empty?
-      %div{:style => 'padding: 10px;'}
+      %div{:style => 'padding: 10px; background-color: #FFFBE0;'}
         %h4{:style => 'font-size: 1.5em;'} You're not following anyone.  When you follow someone, you'll get an email as soon as they check-in somewhere.  They check-in and you know right away - it's that easy.
 
     - @following.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle, :class => 'tile'
 
-.span-16.last
+.span-16.last.mask
   #home-following.tipsy
     #home-following-title.titlebar.left Outlate.ly Followers
     - if @followers.empty?
-      %div{:style => 'padding: 10px;'}
+      %div{:style => 'padding: 10px; background-color: #FFFBE0;'}
         %h4{:style => 'font-size: 1.5em;'} You don't have any followers.  When your friends follow you, they'll get an email when you check-in somewhere.  Get your friends to follow you so they know when you're out and about.
 
     - @followers.each do |user|

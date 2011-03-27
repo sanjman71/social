@@ -1,10 +1,14 @@
+- url = local_assigns[:url] || messages_path(:format => 'json')
+
 .overlay.clearfix#wall-message-overlay
   .close
   %p
-    %em This Outlate.ly message posted to a wall and sent to many people.
+    %em
+      Chalkboards are created for each checkin.  When you write on a chalkboard, all followers
+      for that check-in are sent the message.
   %h3#header_to To:
-  = form_tag(messages_path, :id => 'new_message', 'data-url' => messages_path(:format => 'json')) do
-    = hidden_field_tag 'message[wall_id]', ''
+  = form_tag(messages_path, :id => 'new_message', 'data-url' => url) do
+    = hidden_field_tag 'message[wall_id]', '', :id => "message_wall_id"
     %h3 Message:
     = text_area_tag 'message[body]', '', :id => 'message_body', :style => 'height: 30px;', :class => 'textarea countdown autoresize', :placeholder => 'e.g. hey there'
     %br

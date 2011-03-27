@@ -29,8 +29,8 @@
     = javascript_include_tag 'jquery.autoresize.min'
     = javascript_include_tag 'overlay'
     = javascript_include_tag 'hash'
-    = javascript_include_tag 'less'
     = javascript_include_tag 'application'
+    = javascript_include_tag 'message'
     = yield :javascript
     = yield :head
 
@@ -57,7 +57,7 @@
         %li#logo= link_to raw("<h1>Outlate.ly</h1>"), root_path
         %li#nav-stem-left
         %li#nav-stem-right
-        %li#activity= link_to 'Activity', '#'
+        %li#activity= link_to 'Activity', boards_path
         %li#settings= link_to 'Settings', settings_path
 
     - else

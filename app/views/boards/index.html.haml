@@ -1,0 +1,30 @@
+
+.span-16.last.mask
+  #home-following.tipsy
+    #home-following-title.titlebar.left= @chalkboard.name
+    .chalkboard
+      .group
+        The Group: #{@chalkboard.member_handles.join(", ")}
+
+      -# first message is the checkin
+      .span-16.last
+        .span-4.message
+          %strong= @chalkboard.checkin.user.handle
+          %br
+          = @chalkboard.checkin.checkin_at.to_s(:datetime_short)
+        .span-12.last checked in
+
+      - @chalkboard.messages.each do |message|
+        .span-16.last.message[message]
+          .span-4
+            %strong= message.sender.handle
+            %br
+            = message.created_at.to_s(:datetime_short)
+          .span-12.last
+            = message.message
+
+      .span-16.last
+        = link_to 'Add', '#', :class => 'wall-message modal-trigger', :rel => '#wall-message-overlay', 'data-id' => @chalkboard.id, 'data-name' => @chalkboard.location.name, 'data-members-count' => @chalkboard.member_set.size, 'data-goto' => request.fullpath
+
+-# wall message overlay
+= render(:partial => 'shared/wall_message_overlay', :locals => {:sender => current_user, :url => messages_path(:format => 'json', :return_to => request.fullpath)})

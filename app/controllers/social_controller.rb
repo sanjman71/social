@@ -5,7 +5,7 @@ class SocialController < ApplicationController
   # GET /
   def index
     # @user initialized in before_filter
-    
+
     # find users out now
     @users_out_now        = Realtime.find_users_out(:map_ids => true)
     # find friends out using intersection of users out now and user friends
