@@ -705,6 +705,9 @@ body #footer {
 .clearfix {
   display: block;
 }
+.chalkboard {
+  font-size: 11px;
+}
 .chalkboard .group {
   padding: 10px 0;
 }
