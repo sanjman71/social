@@ -23,6 +23,11 @@ class WallTest < ActiveSupport::TestCase
     assert_equal @wall, Wall.find_or_create(:checkin => @checkin)
   end
 
+  should "use set wall updated_at to checkin timestamp" do
+    @wall = Wall.find_or_create(:checkin => @checkin)
+    assert_equal @checkin.checkin_at, @wall.updated_at
+  end
+
   should "use location name as wall name" do
     @wall = Wall.find_or_create(:checkin => @checkin)
     assert_equal "Chicago Starbucks", @wall.name
@@ -40,8 +45,12 @@ class WallTest < ActiveSupport::TestCase
 
   should "post message to wall" do
     @wall = Wall.create!(:checkin => @checkin, :location => @checkin.location)
-    @msg  = @wall.wall_messages.create!(:sender => @user1, :message => "message 1")
-    assert_equal 1, @wall.reload.messages_count
+    Timecop.travel(Time.now+9.minutes) do
+      @msg  = @wall.wall_messages.create!(:sender => @user1, :message => "message 1")
+      assert_equal 1, @wall.reload.messages_count
+      # should set wall updated_at to wall's most recent message
+      assert_equal @msg.created_at.to_i, @wall.updated_at.to_i
+    end
   end
 
   should "not allow post to wall from a non-member" do

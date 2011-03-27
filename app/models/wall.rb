@@ -8,19 +8,20 @@ class Wall < ActiveRecord::Base
 
   def self.find_or_create(options={})
     @checkin = options[:checkin]
-    @wall    = Wall.find_by_checkin_id(@checkin.id) || Wall.create(:checkin => @checkin, :location => @checkin.location)
+    @wall    = Wall.find_by_checkin_id(@checkin.id) ||
+               Wall.create(:checkin => @checkin, :location => @checkin.location, :updated_at => @checkin.checkin_at)
   rescue Exception => e
     nil
   end
 
   def self.find_all_by_member(user)
     user_id = user.id rescue user
-    Wall.find(:all, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "created_at desc")
+    Wall.find(:all, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "updated_at desc")
   end
 
   def self.find_by_member(user)
     user_id = user.id rescue user
-    Wall.find(:first, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "created_at desc")
+    Wall.find(:first, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "updated_at desc")
     # Wall.select(:find_in_set[:member_set_ids, user_id])
   end
 

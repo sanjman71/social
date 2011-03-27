@@ -3,6 +3,8 @@ class WallMessage < ActiveRecord::Base
   belongs_to  :sender, :class_name => 'User'
   validates   :message, :presence => true
 
+  after_save  :event_wall_message_saved
+
   # custom validator
   validate do |object|
     object.validate_sender
@@ -17,6 +19,10 @@ class WallMessage < ActiveRecord::Base
 
   def send!(options={})
     push = (options[:push] == true) || (options[:push] == 1)
+  end
+
+  def event_wall_message_saved
+    wall.update_attribute(:updated_at, updated_at)
   end
 
 end
