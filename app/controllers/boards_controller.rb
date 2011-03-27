@@ -3,9 +3,8 @@ class BoardsController < ApplicationController
 
   # GET /
   def index
-    # find user's most recent chalkboard
-    @chalkboard = Wall.find_by_member(current_user)
-    redirect_to(board_path(@chalkboard.id))
+    # find all chalkboards with messages
+    @chalkboards = Wall.find_all_by_member(current_user)
   end
 
   # GET /boards/1

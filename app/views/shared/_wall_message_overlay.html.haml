@@ -4,9 +4,9 @@
   .close
   %p
     %em
-      When you a checkin somewhere, a chalkboard is created for you and your followers to have a conversation.
-      %br
-      When you write on the chalkboard, all participants are sent the message.
+      A chalkboard is created each time you checkin somewhere.
+      Its a shared space for you and your followers to have a group conversation.
+      When you write on the chalkboard, all participants see the message.
   %h3#header_to To:
   = form_tag(messages_path, :id => 'new_message', 'data-url' => url) do
     = hidden_field_tag 'message[wall_id]', '', :id => "message_wall_id"

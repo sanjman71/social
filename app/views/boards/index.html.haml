@@ -1,0 +1,17 @@
+.span-16.last.mask
+  #home-following.tipsy
+    #home-following-title.titlebar.left Recent Chalkboards
+    
+    .chalkboards
+      - if @chalkboards.empty?
+        %h4 You don't have any recent chalkboards
+
+      - @chalkboards.each do |board|
+        .span-16.last.chalkboard
+          .span-4.name
+            = link_to board.name, board_path(board)
+          .span-12.last.messages
+            = pluralize(board.messages_count, 'message')
+            %br
+            = pluralize(board.member_set.size, 'participant')
+

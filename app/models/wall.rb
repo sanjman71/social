@@ -16,12 +16,12 @@ class Wall < ActiveRecord::Base
 
   def self.find_all_by_member(user)
     user_id = user.id rescue user
-    Wall.find(:all, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "updated_at desc")
+    Wall.find(:all, :conditions => ["find_in_set(?,member_set_ids) AND messages_count > 0", user_id], :order => "updated_at desc")
   end
 
   def self.find_by_member(user)
     user_id = user.id rescue user
-    Wall.find(:first, :conditions => ["find_in_set(?,member_set_ids)", user_id], :order => "updated_at desc")
+    Wall.find(:first, :conditions => ["find_in_set(?,member_set_ids) AND messages_count > 0", user_id], :order => "updated_at desc")
     # Wall.select(:find_in_set[:member_set_ids, user_id])
   end
 
