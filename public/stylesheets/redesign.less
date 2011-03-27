@@ -54,7 +54,7 @@ body {
         float: left;
         margin: 2px 3px 0 0;
       }
-      :hover {
+      &:hover {
         background: rgba(0,0,0,.5);
       }
     }
@@ -66,10 +66,10 @@ body {
         color: @darkblue;
         font-weight: bold;
         text-decoration: none;
-        :hover {
+        &:hover {
           text-decoration: underline;
         }
-        :last-child {
+        &:last-child {
           font-weight: normal;
           text-decoration: underline;
         }
@@ -105,7 +105,7 @@ body {
       width: 112px;
       height: 48px;
       float: left;
-      :first-child {
+      &:first-child {
         a {
           -moz-border-radius-topleft: 30px;
           -moz-border-radius-bottomleft: 30px;
@@ -114,7 +114,7 @@ body {
           border-right: 2px solid #407098;
         }
       }
-      :last-child {
+      &:last-child {
         a {
           -moz-border-radius-topright: 30px;
           -moz-border-radius-bottomright: 30px;
@@ -141,17 +141,17 @@ body {
         background: #5387AC; /* old browsers */
         background: -moz-linear-gradient(top, #6E9CBD 0%, #6998B9 50%, #578CB0 51%, #5387AC 100%);
         background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6E9CBD), color-stop(50%,#6998B9), color-stop(51%,#578CB0), color-stop(100%,#5387AC));
-        :hover {
+        &:hover {
           background: -moz-linear-gradient(top, #79A6C4 0%, #74A3C0 50%, #6098B8 51%, #5B93B4 100%);
           background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#79A6C4), color-stop(50%,#74A3C0), color-stop(51%,#6098B8), color-stop(100%,#5B93B4));
         }
       }
-      :nth-child(2) {
+      &:nth-child(2) {
         a {
           border-left: 2px solid #639cbb;
         }
       }
-      :nth-child(6) {
+      &:nth-child(6) {
         a {
           border-right: 2px solid #407098;
         }
@@ -203,7 +203,7 @@ body {
       li {
         min-height: 42px;
         border-bottom: 1px solid #f0f0f0;
-        :last-child {
+        &:last-child {
           border: 0;
         }
         .member {
@@ -260,7 +260,7 @@ body {
               display: block;
               text-decoration: none;
               color: #363636;
-              :hover {
+              &:hover {
                 text-decoration: underline;
               }
             }
@@ -277,7 +277,7 @@ body {
               color: #999;
               font-weight: normal;
               font-style: italic;
-              :hover {
+              &:hover {
                 text-decoration: underline;
               }
             }
@@ -294,7 +294,7 @@ body {
             display: block;
             text-decoration: none;
             color: @blue;
-            :hover {
+            &:hover {
               text-decoration: underline;
             }
           }
@@ -325,7 +325,7 @@ body {
             float: left;
             margin: 0 3px 0 0;
           }
-          :hover {
+          &:hover {
             .gradient(@lightorange,@orange);
             color: #fff;
             border-color: @darkorange;
@@ -361,7 +361,7 @@ body {
         margin: 0;
         float: left;
       }
-      :hover {
+      &:hover {
         .gradient(@lightorange,@orange);
         border-color: @darkorange;
       }
@@ -390,7 +390,7 @@ body {
           border-top: 1px solid #3c3c3c;
           .gradient(#252525,#000);
           border-bottom: 0 !important;
-          :first-child {
+          &:first-child {
             text-indent: 5px;
           }
           a {
@@ -404,7 +404,7 @@ body {
             display: block;
             padding: 0 5px;
             .gradient(#252525,#000);
-            :hover {
+            &:hover {
               color: @lightorange;
             }
           }
@@ -429,10 +429,10 @@ body {
       }
       #profile-user-info {
         float: left;
-        padding: 10px 0 0 0;
+        padding: 0;
         h2 {
           margin: 0;
-          padding: 0 0 3px 0;
+          padding: 0;
           color: #363636;
           font-size: 20px;
         }
@@ -511,7 +511,7 @@ body {
         li {
           border-bottom: 1px solid #f0f0f0;
           float: left;
-          :last-child {
+          &:last-child {
             border: 0;
           }
           a {
@@ -524,7 +524,7 @@ body {
             height: 46px;
             line-height: 46px;
             float: left;
-            :hover {
+            &:hover {
               text-decoration: underline
             }
           }
@@ -586,7 +586,7 @@ body {
             font-size: 14px;
             text-decoration: none;
             font-weight: bold;
-            :hover {
+            &:hover {
               text-decoration: underline
             }
           }
@@ -715,4 +715,14 @@ body {
 /* Hide from IE Mac \*/
 .clearfix {
   display: block;
+}
+
+.chalkboard {
+  .group {
+    padding: 10px 0;
+  }
+  
+  .message {
+    padding: 0 0 10px 0;
+  }
 }

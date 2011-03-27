@@ -6,7 +6,9 @@ body {
   margin: 0;
   padding: 0;
 }
-body a img { border: 0; }
+body a img {
+  border: 0;
+}
 body .left-col {
   float: left;
   width: 380px;
@@ -19,11 +21,13 @@ body .wrapper {
   width: 660px;
   margin: 0 auto;
 }
-body #header { padding: 5px 0 10px; }
+body #header {
+  padding: 5px 0 10px;
+}
 body #header a#invite-friends {
   float: left;
   background: rgba(0, 0, 0, 0.3);
-  color: #ffffff;
+  color: #fff;
   text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.2);
   font-weight: bold;
   text-decoration: none;
@@ -37,7 +41,9 @@ body #header a#invite-friends img {
   float: left;
   margin: 2px 3px 0 0;
 }
-body #header a#invite-friends:hover { background: rgba(0, 0, 0, 0.5); }
+body #header a#invite-friends:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
 body #header #top-right {
   float: right;
   font-size: 11px;
@@ -48,7 +54,9 @@ body #header #top-right a {
   font-weight: bold;
   text-decoration: none;
 }
-body #header #top-right a:hover { text-decoration: underline; }
+body #header #top-right a:hover {
+  text-decoration: underline;
+}
 body #header #top-right a:last-child {
   font-weight: normal;
   text-decoration: underline;
@@ -105,7 +113,7 @@ body #nav li a {
   line-height: 48px;
   display: block;
   text-decoration: none;
-  color: #ffffff;
+  color: #fff;
   text-align: center;
   font-weight: bold;
   font-size: 16px;
@@ -113,7 +121,9 @@ body #nav li a {
   -webkit-box-shadow: 0 5px 0 #407098, inset 0 1px 0 #87bad1;
   -moz-box-shadow: 0 5px 0 #407098, inset 0 1px 0 #87bad1;
   box-shadow: 0 5px 0 #407098, inset 0 1px 0 #87bad1;
-  background: #5387ac;
+  background: #5387AC;
+  /* old browsers */
+
   background: -moz-linear-gradient(top, #6e9cbd 0%, #6998b9 50%, #578cb0 51%, #5387ac 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #6e9cbd), color-stop(50%, #6998b9), color-stop(51%, #578cb0), color-stop(100%, #5387ac));
 }
@@ -121,8 +131,12 @@ body #nav li a:hover {
   background: -moz-linear-gradient(top, #79a6c4 0%, #74a3c0 50%, #6098b8 51%, #5b93b4 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #79a6c4), color-stop(50%, #74a3c0), color-stop(51%, #6098b8), color-stop(100%, #5b93b4));
 }
-body #nav li:nth-child(2) a { border-left: 2px solid #639cbb; }
-body #nav li:nth-child(6) a { border-right: 2px solid #407098; }
+body #nav li:nth-child(2) a {
+  border-left: 2px solid #639cbb;
+}
+body #nav li:nth-child(6) a {
+  border-right: 2px solid #407098;
+}
 body #nav li#logo {
   width: 244px;
   margin: -10px -16px 0;
@@ -133,7 +147,7 @@ body #nav li#logo h1 {
   font-weight: bold;
   margin: 0;
   padding: 0;
-  color: #ffffff;
+  color: #fff;
   line-height: 48px;
 }
 body #nav li#logo a {
@@ -145,11 +159,11 @@ body #content {
   margin: 0 auto;
   width: 620px;
   border: 10px solid #f0f0f0;
-  background: #ffffff;
+  background: #fff;
   padding: 10px;
-  -webkit-box-shadow: 0 0 2px #000000, 0 0 25px #246676;
-  -moz-box-shadow: 0 0 2px #000000, 0 0 25px #246676;
-  box-shadow: 0 0 2px #000000, 0 0 25px #246676;
+  -webkit-box-shadow: 0 0 2px #000, 0 0 25px #246676;
+  -moz-box-shadow: 0 0 2px #000, 0 0 25px #246676;
+  box-shadow: 0 0 2px #000, 0 0 25px #246676;
   -moz-border-radius: 20px;
   border-radius: 20px;
 }
@@ -172,15 +186,21 @@ body #content #home-checkins li {
   min-height: 42px;
   border-bottom: 1px solid #f0f0f0;
 }
-body #content #home-checkins li:last-child { border: 0; }
+body #content #home-checkins li:last-child {
+  border: 0;
+}
 body #content #home-checkins li .member {
   margin: 15px 20px 0 25px;
   width: 36px;
   height: 12px;
   float: left;
 }
-body #content #home-checkins li .member.yes { background: url(/images/member-yes-no.png); }
-body #content #home-checkins li .member.no { background: url(/images/member-yes-no.png) 0 -12px; }
+body #content #home-checkins li .member.yes {
+  background: url(/images/member-yes-no.png);
+}
+body #content #home-checkins li .member.no {
+  background: url(/images/member-yes-no.png) 0 -12px;
+}
 body #content #home-checkins li .picture {
   width: 40px;
   float: left;
@@ -203,8 +223,8 @@ body #content #home-checkins li a.follow-action {
   background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
   -moz-border-radius: 3px;
   border-radius: 3px;
-  border: 1px solid #cccccc;
-  color: #888888;
+  border: 1px solid #ccc;
+  color: #888;
   text-decoration: none;
   font-weight: bold;
   -moz-border-radius: 3px;
@@ -230,7 +250,9 @@ body #content #home-checkins li .user-info h4 a {
   text-decoration: none;
   color: #363636;
 }
-body #content #home-checkins li .user-info h4 a:hover { text-decoration: underline; }
+body #content #home-checkins li .user-info h4 a:hover {
+  text-decoration: underline;
+}
 body #content #home-checkins li .user-info h5 {
   font-size: 11px;
   margin: 0;
@@ -241,11 +263,13 @@ body #content #home-checkins li .user-info h5 a {
   width: 130px;
   display: block;
   text-decoration: none;
-  color: #999999;
+  color: #999;
   font-weight: normal;
   font-style: italic;
 }
-body #content #home-checkins li .user-info h5 a:hover { text-decoration: underline; }
+body #content #home-checkins li .user-info h5 a:hover {
+  text-decoration: underline;
+}
 body #content #home-checkins li h3 {
   float: left;
   font-size: 14px;
@@ -259,7 +283,9 @@ body #content #home-checkins li h3 a {
   text-decoration: none;
   color: #5c96b5;
 }
-body #content #home-checkins li h3 a:hover { text-decoration: underline; }
+body #content #home-checkins li h3 a:hover {
+  text-decoration: underline;
+}
 body #content #home-checkins li h3 a.location-comment-count {
   padding: 0 0 0 16px;
   margin: 2px 0 0 0;
@@ -267,12 +293,12 @@ body #content #home-checkins li h3 a.location-comment-count {
   line-height: 12px;
   display: block;
   font-size: 10px;
-  color: #aaaaaa;
+  color: #aaa;
   background: url(/images/location-comment-count.png) no-repeat;
 }
 body #content #home-checkins li a.invite {
   float: right;
-  color: #888888;
+  color: #888;
   font-weight: bold;
   text-decoration: none;
   display: block;
@@ -284,7 +310,7 @@ body #content #home-checkins li a.invite {
   background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
   -moz-border-radius: 3px;
   border-radius: 3px;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
 }
 body #content #home-checkins li a.invite img {
   float: left;
@@ -294,7 +320,7 @@ body #content #home-checkins li a.invite:hover {
   background: -webkit-linear-gradient(#ff9c0a, #f29000);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9c0a), color-stop(100%, #f29000));
   background: -moz-linear-gradient(top, #ff9c0a, #f29000);
-  color: #ffffff;
+  color: #fff;
   border-color: #e28600;
 }
 body #content #home-following {
@@ -320,7 +346,7 @@ body #content .actions {
   background: -webkit-linear-gradient(#f3f3f3, #eeeeee);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f3f3f3), color-stop(100%, #eeeeee));
   background: -moz-linear-gradient(top, #f3f3f3, #eeeeee);
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
 }
 body #content .actions img {
   margin: 0;
@@ -338,13 +364,13 @@ body #content .actions ul {
   z-index: 1;
   top: 24px;
   left: -1px;
-  background: #000000;
+  background: #000;
   width: 100px;
   list-style-type: none;
   -moz-border-radius: 5px;
   border-radius: 5px;
   padding: 0;
-  border: 1px solid #000000;
+  border: 1px solid #000;
   -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
   -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
@@ -362,9 +388,11 @@ body #content .actions ul li {
   background: -moz-linear-gradient(top, #252525, #000000);
   border-bottom: 0 !important;
 }
-body #content .actions ul li:first-child { text-indent: 5px; }
+body #content .actions ul li:first-child {
+  text-indent: 5px;
+}
 body #content .actions ul li a {
-  color: #ffffff;
+  color: #fff;
   font-weight: normal;
   font-size: 12px;
   text-transform: none;
@@ -377,8 +405,12 @@ body #content .actions ul li a {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #252525), color-stop(100%, #000000));
   background: -moz-linear-gradient(top, #252525, #000000);
 }
-body #content .actions ul li a:hover { color: #ff9c0a; }
-body #content .actions.open ul { display: block; }
+body #content .actions ul li a:hover {
+  color: #ff9c0a;
+}
+body #content .actions.open ul {
+  display: block;
+}
 body #content #profile-info {
   padding: 9px;
   height: 75px;
@@ -395,11 +427,11 @@ body #content #profile-info img#user-avatar {
 }
 body #content #profile-info #profile-user-info {
   float: left;
-  padding: 10px 0 0 0;
+  padding: 0;
 }
 body #content #profile-info #profile-user-info h2 {
   margin: 0;
-  padding: 0 0 3px 0;
+  padding: 0;
   color: #363636;
   font-size: 20px;
 }
@@ -412,10 +444,12 @@ body #content #profile-info #profile-user-info h3 {
 body #content #profile-info #profile-user-info h4 {
   margin: 0;
   padding: 0 0 3px 0;
-  color: #aaaaaa;
+  color: #aaa;
   font-size: 12px;
 }
-body #content #profile-info .actions { top: 18px; }
+body #content #profile-info .actions {
+  top: 18px;
+}
 body #content #out-now {
   position: relative;
   padding: 18px 10px;
@@ -427,11 +461,13 @@ body #content #out-now {
   color: #363636;
   text-align: left;
   font-weight: bold;
-  -webkit-box-shadow: inset 0 1px 0 #ffffff;
-  -moz-box-shadow: inset 0 1px 0 #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff;
+  -webkit-box-shadow: inset 0 1px 0 #fff;
+  -moz-box-shadow: inset 0 1px 0 #fff;
+  box-shadow: inset 0 1px 0 #fff;
 }
-body #content #out-now a { color: #5c96b5; }
+body #content #out-now a {
+  color: #5c96b5;
+}
 body #content #out-now div {
   width: 27px;
   height: 27px;
@@ -475,7 +511,9 @@ body #content #profile-recent-checkins ul li {
   border-bottom: 1px solid #f0f0f0;
   float: left;
 }
-body #content #profile-recent-checkins ul li:last-child { border: 0; }
+body #content #profile-recent-checkins ul li:last-child {
+  border: 0;
+}
 body #content #profile-recent-checkins ul li a {
   font-size: 14px;
   display: block;
@@ -487,13 +525,15 @@ body #content #profile-recent-checkins ul li a {
   line-height: 46px;
   float: left;
 }
-body #content #profile-recent-checkins ul li a:hover { text-decoration: underline; }
+body #content #profile-recent-checkins ul li a:hover {
+  text-decoration: underline;
+}
 body #content #profile-recent-checkins ul li small {
   float: right;
   width: 90px;
   font-size: 11px;
   font-style: italic;
-  color: #777777;
+  color: #777;
   height: 46px;
   line-height: 46px;
 }
@@ -509,84 +549,24 @@ body #content #profile-following a {
   float: left;
   margin: 2px 2px 0 0;
 }
-body #content #favorite-places {
+body #content #favorite-places, body #content #friends-favorite-places {
   margin: 35px 0 0 0;
   float: left;
   position: relative;
 }
-body #content #favorite-places #favorite-places-title {
-  right: -23px;
-  top: -25px;
-}
-body #content #favorite-places #friends-favorite-places-title {
-  right: -23px;
-  top: -25px;
-}
-body #content #favorite-places ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-body #content #favorite-places ul li {
-  margin: 0 0 5px 0;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  background: #f0f0f0;
-  border: 1px solid #e0e0e0;
-  padding: 5px 8px;
-  width: 214px;
-  float: left;
-}
-body #content #favorite-places ul li a {
-  padding: 7px 0 0 0;
-  display: block;
-  color: #5c96b5;
-  width: 160px;
-  float: left;
-  font-size: 14px;
-  text-decoration: none;
-  font-weight: bold;
-}
-body #content #favorite-places ul li a:hover { text-decoration: underline; }
-body #content #favorite-places ul li div {
-  text-align: center;
-  width: 50px;
-  float: right;
-}
-body #content #favorite-places ul li div em {
-  color: #363636;
-  font-size: 18px;
-  width: 50px;
-  display: block;
-  font-weight: bold;
-  font-style: normal;
-}
-body #content #favorite-places ul li div small {
-  display: block;
-  width: 50px;
-  font-size: 9px;
-  color: #aaaaaa;
-  font-style: normal;
-}
-body #content #friends-favorite-places {
-  margin: 35px 0 0 0;
-  float: left;
-  position: relative;
-}
-body #content #friends-favorite-places #favorite-places-title {
-  right: -23px;
-  top: -25px;
-}
+body #content #favorite-places #favorite-places-title,
+body #content #friends-favorite-places #favorite-places-title,
+body #content #favorite-places #friends-favorite-places-title,
 body #content #friends-favorite-places #friends-favorite-places-title {
   right: -23px;
   top: -25px;
 }
-body #content #friends-favorite-places ul {
+body #content #favorite-places ul, body #content #friends-favorite-places ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-body #content #friends-favorite-places ul li {
+body #content #favorite-places ul li, body #content #friends-favorite-places ul li {
   margin: 0 0 5px 0;
   -moz-border-radius: 5px;
   border-radius: 5px;
@@ -596,7 +576,7 @@ body #content #friends-favorite-places ul li {
   width: 214px;
   float: left;
 }
-body #content #friends-favorite-places ul li a {
+body #content #favorite-places ul li a, body #content #friends-favorite-places ul li a {
   padding: 7px 0 0 0;
   display: block;
   color: #5c96b5;
@@ -606,13 +586,15 @@ body #content #friends-favorite-places ul li a {
   text-decoration: none;
   font-weight: bold;
 }
-body #content #friends-favorite-places ul li a:hover { text-decoration: underline; }
-body #content #friends-favorite-places ul li div {
+body #content #favorite-places ul li a:hover, body #content #friends-favorite-places ul li a:hover {
+  text-decoration: underline;
+}
+body #content #favorite-places ul li div, body #content #friends-favorite-places ul li div {
   text-align: center;
   width: 50px;
   float: right;
 }
-body #content #friends-favorite-places ul li div em {
+body #content #favorite-places ul li div em, body #content #friends-favorite-places ul li div em {
   color: #363636;
   font-size: 18px;
   width: 50px;
@@ -620,11 +602,11 @@ body #content #friends-favorite-places ul li div em {
   font-weight: bold;
   font-style: normal;
 }
-body #content #friends-favorite-places ul li div small {
+body #content #favorite-places ul li div small, body #content #friends-favorite-places ul li div small {
   display: block;
   width: 50px;
   font-size: 9px;
-  color: #aaaaaa;
+  color: #aaa;
   font-style: normal;
 }
 body #footer {
@@ -639,7 +621,7 @@ body #footer {
   background: -moz-linear-gradient(top, #494949, #242424);
   height: 21px;
   line-height: 21px;
-  color: #ffffff;
+  color: #fff;
   font-size: 11px;
   font-weight: bold;
   text-shadow: 0 -1px 1px #000000;
@@ -668,7 +650,7 @@ body #footer {
   background: url(/images/welcome-map.jpg);
 }
 #welcome-header h2 {
-  color: #ffffff;
+  color: #fff;
   font-size: 24px;
   text-shadow: 0 -1px 1px #000000;
   font-weight: bold;
@@ -683,7 +665,7 @@ body #footer {
   left: -23px;
   background: rgba(0, 0, 0, 0.8);
   padding: 5px 10px;
-  color: #ffffff;
+  color: #fff;
   font-size: 15px;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
   -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
@@ -696,7 +678,7 @@ body #footer {
 }
 #welcome-left p {
   font-size: 12px;
-  color: #555555;
+  color: #555;
   line-height: 16px;
 }
 #welcome-right {
@@ -716,5 +698,16 @@ body #footer {
   clear: both;
   visibility: hidden;
 }
-.clearfix { display: inline-block; }
-.clearfix { display: block; }
+.clearfix {
+  display: inline-block;
+}
+/* Hide from IE Mac \*/
+.clearfix {
+  display: block;
+}
+.chalkboard .group {
+  padding: 10px 0;
+}
+.chalkboard .message {
+  padding: 0 0 10px 0;
+}
