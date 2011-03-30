@@ -1,4 +1,4 @@
-- javascript('users_settings')
+- javascript('settings')
 
 .left-col
   #profile-recent-checkins.clearfix
@@ -28,21 +28,37 @@
     -# gender and orientation
     .span-15.last
       = f.input :gender, :collection => [['Female', 'female'], ['Male', 'male']], :selected => @user.gender_name, :required => true
-    .span-15.last
-      = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name, :required => true
-    -# birthdate
-    .span-15.last
-      = f.input :birthdate, :as => :date, :start_year => Date.today.year - 60, :end_year => Date.today.year - 15, :order => [:month, :day, :year], :required => true
+
+    - if false
+      .span-15.last
+        = f.input :orientation, :collection => [['Gay', 'gay'], ['Straight', 'straight']], :selected => @user.orientation_name, :required => true
+      -# birthdate
+      .span-15.last
+        = f.input :birthdate, :as => :date, :start_year => Date.today.year - 60, :end_year => Date.today.year - 15, :order => [:month, :day, :year], :required => true
+
     -# email address
     .span-15.last
       = f.simple_fields_for :email_addresses do |email_form|
         = email_form.input :address, :label => 'Email Address', :required => true, :input_html => {:class => 'required email', :id => 'user_email'}
+
     -# location
     .span-15.last
       = f.simple_fields_for :city do |city_form|
         -# city
         = city_form.input :name, :label => 'Location', :required => true, :input_html => {'data-url' => search_locations_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
       = hidden_field_tag :location_changed, 0
+
+    .span-15.last{:style => 'margin: 5px 0;'}
+      Outlate.ly will send you notification emails when someone you're following checks-in ...
+
+    .span-15.last
+      %label{:for => "follow_all_checkins_email"} Anywhere
+      = f.check_box :preferences_follow_all_checkins_email, :id => 'follow_all_checkins_email', :class => 'checkbox'
+
+    .span-15.last
+      %label{:for => "follow_nearby_checkins_email"} Near Me
+      = f.check_box :preferences_follow_nearby_checkins_email, :id => 'follow_nearby_checkins_email', :class => 'checkbox'
+
     -#.span-24.last
       -#= f.simple_fields_for :availability do |avail_form|
         -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"

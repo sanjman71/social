@@ -19,7 +19,19 @@ class CheckinWorker
     followers.each do |follower|
       # should always be members, but check anyway
       next unless follower.member?
-      log("[user:#{user.id}] #{user.handle} sending checkin email to follower:#{follower.id}:#{follower.handle}")
+      # check follower's preferences
+      if follower.preferences_follow_all_checkins_email.to_i == 1
+        log("[user:#{user.id}] #{user.handle} sending checkin email to follower:#{follower.id}:#{follower.handle}")
+      elsif follower.preferences_follow_nearby_checkins_email.to_i == 1
+        # check distance between user and checkin
+        distance = Distance.checkin_distance(follower, checkin)
+        if distance <= 20.0
+          log("[user:#{user.id}] #{user.handle} sending checkin email to follower:#{follower.id}:#{follower.handle}, distance #{distance} lt 20")
+        else
+          log("[user:#{user.id}] #{user.handle} discarding checkin email to follower:#{follower.id}:#{follower.handle}, distance #{distance} gt 20")
+          return
+        end
+      end
       # send email
       Resque.enqueue(UserMailerWorker, :user_friend_realtime_checkin,
                      'user_id' => follower.id, 'checkin_id' => checkin.id)

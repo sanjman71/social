@@ -3,17 +3,20 @@ Feature: Import user checkin
   I want to receive notifications when I checkin using facebook or foursquare
 
   Background:
-    Given a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
+    Given a city "Chicago" should exist with name: "Chicago"
+
+    And a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight", city: city "Chicago"
     And user "sanjay" has email "sanjay@outlately.com"
     And user "sanjay" has oauth "facebook" "123"
 
-    And a user "adam" exists with handle: "adam", member: "1", gender: "Male", orientation: "Straight"
+    And a user "adam" exists with handle: "adam", member: "1", gender: "Male", orientation: "Straight", city: city "Chicago"
     And user "adam" has email "adam@outlately.com"
 
     And a user "friendly" exists with handle: "friendly", member: "1", gender: "Male", orientation: "Straight"
     And user "friendly" has email "friendly@gmail.com"
 
     And a location "Starbucks" exists with name: "Starbucks", street_address: "200 N State St.", city_state: "Chicago:IL", lat: "41.8781136", lng: "-87.6297982"
+    And a location "Boston Lager" exists with name: "Boston Lager", city_state: "Boston:MA", lat: "42.3584308", lng: "-71.0597732"
 
   @checkin @email @realtime
   Scenario: Members who have opted in should receive an email after a recent checkin is imported
@@ -27,10 +30,33 @@ Feature: Import user checkin
 
 
   @checkin @email @realtime
-  Scenario: Followers should receive an email after a user checkin is imported
+  Scenario: Followers with preferences_follow_nearby_checkins_email should only receive emails for nearby following checkins
     Given "adam" is friends with "sanjay"
     And "adam" is friends with "friendly"
     And "sanjay" is following "adam"
+    And user "sanjay" has preference "preferences_follow_nearby_checkins_email" "1"
+    And user "sanjay" has preference "preferences_follow_all_checkins_email" "0"
+
+    And user "adam" checked in to "Boston Lager" "5 minutes ago"
+    And the resque jobs are processed until empty
+
+    # followers should not receive emails
+    Then "sanjay@outlately.com" should receive no emails with subject "Outlate.ly: adam checked in at Boston Lager..."
+
+    When 3 hours have passed
+    And user "adam" checked in to "Starbucks" "5 minutes ago"
+    And the resque jobs are processed until empty
+
+    Then "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Starbucks..."
+
+
+  @checkin @email @realtime
+  Scenario:  Followers with preferences_follow_all_checkins_email should receive an email after any user checkin is imported
+    Given "adam" is friends with "sanjay"
+    And "adam" is friends with "friendly"
+    And "sanjay" is following "adam"
+    And user "sanjay" has preference "preferences_follow_nearby_checkins_email" "0"
+    And user "sanjay" has preference "preferences_follow_all_checkins_email" "1"
 
     And user "adam" checked in to "Starbucks" "5 minutes ago"
     And the resque jobs are processed until empty

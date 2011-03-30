@@ -53,8 +53,21 @@ $.fn.init_change_user_city = function() {
   })
 }
 
+$.fn.init_change_preferences = function() {
+  $("input.checkbox").change(function() {
+    if ($(this).attr('checked')) {
+      // uncheck other field
+      $("input:checkbox").not("#" + $(this).attr('id')).attr('checked', false)
+    } else {
+      // check other field
+      $("input:checkbox").not("#" + $(this).attr('id')).attr('checked', true)
+    }
+  })
+}
+
 $(document).ready(function() {
   $(document).init_change_user_city();
+  $(document).init_change_preferences();
 
   // remove date class from select fields - firefox doesn't like it
   $("select.date").removeClass('date');
