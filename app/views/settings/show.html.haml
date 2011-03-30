@@ -50,6 +50,9 @@
         %br
         %label{:for => "foursquare"}= link_to 'Foursquare', user_omniauth_authorize_path(:foursquare)
         %span{:style => 'display: block; margin-top: 5px;'} Link this account so Outlate.ly can notify your friends when you check-in on Foursquare
+      - else
+        %label{:for => "foursquare"} Foursquare
+        %span{:style => 'display: block; margin-top: 5px;'} Account linked
 
     .span-15.last{:style => 'margin: 5px 0;'}
       Outlate.ly will send you notification emails when someone you're following checks-in ...
