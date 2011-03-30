@@ -10,10 +10,6 @@
   = display_flash(:all)
   = display_alerts
 
-.span-16.last
-  -# link foursquare
-  = render(:partial => 'shared/oauth_links')
-
 .span-15.last
   -# initialize nested objects
   - @user.email_addresses.build if @user.email_addresses_count == 0
@@ -47,6 +43,13 @@
         -# city
         = city_form.input :name, :label => 'Location', :required => true, :input_html => {'data-url' => search_locations_path(:google), :value => f.object.city.try(:city_state), :id => 'user_city_name', :autocomplete => 'off'}
       = hidden_field_tag :location_changed, 0
+
+    .span-15.last{:style => 'margin: 5px 0;'}
+      - if @user.foursquare_oauth.blank?
+        %strong Link your accounts:
+        %br
+        %label{:for => "foursquare"}= link_to 'Foursquare', user_omniauth_authorize_path(:foursquare)
+        %span{:style => 'display: block; margin-top: 5px;'} Link this account so Outlate.ly can notify your friends when you check-in on Foursquare
 
     .span-15.last{:style => 'margin: 5px 0;'}
       Outlate.ly will send you notification emails when someone you're following checks-in ...
