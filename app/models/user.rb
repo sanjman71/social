@@ -468,6 +468,10 @@ class User < ActiveRecord::Base
     !self.encrypted_password.blank?
   end
 
+  def last_checkin_after(timestamp)
+    checkins.where(:checkin_at.gt => timestamp).order("checkin_at desc").limit(1).first
+  end
+
   #
   # learn methods
   #

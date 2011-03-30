@@ -23,8 +23,10 @@ class CheckinWorker
       if follower.preferences_follow_all_checkins_email.to_i == 1
         log("[user:#{user.id}] #{user.handle} sending checkin email to follower:#{follower.id}:#{follower.handle}")
       elsif follower.preferences_follow_nearby_checkins_email.to_i == 1
-        # check distance between user and checkin
-        distance = Distance.checkin_distance(follower, checkin)
+        # check distance between folower and checkin
+        # use follower's last checkin within 24 hours, default to follower's city
+        geo       = follower.last_checkin_after(24.hours.ago).try(:location) || follower.city
+        distance  = Distance.checkin_distance(geo, checkin)
         if distance <= 20.0
           log("[user:#{user.id}] #{user.handle} sending checkin email to follower:#{follower.id}:#{follower.handle}, distance #{distance} lt 20")
         else

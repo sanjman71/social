@@ -64,10 +64,12 @@
     .span-15.last
       %label{:for => "follow_nearby_checkins_email"} Near Me
       = f.check_box :preferences_follow_nearby_checkins_email, :id => 'follow_nearby_checkins_email', :class => 'checkbox'
+      %span.hint based on your last checkin in the past 24 hours or your default location
 
     -#.span-24.last
       -#= f.simple_fields_for :availability do |avail_form|
         -#= avail_form.input :now, :label => 'Available Today', :hint => "you're available to meet today"
+
     .span-15.prepend-1.last{:style => 'margin: 20px 0;'}
       = f.submit 'Update', :id => 'edit_user_submit', :style => 'font-size: 1.3em;'
       %span{:style => 'margin: 3px; display: block;'}

@@ -12,7 +12,7 @@
 }
 .simple_form input[type="checkbox"] {
   float: left;
-  width: 100px;
+  width: 30px;
   margin-top: 7px;
 }
 .simple_form label {
@@ -20,6 +20,12 @@
   width: 100px;
   text-align: right;
   margin: 5px 10px;
+}
+.simple_form .hint {
+  display: block;
+  margin-top: 7px;
+  color: #777;
+  font-style: italic;
 }
 /*
 input[type="text"],
@@ -46,9 +52,4 @@ textarea {
 */
 input[type="submit"], label, select {
   clear: both;
-}
-span.hint {
-  margin: 0 5px;
-  display: block;
-  color: #bbb;
 }

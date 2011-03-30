@@ -30,7 +30,7 @@ Feature: Import user checkin
 
 
   @checkin @email @realtime
-  Scenario: Followers with preferences_follow_nearby_checkins_email should only receive emails for nearby following checkins
+  Scenario: Followers with preferences_follow_nearby_checkins_email should only receive emails for nearby checkins from users they are following
     Given "adam" is friends with "sanjay"
     And "adam" is friends with "friendly"
     And "sanjay" is following "adam"
@@ -51,7 +51,29 @@ Feature: Import user checkin
 
 
   @checkin @email @realtime
-  Scenario:  Followers with preferences_follow_all_checkins_email should receive an email after any user checkin is imported
+  Scenario: Followers with preferences_follow_nearby_checkins_email should only receive emails for nearby checkins (based on their last checkin within 24 hours) from users they are following
+    Given "adam" is friends with "sanjay"
+    And "adam" is friends with "friendly"
+    And "sanjay" is following "adam"
+    And user "sanjay" has preference "preferences_follow_nearby_checkins_email" "1"
+    And user "sanjay" has preference "preferences_follow_all_checkins_email" "0"
+
+    And user "sanjay" checked in to "Boston Lager" "23 hours ago"
+    And user "adam" checked in to "Boston Lager" "5 minutes ago"
+    And the resque jobs are processed until empty
+
+    # follower should get email based on their last checkin
+    Then "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Boston Lager..."
+
+    When 2 hours have passed
+    And user "adam" checked in to "Boston Lager" "5 minutes ago"
+    And the resque jobs are processed until empty
+
+    # follower should not get email based on their default city
+    Then "sanjay@outlately.com" should receive no emails with subject "Outlate.ly: adam checked in at Boston Lager..."
+
+  @checkin @email @realtime
+  Scenario:  Followers with preferences_follow_all_checkins_email should receive an email after any checkin from a user they are following
     Given "adam" is friends with "sanjay"
     And "adam" is friends with "friendly"
     And "sanjay" is following "adam"
