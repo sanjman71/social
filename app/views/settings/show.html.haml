@@ -45,13 +45,12 @@
       = hidden_field_tag :location_changed, 0
 
     .span-15.last{:style => 'margin: 5px 0;'}
+      %label{:for => "foursquare"} Foursquare
       - if @user.foursquare_oauth.blank?
-        %strong Link your accounts:
-        %br
-        %label{:for => "foursquare"}= link_to 'Foursquare', user_omniauth_authorize_path(:foursquare)
-        %span{:style => 'display: block; margin-top: 5px;'} Link this account so Outlate.ly can notify your friends when you check-in on Foursquare
+        %span{:style => 'display: block; margin-top: 5px;'}= link_to 'Connect', user_omniauth_authorize_path(:foursquare)
+        %label{:for => ''} &nbsp;
+        %span.hint so Outlate.ly can notify your followers when you check-in on Foursquare
       - else
-        %label{:for => "foursquare"} Foursquare
         %span{:style => 'display: block; margin-top: 5px;'} Account linked
 
     .span-15.last{:style => 'margin: 5px 0;'}
