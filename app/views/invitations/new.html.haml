@@ -30,9 +30,7 @@
         .span-12.last
           %label{:for => 'invitees'} To:
         .span-12.last.bottom
-          = text_area_tag :invitees, '', :id => 'invitees', :placeholder => 'e.g. user@gmail.com', :style => 'height: 30px;'
-        .span-12.last
-          %span.hint Lots of people to invite? Seperate multiple email addresses with commas.
+          = text_area_tag :invitees, '', :id => 'invitees', :placeholder => 'e.g. mybuddy@gmail.com, anotherfriend@gmail.com', :style => 'height: 30px;'
         .span-12.last
           %label{:for => 'invitation_subject'} Subject:
         .span-12.last
