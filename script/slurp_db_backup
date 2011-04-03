@@ -39,6 +39,6 @@ Net::SFTP.start(server, user, :port => 22) do |sftp|
   sftp.download!("#{backup_path}/#{backup}", backup)
   puts "#{Time.now}: restoring backup to #{app}_#{environment} database"
   system "rake db:restore DB=#{app}_#{environment} FILE=#{backup}"
-  system "rake ts:rebuild"
+  # system "rake ts:rebuild"
 end
 

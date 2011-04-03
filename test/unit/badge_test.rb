@@ -72,7 +72,6 @@ class BadgeTest < ActiveSupport::TestCase
     @badge = Badge.create!(:regex => "pizza", :name => 'Pizza Junkie', :tagline => 'Sucka cheese')
     # create chicago checkin, update locationship
     @chicago_male1.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @chicago_sbux))
-    work_off_delayed_jobs(/async_update_locationships/)
     # run resque jobs
     Resque.run!
     # should not add any badges
@@ -83,7 +82,7 @@ class BadgeTest < ActiveSupport::TestCase
     # trigger location_tagged event
     @chicago_sbux.event_location_tagged
     # run resque jobs
-    Resque.run!
+    Resque.full_run!
     # should add matching badge
     assert_equal ['Pizza Junkie'], @chicago_male1.reload.badges_list
   end

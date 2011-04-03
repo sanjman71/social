@@ -502,7 +502,7 @@ class User < ActiveRecord::Base
   end
 
   # add user badges based on checkin location tags
-  # note: usually called asynchronously
+  # called by badge worker
   def async_add_badges
     tag_ids       = checkins.joins(:location).includes(:location => :tags).collect{|o| o.location.tags}.flatten.collect(&:id).uniq
     # tag_ids       = checkins.includes(:location).collect(&:location).collect(&:tags).flatten.collect(&:id).uniq
@@ -518,13 +518,14 @@ class User < ActiveRecord::Base
     new_badges
   end
 
-  # called after a location is tagged
+  # called after a location is tagged asynchronously
+  # called by location worker
   def event_location_tagged(location, force=false)
     # check that location is a checkin or todo location
     if !force and !locationships.my_todo_or_checkin.select(:location_id).collect(&:location_id).include?(location.try(:id))
       return false
     end
-  
+
     add_ids = location.tag_ids
     if (add_ids - tag_ids).any?
       # add the new tag ids

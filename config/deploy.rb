@@ -32,9 +32,9 @@ default_run_options[:pty] = true
 
 # Load external recipe files
 load_paths << "config/recipes"
-load "delayed_job"
+# load "delayed_job"
 load "resque_worker"
-load "sphinx"
+# load "sphinx"
 
 # automatically called after a deploy
 deploy.task :restart, :roles => :app do
@@ -48,8 +48,8 @@ deploy.task :config, :roles => [:app, :db] do
   run "ln -s #{deploy_to}/shared/config/database.yml #{current_release}/config/database.yml"
   run "rm -f #{current_release}/config/unicorn.rb"
   run "ln -s #{deploy_to}/shared/config/unicorn.rb #{current_release}/config/unicorn.rb"
-  run "rm -f #{current_release}/config/production.sphinx.conf"
-  run "ln -s #{deploy_to}/shared/config/production.sphinx.conf #{current_release}/config/production.sphinx.conf"
+  # run "rm -f #{current_release}/config/production.sphinx.conf"
+  # run "ln -s #{deploy_to}/shared/config/production.sphinx.conf #{current_release}/config/production.sphinx.conf"
   run "rm -rf #{current_release}/tmp/sockets"
   run "ln -s #{deploy_to}/shared/sockets #{current_release}/tmp/sockets"
 end
@@ -58,13 +58,13 @@ end
 after "deploy:update_code", "deploy:config"
 
 # after deploy
-after "deploy", "dj:restart"
+# after "deploy", "dj:restart"
 after "deploy", "rw:restart"
 after "deploy", "deploy:cleanup"
 
 # after deploy stop/start
-after "deploy:stop",  "dj:stop"
-after "deploy:start", "dj:start"
+# after "deploy:stop",  "dj:stop"
+# after "deploy:start", "dj:start"
 after "deploy:stop",  "rw:stop"
 after "deploy:start", "rw:start"
 

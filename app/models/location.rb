@@ -254,23 +254,15 @@ class Location < ActiveRecord::Base
     @hotness ||= 5*locationships.my_checkins.count + 2*locationships.todo_checkins.count
   end
 
-  # called after location tagged
-  def event_location_tagged
-    users.each do |user|
-      # add badges for each associated user
-      Resque.enqueue(BadgeWorker, :async_badge_discovery, 'user_id' => user.id)
-      # propagate to user
-      user.delay.event_location_tagged(self)
-    end
-  end
-
   # called after location created
   def event_location_created
     self.class.log("[location:#{self.id}] #{self.name} created")
-    # check if location needs reverse geocoding
-    if geocoded? and city_id.blank? and street_address.blank?
-      self.delay.reverse_geocode
-    end
+    Resque.enqueue(LocationWorker, :location_created, 'location_id' => id)
+  end
+
+  # called after location tagged
+  def event_location_tagged
+    Resque.enqueue(LocationWorker, :location_tagged, 'location_id' => id)
   end
 
   def self.log(s, level = :info)
