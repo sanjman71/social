@@ -8,6 +8,7 @@ class Invitation < ActiveRecord::Base
   attr_accessor   :list
 
   def send_email
+    self.class.log("[user:#{sender.id}] #{sender.handle} invited #{recipient_email}")
     Resque.enqueue(UserMailerWorker, :user_invite, 'invitation_id' => self.id)
   end
 

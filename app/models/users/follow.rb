@@ -2,6 +2,7 @@ module Users::Follow
 
   # follow the specified user
   def follow(user)
+    return false if user.blank?
     redis   = RedisSocket.new
     user_id = user.is_a?(User) ? user.id : user.to_i
     # add user to my following list
@@ -11,10 +12,12 @@ module Users::Follow
     # send email
     self.class.log("[user:#{id}] #{handle} is following #{user.handle}:#{user.id}")
     Resque.enqueue(UserMailerWorker, :user_following, 'follower_id' => id, 'following_id' => user.id)
+    true
   end
 
   # unfollow the specified user
   def unfollow(user)
+    return false if user.blank?
     redis   = RedisSocket.new
     user_id = user.is_a?(User) ? user.id : user.to_i
     # remove user from my following list
@@ -22,6 +25,7 @@ module Users::Follow
     # remove me from user's followers list
     redis.srem(follower_key(user_id), id)
     self.class.log("[user:#{id}] #{handle} unfollowed #{user.handle}:#{user.id}")
+    true
   end
 
   # unfollow all users the user is currently following

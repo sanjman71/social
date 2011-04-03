@@ -38,17 +38,15 @@ class InvitationsController < ApplicationController
     when 1
       flash[:notice]  = "Sent Invitation."
       flash[:tracker] = track_page("/action/invite/message")
-      Invitation.log("[user:#{@sender.id}] #{@sender.handle} invited #{@emails.join(',')}")
     else
       flash[:notice]  = "Sent #{@emails.size} Invitations."
       flash[:tracker] = track_page("/action/invite/message")
-      Invitation.log("[user:#{@sender.id}] #{@sender.handle} invited #{@emails.join(',')}")
     end
     if @ignored.any?
       if @ignored.size == 1
-        flash[:notice] += " There is already a member with email #{@ignored.join(', ')}"
+        flash[:notice] += " There is already a member with the email #{@ignored.join(', ')}"
       else
-        flash[:notice] += " There are already members with emails #{@ignored.join(', ')}"
+        flash[:notice] += " There are already members with the emails #{@ignored.join(', ')}"
       end
     end
 

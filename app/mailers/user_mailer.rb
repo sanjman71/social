@@ -79,7 +79,6 @@ class UserMailer < ActionMailer::Base
     @invite     = Invitation.find_by_token(@user.invitation_token)
     @inviter    = @invite.try(:sender)
     @email      = @inviter.try(:email_address)
-    @points     = options['points']
     @subject    = "Outlate.ly: Your invitation was accepted!"
     @campaign   = "invite-accepted"
 

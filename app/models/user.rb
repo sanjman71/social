@@ -671,8 +671,13 @@ class User < ActiveRecord::Base
   # send email to inviter when an invitee signs up
   def after_invite_token_assigned
     if changes[:invitation_token] and changes[:invitation_token][1].present?
-      Resque.enqueue(UserMailerWorker, :user_invite_accepted,
-                     'user_id' => self.id, 'points' => Currency.for_accepting_invite)
+      invite  = Invitation.find_by_token(invitation_token)
+      inviter = invite.try(:sender)
+      self.class.log("[user:#{id}] #{handle} signup using invite from user:#{inviter.try(:id)}:#{inviter.try(:handle)} with token:#{invitation_token}")
+      # invitee gets email that invitee signed up
+      Resque.enqueue(UserMailerWorker, :user_invite_accepted, 'user_id' => self.id)
+      # invitee auto follows inviter
+      self.follow(inviter)
     end
   end
 
