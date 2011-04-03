@@ -166,6 +166,9 @@ Social::Application.routes.draw do
     put :remove_tags, :on => :member
   end
 
+  # search
+  match 'search', :to => "search#index", :as => :search, :via => [:get]
+
   # jobs routes
   authenticate :admin do
     match 'jobs', :to => 'jobs#index', :as => :jobs

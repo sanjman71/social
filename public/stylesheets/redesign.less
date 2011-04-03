@@ -195,7 +195,7 @@ body {
       top: -16px;
       left: 5px;
     }
-    #home-checkins {
+    #home-checkins, #search-users {
       list-style-type: none;
       padding: 0;
       width: 640px;
@@ -243,7 +243,14 @@ body {
           font-weight: bold;
           .rounded(3px);
         }
-        .user-info {
+        a.follow-action.follow:hover {
+          background: #ff9c0a;
+          color: #fff;
+        }
+        a.follow-action.unfollow:hover {
+          background: #fff;
+        }
+        .user-info, .user-followers {
           float: left;
           margin: 5px 0;
           width: 140px;
@@ -734,4 +741,9 @@ body {
   .message {
     padding: 0 0 10px 0;
   }
+}
+
+.flash {
+  width: 620px;
+  float: left;
 }

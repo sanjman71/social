@@ -26,10 +26,10 @@ every 5.minutes do
   command "cd /usr/apps/outlately/current && thor checkins:poll_members >> /usr/apps/outlately/shared/log/checkins.log"
 end
 
-every 10.minutes do
-  # rebuild sphinx
-  rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
-end
+# every 10.minutes do
+#   # rebuild sphinx
+#   rake "ts:index >> /usr/apps/outlately/shared/log/sphinx.log"
+# end
 
 every 4.hours do
   # reverse geocode location

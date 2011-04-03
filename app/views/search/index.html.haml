@@ -1,0 +1,17 @@
+- javascript('search')
+
+.left-col{:style => 'width: 55px;'}
+  #profile-recent-checkins
+    #recent-checkins-title.titlebar.left Search
+
+.span-10.last
+  = text_field :search_users, '', :value => @query, :placeholder => "search by name", :id => 'live_user_search', 'data-url' => '/search.js', :style => 'padding: 6px; margin-top: 7px;'
+  %span#search-hint{:style => 'display: inline; margin: 0 5px; color: #777;'}
+
+%hr.space
+
+= display_flash(:all)
+
+.span-16.last
+  %ul#search-users
+    = render(:partial => 'search/users', :locals => {:users => @users})

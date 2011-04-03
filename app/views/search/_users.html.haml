@@ -1,0 +1,14 @@
+- users.each do |user|
+  %li.span-16.last{:style => 'border-bottom: none; margin: 5px 10px;'}
+    .handle
+    - if current_user.following_ids.include?(user.id)
+      = link_to 'Unfollow', unfollow_user_path(user, :return_to => request.fullpath), :method => :put, :class => 'follow-action unfollow'
+    - else
+      = link_to 'Follow', follow_user_path(user, :return_to => request.fullpath), :method => :put, :class => 'follow-action follow'
+    .picture
+      -# user profile link
+      = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), user_path(user)
+    .user-info
+      %h4= link_to user.handle, user_path(user)
+    .user-followers
+      %h4= pluralize(user.followers_count, 'follower')

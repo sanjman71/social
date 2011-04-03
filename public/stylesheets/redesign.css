@@ -176,40 +176,40 @@ body #content #member-title {
   top: -16px;
   left: 5px;
 }
-body #content #home-checkins {
+body #content #home-checkins, body #content #search-users {
   list-style-type: none;
   padding: 0;
   width: 640px;
   margin: 0 -10px -10px;
 }
-body #content #home-checkins li {
+body #content #home-checkins li, body #content #search-users li {
   min-height: 42px;
   border-bottom: 1px solid #f0f0f0;
 }
-body #content #home-checkins li:last-child {
+body #content #home-checkins li:last-child, body #content #search-users li:last-child {
   border: 0;
 }
-body #content #home-checkins li .member {
+body #content #home-checkins li .member, body #content #search-users li .member {
   margin: 15px 20px 0 25px;
   width: 36px;
   height: 12px;
   float: left;
 }
-body #content #home-checkins li .member.yes {
+body #content #home-checkins li .member.yes, body #content #search-users li .member.yes {
   background: url(/images/member-yes-no.png);
 }
-body #content #home-checkins li .member.no {
+body #content #home-checkins li .member.no, body #content #search-users li .member.no {
   background: url(/images/member-yes-no.png) 0 -12px;
 }
-body #content #home-checkins li .picture {
+body #content #home-checkins li .picture, body #content #search-users li .picture {
   width: 40px;
   float: left;
 }
-body #content #home-checkins li a img {
+body #content #home-checkins li a img, body #content #search-users li a img {
   float: left;
   margin: 5px 10px 0 0;
 }
-body #content #home-checkins li a.follow-action {
+body #content #home-checkins li a.follow-action, body #content #search-users li a.follow-action {
   width: 55px;
   margin: 10px 10px 0 0;
   font-size: 10px;
@@ -230,13 +230,26 @@ body #content #home-checkins li a.follow-action {
   -moz-border-radius: 3px;
   border-radius: 3px;
 }
-body #content #home-checkins li .user-info {
+body #content #home-checkins li a.follow-action.follow:hover, body #content #search-users li a.follow-action.follow:hover {
+  background: #ff9c0a;
+  color: #fff;
+}
+body #content #home-checkins li a.follow-action.unfollow:hover, body #content #search-users li a.follow-action.unfollow:hover {
+  background: #fff;
+}
+body #content #home-checkins li .user-info,
+body #content #search-users li .user-info,
+body #content #home-checkins li .user-followers,
+body #content #search-users li .user-followers {
   float: left;
   margin: 5px 0;
   width: 140px;
   padding: 3px 10px 0 0;
 }
-body #content #home-checkins li .user-info h4 {
+body #content #home-checkins li .user-info h4,
+body #content #search-users li .user-info h4,
+body #content #home-checkins li .user-followers h4,
+body #content #search-users li .user-followers h4 {
   font-size: 13px;
   font-weight: bold;
   margin: 0;
@@ -244,22 +257,34 @@ body #content #home-checkins li .user-info h4 {
   width: 130px;
   overflow: hidden;
 }
-body #content #home-checkins li .user-info h4 a {
+body #content #home-checkins li .user-info h4 a,
+body #content #search-users li .user-info h4 a,
+body #content #home-checkins li .user-followers h4 a,
+body #content #search-users li .user-followers h4 a {
   width: 130px;
   display: block;
   text-decoration: none;
   color: #363636;
 }
-body #content #home-checkins li .user-info h4 a:hover {
+body #content #home-checkins li .user-info h4 a:hover,
+body #content #search-users li .user-info h4 a:hover,
+body #content #home-checkins li .user-followers h4 a:hover,
+body #content #search-users li .user-followers h4 a:hover {
   text-decoration: underline;
 }
-body #content #home-checkins li .user-info h5 {
+body #content #home-checkins li .user-info h5,
+body #content #search-users li .user-info h5,
+body #content #home-checkins li .user-followers h5,
+body #content #search-users li .user-followers h5 {
   font-size: 11px;
   margin: 0;
   padding: 0;
   width: 130px;
 }
-body #content #home-checkins li .user-info h5 a {
+body #content #home-checkins li .user-info h5 a,
+body #content #search-users li .user-info h5 a,
+body #content #home-checkins li .user-followers h5 a,
+body #content #search-users li .user-followers h5 a {
   width: 130px;
   display: block;
   text-decoration: none;
@@ -267,26 +292,29 @@ body #content #home-checkins li .user-info h5 a {
   font-weight: normal;
   font-style: italic;
 }
-body #content #home-checkins li .user-info h5 a:hover {
+body #content #home-checkins li .user-info h5 a:hover,
+body #content #search-users li .user-info h5 a:hover,
+body #content #home-checkins li .user-followers h5 a:hover,
+body #content #search-users li .user-followers h5 a:hover {
   text-decoration: underline;
 }
-body #content #home-checkins li h3 {
+body #content #home-checkins li h3, body #content #search-users li h3 {
   float: left;
   font-size: 14px;
   margin: 0;
   padding: 8px 0 10px 0;
   width: 220px;
 }
-body #content #home-checkins li h3 a {
+body #content #home-checkins li h3 a, body #content #search-users li h3 a {
   width: 215px;
   display: block;
   text-decoration: none;
   color: #5c96b5;
 }
-body #content #home-checkins li h3 a:hover {
+body #content #home-checkins li h3 a:hover, body #content #search-users li h3 a:hover {
   text-decoration: underline;
 }
-body #content #home-checkins li h3 a.location-comment-count {
+body #content #home-checkins li h3 a.location-comment-count, body #content #search-users li h3 a.location-comment-count {
   padding: 0 0 0 16px;
   margin: 2px 0 0 0;
   height: 12px;
@@ -296,7 +324,7 @@ body #content #home-checkins li h3 a.location-comment-count {
   color: #aaa;
   background: url(/images/location-comment-count.png) no-repeat;
 }
-body #content #home-checkins li a.invite {
+body #content #home-checkins li a.invite, body #content #search-users li a.invite {
   float: right;
   color: #888;
   font-weight: bold;
@@ -312,11 +340,11 @@ body #content #home-checkins li a.invite {
   border-radius: 3px;
   border: 1px solid #ccc;
 }
-body #content #home-checkins li a.invite img {
+body #content #home-checkins li a.invite img, body #content #search-users li a.invite img {
   float: left;
   margin: 0 3px 0 0;
 }
-body #content #home-checkins li a.invite:hover {
+body #content #home-checkins li a.invite:hover, body #content #search-users li a.invite:hover {
   background: -webkit-linear-gradient(#ff9c0a, #f29000);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff9c0a), color-stop(100%, #f29000));
   background: -moz-linear-gradient(top, #ff9c0a, #f29000);
@@ -719,4 +747,8 @@ body #footer {
 }
 .chalkboard .message {
   padding: 0 0 10px 0;
+}
+.flash {
+  width: 620px;
+  float: left;
 }

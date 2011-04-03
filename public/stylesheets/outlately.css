@@ -1,4 +1,6 @@
-body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
+body.invitations ul#nav li#nav-invitations a {
+  color: #ffcc00;
+}
 .simple_form label {
   float: left;
   width: 100px;
@@ -7,22 +9,32 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
 }
 .simple_form label.error {
   float: none;
-  color: #0000ff;
+  color: #00F;
 }
 .simple_form select {
   margin: 15px 0px;
   font-size: 1.2em;
 }
-.simple_form div.input { margin-bottom: 10px; }
-.simple_form input[type='text'] { font-size: 1.5em; }
-.simple_form input[type='checkbox'] { margin: 15px 5px; }
-.simple_form input[type='submit'] { margin-top: 20px; }
+.simple_form div.input {
+  margin-bottom: 10px;
+}
+.simple_form input[type='text'] {
+  font-size: 1.5em;
+}
+.simple_form input[type='checkbox'] {
+  margin: 15px 5px;
+}
+.simple_form input[type='submit'] {
+  margin-top: 20px;
+}
 .simple_form span.hint {
   padding-left: 5px;
   font-size: 0.9em;
-  color: #777777;
+  color: #777;
 }
-.search_places_autocomplete_form { margin-bottom: 20px; }
+.search_places_autocomplete_form {
+  margin-bottom: 20px;
+}
 .search_places_autocomplete_form input[type='text'] {
   font-size: 1.3em;
   width: 580px;
@@ -31,7 +43,7 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
 .search_places_autocomplete_form #hint {
   margin-top: 10px;
   font-size: 0.9em;
-  color: #777777;
+  color: #777;
 }
 .suggestion_form .label {
   font-weight: normal;
@@ -40,28 +52,38 @@ body.invitations ul#nav li#nav-invitations a { color: #ffcc00; }
   margin-top: 10px;
 }
 .suggestion_form input[type='text'] {
-  font-size: 1em;
+  font-size: 1.0em;
   padding: 5px 3px;
 }
-.suggestion_form input.message { width: 350px; }
+.suggestion_form input.message {
+  width: 350px;
+}
 .suggestion_form span#message_count {
   margin-left: 5px;
-  color: #777777;
+  color: #777;
 }
-.suggestion_title a { color: #0000ff; }
+.suggestion_title a {
+  color: #00f;
+}
 .suggestion {
   margin-top: 20px;
   height: 160px;
 }
-.suggestion a { color: #0000ff; }
+.suggestion a {
+  color: #00f;
+}
 .suggestion .text {
   font-size: 1.1em;
   font-weight: normal;
-  color: #333333;
-  line-height: 2em;
+  color: #333;
+  line-height: 2.0em;
 }
-div#todo_header a { color: #0000ff; }
-div#todo_search a { color: #0000ff; }
+div#todo_header a {
+  color: #00f;
+}
+div#todo_search a {
+  color: #00f;
+}
 div#todo_search a.button {
   height: 22px;
   width: 37px;
@@ -69,59 +91,44 @@ div#todo_search a.button {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  color: #ffffff;
-  background-color: #333333;
+  color: #fff;
+  background-color: #333;
   padding: 0 10px;
   text-decoration: none;
   display: block;
   font-size: 11px;
   text-align: center;
 }
-div#todo_search span#help { color: #555555; }
-div#todos .location { margin-bottom: 10px; }
-div#todos .location .name {
-  color: #0000ff;
+div#todo_search span#help {
+  color: #555;
+}
+div#todos .location, div#locations .location {
+  margin-bottom: 10px;
+}
+div#todos .location .name, div#locations .location .name {
+  color: #00f;
   font-weight: bold;
 }
-div#todos .location .street { color: #333333; }
-div#todos .location .latlng { color: #999999; }
-div#todos .location .tags {
-  color: #333333;
+div#todos .location .street, div#locations .location .street {
+  color: #333;
+}
+div#todos .location .latlng, div#locations .location .latlng {
+  color: #999;
+}
+div#todos .location .tags, div#locations .location .tags {
+  color: #333;
   font-weight: bold;
 }
-div#todos .location .add_tags a {
-  color: #0000ff;
+div#todos .location .add_tags a, div#locations .location .add_tags a {
+  color: #00f;
   font-size: 0.8em;
 }
-div#todos .location .badges {
-  color: #333333;
+div#todos .location .badges, div#locations .location .badges {
+  color: #333;
   font-weight: bold;
 }
-div#todos .location .add_badges a {
-  color: #0000ff;
-  font-size: 0.8em;
-}
-div#locations .location { margin-bottom: 10px; }
-div#locations .location .name {
-  color: #0000ff;
-  font-weight: bold;
-}
-div#locations .location .street { color: #333333; }
-div#locations .location .latlng { color: #999999; }
-div#locations .location .tags {
-  color: #333333;
-  font-weight: bold;
-}
-div#locations .location .add_tags a {
-  color: #0000ff;
-  font-size: 0.8em;
-}
-div#locations .location .badges {
-  color: #333333;
-  font-weight: bold;
-}
-div#locations .location .add_badges a {
-  color: #0000ff;
+div#todos .location .add_badges a, div#locations .location .add_badges a {
+  color: #00f;
   font-size: 0.8em;
 }
 div#add_badge a {
@@ -131,7 +138,7 @@ div#add_badge a {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  color: #ffffff;
+  color: #fff;
   background-color: #ff6f00;
   padding: 0 10px;
   text-decoration: none;
@@ -139,20 +146,26 @@ div#add_badge a {
   font-size: 11px;
   text-align: center;
 }
-div#badge a { color: #0000ff; }
-div#badge span#apply_tags a { color: #0000ff; }
-div#badge span#help { color: #555555; }
+div#badge a {
+  color: #00f;
+}
+div#badge span#apply_tags a {
+  color: #00f;
+}
+div#badge span#help {
+  color: #555;
+}
 div#tags #add_tag_list {
   font-size: 1.5em;
   color: #333333;
 }
 div#tags #add_tag_list a {
   font-size: 0.9em;
-  color: #ff0000;
+  color: #f00;
 }
 div#tags a#submit_tags {
   margin-top: 20px;
-  color: #0000ff;
+  color: #00f;
 }
 div.newbie h3 {
   line-height: 1.5em;
@@ -165,8 +178,8 @@ div.newbie a.button.go {
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  color: #ffffff;
-  background-color: #333333;
+  color: #fff;
+  background-color: #333;
   padding: 0 10px;
   text-decoration: none;
   display: block;

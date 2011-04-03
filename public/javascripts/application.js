@@ -45,6 +45,7 @@ function track_page(page) {
   } catch(e) {}
 }
 
+/*
 $.fn.init_get_points = function() {
   var points_field    = $("a#get-more-points");
   var points_text     = $(points_field).text();
@@ -80,15 +81,9 @@ $.fn.init_get_points = function() {
     $(field).text(points);
   }
 }
-
-/*
-$.fn.init_shared_dialogs = function() {
-  $("a#what-is-outlately").fancybox();
-  $("a#points-info").fancybox();
-}
 */
 
-$.fn.init_tooltips = function() {
+$.fn.init_tipsy = function() {
   try {
     // tooltip
     $('.tipsy a').tipsy({
@@ -96,6 +91,17 @@ $.fn.init_tooltips = function() {
       fade: true
     });
   } catch(e) {}
+}
+
+$.fn.init_flash = function() {
+  /* flash message fadeout */
+  $('.flash').animate(
+    {backgroundColor: 'white', opacity: 0.5},
+    7000,
+    function() {
+      $('.flash').hide();
+    }
+  );
 }
 
 $.fn.init_textarea_autoresize = function() {
@@ -134,8 +140,8 @@ $.fn.init_character_counter = function() {
 }
 
 $(document).ready(function() {
-  $(document).init_get_points();
-  $(document).init_tooltips();
+  $(document).init_tipsy();
+  $(document).init_flash();
   $(document).init_textarea_autoresize();
   $(document).init_character_counter();
 })
