@@ -1,3 +1,4 @@
 page["#search-users"].html('');
+page["#search-pagination"].html(render(:partial => 'search/pagination', :locals => {:users => @users}))
 page["#search-users"].append(render(:partial => 'search/users', :locals => {:users => @users}))
 page["#search-hint"].html('');
