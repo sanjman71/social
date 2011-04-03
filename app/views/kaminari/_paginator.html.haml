@@ -1,0 +1,22 @@
+:css
+  #paginator a{display:block}
+  #paginator td{padding:0;text-align:center}
+  .cur {font-weight:bold}
+  .csb {width:40px;display:block}
+  #paginator {font-family: arial,sans-serif; font-size:small}
+  #paginator a:link {text-decoration:none; color:#4496d3}
+  #paginator a:hover {text-decoration:underline}
+  #paginator a:active {color:#c11}
+  #paginator a:visited {color:#2200C1}
+  .b {font-weight:bold}
+= paginator.render do
+  %table#paginator{:style => 'border-collapse:collapse;text-align:left;direction:ltr;margin:5px auto 0;width: 250px;'}<
+    %tbody><
+      %tr{:valign => 'top'}><
+        = current_page > 1 ? prev_link_tag : prev_span_tag
+        - each_page do |page|
+          - if page.current?
+            = current_page_tag
+          - elsif page.inside_window?
+            = page_link_tag
+        = num_pages > current_page ? next_link_tag : next_span_tag

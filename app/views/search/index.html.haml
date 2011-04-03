@@ -13,7 +13,7 @@
 = display_flash(:all)
 
 .span-16.last
-  #search-pagination
+  #search-pagination{:style => 'width: 250px;'}
     = render(:partial => 'search/pagination', :locals => {:users => @users})
   %ul#search-users
     = render(:partial => 'search/users', :locals => {:users => @users})
