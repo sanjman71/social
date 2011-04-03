@@ -230,12 +230,19 @@ body #content #home-checkins li a.follow-action, body #content #search-users li 
   -moz-border-radius: 3px;
   border-radius: 3px;
 }
+body #content #home-checkins li a.follow-action.unfollow, body #content #search-users li a.follow-action.unfollow {
+  background: #333;
+  border: 1px solid #555;
+  color: #fff;
+}
 body #content #home-checkins li a.follow-action.follow:hover, body #content #search-users li a.follow-action.follow:hover {
   background: #ff9c0a;
   color: #fff;
 }
 body #content #home-checkins li a.follow-action.unfollow:hover, body #content #search-users li a.follow-action.unfollow:hover {
-  background: #fff;
+  background: #ccc;
+  border: 1px solid #999;
+  color: #999;
 }
 body #content #home-checkins li .user-info,
 body #content #search-users li .user-info,

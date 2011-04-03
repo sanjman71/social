@@ -2,9 +2,9 @@
   %li.span-16.last{:style => 'border-bottom: none; margin: 5px 10px;'}
     .handle
     - if current_user.following_ids.include?(user.id)
-      = link_to 'Unfollow', unfollow_user_path(user, :return_to => request.fullpath), :method => :put, :class => 'follow-action unfollow'
+      = link_to 'Following', '#', 'data-url' => unfollow_user_path(user), 'data-id' => user.id, :class => 'follow-action unfollow'
     - else
-      = link_to 'Follow', follow_user_path(user, :return_to => request.fullpath), :method => :put, :class => 'follow-action follow'
+      = link_to 'Follow', '#', 'data-url' => follow_user_path(user), 'data-id' => user.id, :class => 'follow-action follow'
     .picture
       -# user profile link
       = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), user_path(user)

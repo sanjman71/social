@@ -37,8 +37,8 @@ Social::Application.routes.draw do
   match 'users/:city(/:radius)', :to => 'users#search',
     :constraints => {:city => /city:[a-z-]+/, :radius => /radius:\d+/}, :as => :city_users
   match 'users/:id/bucks/:points', :to => "users#bucks", :as => :add_bucks_user
-  match 'users/:id/follow', :to => "users#follow", :as => :follow_user, :via => :put
-  match 'users/:id/unfollow', :to => "users#unfollow", :as => :unfollow_user, :via => :put
+  match 'users/:id/follow', :to => "users#follow", :as => :follow_user, :via => [:put]
+  match 'users/:id/unfollow', :to => "users#unfollow", :as => :unfollow_user, :via => [:put]
 
   # message routes
   match 'users/:id/re/:object_type/:object_id/message/:message', :to => "messages#user_compose",

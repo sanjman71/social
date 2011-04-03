@@ -119,6 +119,7 @@ class UsersController < ApplicationController
     @points = params[:points].to_i
     @user.add_points(@points)
     @growls = [{:message => I18n.t("currency.add_bucks.growl", :points => @points), :timeout => 2000}]
+
     respond_to do |format|
       format.json do
         render :json => Hash[:points => @user.points, :growls => @growls].to_json
@@ -130,18 +131,34 @@ class UsersController < ApplicationController
   def follow
     # @user initialized in before filter
     current_user.follow(@user)
-    flash[:notice]  = "You are now following #{@user.handle}"
-    flash[:tracker] = track_page("/action/follow")
-    redirect_to(redirect_back_path(root_path))
+
+    respond_to do |format|
+      format.html do
+        flash[:notice]  = "You are now following #{@user.handle}"
+        flash[:tracker] = track_page("/action/follow")
+        redirect_to(redirect_back_path(root_path))
+      end
+      format.json do
+        render(:json => {:status => 'ok', :id => @user.id, :action => 'follow'}.to_json)
+      end
+    end
   end
 
   # PUT /users/1/unfollow
   def unfollow
     # @user initialized in before filter
     current_user.unfollow(@user)
-    flash[:notice]  = "You are no longer following #{@user.handle}"
-    flash[:tracker] = track_page("/action/unfollow")
-    redirect_to(redirect_back_path(root_path))
+
+    respond_to do |format|
+      format.html do
+        flash[:notice]  = "You are no longer following #{@user.handle}"
+        flash[:tracker] = track_page("/action/unfollow")
+        redirect_to(redirect_back_path(root_path))
+      end
+      format.json do
+        render(:json => {:status => 'ok', :id => @user.id, :action => 'unfollow'}.to_json)
+      end
+    end
   end
 
   # PUT /users/1/activate
