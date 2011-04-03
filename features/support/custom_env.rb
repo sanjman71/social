@@ -1,3 +1,4 @@
+# deprecated
 # require 'cucumber/thinking_sphinx/external_world'
 # Cucumber::ThinkingSphinx::ExternalWorld.new
 
@@ -24,6 +25,7 @@ Before do
   Resque.reset!
   Timecop.return
   OmniAuth.config.test_mode = true
+  # deprecated
   # ThinkingSphinx::Test.index
   Badges::Init.add_roles_and_privileges
   init_states_and_cities

@@ -1,5 +1,6 @@
 class UserMailer < ActionMailer::Base
   default :from => "outlately@jarna.com"
+  layout  'mailer'
 
   def log(s, level = :info)
     AppLogger.log(s, nil, level)
@@ -16,8 +17,9 @@ class UserMailer < ActionMailer::Base
   end
 
   def user_signup(options)
-    @user     = User.find(options['user_id'])
-    @emails   = admin_emails
+    @user         = User.find(options['user_id'])
+    @emails       = admin_emails
+    @campaign     = "signup"
 
     mail(:to => @emails, :subject => "Outlate.ly: member signup #{@user.handle}:#{@user.id}")
   end
@@ -29,7 +31,8 @@ class UserMailer < ActionMailer::Base
     track("user_following")
 
     @email        = @following.email_address
-    @subject      = "Outlate.ly: #{@follower.handle} is following you..."
+    @subject      = "Outlate.ly: #{@follower.handle} is now following you..."
+    @campaign     = "following"
     mail(:to => @email, :subject => @subject)
   end
 
@@ -41,7 +44,8 @@ class UserMailer < ActionMailer::Base
     @invitee      = @invite_poke.invitee
     @poker        = @invite_poke.poker
     @subject      = "Outlate.ly: Can you invite your friend #{@invitee.handle} to sign up..."
-
+    @campaign     = "invite-poke"
+    
     if @email.blank?
       # send email to admins instead, with a modified subject
       @email    = admin_emails
@@ -61,6 +65,7 @@ class UserMailer < ActionMailer::Base
     @sender     = @invitation.sender
     @subject    = @invitation.subject || "Outlately Invitation!"
     @message    = @invitation.body
+    @campaign   = "invite"
 
     # log and track
     # log("[email:#{@sender.id}]: #{@email} invited by #{@sender.handle}")
@@ -76,6 +81,7 @@ class UserMailer < ActionMailer::Base
     @email      = @inviter.try(:email_address)
     @points     = options['points']
     @subject    = "Outlate.ly: Your invitation was accepted!"
+    @campaign   = "invite-accepted"
 
     # log and track
     # log("[email:#{@inviter.id}]: #{@email} invite:#{@invite.id} to user:#{@user.id}:#{@user.handle}")
@@ -85,11 +91,12 @@ class UserMailer < ActionMailer::Base
   end
 
   def user_signup_to_poker(options)
-    @poke     = InvitePoke.find(options['poke_id'])
-    @poker    = @poke.poker
-    @invitee  = @poke.invitee
-    @email    = @poker.email_address
-    @subject  = "Outlate.ly: You might be interested in this user signup..."
+    @poke         = InvitePoke.find(options['poke_id'])
+    @poker        = @poke.poker
+    @invitee      = @poke.invitee
+    @email        = @poker.email_address
+    @subject      = "Outlate.ly: You might be interested in this user signup..."
+    @campaign     = "signup-notify"
 
     # log and track
     # log("[email:#{@poker.id}]: #{@email} signup:#{@invitee.id}:#{@invitee.handle}")
@@ -128,6 +135,7 @@ class UserMailer < ActionMailer::Base
     @email    = @to.email_address
     @token    = @to.remember_token
     @text     = options['body']
+    @campaign = "user-message"
 
     if @checkin.present?
       @subject  = "Outlate.ly: #{@sender.handle} sent you a message about your checkin at #{@checkin.location.try(:name)}..."
@@ -153,6 +161,7 @@ class UserMailer < ActionMailer::Base
 
     @email    = @to.email_address
     @subject  = "Outlate.ly: from #{@sender.handle}, re: your checkin at #{@checkin.location.try(:name)}..."
+    @campaign = "user-message"
 
     # log and track
     # log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
@@ -168,6 +177,7 @@ class UserMailer < ActionMailer::Base
 
     @email    = @to.email_address
     @subject  = "Outlate.ly: #{@sender.handle} commented on your checkin at #{@checkin.location.try(:name)}..."
+    @campaign = "user-message"
 
     # log and track
     # log("[email:#{@to.id}]: #{@email} from:#{@sender.id}:#{@sender.handle}")
@@ -180,6 +190,7 @@ class UserMailer < ActionMailer::Base
     @sender   = User.find(options['sender_id'])
     @to       = User.find(options['to_id'])
     @email    = @to.email_address
+    @campaign = "user-message"
 
     if options['checkin_id']
       @checkin  = Checkin.find(options['checkin_id'])
@@ -239,6 +250,7 @@ class UserMailer < ActionMailer::Base
     @email    = @user.email_address
     @token    = @user.remember_token
     @subject  = "Outlate.ly: #{@checkin.user.try(:handle)} checked in at #{@checkin.location.try(:name)}..."
+    @campaign = "friend-realtime-checkin"
 
     # build message urls
 

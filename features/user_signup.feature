@@ -18,43 +18,54 @@ Feature: User Signup
     And I should see "Welcome to Outlate.ly" within "div#flash"
 
   @signup @goal
-  Scenario: Non-member signup should complete the signup goal
-    Given a user "facebook_guy" exists with handle: "facebook_guy", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
+  Scenario: Non-member signup should trigger the signup goal
+    Given a user "Facebook G." exists with handle: "Facebook G.", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
+    And user "Facebook G." has email "facebooker@gmail.com"
+
     And 7 days have passed
+
+    When the facebook mock oauth has user "Facebook G." and nickname "facebooker" and id "99999"
     And I go to the home page
     Then I should be on the login page
     And I should see "Welcome To Outlately"
 
-    Given I login with facebook as "facebook_guy"
+    When I follow "facebook_login"
     Then I should be on path "/newbie/settings"
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
 
     # logging in a second time should not trigger the signup goal
     And I go to the logout page
-    And I login with facebook as "facebook_guy"
+    And I go to the login page
+    And I follow "facebook_login"
     Then I should be on the home page
     And I should not see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should not see "_gaq.push(['_trackPageview', '/signup/invited'])"
 
-
   @signup @goal
   Scenario: Friend signup should auto follow member(s) and send email
-    Given a user "facebook_guy" exists with handle: "facebook_guy", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
+    Given a user "Facebook G." exists with handle: "Facebook G.", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
+    And user "Facebook G." has email "facebooker@gmail.com"
+
     And a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
     And user "sanjay" has email "sanjay@outlately.com"
-    And "sanjay" is friends with "facebook_guy"
+    And "sanjay" is friends with "Facebook G."
 
-    Given I login with facebook as "facebook_guy"
-    Then I should be on path "/newbie/settings"
+    When the facebook mock oauth has user "Facebook G." and nickname "facebooker" and id "99999"
+    And I go to the login page
+    And I follow "facebook_login"
 
     When the resque jobs are processed until empty
-    And "sanjay@outlately.com" should receive an email with subject "Outlate.ly: First L. is following you"
-
+    Then "sanjay@outlately.com" should receive an email with subject "Outlate.ly: Facebook G. is now following you"
+    When I open the email with subject "Outlate.ly: Facebook G. is now following you"
+    Then I should see "Sweet. Now everytime you check-in, they'll know where." in the email body
 
   @signup @email
   Scenario: New user signup should send email to site admins
-    Given I login with facebook as "facebook_guy"
+    When the facebook mock oauth has user "Facebook G." and nickname "facebooker" and id "99999"
+    And I go to the login page
+    And I follow "facebook_login"
     And the resque jobs are processed
+
     Then "sanjay@jarna.com" should receive an email with subject "Outlate.ly: member signup"
     And "marchick@gmail.com" should receive an email with subject "Outlate.ly: member signup"
 

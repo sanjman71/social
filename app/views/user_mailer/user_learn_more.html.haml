@@ -2,5 +2,3 @@ You and #{@about_user.handle} have #{@common_friends} mutual friends.
 %br
 %br
 Click #{link_to('here', user_url(@about_user.id, 'utm_campaign' => 'user-learn-more', 'utm_medium' => 'email', 'utm_source' => 'outlately'))} to see #{@about_user.handle}'s profile.
-
-= render(:partial => 'footer', :locals => {:campaign => 'user-learn-more'})

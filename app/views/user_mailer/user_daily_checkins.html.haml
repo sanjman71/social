@@ -12,5 +12,3 @@
         = link_to(user.handle, user_url(user.id, 'utm_campaign' => 'daily-checkins', 'utm_medium' => 'email', 'utm_source' => 'outlately'))
         %br{:style => 'margin: 3px 0;'}
         = location.name
-
-= render(:partial => 'footer', :locals => {:campaign => 'daily-checkins'})

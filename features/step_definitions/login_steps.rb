@@ -20,36 +20,47 @@ end
 #   And %{I press "Continue"}
 # end
 
-ACCESS_TOKEN = {
-  :access_token => "outlately"
-}
+When /^the facebook mock oauth has user "([^"]*)" and nickname "([^"]*)" and id "([^"]*)"$/ do |name, nickname, id|
+  first = name.split[0].strip
+  last  = name.split[1].strip
+  OmniAuth.config.mock_auth[:facebook] = {
+    'provider' => 'facebook',
+    'credentials'=> {'token'=>'114293108648736'},
+    'user_info'=>{'nickname'=>nickname, 'first_name'=>first, 'last_name'=>last, 'name'=>name},
+    'extra' => {'user_hash' => {'email' => "#{nickname}@gmail.com", 'id' => id}}
+  }
+end
 
-FACEBOOK_INFO = {
-  :id => '12345',
-  :link => 'http://facebook.com/facebook_guy',
-  :email => 'facebook_guy@gmail.com',
-  :first_name => 'First',
-  :last_name => 'Last',
-  :website => 'http://outlate.ly',
-  :location => {"id" => 108659242498155, "name" => "Chicago, Illinois"}
-}
+# ACCESS_TOKEN = {
+#   :access_token => "outlately"
+# }
+
+# FACEBOOK_INFO = {
+#   :id => '12345',
+#   :link => 'http://facebook.com/facebook_guy',
+#   :email => 'facebook_guy@gmail.com',
+#   :first_name => 'First',
+#   :last_name => 'Last',
+#   :website => 'http://outlate.ly',
+#   :location => {"id" => 108659242498155, "name" => "Chicago, Illinois"}
+# }
 
 Given /^outlately authorizes me as "([^"]*)"$/ do |handle|
   user = User.find_by_handle(handle)
   visit '/users/auth/outlately/callback?handle=' + user.id.to_s
 end
 
-Given /^I login with facebook as "([^"]*)"$/ do |handle|
-  # map handle to user, if one exists
-  user = User.find_by_handle(handle)
-  if user
-    # link handle to authenticating facebook user
-    FACEBOOK_INFO[:id] = user.facebook_id
-  end
-  # Devise::OmniAuth.short_circuit_authorizers!
-  # Devise::OmniAuth.stub!(:facebook) do |b|
-  #   b.post('/oauth/access_token') { [200, {}, ACCESS_TOKEN.to_json] }
-  #   b.get('/me?access_token=outlately') { [200, {}, FACEBOOK_INFO.to_json] }
-  # end
-  visit '/users/auth/facebook/callback'
-end
+# Given /^I login with facebook as "([^"]*)"$/ do |handle|
+#   # map handle to user, if one exists
+#   user = User.find_by_handle(handle)
+#   if user
+#     # link handle to authenticating facebook user
+#     FACEBOOK_INFO[:id] = user.facebook_id
+#   end
+#   # Devise::OmniAuth.short_circuit_authorizers!
+#   # Devise::OmniAuth.stub!(:facebook) do |b|
+#   #   b.post('/oauth/access_token') { [200, {}, ACCESS_TOKEN.to_json] }
+#   #   b.get('/me?access_token=outlately') { [200, {}, FACEBOOK_INFO.to_json] }
+#   # end
+#   visit '/users/auth/facebook/callback'
+# end

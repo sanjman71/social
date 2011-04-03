@@ -1,0 +1,8 @@
+%div{:style => 'color: #111;'}
+  = yield
+
+%div{:style => 'color: #999; font-style: normal; padding: 20px 0 0 0;'}
+  - @campaign ||= 'general'
+  %p
+  %p
+  See who's out and about - #{link_to('Outlately', root_url('utm_campaign' => @campaign, 'utm_medium' => 'email', 'utm_source' => 'outlately'))}
