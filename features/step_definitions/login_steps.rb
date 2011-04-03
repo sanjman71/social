@@ -20,14 +20,14 @@ end
 #   And %{I press "Continue"}
 # end
 
-When /^the facebook mock oauth has user "([^"]*)" and nickname "([^"]*)" and id "([^"]*)"$/ do |name, nickname, id|
+When /^the facebook mock oauth has user "([^"]*)" and email "([^"]*)" and id "([^"]*)"$/ do |name, email, id|
   first = name.split[0].strip
   last  = name.split[1].strip
   OmniAuth.config.mock_auth[:facebook] = {
     'provider' => 'facebook',
     'credentials'=> {'token'=>'114293108648736'},
     'extra' => {'user_hash' =>
-      {'email' => "#{nickname}@gmail.com", 'id' => id, 'nickname'=>nickname, 'first_name'=>first, 'last_name'=>last, 'name'=>name}}
+      {'email' => email, 'id' => id, 'nickname'=>name, 'first_name'=>first, 'last_name'=>last, 'name'=>name}}
   }
 end
 

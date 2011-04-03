@@ -10,8 +10,8 @@
         .span-16.last.chalkboard
           .span-4.name
             = link_to board.name, board_path(board)
-          .span-12.last.messages
+          .span-4.messages
             = pluralize(board.messages_count, 'message')
-            %br
+          .span-8.last.participants
             = pluralize(board.member_set.size, 'participant')
 

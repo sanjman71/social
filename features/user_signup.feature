@@ -12,7 +12,9 @@ Feature: User Signup
     Then I should be on the login page
     And I should see "Welcome To Outlately"
 
-    Given I login with facebook as "facebook_guy"
+    Given the facebook mock oauth has user "Facebook G." and email "facebooker@gmail.com" and id "99999"
+
+    When I follow "facebook_login"
     Then I should be on path "/newbie/settings"
     And I should see "_gaq.push(['_trackPageview', '/signup/completed'])"
     And I should see "Welcome to Outlate.ly" within "div#flash"
@@ -21,11 +23,11 @@ Feature: User Signup
   Scenario: Non-member signup should trigger the signup goal
     Given a user "Facebook G." exists with handle: "Facebook G.", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
     And user "Facebook G." has email "facebooker@gmail.com"
+    And the facebook mock oauth has user "Facebook G." and email "facebooker@gmail.com" and id "99999"
 
     And 7 days have passed
 
-    When the facebook mock oauth has user "Facebook G." and nickname "facebooker" and id "99999"
-    And I go to the home page
+    When I go to the home page
     Then I should be on the login page
     And I should see "Welcome To Outlately"
 
@@ -45,13 +47,13 @@ Feature: User Signup
   Scenario: Friend signup should auto follow member(s) and send email
     Given a user "Facebook G." exists with handle: "Facebook G.", gender: "Male", orientation: "Straight", member: "0", facebook_id: "99999", city: city "Chicago", sign_in_count: 0
     And user "Facebook G." has email "facebooker@gmail.com"
+    And the facebook mock oauth has user "Facebook G." and email "facebooker@gmail.com" and id "99999"
 
     And a user "sanjay" exists with handle: "sanjay", member: "1", gender: "Male", orientation: "Straight"
     And user "sanjay" has email "sanjay@outlately.com"
     And "sanjay" is friends with "Facebook G."
 
-    When the facebook mock oauth has user "Facebook G." and nickname "facebooker" and id "99999"
-    And I go to the login page
+    When I go to the login page
     And I follow "facebook_login"
 
     When the resque jobs are processed until empty
@@ -61,7 +63,7 @@ Feature: User Signup
 
   @signup @email
   Scenario: New user signup should send email to site admins
-    When the facebook mock oauth has user "Facebook G." and nickname "facebooker" and id "99999"
+    When the facebook mock oauth has user "Facebook G." and email "facebooker@gmail.com" and id "99999"
     And I go to the login page
     And I follow "facebook_login"
     And the resque jobs are processed

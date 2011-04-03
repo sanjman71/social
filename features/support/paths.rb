@@ -30,15 +30,15 @@ module NavigationHelpers
       "/users/auth/outlately/callback?handle=#{$1}"
 
     when /^(.*)'s profile page$/i
-      user = User.find_by_handle($1)
+      user = User.find_by_handle($1.gsub("\"", ''))
       "/users/#{user.id}"
 
     when /^(.*)'s share a drink page$/i
-      user = User.find_by_handle($1)
+      user = User.find_by_handle($1.gsub("\"", ''))
       "/users/#{user.id}/share_drink"
 
     when /^(.*)'s user edit page$/i
-      user = User.find_by_handle($1)
+      user = User.find_by_handle($1.gsub("\"", ''))
       "/users/#{user.id}/edit"
 
     when /^(.*)'s plans page$/i

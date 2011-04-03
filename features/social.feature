@@ -68,8 +68,11 @@ Feature: New home page
 
     When I follow "Activity"
     Then I should see "Chicago Starbucks"
-    And I should see "checked in"
-    And I should see "I wrote on the chalkboard"
+    And I should see "1 message"
+    And I should see "2 participants"
+
+    When I follow "Chicago Starbucks"
+    Then I should see "I wrote on the chalkboard"
 
     When I follow "Add"
     And I fill in "message_body" with "Another chalkboard message" within "#wall-message-overlay"
