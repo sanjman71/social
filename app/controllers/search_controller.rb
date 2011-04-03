@@ -5,12 +5,13 @@ class SearchController < ApplicationController
   # GET /search?q=sanj
   def index
     @query  = params[:q].to_s
-    @users  = User.member.page(@page).per(10).scoped
+    @users  = User.member.page(@page).scoped
 
     if @query.present?
-      @users = @users.where(:handle.matches => "%#{@query}%").order("member_at desc")
+      @users = @users.joins(:city).where({:handle.matches => "%#{@query}%"} | {:'cities.name'.matches => "%#{@query}%"}).
+                order("member_at desc").per(50)
     else
-      @users = @users.order("rand()")
+      @users = @users.order("rand()").per(10)
     end
 
     respond_to do |format|

@@ -10,5 +10,6 @@
       = link_to image_tag(user.primary_photo_url, :alt => user.handle, :size => '35x35'), user_path(user)
     .user-info
       %h4= link_to user.handle, user_path(user)
+      %h5{:style => 'font-weight: normal;'}= user.city.try(:name)
     .user-followers
-      %h4= pluralize(user.followers_count, 'follower')
+      %h5{:style => 'font-weight: normal;'}= pluralize(user.followers_count, 'follower')

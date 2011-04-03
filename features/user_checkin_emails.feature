@@ -66,6 +66,7 @@ Feature: Import user checkin
     Then "sanjay@outlately.com" should receive an email with subject "Outlate.ly: adam checked in at Boston Lager..."
 
     When 2 hours have passed
+    And a clear email queue
     And user "adam" checked in to "Boston Lager" "5 minutes ago"
     And the resque jobs are processed until empty
 

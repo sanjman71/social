@@ -6,7 +6,7 @@
   #profile-user-info
     %h2= @user.handle
     %h3= @user.city.try(:name)
-    %h4= pluralize(@user.followers_count, "Follower")
+    %h5= pluralize(@user.followers_count, "Follower")
   .actions
     = image_tag("/images/actions.png", :alt => 'actions menu')
     %span
