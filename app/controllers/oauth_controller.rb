@@ -16,11 +16,12 @@ class OauthController < Devise::OmniauthCallbacksController
   end
 
   # GET /users/auth/outlately/callback?handle=chicago_guy
+  # GET /users/auth/outlately/callback?handle=5
   # note: used for testing
   def outlately
     @handle = params[:handle]
-    @user   = User.find_by_handle(@handle)
-    
+    @user   = @handle.match(/^\d+$/) ? User.find_by_id(@handle) : User.find_by_handle(@handle)
+
     if user_signed_in?
       # user already signed in
       flash[:error] = "User already signed in"

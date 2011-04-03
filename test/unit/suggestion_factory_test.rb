@@ -1,5 +1,6 @@
 require 'test_helper'
 
+# deprecated - unused
 class SuggestionFactoryTest < ActiveSupport::TestCase
 
   # turn off transactional fixtures here so we can test sphinx
@@ -65,73 +66,73 @@ class SuggestionFactoryTest < ActiveSupport::TestCase
     [Suggestion, Checkin, CheckinLog, Location, Locationship, Country, State, City, User, Delayed::Job].each { |o| o.delete_all }
   end
 
-  context "geo based algorithm" do
-    setup do
-      @algorithm = [:geo_checkins, :geo_tags, :geo]
-    end
-
-    should "not create suggestions with non-member users" do
-      setup_chicago_users
-      # make sure other chicago users are non-members
-      @chicago_female1.update_attribute(:member, 0)
-      ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
-                                                :limit => 10)
-      end
-      assert_equal 0, @suggestions.size
-    end
-
-    should "not create suggestions with friends" do
-      setup_chicago_users
-      # add chicago user locationships and a friend
-      @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      @chicago_male1.friendships.create!(:friend => @chicago_female1)
-      ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id,
-                                                :algorithm => @algorithm, :limit => 10)
-      end
-      assert_equal 0, @suggestions.size
-    end
-
-    should "not create suggestions with checkins from users outside of home radius" do
-      setup_chicago_male_users
-      setup_boston_users
-      # add chicago and boston user checkins to the same place
-      @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      @boston_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
-      ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
-                                                :limit => 10)
-      end
-      assert_equal 0, @suggestions.size
-    end
-    
-    should "not create suggestions with common user tags outside of home radius" do
-      setup_chicago_male_users
-      setup_ny_users
-      # add chicago and new york users with similar tags
-      @chicago_male1.tag_ids = @newyork_female1.tag_ids = @chicago_sbux.tag_ids
-      @chicago_male1.save
-      @newyork_female1.save
-      ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
-                                                :limit => 10)
-      end
-      assert_equal 0, @suggestions.size
-    end
-    
-    should "create suggestion with local daters" do
-      setup_chicago_users
-      ThinkingSphinx::Test.run do
-        @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
-                                                :limit => 10)
-      end
-      assert_equal 1, @suggestions.size
-      assert_equal [[@chicago_male1.id, @chicago_female1.id].sort].flatten, @suggestions.map{ |s| [s.users.collect(&:id).sort]}.flatten
-      assert_equal ['geo'], @suggestions.collect(&:match)
-    end
-  end
+  # context "geo based algorithm" do
+  #   setup do
+  #     @algorithm = [:geo_checkins, :geo_tags, :geo]
+  #   end
+  # 
+  #   should "not create suggestions with non-member users" do
+  #     setup_chicago_users
+  #     # make sure other chicago users are non-members
+  #     @chicago_female1.update_attribute(:member, 0)
+  #     ThinkingSphinx::Test.run do
+  #       @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+  #                                               :limit => 10)
+  #     end
+  #     assert_equal 0, @suggestions.size
+  #   end
+  # 
+  #   should "not create suggestions with friends" do
+  #     setup_chicago_users
+  #     # add chicago user locationships and a friend
+  #     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+  #     @chicago_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+  #     @chicago_male1.friendships.create!(:friend => @chicago_female1)
+  #     ThinkingSphinx::Test.run do
+  #       @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id,
+  #                                               :algorithm => @algorithm, :limit => 10)
+  #     end
+  #     assert_equal 0, @suggestions.size
+  #   end
+  # 
+  #   should "not create suggestions with checkins from users outside of home radius" do
+  #     setup_chicago_male_users
+  #     setup_boston_users
+  #     # add chicago and boston user checkins to the same place
+  #     @chicago_male1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+  #     @boston_female1.locationships.create!(:location => @chicago_sbux, :my_checkins => 1)
+  #     ThinkingSphinx::Test.run do
+  #       @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+  #                                               :limit => 10)
+  #     end
+  #     assert_equal 0, @suggestions.size
+  #   end
+  #   
+  #   should "not create suggestions with common user tags outside of home radius" do
+  #     setup_chicago_male_users
+  #     setup_ny_users
+  #     # add chicago and new york users with similar tags
+  #     @chicago_male1.tag_ids = @newyork_female1.tag_ids = @chicago_sbux.tag_ids
+  #     @chicago_male1.save
+  #     @newyork_female1.save
+  #     ThinkingSphinx::Test.run do
+  #       @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+  #                                               :limit => 10)
+  #     end
+  #     assert_equal 0, @suggestions.size
+  #   end
+  #   
+  #   should "create suggestion with local daters" do
+  #     setup_chicago_users
+  #     ThinkingSphinx::Test.run do
+  #       @suggestions = SuggestionFactory.create(:user_id => @chicago_male1.id, :algorithm => @algorithm,
+  #                                               :limit => 10)
+  #     end
+  #     assert_equal 1, @suggestions.size
+  #     assert_equal [[@chicago_male1.id, @chicago_female1.id].sort].flatten, @suggestions.map{ |s| [s.users.collect(&:id).sort]}.flatten
+  #     assert_equal ['geo'], @suggestions.collect(&:match)
+  #   end
+  # end
 
   # context "geo checkins, geo algorithm" do
   #   setup do

@@ -13,9 +13,10 @@ class SettingsController < ApplicationController
       # track page
       flash.now[:tracker] = track_page("/newbie/settings")
       flash.now[:notice]  = "Welcome to Outlate.ly.  Make sure your settings are correct before joining the fun."
-      # set next page
-      @goto_path = newbie_favorites_path
     end
+
+    # set next page
+    @goto_path = settings_path
   end
 
   # PUT /settings

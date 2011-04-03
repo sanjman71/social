@@ -26,30 +26,30 @@ class PlannedCheckin < ActiveRecord::Base
   scope         :not_expired, lambda { where(:expires_at.gt => Time.zone.now) }
   scope         :expired, lambda { where(:expires_at.lt => Time.zone.now) }
 
-  define_index do
-    has :id, :as => :todo_ids
-    zero = "0"
-    has zero, :as => :checkin_ids, :type => :integer
-    has zero, :as => :shout_ids, :type => :integer
-    has 'IF(going_at, going_at, planned_at)', :as => :timestamp_at, :type => :datetime
-    # user
-    has user(:id), :as => :user_ids
-    indexes user(:handle), :as => :handle
-    has user(:gender), :as => :gender
-    has user(:member), :as => :member
-    has user.availability(:now), :as => :now
-    # location
-    has location(:id), :as => :location_ids
-    # location tags
-    has location.tags(:id), :as => :tag_ids
-    # convert degrees to radians for sphinx
-    has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
-    has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
-    # use delayed job for delta index
-    set_property :delta => :delayed
-    # only index non-expired objects
-    where "expires_at > NOW()"
-  end
+  # define_index do
+  #   has :id, :as => :todo_ids
+  #   zero = "0"
+  #   has zero, :as => :checkin_ids, :type => :integer
+  #   has zero, :as => :shout_ids, :type => :integer
+  #   has 'IF(going_at, going_at, planned_at)', :as => :timestamp_at, :type => :datetime
+  #   # user
+  #   has user(:id), :as => :user_ids
+  #   indexes user(:handle), :as => :handle
+  #   has user(:gender), :as => :gender
+  #   has user(:member), :as => :member
+  #   has user.availability(:now), :as => :now
+  #   # location
+  #   has location(:id), :as => :location_ids
+  #   # location tags
+  #   has location.tags(:id), :as => :tag_ids
+  #   # convert degrees to radians for sphinx
+  #   has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
+  #   has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
+  #   # use delayed job for delta index
+  #   set_property :delta => :delayed
+  #   # only index non-expired objects
+  #   where "expires_at > NOW()"
+  # end
 
   # days left to complete checkin at this location
   def expires_days_left
@@ -83,15 +83,9 @@ class PlannedCheckin < ActiveRecord::Base
     # log data
     self.class.log("[user:#{user.id}] #{user.handle} added planned_checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
-    self.delay.async_update_locationships
+    Resque.enqueue(LocationshipWorker, :planned_checkin_added, 'planned_checkin_id' => id)
     # send email
     Resque.enqueue(CheckinMailerWorker, :todo_added, 'planned_checkin_id' => self.id, 'points' => Currency.for_completed_todo)
-  end
-
-  # find or create locationship, and update counters
-  def async_update_locationships
-    # increment user locationships counter
-    Locationship.async_increment(user, location, :todo_checkins)
   end
 
   # planned checkin was saved

@@ -59,10 +59,14 @@ class LocationFinder
     @hash           = Query.build(@query)
     @fields         = @hash[:fields]
 
-    @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
-                           :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
-                           :max_matches => 100]
-    @locations      = Location.search(@sphinx_options)
+    # sphinx
+    # @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
+    #                        :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
+    #                        :max_matches => 100]
+    # @locations      = Location.search(@sphinx_options)
+
+    # sql
+    @locations      = Location.where({:name.matches => "%#{@name}%"} | {:street_address.matches => "%#{@address}%"})
 
     if @locations.size != 1 and @phone.present?
       puts "*** searching using name and phone" if @log
@@ -71,10 +75,15 @@ class LocationFinder
       @hash           = Query.build(@query)
       @fields         = @hash[:fields]
 
-      @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
-                             :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
-                             :max_matches => 100]
-      @locations      = Location.search(@sphinx_options)
+      # sphinx
+      # @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
+      #                        :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
+      #                        :max_matches => 100]
+      # @locations      = Location.search(@sphinx_options)
+
+      # sql
+      @locations      = Location.joins(:phone_numbers).
+                          where({:name.matches => "%#{@name}%"} | {:'phone_numbers.address'.matches => "%#{@phone}%"})
     end
 
     if @locations.size != 1 and @phone.present?
@@ -84,10 +93,14 @@ class LocationFinder
       @hash           = Query.build(@query)
       @fields         = @hash[:fields]
 
-      @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
-                             :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
-                             :max_matches => 100]
-      @objects        = Location.search(@sphinx_options)
+      # sphinx
+      # @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
+      #                        :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
+      #                        :max_matches => 100]
+      # @objects        = Location.search(@sphinx_options)
+
+      # sql
+      @locations      = Location.joins(:phone_numbers).where(:'phone_numbers.address'.matches => "%#{@phone}%")
 
       if @objects.size == 1
         # there was 1 phone match, but we require a phone and name match, so check object name with query name
@@ -140,10 +153,16 @@ class LocationFinder
     @hash           = Query.build(@query)
     @fields         = @hash[:fields]
 
-    @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
-                           :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
-                           :max_matches => 100]
-    @objects        = Location.search(@sphinx_options)
+    # sphinx
+    # @sphinx_options = Hash[:with => @attributes, :conditions => @fields, :order => @sort_order,
+    #                        :match_mode => :extended2, :rank_mode => :bm25, :page => 1, :per_page => 5,
+    #                        :max_matches => 100]
+    # @objects        = Location.search(@sphinx_options)
+
+    # sql
+    @objects        = Location.joins(:phone_numbers).joins(:city).
+                        where({:'phone_numbers.address'.matches => "%#{@phone}%"} & {:'city.name'.matches => "%#{@city.try(:name)}%"})
+
     @objects
   end
 end

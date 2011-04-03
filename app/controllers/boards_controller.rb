@@ -1,7 +1,7 @@
 class BoardsController < ApplicationController
   before_filter :authenticate_user!
 
-  # GET /
+  # GET /boards
   def index
     # find all chalkboards with messages
     @chalkboards = Wall.find_all_by_member(current_user)

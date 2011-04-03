@@ -170,4 +170,28 @@ class FacebookWorker
     end
   end
 
+  # import tags for the specific location sources
+  def self.import_tags(options={})
+    # initialize location sources, using specified ids collection or all
+    conditions        = options['location_sources'] ? options['location_sources'] : :all
+    location_sources  = LocationSource.facebook.find(conditions, :include => :location)
+
+    location_sources.each do |ls|
+      # check if we have already imported tags from this source
+      next if ls.tagged_at?
+
+      begin
+        # initialize facebook client, no token required
+        facebook  = FacebookClient.new(nil)
+        place     = facebook.place(ls.source_id)
+        location  = ls.location
+        log("[location:#{location.id}] #{location.name} ... no tags for facebook locations")
+      rescue Exception => e
+        log("[location:#{location.id}] #{location.name} #{__method__.to_s} #{e.message}", :error)
+      end
+
+      nil
+    end
+  end
+
 end

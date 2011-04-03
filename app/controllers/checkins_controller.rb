@@ -14,17 +14,15 @@ class CheckinsController < ApplicationController
   # GET /admin/checkins
   # GET /admin/checkins?limit=10&page=0&member=1
   def index
-    @page         = params[:page] ? params[:page].to_i : 1
-    @limit        = params[:limit] ? params[:limit].to_i : page_size
-    @pagination   = {:page => @page, :per_page => @limit}
+    @page       = params[:page] ? params[:page].to_i : 1
+    @limit      = params[:limit] ? params[:limit].to_i : page_size
 
-    @search = MetaSearch::Builder.new(Checkin, {})
-    @search.build(params[:search] || {})
+    @search     = Checkin.search(params[:search])
 
     if @search.search_attributes.values.any?(&:present?)
-      @checkins = @search.order("checkin_at asc").all.paginate(@pagination)
+      @checkins = @search.order("checkin_at asc").page(@page).per(@limit)
     else
-      @checkins = []
+      @checkins = @search.order("checkin_at desc").page(@page).per(@limit)
     end
 
     respond_to do |format|

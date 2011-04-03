@@ -16,8 +16,8 @@ class Friendship < ActiveRecord::Base
   def event_friendship_created
     self.class.log("[user:#{user.id}] #{user.handle} added friend #{friend.handle}:#{friend.id}")
     self.class.log("[user:#{friend.id}] #{friend.handle} added inverse friend #{user.handle}:#{user.id}")
-    # call async event handlers
-    self.delay.async_update_locationships
+    # update locationships
+    Resque.enqueue(LocationshipWorker, :friendship_created, 'friendship_id' => id)
     # update user friend set
     Resque.enqueue(FriendshipWorker, :update_friend_set, 'user_id' => user_id)
     Resque.enqueue(FriendshipWorker, :update_friend_set, 'user_id' => friend_id)
@@ -39,22 +39,6 @@ class Friendship < ActiveRecord::Base
 
   def self.log(s, level = :info)
     AppLogger.log(s, nil, level)
-  end
-
-  protected
-  
-  # update locationships friend_checkins
-  def async_update_locationships
-    # find user's checkins before this friendship was created - future checkins are handled by checkin event
-    user.checkins.where("checkins.created_at < ?", self.created_at).each do |checkin|
-      # update friend's friend_checkins
-      Locationship.async_increment(friend, checkin.location, :friend_checkins)
-    end
-    # find friend's checkins before this friendship was created - future checkins are handled by checkin event
-    friend.checkins.where("checkins.created_at < ?", self.created_at).each do |checkin|
-      # update users's friend_checkins
-      Locationship.async_increment(user, checkin.location, :friend_checkins)
-    end
   end
 
 end

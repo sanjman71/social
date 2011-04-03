@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.0'
+gem 'rails', '3.0.3'
 
 # Mysql gem for ruby 1.9.2
 gem 'ruby-mysql'
@@ -13,7 +13,7 @@ gem 'crack',                  :git => 'git://github.com/sanjman71/crack.git'
 gem 'chronic',                '>= 0.3.0'
 gem 'daemons',                '1.0.10' # dj doesn't start with 1.1.0
 gem 'delayed_job',            :git => 'git://github.com/collectiveidea/delayed_job.git'
-gem 'devise',                 '>= 1.2.rc'
+gem 'devise',                 '1.2.rc2'
 gem 'dotiw',                  '>= 0.4.1'
 gem 'foursquare',             '>= 0.3.1'
 gem 'geokit',                 '>= 1.5.0'
@@ -24,8 +24,9 @@ gem 'haml-rails',             '>= 0.3.4'
 gem 'high_voltage'
 gem 'jquery-rails',           '>= 0.2.6'
 gem 'juggernaut'
-gem 'meta_where',             '>= 0.9.6'
-gem 'meta_search',            '>= 0.9.8'
+gem 'kaminari',               '>= 0.10.4'
+gem 'meta_where',             '>= 1.0.4'
+gem 'meta_search',            '>= 1.0.3'
 gem 'oa-oauth',               :require => "omniauth/oauth"
 gem 'omniauth',               '>= 0.1.6'
 gem 'RedCloth',               '>= 4.2.3'
@@ -36,9 +37,8 @@ gem "SyslogLogger",           ">= 1.4.0"
 gem 'ts-delayed-delta',       :git => 'git://github.com/freelancing-god/ts-delayed-delta.git'
 gem 'test-unit',              '>= 2.1.1'  # used by teamcity
 gem 'thor',                   '>= 0.14.6'
-gem 'thinking-sphinx',        '>= 2.0.0', :require => 'thinking_sphinx'
+# gem 'thinking-sphinx',        '>= 2.0.0', :require => 'thinking_sphinx'
 gem 'twitter',                '>= 1.0.0'
-gem 'will_paginate',          '3.0.pre2'
 gem 'whenever',               '>= 0.5.0'
 
 # Bundle gems for the local environment. Make sure to
@@ -48,7 +48,7 @@ group :development, :test do
   gem 'capistrano'
   gem 'capybara'
   gem 'cucumber',               '>= 0.10.0'
-  gem 'cucumber-rails'
+  gem 'cucumber-rails',         '0.3.2'   # 0.4.0 generates 'cucumber/rails/active_record' unable to load file
   gem 'database_cleaner'
   gem 'email_spec',             '>= 1.0.0', :require => nil
   gem 'factory_girl_rails'

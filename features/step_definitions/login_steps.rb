@@ -34,25 +34,22 @@ FACEBOOK_INFO = {
   :location => {"id" => 108659242498155, "name" => "Chicago, Illinois"}
 }
 
-Then /^outlately authorizes me as "([^"]*)"$/ do |handle|
-  Devise::OmniAuth.short_circuit_authorizers!
-  Devise::OmniAuth.stub!(:outlately) do |b|
-    b.post('/oauth/access_token') { [200, {}, ACCESS_TOKEN.to_json] }
-  end
-  visit '/users/auth/outlately/callback?handle=' + handle
+Given /^outlately authorizes me as "([^"]*)"$/ do |handle|
+  user = User.find_by_handle(handle)
+  visit '/users/auth/outlately/callback?handle=' + user.id.to_s
 end
 
-Then /^I login with facebook as "([^"]*)"$/ do |handle|
+Given /^I login with facebook as "([^"]*)"$/ do |handle|
   # map handle to user, if one exists
   user = User.find_by_handle(handle)
   if user
     # link handle to authenticating facebook user
     FACEBOOK_INFO[:id] = user.facebook_id
   end
-  Devise::OmniAuth.short_circuit_authorizers!
-  Devise::OmniAuth.stub!(:facebook) do |b|
-    b.post('/oauth/access_token') { [200, {}, ACCESS_TOKEN.to_json] }
-    b.get('/me?access_token=outlately') { [200, {}, FACEBOOK_INFO.to_json] }
-  end
+  # Devise::OmniAuth.short_circuit_authorizers!
+  # Devise::OmniAuth.stub!(:facebook) do |b|
+  #   b.post('/oauth/access_token') { [200, {}, ACCESS_TOKEN.to_json] }
+  #   b.get('/me?access_token=outlately') { [200, {}, FACEBOOK_INFO.to_json] }
+  # end
   visit '/users/auth/facebook/callback'
 end

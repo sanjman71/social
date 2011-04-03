@@ -67,8 +67,8 @@ class LocationImport
     @location       = Location.create(options)
   end
 
-  def self.log(level, s, options={})
-    CHECKINS_LOGGER.info("#{Time.now}: [#{level}] #{s}")
+  def self.log(s, level = :info)
+    AppLogger.log(s, nil, level)
   end
 
 end

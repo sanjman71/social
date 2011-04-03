@@ -68,34 +68,34 @@ class Location < ActiveRecord::Base
   scope :min_popularity,        lambda { |x| {:conditions => ["popularity >= ?", x] }}
   scope :with_delta,            { :conditions => {:delta => 1} }
 
-  define_index do
-    has :id, :as => :location_ids
-    indexes name, :as => :name
-    indexes street_address, :as => :address
-    # deprecated: this takes forever to index
-    # location tags
-    # indexes tags(:name), :as => :tags
-    # has tags(:id), :as => :tag_ids
-    # users
-    has users(:id), :as => :user_ids
-    # locality attributes
-    has country_id, :type => :integer, :as => :country_id
-    has state_id, :type => :integer, :as => :state_id
-    has city_id, :type => :integer, :as => :city_id
-    has zipcode_id, :type => :integer, :as => :zipcode_id
-    has neighborhoods(:id), :as => :neighborhood_ids
-    # phone numbers
-    indexes phone_numbers(:address), :as => :phone
-    # other attributes
-    has popularity, :as => :popularity, :type => :integer
-    # convert degrees to radians for sphinx
-    has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
-    has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
-    # use delayed job for delta index
-    set_property :delta => :delayed
-    # only index active users
-    where "users.state = 'active'"
-  end
+  # define_index do
+  #   has :id, :as => :location_ids
+  #   indexes name, :as => :name
+  #   indexes street_address, :as => :address
+  #   # deprecated: this takes forever to index
+  #   # location tags
+  #   # indexes tags(:name), :as => :tags
+  #   # has tags(:id), :as => :tag_ids
+  #   # users
+  #   has users(:id), :as => :user_ids
+  #   # locality attributes
+  #   has country_id, :type => :integer, :as => :country_id
+  #   has state_id, :type => :integer, :as => :state_id
+  #   has city_id, :type => :integer, :as => :city_id
+  #   has zipcode_id, :type => :integer, :as => :zipcode_id
+  #   has neighborhoods(:id), :as => :neighborhood_ids
+  #   # phone numbers
+  #   indexes phone_numbers(:address), :as => :phone
+  #   # other attributes
+  #   has popularity, :as => :popularity, :type => :integer
+  #   # convert degrees to radians for sphinx
+  #   has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
+  #   has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
+  #   # use delayed job for delta index
+  #   set_property :delta => :delayed
+  #   # only index active users
+  #   where "users.state = 'active'"
+  # end
 
   def self.anywhere
     Location.new do |l|
@@ -248,19 +248,6 @@ class Location < ActiveRecord::Base
   rescue Exception => e
     self.class.log("[geocoding error] [location:#{id}] #{name}: #{e.message}")
     false
-  end
-  
-  # redis queueu
-  @queue = :locations
-
-  # queue a job to be processed with the perform method
-  def async(method, *args)
-    Resque.enqueue(Location, id, method, *args)
-  end
-
-  # this will be called by a worker when a job needs to be processed
-  def self.perform(id, method, *args)
-    find(id).send(method, *args)
   end
 
   def hotness

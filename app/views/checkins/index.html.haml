@@ -22,9 +22,8 @@
         = f.submit 'Search', :style => 'margin: 0px;'
   
   .span-24.last#admin-checkins
-    - if @checkins.respond_to?(:total_pages)
-      .span-24#pagination{:style => 'margin: 20px 0;'}
-        = will_paginate(@checkins, :page_links => true, :inner_window => 1, :outer_window => 1)
+    .span-24#pagination{:style => 'margin: 20px 0;'}
+      = paginate(@checkins)
     
     - @checkins.group_by { |checkin| checkin.checkin_at.to_s(:date_dow_ddmmyyyy) }.each do |date, checkins|
       .span-24.last.checkin-date

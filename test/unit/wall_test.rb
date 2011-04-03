@@ -38,9 +38,6 @@ class WallTest < ActiveSupport::TestCase
     assert_equal [@user1.id, @user2.id, @user3.id], @wall.member_set
     # should find member handles
     assert_equal [@user1.handle, @user2.handle, @user3.handle], @wall.member_handles
-    # should link user to wall
-    assert_equal [@wall], Wall.find_all_by_member(@user1)
-    assert_equal @wall, Wall.find_by_member(@user1)
   end
 
   should "post message to wall" do
@@ -50,6 +47,9 @@ class WallTest < ActiveSupport::TestCase
       assert_equal 1, @wall.reload.messages_count
       # should set wall updated_at to wall's most recent message
       assert_equal @msg.created_at.to_i, @wall.updated_at.to_i
+      # should link user to wall
+      assert_equal [@wall], Wall.find_all_by_member(@user1)
+      assert_equal @wall, Wall.find_by_member(@user1)
     end
   end
 

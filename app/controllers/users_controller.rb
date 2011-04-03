@@ -12,17 +12,16 @@ class UsersController < ApplicationController
   # GET /admin/users?limit=10&page=0&member=1
   def index
     # check general parameters
-    @limit            = params[:limit] ? params[:limit].to_i : 20
-    @member           = params[:member].to_i
-    @pagination       = {:page => params[:page] ? params[:page].to_i : 1, :per_page => @limit}
+    @limit      = params[:limit] ? params[:limit].to_i : 20
+    @member     = params[:member].to_i
+    @page       = params[:page].to_i
 
-    @search = MetaSearch::Builder.new(User, {})
-    @search.build(params[:search] || {})
+    @search     = User.search(params[:search])
 
     if @search.search_attributes.values.any?(&:present?)
-      @users = @search.all.paginate(@pagination)
+      @users = @search.page(@page).per(@limit)
     else
-      @users = []
+      @users = User.order("created_at desc").page(@page).per(@limit)
     end
 
     @members          = User.where(:member => 1).count

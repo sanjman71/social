@@ -26,9 +26,8 @@
         = f.submit 'Search', :style => 'margin: 0px;'
 
   .span-24.last#users
-    - if @users.respond_to?(:total_pages)
-      .span-23.prepend-1#pagination{:style => 'margin: 20px 0;'}
-        = will_paginate(@users, :page_links => true, :inner_window => 1, :outer_window => 1)
+    .span-23.prepend-1#pagination{:style => 'margin: 20px 0;'}
+      = paginate(@users)
 
     - @users.each do |user|
       - klasses = []

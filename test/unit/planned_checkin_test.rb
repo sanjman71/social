@@ -27,9 +27,9 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
 
     should "set locationship todo_checkins to 1" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @pcheckin = @user.planned_checkins.create!(:location => @chi_sbux)
-      work_off_delayed_jobs
+      Resque.run!
       @locship  = @user.locationships.find_by_location_id(@chi_sbux.id)
       assert_equal 1, @locship.todo_checkins
     end
@@ -51,9 +51,9 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
 
     should "not allow if there is already an active planned checkin" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
-      work_off_delayed_jobs
+      Resque.run!
       Timecop.travel(Time.now+3.days) do
         assert_false @pcheckin1.expired?
         # expire planned checkins
@@ -65,9 +65,9 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
 
     should "allow if there are no active planned checkins" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
-      work_off_delayed_jobs
+      Resque.run!
       Timecop.travel(Time.now+7.days+1.minute) do
         assert @pcheckin1.expired?
         # expire planned checkins
@@ -81,9 +81,9 @@ class PlannedCheckinTest < ActiveSupport::TestCase
 
   context "planned checkin expired" do
     should "reset locationship todo_checkins to 0 after expiry" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
-      work_off_delayed_jobs
+      Resque.run!
       Timecop.travel(Time.now+7.days+1.minute) do
         # expire planned checkins
         PlannedCheckin.expire_all
@@ -95,9 +95,9 @@ class PlannedCheckinTest < ActiveSupport::TestCase
 
   context "planned checkin reminders" do
     should "send reminder email 2 days before planned checkin expires" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @pcheckin1 = @user.planned_checkins.create!(:location => @chi_sbux)
-      work_off_delayed_jobs
+      Resque.run!
       Timecop.travel(Time.now+1.day) do
         # should have no reminders in 1 day
         assert_equal 0, @user.reload.send_planned_checkin_reminders
@@ -112,15 +112,15 @@ class PlannedCheckinTest < ActiveSupport::TestCase
 
   context "planned checkin resolution" do
     should "resolve as completed when a user checks in to a planned location before it expires" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @pcheckin1  = @user.planned_checkins.create!(:location => @chi_sbux)
-      work_off_delayed_jobs
+      Resque.run!
       Timecop.travel(Time.now+1.day) do
         @points  = @user.points
         # user checks in to location
         @checkin = @user.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @chi_sbux,
                                                                  :checkin_at => Time.zone.now))
-        work_off_delayed_jobs
+        Resque.run!
         # should be no active planned checkins on user's list
         assert_equal 0, @user.planned_checkins.active.count
         # should reset locationship todo_checkins to 0
@@ -131,15 +131,15 @@ class PlannedCheckinTest < ActiveSupport::TestCase
     end
     
     should "resolve as expired when a user checks in to a planned location after it expires" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @pcheckin1  = @user.planned_checkins.create!(:location => @chi_sbux)
-      work_off_delayed_jobs
+      Resque.run!
       Timecop.travel(Time.now+7.days+1.minute) do
         @points  = @user.points
         # user checks in to location
         @checkin = @user.checkins.create!(Factory.attributes_for(:foursquare_checkin, :location => @chi_sbux,
                                                                  :checkin_at => Time.zone.now))
-        work_off_delayed_jobs
+        Resque.run!
         # should be no active planned checkins on user's list
         assert_equal 0, @user.planned_checkins.active.count
         # should reset locationship todo_checkins to 0

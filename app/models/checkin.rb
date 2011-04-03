@@ -21,31 +21,31 @@ class Checkin < ActiveRecord::Base
 
   include Checkins::Match
 
-  define_index do
-    has :id, :as => :checkin_ids
-    zero = "0"
-    has zero, :as => :todo_ids, :type => :integer
-    has zero, :as => :shout_ids, :type => :integer
-    has :checkin_at, :as => :checkin_at
-    has :checkin_at, :as => :timestamp_at
-    # checkin user
-    has user(:id), :as => :user_ids
-    indexes user(:handle), :as => :handle
-    has user(:gender), :as => :gender
-    has user(:member), :as => :member
-    has user.availability(:now), :as => :now
-    # checkin location
-    has location(:id), :as => :location_ids
-    # checkin location tags
-    has location.tags(:id), :as => :tag_ids
-    # convert degrees to radians for sphinx
-    has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
-    has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
-    # use delayed job for delta index
-    set_property :delta => :delayed
-    # only index active users
-    where "users.state = 'active'"
-  end
+  # define_index do
+  #   has :id, :as => :checkin_ids
+  #   zero = "0"
+  #   has zero, :as => :todo_ids, :type => :integer
+  #   has zero, :as => :shout_ids, :type => :integer
+  #   has :checkin_at, :as => :checkin_at
+  #   has :checkin_at, :as => :timestamp_at
+  #   # checkin user
+  #   has user(:id), :as => :user_ids
+  #   indexes user(:handle), :as => :handle
+  #   has user(:gender), :as => :gender
+  #   has user(:member), :as => :member
+  #   has user.availability(:now), :as => :now
+  #   # checkin location
+  #   has location(:id), :as => :location_ids
+  #   # checkin location tags
+  #   has location.tags(:id), :as => :tag_ids
+  #   # convert degrees to radians for sphinx
+  #   has 'RADIANS(locations.lat)', :as => :lat,  :type => :float
+  #   has 'RADIANS(locations.lng)', :as => :lng,  :type => :float
+  #   # use delayed job for delta index
+  #   set_property :delta => :delayed
+  #   # only index active users
+  #   where "users.state = 'active'"
+  # end
 
   # returns true if this checkin is more recent than the specified time
   def checkin_since?(time=2.hours.ago)
@@ -57,7 +57,7 @@ class Checkin < ActiveRecord::Base
     # log data
     self.class.log("[user:#{user.id}] #{user.handle} imported checkin:#{self.id} to #{location.name}:#{location.id}")
     # update locationships
-    self.delay.async_update_locationships
+    Resque.enqueue(LocationshipWorker, :checkin_added, 'checkin_id' => id)
     if checkin_since?(12.hours.ago) && user.member? && user.email_addresses_count?
       if user.preferences_import_checkin_emails.to_i == 1
         self.class.log("[user:#{user.id}] #{user.handle} sending checkin email to #{user.email_address}")
@@ -134,18 +134,6 @@ class Checkin < ActiveRecord::Base
 
   def self.log(s, level = :info)
     AppLogger.log(s, nil, level)
-  end
-
-  protected
-  
-  # find or create locationships and update counters
-  def async_update_locationships
-    # update user locationships
-    Locationship.async_increment(user, location, :my_checkins)
-    # update friend locationships
-    (user.friends + user.inverse_friends).each do |friend|
-      Locationship.async_increment(friend, location, :friend_checkins)
-    end
   end
 
 end

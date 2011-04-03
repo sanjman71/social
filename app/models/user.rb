@@ -146,30 +146,30 @@ class User < ActiveRecord::Base
                                                                   }}
 
 
-  define_index do
-    has :id, :as => :user_ids
-    indexes handle, :as => :handle
-    has gender, :as => :gender
-    has member, :as => :member
-    has availability.now, :as => :now
-    has tag_ids, :as => :tag_ids, :type => :multi
-    has friend_set_ids, :as => :friend_ids, :type => :multi
-    # checkins
-    has checkins(:id), :as => :checkin_ids
-    has checkins_count, :as => :checkins_count
-    # locationships
-    has locations(:id), :as => :location_ids
-    # checkin location tags
-    # indexes locations.tags(:name), :as => :tags
-    # has locations.tags(:id), :as => :tag_ids
-    # convert degrees to radians for sphinx
-    has 'RADIANS(users.lat)', :as => :lat,  :type => :float
-    has 'RADIANS(users.lng)', :as => :lng,  :type => :float
-    # use delayed job for delta index
-    set_property :delta => :delayed
-    # only index active users
-    where "state = 'active'"
-  end
+  # define_index do
+  #   has :id, :as => :user_ids
+  #   indexes handle, :as => :handle
+  #   has gender, :as => :gender
+  #   has member, :as => :member
+  #   has availability.now, :as => :now
+  #   has tag_ids, :as => :tag_ids, :type => :multi
+  #   has friend_set_ids, :as => :friend_ids, :type => :multi
+  #   # checkins
+  #   has checkins(:id), :as => :checkin_ids
+  #   has checkins_count, :as => :checkins_count
+  #   # locationships
+  #   has locations(:id), :as => :location_ids
+  #   # checkin location tags
+  #   # indexes locations.tags(:name), :as => :tags
+  #   # has locations.tags(:id), :as => :tag_ids
+  #   # convert degrees to radians for sphinx
+  #   has 'RADIANS(users.lat)', :as => :lat,  :type => :float
+  #   has 'RADIANS(users.lng)', :as => :lng,  :type => :float
+  #   # use delayed job for delta index
+  #   set_property :delta => :delayed
+  #   # only index active users
+  #   where "state = 'active'"
+  # end
   
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   #

@@ -5,7 +5,7 @@ require 'test/unit'
 require 'shoulda'
 require 'mocha' # require mocha after shoulda and test/unit
 require 'factories'
-require 'thinking_sphinx/test'
+# require 'thinking_sphinx/test'
 require 'timecop'
 require 'fast_context'
 require 'database_cleaner'
