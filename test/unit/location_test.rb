@@ -380,35 +380,37 @@ class LocationTest < ActiveSupport::TestCase
 
   context "reverse geocode" do
     should "ignore if location is not geocoded" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel")
-      assert_equal 0, match_delayed_jobs(/reverse_geocode/)
+      @location.expects(:reverse_geocode).once
+      Resque.run!
       assert_false @location.reverse_geocode
     end
 
     should "ignore if location has a street addresss" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :street_address => "200 W Grand Ave")
-      assert_equal 0, match_delayed_jobs(/reverse_geocode/)
+      @location.expects(:reverse_geocode).once
+      Resque.run!
       assert_false @location.reverse_geocode
     end
 
     should "ignore if location has a city" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :city => cities(:chicago))
-      assert_equal 0, match_delayed_jobs(/reverse_geocode/)
+      @location.expects(:reverse_geocode).once
+      Resque.run!
       assert_false @location.reverse_geocode
     end
 
     should "fill in street, city, state, zipcode, country for a san diego location" do
-      Delayed::Job.delete_all
+      Resque.reset!
       # @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => countries(:us))
       @location = Location.create!(:name => "Mary Janes Coffee Shop @ Hard Rock Hotel",
                                    :lat => 32.707664, :lng => -117.159876)
-      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
-      work_off_delayed_jobs(/reverse_geocode/)
+      Resque.run!
       assert_equal "209 5th Ave", @location.reload.street_address
       assert_equal "San Diego", @location.reload.city.name
       assert_equal "CA", @location.reload.state.code
@@ -416,23 +418,21 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "fill in street, city, state, country for a lake tahoe location" do
-      Delayed::Job.delete_all
+      Resque.reset!
       # @ca       = Factory(:state, :name => 'California', :code => 'CA', :country => countries(:us))
       @location = Location.create!(:name => "Gar Woods",
                                    :lat => 39.22543, :lng => -120.083609)
-      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
-      work_off_delayed_jobs(/reverse_geocode/)
-      assert_equal "Lake Tahoe", @location.reload.city.name
-      assert_equal "CA", @location.reload.state.code
-      assert_equal "US", @location.reload.country.code
+      Resque.run!
+      assert_equal "Lake Tahoe", @location.reload.city.try(:name)
+      assert_equal "CA", @location.reload.state.try(:code)
+      assert_equal "US", @location.reload.country.try(:code)
     end
 
     should "fill in street, city, state, country for a toronto location" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @location = Location.create!(:name => "Blowfish Restaurant & Saki bar",
                                    :lat => 43.6439338, :lng => -79.4025813)
-      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
-      work_off_delayed_jobs(/reverse_geocode/)
+      Resque.run!
       assert_equal "668 King St W", @location.reload.street_address
       assert_equal "Toronto", @location.reload.city.name
       assert_equal "ON", @location.reload.state.code
@@ -440,11 +440,10 @@ class LocationTest < ActiveSupport::TestCase
     end
 
     should "create country and fill in street, city for a hereford (london) location" do
-      Delayed::Job.delete_all
+      Resque.reset!
       @location = Location.create!(:name => "Left Bank",
                                    :lat => 52.0528303, :lng => -2.7188012)
-      assert_equal 1, match_delayed_jobs(/reverse_geocode/)
-      work_off_delayed_jobs(/reverse_geocode/)
+      Resque.run!
       assert_equal "St Martin'S St", @location.reload.street_address
       assert_equal "Hereford", @location.reload.city.name
       assert_equal "GB", @location.reload.country.code
