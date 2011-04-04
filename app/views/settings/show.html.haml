@@ -47,7 +47,7 @@
       - if @user.foursquare_oauth.blank?
         %span{:style => 'display: block; margin-top: 5px;'}= link_to 'Connect', user_omniauth_authorize_path(:foursquare)
         %label{:for => ''} &nbsp;
-        %span.hint so Outlate.ly can notify your followers when you check-in on Foursquare
+        %span.hint ... so Outlate.ly can notify your followers when you check-in on Foursquare
       - else
         %span{:style => 'display: block; margin-top: 5px;'} Account linked
 
