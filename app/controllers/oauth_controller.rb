@@ -41,8 +41,8 @@ class OauthController < Devise::OmniauthCallbacksController
     if params[:handle].present?
       outlately
     elsif params[:error].present?
-      flash.now[:error] = "Oauth error: #{params[:error]}"
       Oauth.log("[user:#{current_user.try(:id)}] #{current_user.try(:handle)} oauth error #{params[:error]}")
+      redirect_to(settings_path, :notice => "Oauth error: #{params[:error]}") and return
     end
   end
 
