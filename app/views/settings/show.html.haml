@@ -45,11 +45,11 @@
     .span-15.last{:style => 'margin: 5px 0;'}
       %label{:for => "foursquare"} Foursquare
       - if @user.foursquare_oauth.blank?
-        %span{:style => 'display: block; margin-top: 5px;'}= link_to 'Connect', user_omniauth_authorize_path(:foursquare)
+        %span{:style => 'display: block; margin-top: 5px;'}= link_to 'Connect', user_omniauth_authorize_path(:foursquare), :style => 'color: #00f;'
         %label{:for => ''} &nbsp;
         %span.hint ... so Outlate.ly can notify your followers when you check-in on Foursquare
       - else
-        %span{:style => 'display: block; margin-top: 5px;'} Account linked
+        %span{:style => 'display: block; margin-top: 5px; font-weight: bold;'} Account linked
 
     .span-15.last{:style => 'margin: 5px 0;'}
       Outlate.ly will send you notification emails when someone you're following checks-in ...
