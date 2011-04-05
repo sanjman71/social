@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+require File.expand_path(File.join(File.dirname(__FILE__), '../..', 'config', 'environment'))
+
+limit   = ARGV[0].present? ? ARGV[0].to_i : 100
+
+# map v1 foursquare venue ids to v2
+
+fs_ls   = LocationSource.where(:source_type => 'foursquare').where(:length.func(:source_id) < 10).limit(limit)
+puts "#{Time.now}: mapping #{fs_ls.size} foursquare venues"
+
+# foursquare api v2 uses the oauth1 access_token_secret
+oauth   = User.find(13).foursquare_oauth
+client  = FoursquareApi.new(oauth.access_token_secret.present? ? oauth.access_token_secret : oauth.access_token)
+# client  = FoursquareApi.new(FOURSQUARE_SECRET)
+
+fs_ls.each do |location_source|
+  response  = client.venues_detail(location_source.source_id)
+  code      = response['meta']['code']
+  if code == 200
+    # puts response
+    data  = response['response']
+    venue = data['venue']
+    puts "#{Time.now}: mapping ls:#{location_source.id} v1:#{location_source.source_id} to v2:#{venue['id']}"
+    location_source.update_attribute(:source_id, venue['id'])
+  end
+end
+
+puts "#{Time.now}: completed"

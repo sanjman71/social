@@ -372,7 +372,7 @@ DEPENDENCIES
   haml (>= 3.0.18)
   haml-rails (>= 0.3.4)
   high_voltage
-  httparty (>= 0.6.1)
+  httparty (>= 0.7.4)
   jquery-rails (>= 0.2.6)
   juggernaut
   kaminari (>= 0.10.4)

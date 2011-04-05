@@ -24,17 +24,32 @@ class CheckinTest < ActiveSupport::TestCase
 
   context "import single foursquare checkin" do
     setup do
-      @checkin_hash = Hash["id"=>141731194, "created"=>"Sun, 22 Aug 10 23:16:33 +0000", "timezone"=>"America/Chicago",
-                           "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago",
-                                     "state"=>"Illinois", "geolat"=>41.8964066, "geolong"=>-87.6312161}
-                          ]
+      @checkin_hash =
+       {"id"=>"4d96b18897d06ea88d020a0b", "createdAt"=>1301721480, "type"=>"checkin",
+        "timeZone"=>"America/Chicago",
+        "venue"=>{"id"=>"4c047ed13f03b713f8275241", "name"=>"Moe's Cantina",
+          "contact"=>{},
+          "location"=>{"address"=>"155 W. Kinzie", "crossStreet"=>"in River North", "city"=>"Chicago", "state"=>"IL",
+                       "postalCode"=>"60654", "lat"=>41.88883, "lng"=>-87.633208},
+                       "categories"=>[
+                         {"id"=>"4bf58dd8d48988d1db931735", "name"=>"Tapas Restaurants", "icon"=>"http://foursquare.com/img/categories/food/default.png", "parents"=>["Food"], "primary"=>true},
+                         {"id"=>"4bf58dd8d48988d1c1941735", "name"=>"Mexican Restaurants", "icon"=>"http://foursquare.com/img/categories/food/default.png", "parents"=>["Food"]},
+                         {"id"=>"4bf58dd8d48988d116941735", "name"=>"Bars", "icon"=>"http://foursquare.com/img/categories/nightlife/default.png", "parents"=>["Nightlife Spots"]}],
+                         "verified"=>false,
+                         "stats"=>{"checkinsCount"=>1691, "usersCount"=>1041}, "todos"=>{"count"=>0}}, "photos"=>{"count"=>0, "items"=>[]},
+                         "comments"=>{"count"=>0, "items"=>[]}}
+      # @checkin_hash = Hash["id"=>141731194, "created"=>"Sun, 22 Aug 10 23:16:33 +0000", "timezone"=>"America/Chicago",
+      #                      "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago",
+      #                                "state"=>"Illinois", "geolat"=>41.8964066, "geolong"=>-87.6312161}
+      #                     ]
     end
 
     should "create location, add checkin, add locationship" do
       Resque.reset!
-      @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
+      @checkin = FoursquareWorker.import_checkin(@user, @checkin_hash)
+      # @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
       assert @checkin.valid?
-      assert_equal '141731194', @checkin.source_id
+      assert_equal '4d96b18897d06ea88d020a0b', @checkin.source_id
       assert_equal 'foursquare', @checkin.source_type
       # should add user checkin
       assert_equal 1, @user.reload.checkins.count
@@ -45,13 +60,13 @@ class CheckinTest < ActiveSupport::TestCase
       assert_equal 1, @location.reload.checkins_count
       # run jobs
       Resque.run!
-      # should add locationship, increment checkins count
+      # should add locationship and increment my_checkins count
       assert_equal 1, @user.locationships.count
       assert_equal [@location.id], @user.locationships.collect(&:location_id)
       assert_equal [1], @user.locationships.collect(&:my_checkins)
       # should use same checkin if we try it again
-      @checkin2 = FoursquareCheckin.import_checkin(@user, @checkin_hash)
-      assert_nil @checkin1
+      @checkin2 = FoursquareWorker.import_checkin(@user, @checkin_hash)
+      assert_equal @checkin2, @checkin
       assert_equal 1, Checkin.count
       assert_equal 1, Location.count
     end
@@ -61,7 +76,7 @@ class CheckinTest < ActiveSupport::TestCase
       # create user friendship
       @friend   = Factory.create(:user)
       @fship    = @user.friendships.create!(:friend => @friend)
-      @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
+      @checkin  = FoursquareWorker.import_checkin(@user, @checkin_hash)
       assert @checkin.valid?
       @location = @checkin.location
       # run jobs
@@ -75,7 +90,7 @@ class CheckinTest < ActiveSupport::TestCase
 
     should "update locationship friend_checkins for friends added later" do
       Resque.reset!
-      @checkin  = FoursquareCheckin.import_checkin(@user, @checkin_hash)
+      @checkin  = FoursquareWorker.import_checkin(@user, @checkin_hash)
       assert @checkin.valid?
       # update checkin timestamp to make sure its created before any friends
       @checkin.update_attribute(:created_at, @checkin.created_at - 1.month)
@@ -96,16 +111,29 @@ class CheckinTest < ActiveSupport::TestCase
   end
 
   context "import all foursquare checkins" do
-    should "create checkin log, add checkin, create checkin alert, add delay sphinx rebuild" do
+    should "create checkin log and add checkin" do
       # create user oauth token
       @oauth    = @user.oauths.create(:provider => 'foursquare', :access_token => '12345')
-      @hash     = Hash["id"=>141731194, "created"=>"Sun, 22 Aug 10 23:16:33 +0000", "timezone"=>"America/Chicago",
-                       "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago",
-                                 "state"=>"Illinois", "geolat"=>41.8964066, "geolong"=>-87.6312161}
-                      ]
-      # stub oauth calls
-      Foursquare::Base.any_instance.stubs(:test).returns(Hash['response' => 'ok'])
-      Foursquare::Base.any_instance.stubs(:history).returns([@hash])
+      @response =
+      {"meta" => {"code" => 200},
+       "response" => {"checkins" => [
+         {"id"=>"4d96b18897d06ea88d020a0b", "createdAt"=>1301721480, "type"=>"checkin",
+           "timeZone"=>"America/Chicago",
+           "venue"=>{"id"=>"4c047ed13f03b713f8275241", "name"=>"Moe's Cantina",
+             "contact"=>{},
+             "location"=>{"address"=>"155 W. Kinzie", "crossStreet"=>"in River North", "city"=>"Chicago", "state"=>"IL",
+                          "postalCode"=>"60654", "lat"=>41.88883, "lng"=>-87.633208},
+                          "categories"=>[
+                            {"id"=>"4bf58dd8d48988d1db931735", "name"=>"Tapas Restaurants", "icon"=>"http://foursquare.com/img/categories/food/default.png", "parents"=>["Food"], "primary"=>true},
+                            {"id"=>"4bf58dd8d48988d1c1941735", "name"=>"Mexican Restaurants", "icon"=>"http://foursquare.com/img/categories/food/default.png", "parents"=>["Food"]},
+                            {"id"=>"4bf58dd8d48988d116941735", "name"=>"Bars", "icon"=>"http://foursquare.com/img/categories/nightlife/default.png", "parents"=>["Nightlife Spots"]}],
+                            "verified"=>false,
+                            "stats"=>{"checkinsCount"=>1691, "usersCount"=>1041}, "todos"=>{"count"=>0}}, "photos"=>{"count"=>0, "items"=>[]},
+                            "comments"=>{"count"=>0, "items"=>[]}}
+        ]}
+      }
+
+      FoursquareApi.any_instance.stubs(:user_checkins).returns(@response)
       @checkin_log = FoursquareWorker.import_checkins('user_id' => @user.id)
       assert @checkin_log.valid?
       # should have 1 checkin

@@ -2,6 +2,42 @@ require File.expand_path('config/environment.rb')
 
 class Checkins < Thor
 
+  desc "poll_foursquare", "check recent foursquare checkins for user --handle or --user"
+  method_options :handle => nil
+  method_options :user => nil
+  def poll_foursquare
+    handle  = options[:handle]
+    user_id = options[:user]
+
+    if handle.blank? and user_id.blank?
+      puts "missing handle or user"
+      return
+    end
+
+    user  = User.find_by_handle!(handle)
+    oauth = user.foursquare_oauth
+
+    if oauth.blank?
+      puts "[error] user #{user.handle} missing oauth"
+      return -1
+    end
+
+    client    = FoursquareApi.new(oauth.access_token_secret.present? ? oauth.access_token_secret : oauth.access_token)
+    response  = client.user_checkins('self')
+
+    # check response
+    if response['meta']['code'] != 200
+      puts "[error] #{response['meta']}"
+      return -1
+    end
+
+    checkins  = response['response']['checkins']
+    # checkins hash => {'count' => x, 'items' => []}
+    checkins['items'].each do |checkin_hash|
+      puts checkin_hash.inspect
+    end
+  end
+
   desc "list", "list recent checkins across all users"
   method_options :limit => 100
   def list
@@ -88,7 +124,7 @@ class Checkins < Thor
           Resque.enqueue(FacebookWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'since' => 'last')
         when 'foursquare'
           # queue job
-          Resque.enqueue(FoursquareWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'sinceid' => 'last')
+          Resque.enqueue(FoursquareWorker, :import_checkins, 'user_id' => user.id, 'limit' => 250, 'afterTimestamp' => 'last')
         end
       end
     end

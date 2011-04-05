@@ -40,37 +40,39 @@ class FoursquareWorker
     end
 
     begin
-      # initiialize oauth object
-      foursquare_oauth = Foursquare::OAuth.new(FOURSQUARE_KEY, FOURSQUARE_SECRET)
-      foursquare_oauth.authorize_from_access(oauth.access_token, oauth.access_token_secret)
-      
-      # initialize foursquare client
-      foursquare = Foursquare::Base.new(foursquare_oauth)
-      if foursquare.test['response'] != 'ok'
-        raise Exception, "foursquare ping failed"
-      end
-
       # parse options
       # http://groups.google.com/group/foursquare-api/web/api-documentation
-      # options - sinceid (since), l
-      if options['sinceid'].present?
+      # options - afterTimestamp, beforeTimestamp, limit, offset
+      if options['afterTimestamp'].present?
         # get checkins since id
-        case options['sinceid']
+        case options['afterTimestamp']
         when 'last'
           # find last foursquare checkin
-          options['sinceid'] = user.checkins.foursquare.recent.limit(1).first.try(:source_id)
+          last_checkin_at = user.checkins.foursquare.recent.limit(1).first.try(:checkin_at)
+          if last_checkin_at
+            # convert to utc
+            options['afterTimestamp'] = last_checkin_at.utc.to_i
+          else
+            # no checkins so start at beginning
+            options.delete('afterTimestamp')
+          end
         end
       end
 
       log("[user:#{user.id}] #{user.handle} importing #{source} checkin with options:#{options.inspect}, last checked about #{mm} minutes ago")
 
-      # default is 20, max is 250
-      if options['limit']
-        options['l'] = options.delete('limit')
+      client    = FoursquareApi.new(oauth.access_token_secret.present? ? oauth.access_token_secret : oauth.access_token)
+      response  = client.user_checkins('self')
+
+      # check response
+      if response['meta']['code'] != 200
+        log("[user:#{user.id}] #{user.handle} foursquare oauth error #{response['meta']}")
+        puts "[error] #{response['meta']}"
+        return nil
       end
 
       # get checkins, handle and log exceptions
-      checkins    = foursquare.history(options)
+      checkins    = response['response']['checkins']
       collection  = checkins.inject([]) do |array, checkin_hash|
         begin
           array.push(import_checkin(user, checkin_hash))
@@ -91,6 +93,21 @@ class FoursquareWorker
   end
 
   # import a foursquare checkin hash
+  # e.g.
+  # {"id"=>"4d96b18897d06ea88d020a0b", "createdAt"=>1301721480, "type"=>"checkin", "timeZone"=>"America/Chicago",
+  #  "venue"=>{"id"=>"4c047ed13f03b713f8275241", "name"=>"Moe's Cantina",
+  #  "contact"=>{},
+  #  "location"=>
+  #   {"address"=>"155 W. Kinzie", "crossStreet"=>"in River North", "city"=>"Chicago", "state"=>"IL",
+  #    "postalCode"=>"60654", "lat"=>41.88883, "lng"=>-87.633208},
+  #    "categories"=>[
+  #     {"id"=>"4bf58dd8d48988d1db931735", "name"=>"Tapas Restaurants", "icon"=>"http://foursquare.com/img/categories/food/default.png", "parents"=>["Food"], "primary"=>true},
+  #      {"id"=>"4bf58dd8d48988d1c1941735", "name"=>"Mexican Restaurants", "icon"=>"http://foursquare.com/img/categories/food/default.png", "parents"=>["Food"]},
+  #      {"id"=>"4bf58dd8d48988d116941735", "name"=>"Bars", "icon"=>"http://foursquare.com/img/categories/nightlife/default.png", "parents"=>["Nightlife Spots"]}],
+  #      "verified"=>false,
+  #      "stats"=>{"checkinsCount"=>1691, "usersCount"=>1041}, "todos"=>{"count"=>0}}, "photos"=>{"count"=>0, "items"=>[]},
+  #      "comments"=>{"count"=>0, "items"=>[]}}
+  # deprecated
   # e.g. {"id"=>141731194, "created"=>"Sun, 22 Aug 10 23:16:33 +0000", "timezone"=>"America/Chicago",
   #       "venue"=>{"id"=>4172889, "name"=>"Zed 451", "address"=>"763 N. Clark St.", "city"=>"Chicago", "state"=>"Illinois",
   #                 "geolat"=>41.8964066, "geolong"=>-87.6312161}
@@ -98,25 +115,40 @@ class FoursquareWorker
   def self.import_checkin(user, checkin_hash)
     # normalize foursquare venue hash and import location
     log("[user:#{user.id}] importing foursquare checkin #{checkin_hash.inspect}");
-    @venue  = checkin_hash['venue']
-    @hash   = Hash['name' => @venue['name'], 'address' => @venue['address'], 'city' => @venue['city'],
-                   'state' => @venue['state'], 'lat' => @venue['geolat'], 'lng' => @venue['geolong']]
-    @location = LocationImport.import_location(@venue['id'].to_s, Source.foursquare, @hash)
+    @venue    = checkin_hash['venue']
+    @location = @venue['location']
+    @hash     = {'name' => @venue['name'], 'address' => @location['address'], 'city' => @location['city'],
+                 'state' => @location['state'], 'lat' => @location['late'], 'lng' => @location['lng']}
+    @location = LocationImport.import_location(@venue['id'], Source.foursquare, @hash)
     if @location.blank?
       raise Exception, "invalid location #{checkin_hash}"
     end
-    
+
+    begin
+      # create checkin timestamp adjusted for specified timezone
+      Time.zone   = ActiveSupport::TimeZone.zones_map[checkin_hash['timeZone']]
+      checkin_at  = Time.zone.at(checkin_hash['createdAt']).utc
+    rescue Exception => e
+      # default to utc
+      checkin_at  = Time.at(checkin_hash['createdAt']).utc
+    end
+
     # find/add checkin
-    checkin_at  = Time.parse(checkin_hash['created']).utc # xxx - need to account for 'timezone' attribute
-    options     = Hash[:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'].to_s, :source_type => Source.foursquare]
-    @checkin    = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
-    return nil if @checkin
-    # add checkin
-    @checkin    = user.checkins.create(options)
+    options   = {:location => @location, :checkin_at => checkin_at, :source_id => checkin_hash['id'],
+                 :source_type => Source.foursquare}
+    @checkin  = user.checkins.find_by_source_id_and_source_type(options[:source_id], options[:source_type])
+    if @checkin.blank?
+      # add checkin
+      @checkin = user.checkins.create(options)
+    end
+    @checkin
   end
 
   # import tags for the specific location sources
   def self.import_tags(options={})
+    # todo: convert to foursquare api v2
+    return false
+
     # initialize foursquare client, no auth required
     foursquare = FoursquareClient.new
 
@@ -154,6 +186,9 @@ class FoursquareWorker
 
   # map the specified location(s) to foursquare
   def self.map_location(options={})
+    # todo: convert to foursquare api v2
+    return 0
+
     locations = Location.find(options['location_ids'])
 
     mapped_count = 0
