@@ -16,7 +16,8 @@ GIT
 
 GIT
   remote: git://github.com/sanjman71/crack.git
-  revision: 1f3495c1205c134509dba0be3b570ee8adbefe83
+  revision: 3b0d9d35453fd2c49bf1cd42c1f1f7bc8298112f
+  ref: 3b0d9d35453fd2c49bf1cd42c1f1f7bc8298112f
   specs:
     crack (0.1.8)
 

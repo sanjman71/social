@@ -9,7 +9,7 @@ gem 'aasm',                   '>= 2.2.0'
 gem 'acts-as-taggable-on',    '>= 2.0.6'
 gem 'alchemist',              '>= 0.1.2'
 # crack version that fixes parser errors by using ActiveSupport json parser
-gem 'crack',                  :git => 'git://github.com/sanjman71/crack.git'
+gem 'crack',                  :git => 'git://github.com/sanjman71/crack.git', :ref => '3b0d9d35453fd2c49bf1cd42c1f1f7bc8298112f'
 gem 'chronic',                '>= 0.3.0'
 gem 'daemons',                '1.0.10' # dj doesn't start with 1.1.0
 gem 'delayed_job',            :git => 'git://github.com/collectiveidea/delayed_job.git'
