@@ -10,7 +10,7 @@ module Users::Follow
     # add me to user's followers list
     redis.sadd(follower_key(user_id), id)
     # send email
-    self.class.log("[user:#{id}] #{handle} is following #{user.handle}:#{user.id} ... and sending now following email")
+    self.class.log("[user:#{id}] #{handle} is following #{user.handle}:#{user.id} ... sending now following email")
     Resque.enqueue(UserMailerWorker, :user_following, 'follower_id' => id, 'following_id' => user.id)
     true
   end

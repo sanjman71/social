@@ -132,7 +132,6 @@ class CheckinTest < ActiveSupport::TestCase
                             "comments"=>{"count"=>0, "items"=>[]}}
         ]}
       }
-
       FoursquareApi.any_instance.stubs(:user_checkins).returns(@response)
       @checkin_log = FoursquareWorker.import_checkins('user_id' => @user.id)
       assert @checkin_log.valid?

@@ -78,20 +78,47 @@ class LocationImportTest < ActiveSupport::TestCase
   end
 
   should "import tags asynchronously after adding a location source" do
+    # create user oauth token
+    @user     = Factory(:user)
+    @oauth    = @user.oauths.create(:provider => 'foursquare', :access_token => '12345')
+    # stubbed venue details response
+    @response =
+    {"meta" => {"code" => 200},
+     "response" => {"venue" =>
+       {"id"=>"4a9d9614f964a520953820e3", "name"=>"Starbucks",
+         "contact"=>{"phone"=>"3125730033", "twitter"=>"Starbucks"},
+         "location"=>
+          {"address"=>"600 N State St", "crossStreet"=>"State St and Ohio St", "city"=>"Chicago",
+           "state"=>"IL", "postalCode"=>"60654", "country"=>"USA", "lat"=>41.8927539, "lng"=>-87.6286206},
+         "categories"=>
+           [
+           {"id"=>"4bf58dd8d48988d1e0931735", "name"=>"Coffee Shops", "icon"=>"http://foursquare.com/img/categories/food/coffeeshop.png", "parents"=>["Food"], "primary"=>true},
+           {"id"=>"4bf58dd8d48988d16d941735", "name"=>"Cafes", "icon"=>"http://foursquare.com/img/categories/food/cafe.png", "parents"=>["Food"]},
+           {"id"=>"4bf58dd8d48988d130941735", "name"=>"Buildings", "icon"=>"http://foursquare.com/img/categories/building/default.png", "parents"=>["Homes, Work, Others"]}
+           ],
+           "verified"=>true,
+           "stats"=>
+            {"checkinsCount"=>1814, "usersCount"=>694},
+            "hereNow"=>{"count"=>0, "groups"=>[{"type"=>"friends", "name"=>"friends here", "count"=>0, "items"=>[]},
+            {"type"=>"others", "name"=>"other people here", "count"=>0, "items"=>[]}]}
+        }
+      }
+    }
     Resque.reset!
     # create location and location source
     @location = Location.create(:name => 'Starbucks - State St and Ohio St', :address => '600 N State St',
                                 :state => @il, :country => @us)
     # should call location.event_location_tagged after tagging location source
     Location.any_instance.expects(:event_location_tagged).once
-    @source   = @location.location_sources.create(:source_id => '108207', :source_type => 'foursquare')
+    @source   = @location.location_sources.create(:source_id => '4a9d9614f964a520953820e3', :source_type => 'foursquare')
     # run async job to import tags
+    FoursquareApi.any_instance.stubs(:venues_detail).returns(@response)
     Resque.run!
     # should add location tags
-    assert_equal ['coffee shops', 'food'], @location.reload.tag_list.sort
+    assert_equal ['buildings', 'cafes', 'coffee shops'], @location.reload.tag_list.sort
     # should mark location_source tag_count, tagged_at
     assert @source.reload.tagged?
-    assert_equal 2, @source.reload.tag_count
+    assert_equal 3, @source.reload.tag_count
     assert @source.reload.tagged_at
   end
 

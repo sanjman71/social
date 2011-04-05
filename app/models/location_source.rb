@@ -41,7 +41,7 @@ class LocationSource < ActiveRecord::Base
 
   def event_location_source_created
     # log
-    self.class.log("[location_source:#{self.id}] location:#{self.location_id} mapped to #{self.source_type}:#{self.source_id}")
+    self.class.log("[location:#{location_id}] #{location.name} mapped to #{self.source_type}:#{self.source_id} and location_source:#{id}")
     # add tags
     add_tags
     # add other sources

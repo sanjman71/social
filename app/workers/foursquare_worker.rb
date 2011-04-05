@@ -146,36 +146,44 @@ class FoursquareWorker
 
   # import tags for the specific location sources
   def self.import_tags(options={})
-    # todo: convert to foursquare api v2
-    return false
-
-    # initialize foursquare client, no auth required
-    foursquare = FoursquareClient.new
-
     # initialize location sources, using specified ids collection or all
     conditions        = options['location_sources'] ? options['location_sources'] : :all
     location_sources  = LocationSource.foursquare.find(conditions, :include => :location)
+
+    # find random foursquare oauth
+    oauth             = Oauth.foursquare.limit(1).order("rand()").first
+    
+    if oauth.blank?
+      log("[foursquare] error, import_tags could not find an oauth key")
+      return false
+    end
+
+    # foursquare api v2 uses the oauth1 access_token_secret
+    client            = FoursquareApi.new(oauth.access_token_secret.present? ? oauth.access_token_secret :
+                                          oauth.access_token)
 
     Array(location_sources).each do |ls|
       # check if we have already imported tags from this source
       next if ls.tagged?
 
       begin
-        venue = foursquare.venue_details(:vid => ls.source_id)
-        if venue['error']
+        response  = client.venues_detail(:vid => ls.source_id)
+        code      = response['meta']['code']
+        if code != 200
           # foursquare returned an error, raise an exception
-          raise Exception, venue['error']
+          raise Exception, response['meta']
         end
         # parse category tags
-        category  = venue['venue']['primarycategory']
-        tag_list  = category_tag_list(category)
+        venue       = response['response']['venue']
+        categories  = venue['categories']
+        tag_list    = category_tag_list(categories)
         # add location tags, duplicate tags are ignored
-        location  = ls.location
+        location    = ls.location
         location.tag_list.add(tag_list)
         location.save
         # mark location source as tagged
         ls.tagged!
-        log("[location:#{location.id}] #{location.name} tags:#{tag_list.join(',')}")
+        log("[location:#{location.id}] #{location.name} tagged with:'#{tag_list.join(',')}' from foursquare")
       rescue Exception => e
         log("[location:#{location.try(:id)}] #{location.try(:name)} #{__method__.to_s} #{e.message}", :error)
       end
@@ -244,12 +252,19 @@ class FoursquareWorker
   end
 
   # category
+  # e.g
+  # {"id"=>"4bf58dd8d48988d1e0931735", "name"=>"Coffee Shops", "parents"=>["Food"], "primary"=>true
+  #  "icon"=>"http://foursquare.com/img/categories/food/coffeeshop.png"}
   # e.g. {"id"=>79048, "fullpathname"=>"Food:Burgers", "nodename"=>"Burgers", "iconurl"=>"http://foursquare.com/img/categories/food/burger.png"}
-  def self.category_tag_list(category)
-    # parse category fullpathname, nodename
-    fullpathname  = category['fullpathname'] rescue nil
-    nodename      = category['nodename'] rescue nil
-    tag_list      = (Tagger.normalize(fullpathname) + Tagger.normalize(nodename)).uniq.sort
+  def self.category_tag_list(categories)
+    tag_list = categories.inject([]) do |array, category_hash|
+      array.push(Tagger.normalize(category_hash['name'])) rescue nil
+      # ignore parent categories, for now
+      # if category_hash['parents'].any?
+      #   category_hash['parents'].each { |s| array.push(Tagger.normalize(s)) }
+      # end
+      array
+    end.flatten.uniq.sort
     tag_list
   end
   
