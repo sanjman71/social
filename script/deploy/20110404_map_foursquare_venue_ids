@@ -22,6 +22,8 @@ fs_ls.each do |location_source|
     venue = data['venue']
     puts "#{Time.now}: mapping ls:#{location_source.id} v1:#{location_source.source_id} to v2:#{venue['id']}"
     location_source.update_attribute(:source_id, venue['id'])
+  else
+    puts "#{Time.now}: error #{response['meta']}"
   end
 end
 
