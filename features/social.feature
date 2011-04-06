@@ -74,7 +74,7 @@ Feature: New home page
     When I follow "Chicago Starbucks"
     Then I should see "I wrote on the chalkboard"
 
-    When I follow "Add"
+    When I follow "Write on Chalkboard"
     And I fill in "message_body" with "Another chalkboard message" within "#wall-message-overlay"
     And I press "Send" within "#wall-message-overlay"
     And I wait for "2" seconds

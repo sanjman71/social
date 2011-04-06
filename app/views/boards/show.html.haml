@@ -24,7 +24,7 @@
             = message.message
 
       .span-16.last
-        = link_to 'Add', '#', :class => 'wall-message modal-trigger', :rel => '#wall-message-overlay', 'data-id' => @chalkboard.id, 'data-name' => @chalkboard.location.name, 'data-members-count' => @chalkboard.member_set.size, 'data-goto' => request.fullpath
+        = link_to 'Write on Chalkboard', '#', :class => 'wall-message modal-trigger', :rel => '#wall-message-overlay', 'data-id' => @chalkboard.id, 'data-name' => @chalkboard.location.name, 'data-members-count' => @chalkboard.member_set.size, 'data-goto' => request.fullpath
 
 -# wall message overlay
 = render(:partial => 'shared/wall_message_overlay', :locals => {:sender => current_user, :url => messages_path(:format => 'json', :return_to => request.fullpath)})
