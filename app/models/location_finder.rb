@@ -65,6 +65,37 @@ class LocationFinder
     #                        :max_matches => 100]
     # @locations      = Location.search(@sphinx_options)
 
+    # match by city and name
+    @city_name    = Location.where(:city_id => @city.id).where(:name.matches => "%#{@name}%")
+
+    # match by city and addr
+    @city_addr    = Location.where(:city_id => @city.id).where(:street_address.matches => "%#{@address}%")
+
+    # intersection
+    @city_matches = @city_name & @city_addr
+
+    if @city_matches.size == 1
+      # exact match
+      return @city_matches
+    elsif @city_name.size == 1 and @city_addr.empty?
+      # name match with no address match
+      return @city_name
+    elsif @city_addr.size == 1 and @city_name.empty?
+      # address match with no name match
+      return @city_addr
+    elsif @city_name.size > 1 and @city_addr.empty?
+      # multiple name matches with no address match
+      return []
+    elsif @city_addr.size > 1 and @city_name
+      # multiple address matches with no name match
+      return []
+    elsif @city_name.empty? and @city_addr.empty?
+      # no name or addr matches
+      return []
+    end
+  
+    # todo: what happens if we have 1 name and 1 address match?
+
     # sql, match city with name or address
     @locations      = Location.where(:city_id => @city.id).
                         where({:name.matches => "%#{@name}%"} | {:street_address.matches => "%#{@address}%"}).all
