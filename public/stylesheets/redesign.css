@@ -24,7 +24,7 @@ body .wrapper {
 body #header {
   padding: 5px 0 10px;
 }
-body #header a#invite-friends {
+body #header a#invite-friends, body #header a#admin {
   float: left;
   background: rgba(0, 0, 0, 0.3);
   color: #fff;
@@ -37,11 +37,11 @@ body #header a#invite-friends {
   -moz-border-radius: 10px;
   border-radius: 10px;
 }
-body #header a#invite-friends img {
+body #header a#invite-friends img, body #header a#admin img {
   float: left;
   margin: 2px 3px 0 0;
 }
-body #header a#invite-friends:hover {
+body #header a#invite-friends:hover, body #header a#admin:hover {
   background: rgba(0, 0, 0, 0.5);
 }
 body #header #top-right {

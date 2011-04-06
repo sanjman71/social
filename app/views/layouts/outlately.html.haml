@@ -46,6 +46,9 @@
           = image_tag("/images/plus.png", :alt => 'invite friends')
           Invite Friends
 
+        - if current_user.has_role?('admin')
+          = link_to 'Admin', admin_path, :id => 'admin', :style => 'margin-left: 10px;'
+
         #top-right
           Welcome
           = link_to current_user.try(:handle), '#'
