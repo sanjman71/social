@@ -67,13 +67,16 @@ class FoursquareWorker
       # check response
       if response['meta']['code'] != 200
         log("[user:#{user.id}] #{user.handle} foursquare oauth error #{response['meta']}")
-        puts "[error] #{response['meta']}"
         return nil
       end
 
       # get checkins, handle and log exceptions
       checkins    = response['response']['checkins']
-      collection  = checkins.inject([]) do |array, checkin_hash|
+      count       = checkins['count']
+
+      log("[user:#{user.id}] #{user.handle} found #{count} foursquare checkin(s)")
+
+      collection  = checkins['items'].inject([]) do |array, checkin_hash|
         begin
           array.push(import_checkin(user, checkin_hash))
         rescue Exception => e
@@ -114,7 +117,7 @@ class FoursquareWorker
   #      }
   def self.import_checkin(user, checkin_hash)
     # normalize foursquare venue hash and import location
-    log("[user:#{user.id}] importing foursquare checkin #{checkin_hash.inspect}");
+    log("[user:#{user.id}] #{user.handle} importing foursquare checkin #{checkin_hash.inspect}");
     @venue    = checkin_hash['venue']
     @location = @venue['location']
     @hash     = {'name' => @venue['name'], 'address' => @location['address'], 'city' => @location['city'],

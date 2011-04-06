@@ -116,7 +116,7 @@ class CheckinTest < ActiveSupport::TestCase
       @oauth    = @user.oauths.create(:provider => 'foursquare', :access_token => '12345')
       @response =
       {"meta" => {"code" => 200},
-       "response" => {"checkins" => [
+       "response" => {"checkins" => {"count"=>1, "items" => [
          {"id"=>"4d96b18897d06ea88d020a0b", "createdAt"=>1301721480, "type"=>"checkin",
            "timeZone"=>"America/Chicago",
            "venue"=>{"id"=>"4c047ed13f03b713f8275241", "name"=>"Moe's Cantina",
@@ -131,7 +131,7 @@ class CheckinTest < ActiveSupport::TestCase
                             "stats"=>{"checkinsCount"=>1691, "usersCount"=>1041}, "todos"=>{"count"=>0}}, "photos"=>{"count"=>0, "items"=>[]},
                             "comments"=>{"count"=>0, "items"=>[]}}
         ]}
-      }
+      }}
       FoursquareApi.any_instance.stubs(:user_checkins).returns(@response)
       @checkin_log = FoursquareWorker.import_checkins('user_id' => @user.id)
       assert @checkin_log.valid?
