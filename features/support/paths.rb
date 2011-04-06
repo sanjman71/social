@@ -33,6 +33,10 @@ module NavigationHelpers
       user = User.find_by_handle($1.gsub("\"", ''))
       "/users/#{user.id}"
 
+    when /^(.*)'s message compose page$/i
+      user = User.find_by_handle($1.gsub("\"", ''))
+      "/users/#{user.id}/message/compose"
+
     when /^(.*)'s share a drink page$/i
       user = User.find_by_handle($1.gsub("\"", ''))
       "/users/#{user.id}/share_drink"
