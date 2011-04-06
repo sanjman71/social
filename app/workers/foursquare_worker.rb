@@ -14,7 +14,7 @@ class FoursquareWorker
     'foursquare'
   end
 
-  # import checkins for the specified user, usually called asynchronously
+  # import checkins for the specified user
   def self.import_checkins(options={})
     # find user oauth object
     user            = User.find_by_id(options['user_id'])
@@ -170,7 +170,7 @@ class FoursquareWorker
       next if ls.tagged?
 
       begin
-        response  = client.venues_detail(:vid => ls.source_id)
+        response  = client.venues_detail(ls.source_id)
         code      = response['meta']['code']
         if code != 200
           # foursquare returned an error, raise an exception

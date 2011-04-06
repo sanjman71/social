@@ -35,40 +35,6 @@ $.fn.init_user_dialogs = function() {
   $("a#whatis-social-dna").fancybox();
 }
 
-$.fn.init_user_message_submit = function() {
-  $("form#new_message").submit(function() {
-    form  = $(this);
-    body  = $(form).find("#message_body").val();
-    url   = $(form).attr('data-url');
-
-    if (body == '') {
-      alert("Please enter a message");
-      return false;
-    }
-
-    // disable submit
-    $(form).find("#message_send_submit").attr('disabled', 'disabled');
-
-    $.post(url, $(form).serialize(), function(data) {
-      // close dialog
-      $.fancybox.close();
-      // reset dialog
-      $(form).find("#message_send_submit").attr('disabled', '');
-      $(form).find("#message_body").val('').trigger('keyup');
-      if (data['track_page']) {
-        // track page
-        track_page(data['track_page']);
-      }
-      // show any growls
-      if (data['growls']) {
-        show_growls(data['growls']);
-      }
-    }, 'json');
-
-    return false;
-  });
-}
-
 $.fn.init_user_learn_more = function() {
   $("#learn_more_ok").click(function() {
     url = $(this).attr('data-url');
@@ -128,18 +94,9 @@ $.fn.init_tooltips = function() {
 }
 */
 
-$.fn.init_growls = function() {
-  try {
-    // check growls
-    if (growls.length > 0) { show_growls(growls); }
-  } catch(e) { }
-}
-
 $(document).ready(function() {
   $(document).init_user_invite();
   $(document).init_user_dialogs();
-  $(document).init_user_message_submit();
   $(document).init_user_learn_more();
   $(document).init_checkin_map();
-  $(document).init_growls();
 })
