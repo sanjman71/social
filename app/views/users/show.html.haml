@@ -13,13 +13,13 @@
           %li= link_to 'Send Message', '#', :class => 'message modal-trigger', :rel => '#user-message-overlay', 'data-id' => @user.id, 'data-handle' => @user.handle
         - else
           %li= link_to "Invite #{@user.him_her}", invite_path
-        - unless @user == current_user
-          -# check if I'm following this user
-          - if current_user.following_ids.include?(@user.id)
-            %li= link_to 'Unfollow', unfollow_user_path(@user, :return_to => request.fullpath), :method => :put
-          - elsif current_user.friend_set.include?(@user.id)
-            -# users can follow friends
-            %li= link_to 'Follow', follow_user_path(@user, :return_to => request.fullpath), :method => :put
+
+        -# check if I'm following this user
+        - if current_user.following_ids.include?(@user.id)
+          %li= link_to 'Unfollow', unfollow_user_path(@user, :return_to => request.fullpath), :method => :put
+        - elsif @user.member?
+          -# users can follow members
+          %li= link_to 'Follow', follow_user_path(@user, :return_to => request.fullpath), :method => :put
 
 .span-16.last.mask
   = display_flash(:all)

@@ -29,6 +29,22 @@ Feature: User Profile
     Then I should see "Send Message"
 
   @profile
+  Scenario: A user visiting a member's profile should see be able to follow them
+    Given I am logged in as "chicago_guy"
+
+    When I go to chicago_gal's profile page
+    And I click "div.actions"
+    Then I should see "Follow"
+
+    When I follow "Follow"
+    And I wait for "2" seconds
+    Then I should see "You are now following chicago_gal"
+
+    # the menu should now have 'Unfollow'
+    When I click "div.actions"
+    Then I should see "Unfollow"
+
+  @profile
   Scenario: A user visiting a non-member's profile should see 'Invite Her' in the actions menu
     Given a user "chicago_nonmember" exists with handle: "chicago_nonmember", gender: "Female", orientation: "Straight", city: city "Chicago", member: "0"
     And I am logged in as "chicago_guy"

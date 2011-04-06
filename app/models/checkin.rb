@@ -55,7 +55,7 @@ class Checkin < ActiveRecord::Base
   # user checkin was added
   def event_checkin_added
     # log data
-    self.class.log("[user:#{user.id}] #{user.handle} imported checkin:#{self.id} to #{location.name}:#{location.id}")
+    self.class.log("[user:#{user.id}] #{user.handle} checkin:#{self.id} at #{location.name}:#{location.id} added")
     # update locationships
     Resque.enqueue(LocationshipWorker, :checkin_added, 'checkin_id' => id)
     if checkin_since?(12.hours.ago) && user.member? && user.email_addresses_count?

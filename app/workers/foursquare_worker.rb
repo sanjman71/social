@@ -81,7 +81,7 @@ class FoursquareWorker
         begin
           if checkin = user.checkins.find_by_source_id(checkin_hash['id'])
             # already imported
-            log("[user:#{user.id}] #{user.handle} checkin:#{checkin.id} at #{checkin.location.try(:name)}:#{checkin.location.try(:id)} alredy imported")
+            log("[user:#{user.id}] #{user.handle} checkin:#{checkin.id} at #{checkin.location.try(:name)}:#{checkin.location.try(:id)} is a duplicate")
           else
             array.push(import_checkin(user, checkin_hash))
           end
