@@ -29,7 +29,7 @@ Feature: User sends signup invitations
     Then I should be on the login page
 
     # user facebook signup
-    When the facebook mock oauth has user "Invitee L." and nickname "invitee" and id "99999"
+    When the facebook mock oauth has user "Invitee L." and email "invitee@gmail.com" and id "99999"
     And I follow "facebook_login"
     And the resque jobs are processed
 
@@ -77,7 +77,7 @@ Feature: User sends signup invitations
     Then I should be on the login page
 
     # user facebook signup
-    When the facebook mock oauth has user "Chicago H." and nickname "chicago_hottie" and id "88888"
+    When the facebook mock oauth has user "Chicago H." and email "chicago_hottie@outlately.com" and id "88888"
     And I follow "facebook_login"
     And the resque jobs are processed until empty
 
