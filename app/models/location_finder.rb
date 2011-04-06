@@ -66,10 +66,10 @@ class LocationFinder
     # @locations      = Location.search(@sphinx_options)
 
     # match by city and name
-    @city_name    = Location.where(:city_id => @city.id).where(:name.matches => "%#{@name}%")
+    @city_name    = Location.where(:city_id => @city.id).where(:name.matches => "%#{@name}%").all
 
     # match by city and addr
-    @city_addr    = Location.where(:city_id => @city.id).where(:street_address.matches => "%#{@address}%")
+    @city_addr    = Location.where(:city_id => @city.id).where(:street_address.matches => "%#{@address}%").all
 
     # intersection
     @city_matches = @city_name & @city_addr
