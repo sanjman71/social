@@ -9,7 +9,8 @@
         %h4
           You don't have any friends out right now.
           %p
-          #{link_to('Invite', invite_path)} your friends to sign up and follow you.
+          Use the #{link_to('search', search_path)} feature to find people to follow or
+          #{link_to('invite', invite_path)} your friends to sign up and follow you.
 
     - @friends_out_now.each_pair do |user, checkins|
       = render(:partial => 'checkin', :locals => {:user => user, :checkin => checkins[0]})
@@ -26,7 +27,9 @@
     #home-following-title.titlebar.left Outlate.ly Following
     - if @following.empty?
       %div{:style => 'padding: 10px; background-color: #FFFBE0;'}
-        %h4{:style => 'font-size: 1.5em;'} You're not following anyone.  When you follow someone, you'll get an email as soon as they check-in somewhere.  They check-in and you know right away - it's that easy.
+        %h4{:style => 'font-size: 1.5em; line-height: 20px;'}
+          Hey, you're not following anyone.  When you follow someone, you'll get an email as soon as they check-in somewhere.
+          Use the #{link_to('search', search_path, :style => 'float: none;')} feature to find people to follow.
 
     - @following.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle, :class => 'tile'
@@ -36,7 +39,8 @@
     #home-following-title.titlebar.left Outlate.ly Followers
     - if @followers.empty?
       %div{:style => 'padding: 10px; background-color: #FFFBE0;'}
-        %h4{:style => 'font-size: 1.5em;'} You don't have any followers.  When your friends follow you, they'll get an email when you check-in somewhere.  Get your friends to follow you so they know when you're out and about.
+        %h4{:style => 'font-size: 1.5em; line-height: 20px;'}
+          Doh, you don't have any followers.  When your friends follow you, they'll get an email when you check-in somewhere.  Invite them #{link_to('here', invite_path, :style => 'float: none;')}.
 
     - @followers.each do |user|
       = link_to image_tag(user.primary_photo_url, :size => '35x35'), user_path(user), :style => 'margin: 0 2px;', :title => user.handle, :class => 'tile'
