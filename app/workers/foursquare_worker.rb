@@ -121,7 +121,7 @@ class FoursquareWorker
     @venue    = checkin_hash['venue']
     @location = @venue['location']
     @hash     = {'name' => @venue['name'], 'address' => @location['address'], 'city' => @location['city'],
-                 'state' => @location['state'], 'lat' => @location['late'], 'lng' => @location['lng']}
+                 'state' => @location['state'], 'lat' => @location['lat'], 'lng' => @location['lng']}
     @location = LocationImport.import_location(@venue['id'], Source.foursquare, @hash)
     if @location.blank?
       raise Exception, "invalid location #{checkin_hash}"
