@@ -62,7 +62,7 @@ class FoursquareWorker
       log("[user:#{user.id}] #{user.handle} importing #{source} checkin with options:#{options.inspect}, last checked about #{mm} minutes ago")
 
       client    = FoursquareApi.new(oauth.access_token_secret.present? ? oauth.access_token_secret : oauth.access_token)
-      response  = client.user_checkins('self')
+      response  = client.user_checkins('self', options)
 
       # check response
       if response['meta']['code'] != 200
@@ -73,10 +73,11 @@ class FoursquareWorker
       # get checkins, handle and log exceptions
       checkins    = response['response']['checkins']
       count       = checkins['count']
+      items       = checkins['items']
 
-      log("[user:#{user.id}] #{user.handle} found #{count} foursquare checkin(s)")
+      log("[user:#{user.id}] #{user.handle} importing #{items.size} of #{count} foursquare checkin(s)")
 
-      collection  = checkins['items'].inject([]) do |array, checkin_hash|
+      collection  = items.inject([]) do |array, checkin_hash|
         begin
           array.push(import_checkin(user, checkin_hash))
         rescue Exception => e
