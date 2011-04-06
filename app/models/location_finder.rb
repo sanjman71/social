@@ -65,8 +65,19 @@ class LocationFinder
     #                        :max_matches => 100]
     # @locations      = Location.search(@sphinx_options)
 
-    # sql
-    @locations      = Location.where({:name.matches => "%#{@name}%"} | {:street_address.matches => "%#{@address}%"})
+    # sql, match city with name or address
+    @locations      = Location.where(:city_id => @city.id).
+                        where({:name.matches => "%#{@name}%"} | {:street_address.matches => "%#{@address}%"}).all
+
+    if @locations.size > 1
+      # sql, match city, name and address
+      @name_or_addr = Location.where(:city_id => @city.id).
+                        where({:name.matches => "%#{@name}%"} & {:street_address.matches => "%#{@address}%"}).all
+      if @name_or_addr.size == 1
+        # we found our match
+        @locations = @name_or_addr
+      end
+    end
 
     if @locations.size != 1 and @phone.present?
       puts "*** searching using name and phone" if @log
@@ -111,12 +122,11 @@ class LocationFinder
       end
     end
 
-    if @locations.size == 1
-      puts "[test] #{@locations.inspect}"
-      @location = @locations.first
-      puts "[found] #{Hash["name" => @location.name, "address" => @location.street_address,
-                           "city" => @location.city.try(:name)].inspect}" if @log
-    end
+    # if @locations.size == 1
+    #   @location = @locations.first
+    #   puts "[found] #{Hash["name" => @location.name, "address" => @location.street_address,
+    #                        "city" => @location.city.try(:name)].inspect}" if @log
+    # end
 
     @locations
   end

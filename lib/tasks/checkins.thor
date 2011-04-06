@@ -5,16 +5,20 @@ class Checkins < Thor
   desc "poll_foursquare", "check recent foursquare checkins for user --handle or --user"
   method_options :handle => nil
   method_options :user => nil
+  method_options :limit => nil
+  method_options :import => nil
   def poll_foursquare
     handle  = options[:handle]
     user_id = options[:user]
+    limit   = options[:limit] ? options[:limit].to_i : 1
+    import  = options[:import].to_i
 
     if handle.blank? and user_id.blank?
       puts "missing handle or user"
       return
     end
 
-    user  = User.find_by_handle!(handle)
+    user  = handle.present? ? User.find_by_handle!(handle) : User.find_by_id(user_id)
     oauth = user.foursquare_oauth
 
     if oauth.blank?
@@ -22,8 +26,9 @@ class Checkins < Thor
       return -1
     end
 
+    options   = {'limit' => limit}
     client    = FoursquareApi.new(oauth.access_token_secret.present? ? oauth.access_token_secret : oauth.access_token)
-    response  = client.user_checkins('self')
+    response  = client.user_checkins('self', options)
 
     # check response
     if response['meta']['code'] != 200
@@ -32,9 +37,15 @@ class Checkins < Thor
     end
 
     checkins  = response['response']['checkins']
-    # checkins hash => {'count' => x, 'items' => []}
-    checkins['items'].each do |checkin_hash|
-      puts checkin_hash.inspect
+    count     = checkins['count']
+    items     = checkins['items']
+    items.each do |checkin_hash|
+      if import == 1
+        puts '*** importing'
+        FoursquareWorker.import_checkin(user, checkin_hash)
+      else
+        puts checkin_hash.inspect
+      end
     end
   end
 

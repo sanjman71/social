@@ -11,17 +11,25 @@ class LocationImport
     return @locations.first if @locations.size == 1
 
     # search for matching locations using venue info
-    @locations = LocationFinder.match(hash) # xxx
-    return @locations.first if @locations.size == 1
+    @locations = LocationFinder.match(hash)
+    
+    if @locations.size == 1
+      # found a unique match
+      return @locations.first
+    end
 
     if @locations.size > 1
-      # xxx - we found more than 1 matching location
+      # xxx - we found more than 1 matching location, log it
+      matches = @locations.collect do |l|
+        [l.id, l.name, l.street_address, l.city.try(:name), l.checkins_count].compact.join(":")
+      end
+      log("[location] found #{@locations.size} matching locations for #{hash['name']}:#{hash['address']} *matches* #{matches.join(', ')}")
       return nil
     end
 
     # add new location
     @location = self.add(hash)
-    
+
     if @location
       # add location source
       @location.location_sources.create(:source_id => id.to_s, :source_type => type)
