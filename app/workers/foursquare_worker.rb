@@ -43,21 +43,21 @@ class FoursquareWorker
       # parse options
       # http://groups.google.com/group/foursquare-api/web/api-documentation
       # options - afterTimestamp, beforeTimestamp, limit, offset
-      if options['afterTimestamp'].present?
-        # get checkins since id
-        case options['afterTimestamp']
-        when 'last'
-          # find last foursquare checkin
-          last_checkin_at = user.checkins.foursquare.recent.limit(1).first.try(:checkin_at)
-          if last_checkin_at
-            # convert to utc
-            options['afterTimestamp'] = last_checkin_at.utc.to_i
-          else
-            # no checkins so start at beginning
-            options.delete('afterTimestamp')
-          end
-        end
-      end
+      # if options['afterTimestamp'].present?
+      #   # get checkins since id
+      #   case options['afterTimestamp']
+      #   when 'last'
+      #     # find last foursquare checkin
+      #     last_checkin_at = user.checkins.foursquare.recent.limit(1).first.try(:checkin_at)
+      #     if last_checkin_at
+      #       # convert to utc
+      #       options['afterTimestamp'] = last_checkin_at.utc.to_i
+      #     else
+      #       # no checkins so start at beginning
+      #       options.delete('afterTimestamp')
+      #     end
+      #   end
+      # end
 
       log("[user:#{user.id}] #{user.handle} importing #{source} checkin with options:#{options.inspect}, last checked about #{mm} minutes ago")
 

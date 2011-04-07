@@ -472,6 +472,24 @@ class User < ActiveRecord::Base
     checkins.where(:checkin_at.gt => timestamp).order("checkin_at desc").limit(1).first
   end
 
+  # find user's most recent checkin_at in the specified format
+  # format:
+  # :facebook => '20081031T120000'
+  # :foursquare => 1302094191
+  def last_checkin_at(format, default=nil)
+    checkin = checkins.order("checkin_at desc").limit(1).first
+    begin
+      case format
+      when :facebook
+        checkin.checkin_at.utc.to_s(:datetime_schedule)
+      when :foursquare
+        checkin.checkin_at.utc.to_i
+      end
+    rescue
+      default
+    end
+  end
+
   #
   # learn methods
   #

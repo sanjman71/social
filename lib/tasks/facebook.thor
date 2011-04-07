@@ -1,6 +1,52 @@
 require File.expand_path('config/environment.rb')
+require 'ruby-debug'
 
 class Facebook < Thor
+
+  desc "poll", "check recent facebook checkins for user --handle or --user, import if --import=1"
+  method_options :handle => nil
+  method_options :user => nil
+  method_options :limit => nil
+  method_options :import => nil
+  def poll
+    handle  = options[:handle]
+    user_id = options[:user]
+    limit   = options[:limit] ? options[:limit].to_i : 1
+    import  = options[:import].to_i
+
+    if handle.blank? and user_id.blank?
+      puts "missing handle or user"
+      return
+    end
+
+    user  = handle.present? ? User.find_by_handle!(handle) : User.find_by_id(user_id)
+    oauth = user.facebook_oauth
+
+    if oauth.blank?
+      puts "[error] user #{user.handle} missing oauth"
+      return -1
+    end
+
+    options   = {'limit' => limit, 'since' => nil}
+    client    = FacebookClient.new(oauth.access_token)
+    response  = client.checkins(user.facebook_id, options)
+
+    # check response
+    if response['error']
+      puts "[error] #{response['error']}"
+      return -1
+    end
+
+    checkins  = response['data']
+    checkins.each do |checkin_hash|
+      if import == 1
+        puts '*** importing'
+        FacebookWorker.import_checkin(user, checkin_hash)
+      else
+        puts checkin_hash.inspect
+      end
+    end
+  end
 
   desc "user", "show user --fbid facebook info"
   method_options :fbid => nil
