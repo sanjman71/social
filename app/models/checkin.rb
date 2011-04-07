@@ -121,7 +121,7 @@ class Checkin < ActiveRecord::Base
   # different poll interval for members vs non-members
 
   def self.poll_interval_member
-    10.minutes
+    7.minutes
   end
 
   def self.poll_interval_default
