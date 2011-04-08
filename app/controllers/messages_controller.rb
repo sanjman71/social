@@ -111,8 +111,7 @@ class MessagesController < ApplicationController
       Message.log("[user:#{@sender.id}] #{@sender.handle} sent message to:#{@to.handle}, body:#{@body}, email:#{@to.email_address}")
     elsif @wall.present?
       @wall.wall_messages.create!(:sender => @sender, :message => @body)
-      # log message
-      Message.log("[wall:#{@wall.id}] #{@sender.handle} wrote on chalkboard")
+      # logging done by models
     end
 
     # set status

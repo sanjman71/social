@@ -34,6 +34,11 @@ class Wall < ActiveRecord::Base
     (self.member_set_ids || '').split(',').map(&:to_i)
   end
 
+  # map member_set_ids to user objects
+  def members
+    User.find(member_set) rescue []
+  end
+
   def member_handles
     User.find(member_set, :select => 'handle').collect(&:handle)
   end

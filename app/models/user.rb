@@ -92,7 +92,8 @@ class User < ActiveRecord::Base
   # Preferences
   serialized_hash           :preferences,
                               {:import_checkin_emails => '0', :realtime_friend_checkin_emails => '0',
-                               :follow_all_checkins_email => '1', :follow_nearby_checkins_email => '0'}
+                               :follow_all_checkins_email => '1', :follow_nearby_checkins_email => '0',
+                               :chalkboard_message_email => '0'}
 
   before_save               :before_save_callback
   after_create              :manage_user_roles
@@ -107,7 +108,8 @@ class User < ActiveRecord::Base
                             :city_attributes, :availability_attributes, :tag_ids,
                             :preferences_import_checkin_emails,
                             :preferences_follow_all_checkins_email,
-                            :preferences_follow_nearby_checkins_email
+                            :preferences_follow_nearby_checkins_email,
+                            :preferences_chalkboard_message_email
 
   # BEGIN acts_as_state_machine
   include AASM
@@ -707,9 +709,9 @@ class User < ActiveRecord::Base
 
   # badging added
   def event_badging_added(badging)
-    if member? and email_addresses_count?
-      Resque.enqueue(UserMailerWorker, :user_badge_added, 'badging_id' => badging.id)
-    end
+    # if member? and email_addresses_count?
+    #   Resque.enqueue(UserMailerWorker, :user_badge_added, 'badging_id' => badging.id)
+    # end
   end
 
   # oauth added

@@ -223,6 +223,20 @@ class UserMailer < ActionMailer::Base
     mail(:to => @email, :subject => @subject)
   end
 
+  def user_chalkboard_message(options)
+    @wall_message = WallMessage.find(options['wall_message_id'])
+    @wall         = @wall_message.wall
+    @sender       = @wall_message.sender
+
+    @user         = User.find(options['user_id'])
+    @email        = @user.email_address
+    @subject      = "Outlate.ly: #{@sender.handle} wrote on the chalkboard at #{@wall.location.try(:name)}..."
+
+    track("chalkboard_message")
+
+    mail(:to => @email, :subject => @subject)
+  end
+
   def user_badge_added(options)
     @badging  = Badging.find(options['badging_id'])
     @user     = @badging.user
